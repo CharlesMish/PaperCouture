@@ -134,7 +134,7 @@ def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: st
 
 async def main():
     OUT.mkdir(parents=True, exist_ok=True)
-    for sub in ("flat", "front", "angle", "rotations"):
+    for sub in ("flat", "front", "angle", "back", "rotations"):
         (OUT / sub).mkdir(parents=True, exist_ok=True)
 
     async with async_playwright() as p:
@@ -145,12 +145,12 @@ async def main():
         page.on("pageerror", lambda e: errors.append(str(e)))
         page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
 
-        cams: dict[str, list] = {"flat": [], "front": [], "angle": [], "rotation": []}
+        cams: dict[str, list] = {"flat": [], "front": [], "angle": [], "back": [], "rotation": []}
 
         async def grab(paper: str, turn: int, kind: str, dest: Path):
             display = kind != "flat"
             step = 0 if kind == "flat" else 6
-            preset = None if kind != "angle" else "angle"
+            preset = {"angle": "angle", "back": "back"}.get(kind)
             await page.goto(url(paper, turn, step, display), wait_until="networkidle")
             await settle(page, display, preset)
             cam = await page.evaluate(CAM)
@@ -163,6 +163,7 @@ async def main():
             await grab(pid, 0, "flat", OUT / "flat" / f"{pid}.png")
             await grab(pid, 0, "front", OUT / "front" / f"{pid}.png")
             await grab(pid, 0, "angle", OUT / "angle" / f"{pid}.png")
+            await grab(pid, 0, "back", OUT / "back" / f"{pid}.png")
 
         names = dict(PAPERS)
         for pid in ROTATION_IDS:
@@ -191,11 +192,12 @@ async def main():
         "Flat square, workshop, step 0",
     )
     make_sheet(
-        [(OUT / "front" / f"{pid}.png", label(pid, 0)) for pid, _ in PAPERS]
-        + [(OUT / "angle" / f"{pid}.png", f"{names[pid]} · angle") for pid, _ in PAPERS],
+        [(OUT / "front" / f"{pid}.png", f"{names[pid]} · front") for pid, _ in PAPERS]
+        + [(OUT / "angle" / f"{pid}.png", f"{names[pid]} · angle") for pid, _ in PAPERS]
+        + [(OUT / "back" / f"{pid}.png", f"{names[pid]} · back") for pid, _ in PAPERS],
         5,
         OUT / "folded-grid.png",
-        "Finished dress — front preset, then angle preset",
+        "Finished dress — front preset, then angle, then back",
     )
     make_sheet(
         [
