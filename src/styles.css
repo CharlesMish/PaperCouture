@@ -168,30 +168,39 @@ button:focus-visible {
 
 [hidden] { display: none !important; }
 
-/* ---- paper picker: a column at the left on wide screens, a row under the title on phones */
+/* ---- paper picker: a column at the left on wide screens, a row under the title on phones.
+   Ten swatches do not fit a centred column beside the step dock, or a single
+   unscrolling row at 390px. The list scrolls; the name and rotate control stay put. */
 
 .papers {
   position: absolute;
-  top: 50%;
+  top: calc(env(safe-area-inset-top, 0px) + 52px);
+  bottom: 118px;
   left: calc(env(safe-area-inset-left, 0px) + 16px);
-  transform: translateY(-50%);
   width: 92px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  overflow: hidden;
 }
 
 .swatches {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  min-height: 0;
+  flex: 0 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
 }
 
 .swatch {
   position: relative;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
+  flex: none;
   padding: 0;
   border: 0;
   border-radius: 3px;
@@ -233,6 +242,7 @@ button:focus-visible {
 
 .paper-name {
   margin: 2px 0 0;
+  flex: none;
   font-size: 0.8rem;
   line-height: 1.3;
   text-align: center;
@@ -242,6 +252,7 @@ button:focus-visible {
 .rotate {
   display: inline-flex;
   align-items: center;
+  flex: none;
   gap: 6px;
   min-height: 36px;
   padding: 0 10px;
@@ -257,16 +268,25 @@ button:focus-visible {
 @media (max-width: 719px) {
   .papers {
     top: calc(env(safe-area-inset-top, 0px) + 46px);
+    bottom: auto;
     left: 12px;
     right: 12px;
     width: auto;
-    transform: none;
+    height: 44px;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     gap: 8px;
   }
-  .swatches { flex-direction: row; gap: 10px; }
+  .swatches {
+    flex-direction: row;
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    touch-action: pan-x;
+  }
   .swatch { width: 44px; height: 44px; }
   .swatch .corner { width: 14px; height: 14px; }
   .swatch::after { border-width: 0 0 14px 14px; }

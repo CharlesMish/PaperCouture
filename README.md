@@ -13,7 +13,7 @@ procedurally. The source is standard Three.js + TypeScript + Vite.
 
 For the first agent session, paste **CURSOR_START.md**. Read **HANDOFF.md** before editing.
 Claude stopped before its final handoff, but the exported application already has a complete
-six-step sequence, four visible papers, fold/back/reset controls, and a display view.
+six-step sequence, ten visible papers, fold/back/reset controls, and a display view.
 
 ## Checks and production preview
 
@@ -43,7 +43,7 @@ from display. A constrained drag-to-fold interaction also exists for owner evalu
 - `src/fold/timeline.ts`: animated rigid facet transforms and layer spacing.
 - `src/app/controller.ts`: forward, reverse, reset, and scrub state.
 - `src/render/`: paper meshes, materials, guides, scene and stand.
-- `src/papers/`: four visible paper designs and a diagnostic grid.
+- `src/papers/`: ten visible paper designs and a diagnostic grid.
 - `src/app/displayCamera.ts`, `viewSwitch.ts`: display inspection and transitions.
 - `src/ui/` and `src/main.ts`: interface and application wiring.
 - `scripts/check.ts`: geometry and controller checks.
