@@ -1,59 +1,59 @@
 # Paper studies — what folding does to the pattern
 
-Captures are from one Chromium session (Playwright, software WebGL), viewport 900×680. Every shot in a category used the same camera position (matched to 0.001 model units). Flat shots are workshop step 0. Folded shots are the finished dress in Display, Front preset, with the Angle preset underneath on `folded-grid.png`. UI chrome was hidden after layout so it would not sit in the frame. Pattern rotation turns the front drawing only; the reverse does not rotate.
+Captures are from one Chromium session (Playwright, software WebGL), viewport 900×680. Every shot in a category used the same camera position (matched to 0.001 model units). Flat shots are workshop step 0. `folded-grid.png` is the finished dress at the Front preset, then Angle, then Back. UI chrome was hidden after layout. Pattern rotation turns the front drawing only; the reverse does not rotate.
 
-The dress front is the centre of the sheet between the slanted side creases. The top tenth becomes the collar and shows the reverse. The side flaps fold back and show their front drawing on the outside of the back. Sleeves show the reverse.
+On the finished dress the collar and the sleeves show the reverse. The Back preset is mostly that same reverse across the centre, with a patch of the front drawing where a side flap lies on top.
 
 ## Stripe and disc
 
-The disc survives, but the left side crease cuts it. On the front you get the right-hand part of the disc low on the skirt; the rest is on the back panel. Diagonal stripes stay readable and kink where a panel folds, so the back does not look like a copy of the front. The blue-grey reverse is a flat colour on the collar and the sleeves. No rotation set was shot; the disc is the thing that moves, and the default place (cut by the left crease) is already the interesting one.
+Most of the red disc is on the front, low and left of centre. The left edge cuts it, and a small red piece shows on the back. The stripes stay readable on the front. The blue-grey reverse is the collar, the sleeves, and the main field of the back. No rotation set was shot.
 
 ## Ivory, ink border
 
-The empty centre is the whole dress front. The ink frame is wider than the front panel at the shoulders, so it leaves with the side flaps and shows along the back edges. The black reverse is the collar and the sleeves. The small corner mark is not on the front. Turning it matters less than on a directional pattern: the frame is nearly symmetric, and the mark is small enough to disappear into a sleeve or a flap.
+The front is the empty ivory centre. No border and no corner mark show there. The collar and sleeves are black. The back is mostly that black reverse, with an ivory patch from a folded flap. The frame is nearly symmetric, so a quarter turn does not rearrange the front the way a one-sided motif does. No rotation set was shot.
 
 ## Indigo lattice
 
-The lattice still reads as one pattern after folding. Creases are obvious because the diagonals change direction on the back panels. Nothing is a focal point, so nothing is awkwardly cropped; the repeat just continues. The ochre reverse is a flat band on the collar and sleeves. A quarter turn swaps which diagonal is steeper. It is visible if you look, and it does not rescue or ruin the dress.
+The lattice covers the front and still reads as one repeat. Nothing large gets cropped. The ochre reverse is the collar, the sleeves, and the main field of the back; a dark blue patch of the front pattern sits on that back. A quarter turn changes which way the diagonals lean. It is visible, and it does not make or break the dress. No rotation set was shot.
 
 ## Botanical sprigs
 
-The half-drop sprigs cover the front and the back, so the dress never looks blank. Individual sprigs are cut in half at the side edges and at the collar fold. At this density that reads as a scatter, not as a broken picture. The mauve reverse is only the collar and sleeves. Rotation moves which sprigs are sliced, not the overall look.
+The sprigs cover the front. Some are cut at the side edges. The mauve reverse is the collar, the sleeves, and the main field of the back, so the back is not a second field of sprigs. A little of the print shows on the flap. Rotation moves which sprigs sit on the front. No rotation set was shot.
 
 ## Wide frame
 
-Flat, this is a dark green frame: thick bands at the top and bottom, thin bands at the sides, rust rules inside, empty middle. Folded, the empty middle is the dress. The top band is almost entirely the collar zone, so it disappears and the collar is the rust reverse instead. The thin side bands go to the back edges. What is left on the front is a dark band along the hem. At 90° and 270° the thick bands are on the sides, so they fold away and the front is bare except for the rust collar. At 180° the thick band sits under the collar and the thinner band is the hem. 0° is the only turn that keeps a clear piece of the border on the front, and even then it is just the hem. The reverse is a flat rust, strongest as the collar against the green hem.
+Flat, this is a dark green frame: thick bands at the top and bottom, thin bands at the sides, rust rules, empty middle. At 0° the front of the dress is that empty middle, with a dark green band along the hem. The top band falls in the collar zone, so the collar is the rust reverse instead. 180° also keeps a green band along the hem. At 90° and 270° there is no hem band; a narrow green strip stays on the left edge and the rest of the front is empty. The back field is the rust reverse, with a dark green patch where a side band folded in.
 
 ## Corner bloom
 
-One flower, low and to the left. At 0° the left crease cuts through it: the front shows a crescent of petals on the lower left, and the angle view shows the rest of the flower on the back panel, including leaves. The collar and sleeves are the dark green reverse, with no flower on them. At 90° the flower sits on the upper left and the collar and shoulder fold take most of it; a fragment remains. At 180° the flower is off the front entirely (it has gone to the back or into the collar zone) and the dress is a blank square with green sleeves. At 270° the flower sits low on the front, large enough to read as a whole bloom, with only the outer edge toward the side. 270° is the best front. 0° is the best if you want to see the cut, because the angle view still shows the missing half.
+One flower, low and to the left on the sheet. At 0° most of the bloom is on the left edge of the skirt. The leaves are cut off at that edge. It is not a thin crescent. At 90° the flower moves to the upper left and the collar cuts the top of it. At 180° it sits on the upper right of the front. At 270° most of it sits on the lower right of the skirt, still meeting the edge. The collar, the sleeves, and the back field are the dark green reverse. Almost none of the red flower is on the back. 270° is the best front: the flower is low on the skirt rather than pushed into the collar. 0° is the one that shows the side cut.
 
 ## Open stems
 
-Three stems and a lot of bare paper. At 0° one stem stands on the dress front, with a few leaves and the berries; it is thin, and the collar crops whatever reached the top edge. A second stem is on the right back panel in the angle view. The third is easy to lose. The reverse is a flat tan on the collar and sleeves and does not compete. Pixel counts of green on the front: 0° the most, then 90° (a stem still crosses the bodice), then 180° and 270° much emptier. 0° is the best. The open ground survives as open ground, which is the point, but two of the three stems do not stay on the front together.
+A few stems on a bare ground. At 0° they read on the front: stem, leaves, and the small berries, with a lot of empty paper around them. The collar and the back field are the tan reverse. Some green is on the back flap, not a second full stem. More of the drawing stays on the front at 0° than at 180° or 270°, where it shifts up and less of it remains in the skirt. 90° still crosses the bodice. 0° is the best of the four.
 
 ## Falling chevrons
 
-Every mark points toward the bottom edge of the sheet, and the strokes get heavier toward that edge. On the dress at 0° they point toward the hem and the hem is the darkest row. The side panels on the angle view are covered in the same marks, turned by the fold, so the back does not point with the front. Dashes are large enough that a crease cutting one of them still leaves a readable row. The reverse is a flat warm grey on the collar and sleeves. 0° is the best: the weight sits in the skirt and the direction follows the dress. 180° puts the heavy row at the neck and points the marks at the collar. 90° and 270° point them out the sides, so the bodice has no up-and-down.
+The marks point toward the bottom edge of the sheet, and the strokes get heavier that way. At 0° the front is heavier toward the hem. At 180° the dark marks sit in the upper part of the dress and the skirt is the light end. At 90° the heavier side is the left. The collar, the sleeves, and the back field are the grey reverse, so the back is not a second sheet of chevrons. 0° is the best: the weight sits in the skirt.
 
 ## Seed dashes
 
-A 16-by-16 grid of short horizontal dashes. On the dress they become a fine texture, not a figure. You can see that the surface is printed, including on the back panels, and you can see individual dashes get clipped at a panel edge. Nothing is noisy, and nothing is a focal point. The reverse is a muted green, clearly a different face, and it is the strongest thing about the folded piece: the collar and sleeves are green against the oatmeal ground. A quarter turn would stand the dashes on end. At this size that is a small change, so no rotation sheet was made.
+Short horizontal dashes on a wide grid. On the front they are a fine texture. You can see dashes, and you can see the ground between them. They do not form a figure, and they do not turn into noise. The collar, the sleeves, and the back field are the muted green reverse, which is easier to see than the dashes. A quarter turn would stand the dashes on end. At this size that is a small change, so no rotation sheet was made.
 
 ## Ink reverse
 
-The front is a warm blank with one vertical stroke and a small diamond. That stroke stays on the bodice at 0°. It is quiet, and a fold does not cut it. The reverse is the actual design: dark blue ground, a pale band across the top, pale corner blocks, and a large off-centre pale disc. Folded, the pale band is the collar. The angle view shows the dark ground and a large part of the disc on the sleeves, so the flipped faces are not a flat fill. The disc does not appear on the dress front. The back panels themselves are mostly the pale front paper, because those flaps show the front drawing. Rotation was not sheeted: the drawn reverse does not turn with the pattern, and turning the front only swings the single stroke (vertical bar versus a bar across the bodice).
+The front is a warm ground with one dark vertical stroke and a small diamond. The stroke sits on the bodice and is not split by a crease. The reverse is the same dark ink across the sheet, with a pale ring drawn in the middle. On the finished dress that ring does not appear. What shows is the dark field: the collar, both sleeves, and the main field of the back. A pale patch of the front paper lies on the back where a flap folds in. The contrast is the dark reverse against the pale front, not a disc on the sleeve. Rotation was not sheeted. The ring does not turn with the pattern; turning the front only swings the single stroke.
 
 ## Rank after folding
 
-Best of the six new papers, at the rotation that helps:
+Best of the six new papers:
 
-1. Falling chevrons at 0°. The direction and the dark hem still read, and the back panels turn that direction into a contrast.
-2. Corner bloom at 270°. The flower is large enough to stay a flower. At 0° it is only a crescent.
-3. Ink reverse at 0°. The collar and the sleeves show a reverse that was drawn for them.
+1. Falling chevrons at 0°. The marks and the heavier hem still read on the front.
+2. Corner bloom at 270°. The flower sits on the lower right of the skirt. At 0° most of the bloom is on the left edge and the leaves are cut off.
+3. Ink reverse at 0°. The collar, the sleeves, and the back are dark ink against the pale front and its single stroke.
 
 Weakest:
 
-1. Wide frame. The border is mostly lost to the collar, the hem edge, or the back. 90° and 270° leave the front bare.
-2. Seed dashes. They survive, and they do not make a mess, but the dress reads as plain paper with a green collar.
-3. Open stems. Even at 0° only one stem really holds the front, and 180°/270° give that front away.
+1. Wide frame. The front stays empty apart from a hem band (0° and 180°) or a narrow left strip (90° and 270°).
+2. Seed dashes. They survive as texture and do not clutter the dress. The green reverse is the part you actually notice.
+3. Open stems. The front is mostly bare paper. Less of the drawing stays there at 180° and 270°.

@@ -25,7 +25,7 @@ Ten swatches do not fit the old centred column, or one unscrolling row at 390px 
 | seed-dashes | Seed dashes | `src/papers/seedDashes.ts` |
 | ink-reverse | Ink reverse | `src/papers/inkReverse.ts` |
 
-Folding notes are in `docs/paper-studies/NOTES.md`. Short version: Falling chevrons at 0° still reads (marks point toward the hem and get heavier there; the back panels turn that direction). Corner bloom is a crescent at 0° and a whole flower on the skirt at 270°. Ink reverse puts a drawn dark face on the collar and sleeves. Wide frame mostly leaves the front empty. Seed dashes survive only as a fine texture. Open stems keeps one stem on the front at 0°, and little at 180° or 270°.
+Folding notes are in `docs/paper-studies/NOTES.md`. Short version, matched to the sheets: Falling chevrons at 0° are heavier toward the hem. Corner bloom at 0° keeps most of the flower on the left edge, with the leaves cut off; at 270° it sits on the lower right. Ink reverse’s collar, sleeves, and back field are dark ink; the ring drawn on the reverse does not show on the dress. Wide frame leaves the front empty apart from a hem band or a narrow side strip. Seed dashes stay a fine texture. Open stems keeps more on the front at 0° than at 180° or 270°.
 
 ## What was tested
 
@@ -38,7 +38,9 @@ Headless Chromium via Playwright, `--use-angle=swiftshader`. Not a phone and not
 - Display: enter, Front / Angle / Back, drag orbit, wheel zoom, Reset view, Turntable, paper change while displayed, return to Workshop with step still 6.
 - 390×844 workshop and display: no horizontal page overflow. Phone row scrolls.
 
-`scripts/capture_papers.py` then shot all ten visible papers at one camera (positions matched to 0.001). Sheets: `docs/paper-studies/flat-grid.png`, `folded-grid.png` (front, then angle), `rotation-grid.png` (Corner bloom, Falling chevrons, Wide frame, Open stems).
+`scripts/capture_papers.py` shot all ten visible papers at one camera (positions matched to 0.001). Sheets: `docs/paper-studies/flat-grid.png`, `folded-grid.png` (front, then angle, then back), `rotation-grid.png` (Corner bloom, Falling chevrons, Wide frame, Open stems).
+
+A later pass changed only `src/papers/inkReverse.ts` `drawBack`. The first reverse painted a pale band and pale corners, so the collar and sleeves came out pale. The back is now the dark ink, with a ring kept in the middle. New Front, Angle, and Back tiles show dark collar and sleeves. The ring is not visible on the dress. Ink reverse was selected from the swatches during a fold and again on the finished piece, then Display was opened. No console errors. `npm run typecheck`, `npm test`, and `npm run build` were run again after that change.
 
 ## Not tested
 
