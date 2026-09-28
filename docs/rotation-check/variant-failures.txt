@@ -1,0 +1,55 @@
+===== front-only (back rotation left at 0): npm test exit 1 =====
+27 problem(s):
+  back q=1 (0.2,0.35) -> (0.8000,0.3500), expected mirror of front (0.3500,0.2000)
+  back q=1 (0.81,0.17) -> (0.1900,0.1700), expected mirror of front (0.1700,0.8100)
+  back q=1 (0.07,0.92) -> (0.9300,0.9200), expected mirror of front (0.9200,0.0700)
+  back q=1 (0.66,0.58) -> (0.3400,0.5800), expected mirror of front (0.5800,0.6600)
+  back q=1 (0.13,0.8) -> (0.8700,0.8000), expected mirror of front (0.8000,0.1300)
+  back q=1 (0,0) -> (1.0000,0.0000), expected mirror of front (0.0000,0.0000)
+  back q=1 (1,1) -> (0.0000,1.0000), expected mirror of front (1.0000,1.0000)
+  back q=1 (0,1) -> (1.0000,1.0000), expected mirror of front (1.0000,0.0000)
+  back q=1 (1,0) -> (0.0000,0.0000), expected mirror of front (0.0000,1.0000)
+  back q=2 (0.2,0.35) -> (0.8000,0.3500), expected mirror of front (0.2000,0.6500)
+  back q=2 (0.81,0.17) -> (0.1900,0.1700), expected mirror of front (0.8100,0.8300)
+  back q=2 (0.07,0.92) -> (0.9300,0.9200), expected mirror of front (0.0700,0.0800)
+  back q=2 (0.66,0.58) -> (0.3400,0.5800), expected mirror of front (0.6600,0.4200)
+  back q=2 (0.13,0.8) -> (0.8700,0.8000), expected mirror of front (0.1300,0.2000)
+  back q=2 (0,0) -> (1.0000,0.0000), expected mirror of front (0.0000,1.0000)
+  back q=2 (1,1) -> (0.0000,1.0000), expected mirror of front (1.0000,0.0000)
+  back q=2 (0,1) -> (1.0000,1.0000), expected mirror of front (0.0000,0.0000)
+  back q=2 (1,0) -> (0.0000,0.0000), expected mirror of front (1.0000,1.0000)
+  back q=3 (0.2,0.35) -> (0.8000,0.3500), expected mirror of front (0.6500,0.8000)
+  back q=3 (0.81,0.17) -> (0.1900,0.1700), expected mirror of front (0.8300,0.1900)
+  back q=3 (0.07,0.92) -> (0.9300,0.9200), expected mirror of front (0.0800,0.9300)
+  back q=3 (0.66,0.58) -> (0.3400,0.5800), expected mirror of front (0.4200,0.3400)
+  back q=3 (0.13,0.8) -> (0.8700,0.8000), expected mirror of front (0.2000,0.8700)
+  back q=3 (0,0) -> (1.0000,0.0000), expected mirror of front (1.0000,1.0000)
+  back q=3 (1,1) -> (0.0000,1.0000), expected mirror of front (0.0000,-0.0000)
+  back q=3 (0,1) -> (1.0000,1.0000), expected mirror of front (0.0000,1.0000)
+  back q=3 (1,0) -> (0.0000,0.0000), expected mirror of front (1.0000,0.0000)
+
+===== same angle after the mirror (rotation ∘ mirror): npm test exit 1 =====
+18 problem(s):
+  back q=1 (0.2,0.35) -> (0.6500,0.8000), expected mirror of front (0.3500,0.2000)
+  back q=1 (0.81,0.17) -> (0.8300,0.1900), expected mirror of front (0.1700,0.8100)
+  back q=1 (0.07,0.92) -> (0.0800,0.9300), expected mirror of front (0.9200,0.0700)
+  back q=1 (0.66,0.58) -> (0.4200,0.3400), expected mirror of front (0.5800,0.6600)
+  back q=1 (0.13,0.8) -> (0.2000,0.8700), expected mirror of front (0.8000,0.1300)
+  back q=1 (0,0) -> (1.0000,1.0000), expected mirror of front (0.0000,0.0000)
+  back q=1 (1,1) -> (0.0000,0.0000), expected mirror of front (1.0000,1.0000)
+  back q=1 (0,1) -> (0.0000,1.0000), expected mirror of front (1.0000,0.0000)
+  back q=1 (1,0) -> (1.0000,0.0000), expected mirror of front (0.0000,1.0000)
+  back q=3 (0.2,0.35) -> (0.3500,0.2000), expected mirror of front (0.6500,0.8000)
+  back q=3 (0.81,0.17) -> (0.1700,0.8100), expected mirror of front (0.8300,0.1900)
+  back q=3 (0.07,0.92) -> (0.9200,0.0700), expected mirror of front (0.0800,0.9300)
+  back q=3 (0.66,0.58) -> (0.5800,0.6600), expected mirror of front (0.4200,0.3400)
+  back q=3 (0.13,0.8) -> (0.8000,0.1300), expected mirror of front (0.2000,0.8700)
+  back q=3 (0,0) -> (-0.0000,0.0000), expected mirror of front (1.0000,1.0000)
+  back q=3 (1,1) -> (1.0000,1.0000), expected mirror of front (0.0000,-0.0000)
+  back q=3 (0,1) -> (1.0000,-0.0000), expected mirror of front (0.0000,1.0000)
+  back q=3 (1,0) -> (0.0000,1.0000), expected mirror of front (1.0000,0.0000)
+
+===== restored mapping: npm test exit 0 =====
+stack height: 0.0290; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+
+all checks passed

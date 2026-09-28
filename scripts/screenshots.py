@@ -41,7 +41,7 @@ async def main():
             await pg.get_by_role('radio', name=pid).click(); await pg.wait_for_timeout(300)
             await pg.screenshot(path=str(CAPTURE_DIR / f"c3-paper-{pid.split()[0].strip(',').lower()}.png"))
         await pg.get_by_role('radio', name='Stripe and disc').click()
-        await pg.get_by_role('button', name='Rotate pattern').click(); await pg.get_by_role('button', name='Front', exact=True).click(); await J(pg,"window.paperCouture.displayCam.update(1)"); await pg.wait_for_timeout(300)
+        await pg.get_by_role('button', name='Turn paper').click(); await pg.get_by_role('button', name='Front', exact=True).click(); await J(pg,"window.paperCouture.displayCam.update(1)"); await pg.wait_for_timeout(300)
         await pg.screenshot(path=str(CAPTURE_DIR / 'c3-rotated.png'))
         await pg.get_by_role('button', name='Return to the workshop').click(); await J(pg,settle); await pg.wait_for_timeout(300)
         print('back in workshop, step =', await J(pg,'window.paperCouture.controller.step'), 'view =', await J(pg,'window.paperCouture.view.mode'))

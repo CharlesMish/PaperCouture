@@ -46,7 +46,8 @@ export class PaperPicker {
     }
     this.rotate.className = 'rotate';
     this.rotate.innerHTML =
-      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Rotate pattern</span>';
+      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn paper</span>';
+    this.rotate.title = 'Turn paper';
     this.rotate.addEventListener('click', h.onRotate);
     this.name.className = 'paper-name';
     this.name.setAttribute('aria-live', 'polite');
@@ -63,8 +64,8 @@ export class PaperPicker {
       img.style.transform = `rotate(${quarterTurns * 90}deg)`;
     }
     const deg = (quarterTurns % 4) * 90;
-    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, turned ${deg}°` : ''}`;
-    this.rotate.setAttribute('aria-label', `Rotate pattern (now ${deg}°)`);
+    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, paper turned ${deg}°` : ''}`;
+    this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
   }
 
   /** Screen space the picker covers: { top, left } in CSS px. */

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { PaperDesign } from '../papers/types';
+import { applySheetOrientation } from './sheetOrientation';
 
 const SIZE = 1024;
 
@@ -57,21 +58,19 @@ export interface PaperTextures {
 }
 
 /**
- * Build the two textures for a paper. `quarterTurns` rotates the printed
- * pattern relative to the square (0..3); the reverse is left alone.
+ * Build the two textures for a paper. `quarterTurns` turns the whole sheet
+ * relative to the folds (0..3): both faces, about the centre.
  */
 export function makePaperTextures(design: PaperDesign, quarterTurns: number, maxAnisotropy: number): PaperTextures {
   const setup = (t: THREE.CanvasTexture) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = Math.min(8, maxAnisotropy);
-    t.center.set(0.5, 0.5);
     return t;
   };
   const front = setup(new THREE.CanvasTexture(paint((c, s) => design.drawFront(c, s))));
-  front.rotation = (-(quarterTurns % 4) * Math.PI) / 2;
   const back = setup(new THREE.CanvasTexture(paint((c, s) => design.drawBack(c, s))));
-  // the back canvas is drawn as seen from behind: sample it mirrored
-  back.repeat.set(-1, 1);
+  applySheetOrientation(front, 'front', quarterTurns);
+  applySheetOrientation(back, 'back', quarterTurns);
   return {
     front,
     back,
