@@ -2,7 +2,9 @@
 
 ## Status
 
-Continuation of Claude's chunk-3 export. The unmodified export is tag `baseline-chunk3`. Later work is on `experiment/paper-studies`. `src/fold/` is unchanged from that tag (`git diff baseline-chunk3 -- src/fold` is empty).
+Continuation of Claude's chunk-3 export. The unmodified export is tag `baseline-chunk3`. The six-paper study from `experiment/paper-studies` was merged through GitHub PR #1
+at `05bba444be376664aeb8c1c35d0463f5cf59e26f`. Continue new work from current
+`main` on a focused branch. `src/fold/` is unchanged from that tag (`git diff baseline-chunk3 -- src/fold` is empty).
 
 Six procedural papers were added beside the original four. The hidden diagnostic grid is unchanged. No new garment, editor, persistence, or backend.
 
@@ -49,3 +51,9 @@ A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fol
 ## Remaining
 
 The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.
+
+## Repository setup
+
+See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for hosted preview setup. GitHub Actions
+runs the documented code checks on PRs and main. The earlier browser results above
+remain historical evidence; setup changes do not add a new human or phone playtest.
