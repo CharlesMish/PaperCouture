@@ -149,14 +149,20 @@ async def settle(page, display: bool, preset: str | None):
     await page.wait_for_timeout(120)
 
 
-def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: str):
+def make_sheet(
+    items: list[tuple[Path, str]],
+    cols: int,
+    dest: Path,
+    heading: str,
+    tile_width: int = 640,
+):
     font = ImageFont.truetype(FONT, 22)
     head = ImageFont.truetype(FONT_BOLD, 28)
     label_h = 36
     pad = 18
     # Scale tiles so a five-column sheet stays sharp but not enormous.
     sample = Image.open(items[0][0])
-    scale = 640 / sample.width
+    scale = tile_width / sample.width
     tw, th = int(sample.width * scale), int(sample.height * scale)
     sample.close()
     rows = (len(items) + cols - 1) // cols
@@ -261,5 +267,134 @@ async def main():
     )
 
 
+PAPERS_REFINE = PAPERS_2
+# Back rows for the two reverses that read as a pattern on the dress:
+# Reverse garden is drawn on the back; Woven checks keeps a slate reverse
+# with the weave showing on the turned edges.
+REFINE_BACKS = ("woven-checks", "reverse-garden")
+
+
+async def _grab(page, base: str, paper: str, turn: int, preset: str, dest: Path) -> list:
+    q = f"?paper={paper}&turn={turn}&step=6&view=display"
+    await page.goto(base.rstrip("/") + "/" + q, wait_until="networkidle")
+    await settle(page, True, preset)
+    cam = await page.evaluate(CAM)
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    await page.screenshot(path=str(dest))
+    print(preset, paper, turn * 90, cam["pos"])
+    return cam["pos"]
+
+
+async def capture_refine() -> None:
+    """Final refine-2 sheets. After is BASE_URL. Before fronts are the 542d7d1
+    tiles already in drafts/before/front. Before Reverse garden orientations
+    come from BEFORE_URL when set (the same commit, so the reverse does not turn).
+    """
+    out = ROOT / "docs" / "paper-studies-02" / "refine-2"
+    shots = Path(os.environ.get("REFINE_SHOTS", "/tmp/pc-refine-shots"))
+    before_fronts = out / "drafts" / "before" / "front"
+    after_base = BASE
+    before_base = os.environ.get("BEFORE_URL", "").strip()
+    names = dict(PAPERS_REFINE)
+    cams: list[tuple[str, list]] = []
+
+    async with async_playwright() as p:
+        launch_kwargs = {"args": LAUNCH}
+        if CHROME:
+            launch_kwargs["executable_path"] = CHROME
+        browser = await p.chromium.launch(**launch_kwargs)
+        context = await browser.new_context(viewport=VIEWPORT, device_scale_factor=1)
+        page = await context.new_page()
+        errors: list[str] = []
+        page.on("pageerror", lambda e: errors.append(str(e)))
+        page.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+
+        for pid, _name in PAPERS_REFINE:
+            for turn in range(4):
+                pos = await _grab(page, after_base, pid, turn, "front", shots / "after" / f"{pid}-{turn * 90}.png")
+                cams.append((f"after front {pid} {turn * 90}", pos))
+        for pid in REFINE_BACKS:
+            for turn in range(4):
+                pos = await _grab(page, after_base, pid, turn, "back", shots / "after" / f"{pid}-back-{turn * 90}.png")
+                cams.append((f"after back {pid} {turn * 90}", pos))
+
+        if before_base:
+            for turn in range(4):
+                pos = await _grab(
+                    page,
+                    before_base,
+                    "reverse-garden",
+                    turn,
+                    "front",
+                    shots / "before" / f"reverse-garden-{turn * 90}.png",
+                )
+                cams.append((f"before front reverse-garden {turn * 90}", pos))
+                pos = await _grab(
+                    page,
+                    before_base,
+                    "reverse-garden",
+                    turn,
+                    "back",
+                    shots / "before" / f"reverse-garden-back-{turn * 90}.png",
+                )
+                cams.append((f"before back reverse-garden {turn * 90}", pos))
+
+        print("console errors:", errors[:8])
+        await browser.close()
+        if errors:
+            raise SystemExit("console errors during refine capture")
+
+    front_pos = [c for label, c in cams if label.startswith("after front")]
+    back_pos = [c for label, c in cams if label.startswith("after back")]
+    if any(c != front_pos[0] for c in front_pos):
+        raise SystemExit(f"front cameras differ: {front_pos[:3]} ...")
+    if any(c != back_pos[0] for c in back_pos):
+        raise SystemExit(f"back cameras differ: {back_pos[:3]} ...")
+    print("front camera", front_pos[0], "back camera", back_pos[0])
+
+    make_sheet(
+        [(before_fronts / f"{pid}.png", f"Before · {names[pid]}") for pid, _ in PAPERS_REFINE]
+        + [(shots / "after" / f"{pid}-0.png", f"After · {names[pid]}") for pid, _ in PAPERS_REFINE],
+        6,
+        out / "before-after-fronts.png",
+        "Finished dress, Display front — before 542d7d1, then this revision",
+        tile_width=300,
+    )
+    orient: list[tuple[Path, str]] = []
+    if before_base:
+        for side, preset in (("front", ""), ("back", "-back")):
+            for deg in (0, 90, 180, 270):
+                orient.append(
+                    (shots / "before" / f"reverse-garden{preset}-{deg}.png", f"Before · {side} · {deg}°")
+                )
+    for side, preset in (("front", ""), ("back", "-back")):
+        for deg in (0, 90, 180, 270):
+            orient.append((shots / "after" / f"reverse-garden{preset}-{deg}.png", f"After · {side} · {deg}°"))
+    make_sheet(
+        orient,
+        4,
+        out / "reverse-garden-orientations.png",
+        "Reverse garden — Display front and back, four turns. Before is 542d7d1.",
+        tile_width=320,
+    )
+    rotation: list[tuple[Path, str]] = []
+    for pid, _ in PAPERS_REFINE:
+        for deg in (0, 90, 180, 270):
+            rotation.append((shots / "after" / f"{pid}-{deg}.png", f"{names[pid]} · {deg}°"))
+    for pid in REFINE_BACKS:
+        for deg in (0, 90, 180, 270):
+            rotation.append((shots / "after" / f"{pid}-back-{deg}.png", f"{names[pid]} · back · {deg}°"))
+    make_sheet(
+        rotation,
+        4,
+        out / "rotation-grid.png",
+        "Refined collection — Display front at four turns, then backs of the two patterned reverses",
+        tile_width=340,
+    )
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    if os.environ.get("REFINE") == "1":
+        asyncio.run(capture_refine())
+    else:
+        asyncio.run(main())

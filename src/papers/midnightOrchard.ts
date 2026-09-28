@@ -92,29 +92,33 @@ function fruit(
   ctx.save();
   ctx.translate(S * x, S * y);
   ctx.rotate(rot);
-  if (kind === 'gold') ctx.scale(1.14, 0.86);
-  else if (kind === 'apricot') ctx.scale(0.9, 1.08);
-  else ctx.scale(1.2, 0.78);
+  // Roundish. A little flatten, or a little taller, and no more than that.
+  if (kind === 'gold') ctx.scale(1.06, 0.94);
+  else if (kind === 'apricot') ctx.scale(0.98, 1.04);
+  else ctx.scale(1.03, 0.97);
   const R = S * r;
   ctx.beginPath();
   if (kind === 'gold') {
-    ctx.moveTo(0, -R * 0.82);
-    ctx.bezierCurveTo(R * 0.58, -R * 0.96, R * 1.08, -R * 0.22, R * 0.96, R * 0.2);
-    ctx.bezierCurveTo(R * 0.86, R * 0.72, R * 0.36, R * 1.0, 0, R * 0.9);
-    ctx.bezierCurveTo(-R * 0.46, R * 0.98, -R * 1.04, R * 0.55, -R * 0.98, R * 0.05);
-    ctx.bezierCurveTo(-R * 0.92, -R * 0.48, -R * 0.5, -R * 0.86, 0, -R * 0.82);
+    // Slightly wide, with a low shoulder on the right.
+    ctx.moveTo(0, -R * 0.9);
+    ctx.bezierCurveTo(R * 0.58, -R * 0.94, R * 0.98, -R * 0.46, R * 0.96, R * 0.08);
+    ctx.bezierCurveTo(R * 0.94, R * 0.58, R * 0.62, R * 1.02, R * 0.08, R * 0.92);
+    ctx.bezierCurveTo(-R * 0.48, R * 0.98, -R * 0.98, R * 0.5, -R * 0.94, R * 0.02);
+    ctx.bezierCurveTo(-R * 0.9, -R * 0.5, -R * 0.52, -R * 0.96, 0, -R * 0.9);
   } else if (kind === 'apricot') {
-    ctx.moveTo(R * 0.04, -R * 0.98);
-    ctx.bezierCurveTo(R * 0.5, -R * 0.86, R * 0.98, -R * 0.28, R * 0.86, R * 0.28);
-    ctx.bezierCurveTo(R * 0.74, R * 0.86, R * 0.22, R * 1.04, -R * 0.12, R * 0.88);
-    ctx.bezierCurveTo(-R * 0.52, R * 0.7, -R * 0.86, R * 0.18, -R * 0.78, -R * 0.28);
-    ctx.bezierCurveTo(-R * 0.7, -R * 0.78, -R * 0.28, -R * 1.02, R * 0.04, -R * 0.98);
+    // Nearly round, a little taller, with a small notch at the stem.
+    ctx.moveTo(R * 0.1, -R * 0.88);
+    ctx.bezierCurveTo(R * 0.58, -R * 0.84, R * 0.98, -R * 0.4, R * 0.94, R * 0.12);
+    ctx.bezierCurveTo(R * 0.9, R * 0.64, R * 0.46, R * 1.02, 0, R * 0.96);
+    ctx.bezierCurveTo(-R * 0.5, R * 0.9, -R * 0.98, R * 0.42, -R * 0.92, -R * 0.06);
+    ctx.bezierCurveTo(-R * 0.86, -R * 0.55, -R * 0.32, -R * 0.98, R * 0.1, -R * 0.88);
   } else {
-    ctx.moveTo(0, -R * 0.88);
-    ctx.bezierCurveTo(R * 0.52, -R * 1.0, R * 1.02, -R * 0.42, R * 0.94, R * 0.08);
-    ctx.bezierCurveTo(R * 0.88, R * 0.55, R * 0.42, R * 0.78, 0, R * 0.74);
-    ctx.bezierCurveTo(-R * 0.48, R * 0.8, -R * 0.96, R * 0.42, -R * 0.9, R * 0.02);
-    ctx.bezierCurveTo(-R * 0.84, -R * 0.52, -R * 0.46, -R * 0.96, 0, -R * 0.88);
+    // Round, with a flattened shoulder where the calyx sits.
+    ctx.moveTo(0, -R * 0.84);
+    ctx.bezierCurveTo(R * 0.52, -R * 0.9, R * 0.98, -R * 0.48, R * 0.96, R * 0.06);
+    ctx.bezierCurveTo(R * 0.94, R * 0.58, R * 0.5, R * 1.0, 0, R * 0.96);
+    ctx.bezierCurveTo(-R * 0.52, R * 1.0, -R * 0.98, R * 0.52, -R * 0.94, R * 0.02);
+    ctx.bezierCurveTo(-R * 0.9, -R * 0.5, -R * 0.5, -R * 0.9, 0, -R * 0.84);
   }
   ctx.closePath();
   ctx.fillStyle = colour;
@@ -122,27 +126,27 @@ function fruit(
   ctx.save();
   ctx.clip();
   ctx.fillStyle = kind === 'persimmon' ? '#9a3e22' : kind === 'gold' ? '#b78432' : '#c56e30';
-  ctx.globalAlpha = 0.16;
+  ctx.globalAlpha = 0.2;
   ctx.beginPath();
-  ctx.ellipse(0, R * 0.55, R * 0.95, R * 0.7, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, R * 0.78, R * 0.62, R * 0.32, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
   ctx.fillStyle = BRANCH_EDGE;
   ctx.beginPath();
-  ctx.moveTo(-R * 0.07, -R * 0.72);
-  ctx.quadraticCurveTo(0, -R * 0.95, R * 0.06, -R * 0.7);
-  ctx.lineTo(R * 0.02, -R * 1.08);
-  ctx.lineTo(-R * 0.03, -R * 1.08);
+  ctx.moveTo(-R * 0.07, -R * 0.74);
+  ctx.quadraticCurveTo(0, -R * 0.58, R * 0.06, -R * 0.76);
+  ctx.lineTo(R * 0.025, -R * 0.98);
+  ctx.lineTo(-R * 0.03, -R * 0.98);
   ctx.closePath();
   ctx.fill();
   if (kind === 'persimmon') {
     ctx.strokeStyle = BRANCH_EDGE;
-    ctx.lineWidth = Math.max(1.25, S * 0.0035);
+    ctx.lineWidth = Math.max(1.25, S * 0.0032);
     ctx.lineCap = 'butt';
     ctx.beginPath();
-    ctx.moveTo(-R * 0.1, -R * 0.78);
-    ctx.lineTo(R * 0.1, -R * 0.78);
-    ctx.moveTo(0, -R * 0.68);
+    ctx.moveTo(-R * 0.12, -R * 0.8);
+    ctx.lineTo(R * 0.12, -R * 0.8);
+    ctx.moveTo(0, -R * 0.7);
     ctx.lineTo(0, -R * 0.9);
     ctx.stroke();
   }

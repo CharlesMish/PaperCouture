@@ -1,3 +1,11 @@
+# Paper Couture handoff — 2026-09-28 (refine 2)
+
+## Status
+
+`experiment/paper-studies-02-refine` merges the accepted two-sided rotation (`bec6885`) into the phase-1 redraws. Turning the sheet turns both printed sides. Woven checks is an over-and-under print again, without the light edge strips. Midnight orchard fruits are rounder. Reverse garden’s drawing is the phase-1 sheet; the back now turns with it. Plum scatter, Tidal bands, and Cut-paper mosaic are unchanged from that draft. Sheets and notes: `docs/paper-studies-02/refine-2/`. `src/fold/` is still unchanged from `05bba444`. The before study remains at `archive/paper-studies-02-542d7d1`.
+
+Headless Chromium on the production preview (not a phone, not physical paper): Turn paper during a fold kept the step, four turns returned to 0°, switching to Reverse garden kept the turn, Back and Start over worked, and Display Front / Angle / Back kept the finished fold when the paper was turned. At a 390×844 viewport the swatch row scrolled to Reverse garden, which is the last swatch. The workshop name line is hidden at that width; the display title shows the name. No console errors.
+
 # Paper Couture handoff — 2026-09-28
 
 ## Status
