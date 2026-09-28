@@ -6,6 +6,7 @@ import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
 import { DisplayCamera } from './app/displayCamera';
 import { PAPERS, findPaper } from './papers';
+import { rotationCheckPaper } from './papers/rotationCheck';
 import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
 import { FoldGuides } from './render/guides';
@@ -54,7 +55,12 @@ stand.setOpacity(0);
 stage.scene.add(stand.group);
 
 // ---- paper
-let paper = findPaper(params.get('paper'));
+function resolvePaper(id: string | null | undefined) {
+  if (id === rotationCheckPaper.id) return rotationCheckPaper;
+  return findPaper(id);
+}
+
+let paper = resolvePaper(params.get('paper'));
 let quarterTurns = ((Number(params.get('turn')) || 0) % 4 + 4) % 4;
 let textures: PaperTextures | null = null;
 function applyPaper() {
@@ -338,7 +344,7 @@ Object.assign(window, {
     enterDisplay,
     leaveDisplay,
     setPaper(id: string) {
-      paper = findPaper(id);
+      paper = resolvePaper(id);
       applyPaper();
     },
     rotatePattern(q: number) {

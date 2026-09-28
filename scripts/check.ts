@@ -13,6 +13,7 @@ import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
 import { FoldController } from '../src/app/controller';
+import { checkTwoSidedRotation } from './rotationCheck';
 
 const errors: string[] = [];
 const construction = buildDress();
@@ -151,6 +152,8 @@ if (process.argv.includes('--dump')) {
   writeFileSync('docs/states.json', JSON.stringify(dump));
   console.log('wrote docs/states.json');
 }
+
+checkTwoSidedRotation(errors);
 
 if (errors.length) {
   console.error(`\n${errors.length} problem(s):`);
