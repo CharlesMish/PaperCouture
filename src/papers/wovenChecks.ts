@@ -9,9 +9,9 @@ import { solid } from './util';
 
 const GAP = '#1c3148';
 const OCHRE = '#c9923c';
-const OCHRE_UNDER = '#8a5c26';
+const OCHRE_UNDER = '#a97834';
 const BLUE = '#2a4e76';
-const BLUE_UNDER = '#173049';
+const BLUE_UNDER = '#1f4468';
 const REVERSE = '#5e6b66';
 
 export const wovenChecks: PaperDesign = {
@@ -23,11 +23,11 @@ export const wovenChecks: PaperDesign = {
     solid(ctx, S, GAP);
     const n = 6;
     const pitch = S / n;
-    // Ground between the bands, wide enough that they stay strips.
-    const channel = pitch * 0.26;
+    // Ground between the bands. Narrow enough that the colours still meet the eye as bands.
+    const channel = pitch * 0.185;
     const thick = pitch - channel;
     // Narrow ground gap where the under band stops, before the one on top.
-    const tuck = channel * 0.36;
+    const tuck = channel * 0.3;
     const underRun = channel - tuck;
 
     const at = (i: number) => i * pitch + channel / 2;

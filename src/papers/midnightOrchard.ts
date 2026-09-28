@@ -1,8 +1,8 @@
 import { PaperDesign } from './types';
 import { solid } from './util';
 
-// One rising limb on deep blue. It tapers. One or two side branches leave it,
-// curve down, and end in fruit. Each fruit hangs close, on a short stem.
+// One limb on deep blue. It is narrow, and it tapers. Short stems leave it
+// and end in fruit, with blue ground between the wood and the fruit.
 // The hem and the lower right stay open.
 
 const GROUND = '#16325a';
@@ -38,22 +38,63 @@ function stemRot(from: Pt, to: Pt): number {
   return Math.atan2(from.x - to.x, -(from.y - to.y));
 }
 
-/** A flat printed limb. Width tapers. A darker edge sits on one side only. */
-function limb(ctx: CanvasRenderingContext2D, S: number, p0: Pt, c: Pt, p1: Pt, w0: number, w1: number) {
-  const n = 32;
+function widthAt(t: number, w0: number, w1: number, softenRoot: boolean): number {
+  const s = t * t * (3 - 2 * t);
+  let w = w0 + (w1 - w0) * s;
+  if (softenRoot && t < 0.14) {
+    const u = t / 0.14;
+    w *= 0.58 + 0.42 * Math.sin((u * Math.PI) / 2);
+  }
+  return w;
+}
+
+/** A flat printed limb. Width tapers. The root is rounded. A darker edge sits on one side. */
+function limb(
+  ctx: CanvasRenderingContext2D,
+  S: number,
+  p0: Pt,
+  c: Pt,
+  p1: Pt,
+  w0: number,
+  w1: number,
+  softenRoot: boolean,
+) {
+  const n = 36;
   const left: Pt[] = [];
   const right: Pt[] = [];
+  let n0: Pt = { x: 0, y: 1 };
+  let t0: Pt = { x: 0, y: -1 };
+  let wRoot = w0;
   for (let i = 0; i <= n; i++) {
     const t = i / n;
     const p = quad(p0, c, p1, t);
     const tan = quadTan(p0, c, p1, t);
     const len = Math.hypot(tan.x, tan.y) || 1;
-    const nx = -tan.y / len;
-    const ny = tan.x / len;
-    const w = w0 + (w1 - w0) * t;
+    const tx = tan.x / len;
+    const ty = tan.y / len;
+    const nx = -ty;
+    const ny = tx;
+    const w = widthAt(t, w0, w1, softenRoot);
+    if (i === 0) {
+      n0 = { x: nx, y: ny };
+      t0 = { x: tx, y: ty };
+      wRoot = w;
+    }
     left.push({ x: p.x + nx * w, y: p.y + ny * w });
     right.push({ x: p.x - nx * w, y: p.y - ny * w });
   }
+  const cap: Pt[] = [];
+  if (softenRoot) {
+    const steps = 8;
+    for (let i = steps - 1; i >= 1; i--) {
+      const a = (Math.PI * i) / steps;
+      cap.push({
+        x: p0.x + n0.x * wRoot * Math.cos(a) - t0.x * wRoot * Math.sin(a),
+        y: p0.y + n0.y * wRoot * Math.cos(a) - t0.y * wRoot * Math.sin(a),
+      });
+    }
+  }
+  const outline = [...left, ...right.slice().reverse(), ...cap];
   const paint = (pts: Pt[], colour: string) => {
     ctx.beginPath();
     ctx.moveTo(S * pts[0].x, S * pts[0].y);
@@ -62,12 +103,12 @@ function limb(ctx: CanvasRenderingContext2D, S: number, p0: Pt, c: Pt, p1: Pt, w
     ctx.fillStyle = colour;
     ctx.fill();
   };
-  const shade: Pt[] = left.map((p, i) => {
-    const r = right[i];
-    return { x: p.x + (p.x - r.x) * 0.1, y: p.y + (p.y - r.y) * 0.1 };
-  });
-  paint([...shade, ...right.slice().reverse()], BRANCH_EDGE);
-  paint([...left, ...right.slice().reverse()], BRANCH);
+  const shade = outline.map((p) => ({
+    x: p.x + n0.x * wRoot * 0.22,
+    y: p.y + n0.y * wRoot * 0.22,
+  }));
+  paint(shade, BRANCH_EDGE);
+  paint(outline, BRANCH);
 }
 
 function fruit(
@@ -83,28 +124,24 @@ function fruit(
   ctx.save();
   ctx.translate(S * x, S * y);
   ctx.rotate(rot);
-  // Roundish. A little flatten, or a little taller, and no more than that.
   if (kind === 'gold') ctx.scale(1.06, 0.94);
   else if (kind === 'apricot') ctx.scale(0.98, 1.04);
   else ctx.scale(1.03, 0.97);
   const R = S * r;
   ctx.beginPath();
   if (kind === 'gold') {
-    // Slightly wide, with a low shoulder on the right.
     ctx.moveTo(0, -R * 0.9);
     ctx.bezierCurveTo(R * 0.58, -R * 0.94, R * 0.98, -R * 0.46, R * 0.96, R * 0.08);
     ctx.bezierCurveTo(R * 0.94, R * 0.58, R * 0.62, R * 1.02, R * 0.08, R * 0.92);
     ctx.bezierCurveTo(-R * 0.48, R * 0.98, -R * 0.98, R * 0.5, -R * 0.94, R * 0.02);
     ctx.bezierCurveTo(-R * 0.9, -R * 0.5, -R * 0.52, -R * 0.96, 0, -R * 0.9);
   } else if (kind === 'apricot') {
-    // Nearly round, a little taller, with a small notch at the stem.
     ctx.moveTo(R * 0.1, -R * 0.88);
     ctx.bezierCurveTo(R * 0.58, -R * 0.84, R * 0.98, -R * 0.4, R * 0.94, R * 0.12);
     ctx.bezierCurveTo(R * 0.9, R * 0.64, R * 0.46, R * 1.02, 0, R * 0.96);
     ctx.bezierCurveTo(-R * 0.5, R * 0.9, -R * 0.98, R * 0.42, -R * 0.92, -R * 0.06);
     ctx.bezierCurveTo(-R * 0.86, -R * 0.55, -R * 0.32, -R * 0.98, R * 0.1, -R * 0.88);
   } else {
-    // Round, with a flattened shoulder where the calyx sits.
     ctx.moveTo(0, -R * 0.84);
     ctx.bezierCurveTo(R * 0.52, -R * 0.9, R * 0.98, -R * 0.48, R * 0.96, R * 0.06);
     ctx.bezierCurveTo(R * 0.94, R * 0.58, R * 0.5, R * 1.0, 0, R * 0.96);
@@ -144,6 +181,15 @@ function fruit(
   ctx.restore();
 }
 
+function hang(from: Pt, dir: Pt, stem: number, r: number): { end: Pt; at: Pt } {
+  const len = Math.hypot(dir.x, dir.y) || 1;
+  const ux = dir.x / len;
+  const uy = dir.y / len;
+  const end = { x: from.x + ux * stem, y: from.y + uy * stem };
+  const reach = r * 0.74;
+  return { end, at: { x: end.x + ux * reach, y: end.y + uy * reach } };
+}
+
 export const midnightOrchard: PaperDesign = {
   id: 'midnight-orchard',
   name: 'Midnight orchard',
@@ -153,55 +199,31 @@ export const midnightOrchard: PaperDesign = {
     solid(ctx, S, GROUND);
 
     // Canvas +y is down the sheet, so a droop is the way fruit hangs.
-    // Side branches are short and thick. The fruit sits against them.
-    const root: Pt = { x: 0.31, y: 0.86 };
-    const bend: Pt = { x: 0.22, y: 0.56 };
-    const tip: Pt = { x: 0.47, y: 0.36 };
-    limb(ctx, S, root, bend, tip, 0.034, 0.014);
-
+    const root: Pt = { x: 0.34, y: 0.76 };
+    const bend: Pt = { x: 0.29, y: 0.5 };
+    const tip: Pt = { x: 0.52, y: 0.3 };
     const at = (t: number) => quad(root, bend, tip, t);
 
-    // Lower fork: a short curve down into the apricot, still in the skirt.
-    const low = at(0.3);
-    const apricotEnd: Pt = { x: low.x + 0.032, y: low.y + 0.05 };
-    const apricotC: Pt = { x: low.x + 0.006, y: low.y + 0.038 };
-    limb(ctx, S, low, apricotC, apricotEnd, 0.022, 0.01);
+    const spots: { t: number; dir: Pt; stem: number; r: number; colour: string; kind: 'gold' | 'apricot' | 'persimmon' }[] = [
+      { t: 0.22, dir: { x: -0.92, y: 0.4 }, stem: 0.058, r: 0.036, colour: APRICOT, kind: 'apricot' },
+      { t: 0.46, dir: { x: 0.05, y: 1 }, stem: 0.04, r: 0.05, colour: GOLD, kind: 'gold' },
+      { t: 0.72, dir: { x: 0.72, y: 0.7 }, stem: 0.034, r: 0.032, colour: PERSIMMON, kind: 'persimmon' },
+      { t: 0.93, dir: { x: 0.35, y: 0.94 }, stem: 0.028, r: 0.022, colour: APRICOT, kind: 'apricot' },
+    ];
 
-    // Upper fork, shorter, drooping into the persimmon.
-    const mid = at(0.78);
-    const persimmonEnd: Pt = { x: mid.x + 0.028, y: mid.y + 0.042 };
-    const persimmonC: Pt = { x: mid.x + 0.004, y: mid.y + 0.03 };
-    limb(ctx, S, mid, persimmonC, persimmonEnd, 0.018, 0.009);
+    for (const spot of spots) {
+      const from = at(spot.t);
+      const { end } = hang(from, spot.dir, spot.stem, spot.r);
+      limb(ctx, S, from, { x: (from.x + end.x) / 2, y: (from.y + end.y) / 2 }, end, 0.0052, 0.0024, false);
+    }
 
-    // Gold hangs on a short neck under the limb.
-    const goldFrom = at(0.52);
-    const goldEnd: Pt = { x: goldFrom.x + 0.01, y: goldFrom.y + 0.036 };
-    const goldC: Pt = { x: goldFrom.x + 0.002, y: goldFrom.y + 0.024 };
-    limb(ctx, S, goldFrom, goldC, goldEnd, 0.015, 0.008);
+    limb(ctx, S, root, bend, tip, 0.013, 0.0036, true);
 
-    // The tip tapers into a short droop and the smaller apricot.
-    const tipEnd: Pt = { x: tip.x + 0.008, y: tip.y + 0.03 };
-    const tipC: Pt = { x: tip.x + 0.014, y: tip.y + 0.008 };
-    limb(ctx, S, tip, tipC, tipEnd, 0.014, 0.008);
-
-    // The notch meets the wood. The stem does not run to the middle of the fruit.
-    const seat = (from: Pt, end: Pt, r: number): Pt => {
-      const dx = end.x - from.x;
-      const dy = end.y - from.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const reach = r * 0.48;
-      return { x: end.x + (dx / len) * reach, y: end.y + (dy / len) * reach };
-    };
-
-    const goldAt = seat(goldC, goldEnd, 0.07);
-    const persimmonAt = seat(persimmonC, persimmonEnd, 0.056);
-    const apricotAt = seat(apricotC, apricotEnd, 0.062);
-    const tipAt = seat(tipC, tipEnd, 0.046);
-
-    fruit(ctx, S, goldAt.x, goldAt.y, 0.07, GOLD, 'gold', stemRot(goldEnd, goldAt));
-    fruit(ctx, S, persimmonAt.x, persimmonAt.y, 0.056, PERSIMMON, 'persimmon', stemRot(persimmonEnd, persimmonAt));
-    fruit(ctx, S, apricotAt.x, apricotAt.y, 0.062, APRICOT, 'apricot', stemRot(apricotEnd, apricotAt));
-    fruit(ctx, S, tipAt.x, tipAt.y, 0.046, APRICOT, 'apricot', stemRot(tipEnd, tipAt));
+    for (const spot of spots) {
+      const from = at(spot.t);
+      const { end, at: centre } = hang(from, spot.dir, spot.stem, spot.r);
+      fruit(ctx, S, centre.x, centre.y, spot.r, spot.colour, spot.kind, stemRot(end, centre));
+    }
   },
   drawBack(ctx, S) {
     solid(ctx, S, OCHRE);
