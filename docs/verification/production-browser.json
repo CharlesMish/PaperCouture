@@ -1,0 +1,13 @@
+{
+  "name": "paper-couture",
+  "mode": "production",
+  "pageErrors": [],
+  "consoleErrors": [],
+  "failedRequests": [],
+  "checks": [
+    "six steps through real UI; material and rotation during folding",
+    "display, turntable, presets, return, six reverse steps, reset during fold",
+    "390x844 layout, no horizontal overflow (desktop browser resized)"
+  ],
+  "ok": true
+}
