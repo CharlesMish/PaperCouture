@@ -1,143 +1,110 @@
 import { PaperDesign } from './types';
 import { solid } from './util';
 
-// One partly open plum blossom, then a short drift of related marks.
-// Each petal is a broad ellipse, wider across than it is deep, so the
-// tip is round. Neighbours use a lighter or darker plum where they
-// overlap. Two petals are shorter, so the blossom is not fully open.
-// The other side of the sheet stays blush.
-
 const GROUND = '#f0d4de';
-const PLUM = '#6e2448';
-const DEEP = '#4c1834';
-const LIFT = '#8a3a5e';
-const CORAL = '#e36a55';
+const PLUM = '#782d50';
+const DEEP = '#54213e';
+const LIFT = '#a04b68';
+const CORAL = '#d77965';
 const REVERSE = '#6a2a48';
 
-/** A round petal head. `across` is the tangential radius, `along` the radial one. */
-function lobe(
-  ctx: CanvasRenderingContext2D,
-  S: number,
-  ang: number,
-  dist: number,
-  across: number,
-  along: number,
-  colour: string,
-) {
-  const a = (ang * Math.PI) / 180;
-  const ox = Math.sin(a) * dist * S;
-  const oy = -Math.cos(a) * dist * S;
-  const ux = Math.sin(a);
-  const uy = -Math.cos(a);
-  const vx = -uy;
-  const vy = ux;
-  const rt = across * S;
-  const rr = along * S;
+// Each petal grows from a shared throat, widening toward an uneven rounded
+// rim. Overlap comes from the silhouette rather than separate circular heads.
+function petal(ctx: CanvasRenderingContext2D, angle: number, length: number,
+  width: number, colour: string, lean = 0) {
+  ctx.save();
+  ctx.rotate(angle);
   ctx.fillStyle = colour;
   ctx.beginPath();
-  const n = 40;
-  for (let i = 0; i <= n; i++) {
-    const t = (i / n) * Math.PI * 2;
-    const px = Math.cos(t) * rr;
-    const py = Math.sin(t) * rt;
-    const x = ox + px * ux + py * vx;
-    const y = oy + px * uy + py * vy;
-    if (i === 0) ctx.moveTo(x, y);
-    else ctx.lineTo(x, y);
-  }
+  ctx.moveTo(-width * 0.10, length * 0.04);
+  ctx.bezierCurveTo(-width * 0.28, -length * 0.26,
+    -width * 0.94, -length * 0.53, -width * 0.70 + lean, -length * 0.82);
+  ctx.bezierCurveTo(-width * 0.52 + lean, -length * 1.08,
+    width * 0.10 + lean, -length * 0.96, width * 0.28 + lean, -length * 0.98);
+  ctx.bezierCurveTo(width * 0.90 + lean, -length * 1.01,
+    width * 0.88, -length * 0.66, width * 0.57, -length * 0.44);
+  ctx.bezierCurveTo(width * 0.31, -length * 0.23,
+    width * 0.16, -length * 0.09, width * 0.10, length * 0.04);
   ctx.closePath();
   ctx.fill();
+  ctx.restore();
 }
 
-function cluster(ctx: CanvasRenderingContext2D, S: number) {
-  const marks: [number, number, number, number][] = [
-    [0, 0.002, 0.012, 0.009],
-    [0.011, -0.004, 0.007, 0.005],
-    [-0.009, 0.006, 0.006, 0.004],
-    [0.002, 0.011, 0.004, 0.003],
-  ];
-  ctx.fillStyle = CORAL;
-  for (const [x, y, rx, ry] of marks) {
+function centre(ctx: CanvasRenderingContext2D) {
+  // A small fan of stamens joins the petals without becoming a glossy dot.
+  ctx.strokeStyle = CORAL;
+  ctx.lineWidth = 0.0028;
+  ctx.lineCap = 'round';
+  const tips = [[-0.019, -0.019], [-0.007, -0.027], [0.009, -0.023],
+    [0.020, -0.008], [0.012, 0.011]];
+  for (const [x, y] of tips) {
     ctx.beginPath();
-    ctx.ellipse(S * x, S * y, S * rx, S * ry, 0, 0, Math.PI * 2);
+    ctx.moveTo(0.001, 0.004);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.fillStyle = '#efb78d';
+    ctx.beginPath();
+    ctx.ellipse(x, y, 0.0038, 0.0028, -0.3, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-// Drawn back to front. The two plum petals are not neighbours, so each
-// cap stays its own shape. Angles are degrees, 0 pointing up the sheet.
-const BLOSSOM: [number, number, number, number, string][] = [
-  [62, 0.058, 0.05, 0.043, PLUM],
-  [288, 0.054, 0.045, 0.039, PLUM],
-  [-12, 0.05, 0.043, 0.036, DEEP],
-  [210, 0.056, 0.047, 0.043, DEEP],
-  [136, 0.06, 0.052, 0.045, LIFT],
-];
-
-const HALF: [number, number, number, number, string][] = [
-  [-55, 0.034, 0.024, 0.021, DEEP],
-  [8, 0.032, 0.029, 0.026, PLUM],
-  [78, 0.026, 0.022, 0.02, LIFT],
-];
-
-function bud(ctx: CanvasRenderingContext2D, S: number, x: number, y: number) {
+function blossom(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.save();
-  ctx.translate(S * x, S * y);
-  ctx.rotate(-0.4);
-  ctx.fillStyle = DEEP;
-  ctx.beginPath();
-  ctx.ellipse(0, 0, S * 0.02, S * 0.026, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = PLUM;
-  ctx.beginPath();
-  ctx.ellipse(0, -S * 0.006, S * 0.013, S * 0.012, 0, 0, Math.PI * 2);
-  ctx.fill();
+  ctx.translate(x, y);
+  petal(ctx, -0.30, 0.103, 0.066, PLUM, -0.004);
+  petal(ctx, 1.05, 0.091, 0.063, DEEP, 0.006);
+  petal(ctx, 4.88, 0.094, 0.068, '#8d3b5c', -0.004);
+  petal(ctx, 3.64, 0.086, 0.064, PLUM, 0.005);
+  petal(ctx, 2.30, 0.083, 0.069, LIFT, -0.006);
+  centre(ctx);
   ctx.restore();
 }
 
-function at(
-  ctx: CanvasRenderingContext2D,
-  S: number,
-  x: number,
-  y: number,
-  petals: [number, number, number, number, string][],
-  core: boolean,
-) {
+function bud(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.save();
-  ctx.translate(S * x, S * y);
-  for (const p of petals) lobe(ctx, S, p[0], p[1], p[2], p[3], p[4]);
-  if (core) cluster(ctx, S);
+  ctx.translate(x, y);
+  ctx.rotate(0.35);
+  petal(ctx, -0.22, 0.040, 0.019, DEEP);
+  petal(ctx, 0.20, 0.034, 0.019, PLUM, 0.003);
+  ctx.strokeStyle = CORAL;
+  ctx.lineWidth = 0.002;
+  ctx.beginPath();
+  ctx.moveTo(0.001, -0.005);
+  ctx.quadraticCurveTo(0.008, -0.018, 0.005, -0.029);
+  ctx.stroke();
   ctx.restore();
 }
 
-function fallen(
-  ctx: CanvasRenderingContext2D,
-  S: number,
-  x: number,
-  y: number,
-  ang: number,
-  across: number,
-  along: number,
-  colour: string,
-) {
+function halfOpen(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.save();
-  ctx.translate(S * x, S * y);
-  lobe(ctx, S, ang, 0, across, along, colour);
+  ctx.translate(x, y);
+  ctx.rotate(0.7);
+  petal(ctx, -0.58, 0.050, 0.028, DEEP, -0.002);
+  petal(ctx, 0.42, 0.055, 0.033, PLUM, 0.002);
+  petal(ctx, -0.08, 0.031, 0.034, LIFT, -0.002);
   ctx.restore();
 }
 
 export const plumScatter: PaperDesign = {
   id: 'plum-scatter',
   name: 'Plum scatter',
-  note: 'Irregular plum and coral petals with open ground',
+  note: 'Open plum petals and a small diagonal drift on blush',
   reverse: REVERSE,
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
-    at(ctx, S, 0.4, 0.38, BLOSSOM, true);
-    bud(ctx, S, 0.55, 0.52);
-    at(ctx, S, 0.66, 0.63, HALF, false);
-    fallen(ctx, S, 0.75, 0.73, 35, 0.02, 0.03, PLUM);
-    fallen(ctx, S, 0.67, 0.82, 125, 0.016, 0.024, CORAL);
+    ctx.save();
+    ctx.scale(S, S);
+    blossom(ctx, 0.40, 0.38);
+    bud(ctx, 0.55, 0.54);
+    halfOpen(ctx, 0.66, 0.65);
+    ctx.save();
+    ctx.translate(0.75, 0.75);
+    petal(ctx, 0.7, 0.042, 0.024, PLUM, 0.003);
+    ctx.restore();
+    ctx.translate(0.67, 0.83);
+    petal(ctx, 2.3, 0.034, 0.021, CORAL, -0.003);
+    ctx.restore();
   },
   drawBack(ctx, S) {
     solid(ctx, S, REVERSE);
