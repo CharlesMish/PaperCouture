@@ -65,16 +65,15 @@ export const midnightOrchard: PaperDesign = {
   reverse: OCHRE,
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
-    limb(ctx, S, 0.32, 0.9, 0.2, 0.58, 0.4, 0.3, 0.03);
-    limb(ctx, S, 0.37, 0.58, 0.56, 0.4, 0.7, 0.52, 0.02);
-    limb(ctx, S, 0.72, 0.88, 0.8, 0.68, 0.56, 0.66, 0.018);
-    // short spur off the main limb, still broad
-    limb(ctx, S, 0.34, 0.44, 0.28, 0.38, 0.3, 0.34, 0.012);
-    fruit(ctx, S, 0.36, 0.72, 0.072, APRICOT);
-    fruit(ctx, S, 0.34, 0.48, 0.082, GOLD);
-    fruit(ctx, S, 0.62, 0.5, 0.06, PERSIMMON);
-    fruit(ctx, S, 0.52, 0.66, 0.046, GOLD);
-    fruit(ctx, S, 0.44, 0.34, 0.054, APRICOT);
+    limb(ctx, S, 0.34, 0.92, 0.22, 0.62, 0.4, 0.32, 0.032);
+    limb(ctx, S, 0.38, 0.58, 0.52, 0.44, 0.64, 0.5, 0.02);
+    limb(ctx, S, 0.7, 0.86, 0.78, 0.7, 0.52, 0.7, 0.018);
+    limb(ctx, S, 0.36, 0.78, 0.46, 0.84, 0.4, 0.9, 0.016);
+    fruit(ctx, S, 0.38, 0.84, 0.07, APRICOT);
+    fruit(ctx, S, 0.36, 0.5, 0.084, GOLD);
+    fruit(ctx, S, 0.56, 0.48, 0.062, PERSIMMON);
+    fruit(ctx, S, 0.5, 0.68, 0.05, GOLD);
+    fruit(ctx, S, 0.44, 0.36, 0.056, APRICOT);
   },
   drawBack(ctx, S) {
     solid(ctx, S, OCHRE);

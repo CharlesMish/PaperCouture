@@ -21,15 +21,16 @@ interface Mark {
   seed: number;
 }
 
+// Centres sit inside the dress front, with a gap of bare ground between clusters.
 const MARKS: Mark[] = [
-  { x: 0.36, y: 0.46, scale: 0.105, rot: 0.35, petals: 4, colour: PLUM, seed: 3 },
-  { x: 0.66, y: 0.74, scale: 0.098, rot: 1.7, petals: 3, colour: CORAL, seed: 8 },
-  { x: 0.28, y: 0.8, scale: 0.086, rot: 2.5, petals: 5, colour: DEEP, seed: 5 },
-  { x: 0.54, y: 0.32, scale: 0.06, rot: 0.9, petals: 3, colour: CORAL, seed: 11 },
-  { x: 0.45, y: 0.64, scale: 0.055, rot: 2.15, petals: 4, colour: PLUM, seed: 14 },
-  { x: 0.6, y: 0.5, scale: 0.036, rot: 0.55, petals: 3, colour: DEEP, seed: 17 },
-  { x: 0.33, y: 0.64, scale: 0.034, rot: 1.25, petals: 3, colour: CORAL, seed: 21 },
-  { x: 0.7, y: 0.4, scale: 0.038, rot: 2.8, petals: 4, colour: PLUM, seed: 24 },
+  { x: 0.4, y: 0.4, scale: 0.125, rot: 0.4, petals: 4, colour: PLUM, seed: 3 },
+  { x: 0.6, y: 0.64, scale: 0.115, rot: 1.55, petals: 3, colour: CORAL, seed: 8 },
+  { x: 0.34, y: 0.8, scale: 0.1, rot: 2.4, petals: 5, colour: DEEP, seed: 5 },
+  { x: 0.68, y: 0.4, scale: 0.072, rot: 0.85, petals: 3, colour: CORAL, seed: 11 },
+  { x: 0.28, y: 0.62, scale: 0.068, rot: 2.2, petals: 4, colour: PLUM, seed: 14 },
+  { x: 0.54, y: 0.28, scale: 0.046, rot: 0.5, petals: 3, colour: DEEP, seed: 17 },
+  { x: 0.48, y: 0.88, scale: 0.044, rot: 1.3, petals: 3, colour: CORAL, seed: 21 },
+  { x: 0.74, y: 0.58, scale: 0.042, rot: 2.7, petals: 4, colour: PLUM, seed: 24 },
 ];
 
 function mark(ctx: CanvasRenderingContext2D, S: number, m: Mark) {

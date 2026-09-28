@@ -46,16 +46,18 @@ export const tidalBands: PaperDesign = {
   note: 'Wide curving bands of teal, pale blue and cream',
   reverse: REVERSE,
   drawFront(ctx, S) {
+    // The top band is the collar fold, so the pale, teal and cream bands
+    // start below it and stay wide enough to read after the sides are cut.
     solid(ctx, S, DEEP);
     const edges = [
       edge(S, -0.02, 0, 0),
-      edge(S, 0.18, 0.04, 0.5),
-      edge(S, 0.4, 0.05, 2.3),
-      edge(S, 0.62, 0.045, 0.7),
-      edge(S, 0.84, 0.035, 2.5),
-      edge(S, 1.04, 0, 0),
+      edge(S, 0.16, 0.028, 0.4),
+      edge(S, 0.38, 0.042, 2.2),
+      edge(S, 0.58, 0.038, 0.55),
+      edge(S, 0.78, 0.032, 2.45),
+      edge(S, 1.06, 0, 0),
     ];
-    const colours = [PALE, TEAL, CREAM, MID, DEEP];
+    const colours = [DEEP, PALE, TEAL, CREAM, MID];
     for (let i = 0; i < colours.length; i++) band(ctx, S, edges[i], edges[i + 1], colours[i]);
   },
   drawBack(ctx, S) {

@@ -1,3 +1,11 @@
+# Paper Couture handoff — 2026-09-28
+
+## Status
+
+Second paper study is on `experiment/paper-studies-02`, open and unmerged, branched from `05bba444` (merge of the first study). Six more procedural papers: Midnight orchard, Tidal bands, Plum scatter, Cut-paper mosaic, Woven checks, Reverse garden. Sixteen swatches use the existing scrolling picker. `src/fold/` is still unchanged (`git diff 05bba444 -- src/fold` is empty), and so are garment, lighting, camera, and renderer code. Notes and sheets: `docs/paper-studies-02/`.
+
+The 2026-09-27 notes below still describe the first ten papers.
+
 # Paper Couture handoff — 2026-09-27
 
 ## Status

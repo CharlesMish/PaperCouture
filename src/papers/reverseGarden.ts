@@ -64,26 +64,26 @@ export const reverseGarden: PaperDesign = {
   },
   drawBack(ctx, S) {
     solid(ctx, S, GREEN);
-    // collar border: short leaves lying in the top band
-    leaf(ctx, S, 0.36, 0.05, 0.055, 0.03, 0.15, LEAF);
-    leaf(ctx, S, 0.5, 0.05, 0.06, 0.032, -0.2, LEAF_DEEP);
-    leaf(ctx, S, 0.64, 0.05, 0.055, 0.03, 0.1, LEAF);
-    // sleeve corners
-    blossom(ctx, S, 0.07, 0.05, 0.045, 5);
-    blossom(ctx, S, 0.93, 0.05, 0.045, 5);
-    // back field
-    ctx.strokeStyle = LEAF_DEEP;
-    ctx.lineWidth = Math.max(2, S * 0.012);
+    // Collar: pale shapes filling the top band, not green-on-green.
+    leaf(ctx, S, 0.34, 0.05, 0.07, 0.038, 0.2, CREAM);
+    leaf(ctx, S, 0.5, 0.05, 0.075, 0.04, -0.15, BLOSSOM);
+    leaf(ctx, S, 0.66, 0.05, 0.07, 0.038, 0.12, CREAM);
+    // Sleeve corners, kept inside the top band.
+    blossom(ctx, S, 0.07, 0.05, 0.048, 5);
+    blossom(ctx, S, 0.93, 0.05, 0.048, 5);
+    // Back field: a few large blossoms in the centre panel's reverse.
+    ctx.strokeStyle = LEAF;
+    ctx.lineWidth = Math.max(3, S * 0.016);
     ctx.lineCap = 'round';
     ctx.beginPath();
-    ctx.moveTo(S * 0.48, S * 0.86);
-    ctx.quadraticCurveTo(S * 0.42, S * 0.62, S * 0.5, S * 0.4);
+    ctx.moveTo(S * 0.5, S * 0.9);
+    ctx.quadraticCurveTo(S * 0.4, S * 0.64, S * 0.5, S * 0.4);
     ctx.stroke();
-    leaf(ctx, S, 0.4, 0.7, 0.05, 0.026, -0.8, LEAF);
-    leaf(ctx, S, 0.58, 0.56, 0.048, 0.024, 0.7, LEAF_DEEP);
-    leaf(ctx, S, 0.44, 0.48, 0.04, 0.02, 0.4, LEAF);
-    blossom(ctx, S, 0.5, 0.42, 0.09, 6);
-    blossom(ctx, S, 0.46, 0.66, 0.1, 5);
-    blossom(ctx, S, 0.56, 0.84, 0.075, 5);
+    leaf(ctx, S, 0.38, 0.72, 0.07, 0.032, -0.7, LEAF);
+    leaf(ctx, S, 0.6, 0.56, 0.065, 0.03, 0.65, LEAF_DEEP);
+    leaf(ctx, S, 0.42, 0.48, 0.055, 0.026, 0.35, LEAF);
+    blossom(ctx, S, 0.5, 0.42, 0.1, 6);
+    blossom(ctx, S, 0.46, 0.68, 0.11, 5);
+    blossom(ctx, S, 0.56, 0.86, 0.085, 5);
   },
 };
