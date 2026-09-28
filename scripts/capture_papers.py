@@ -6,7 +6,8 @@ is hidden only after layout, so the camera insets stay the same for every shot.
 
     BASE_URL=http://127.0.0.1:43123/ python3 scripts/capture_papers.py
 
-Requires Playwright Chromium and Pillow. Writes docs/paper-studies/.
+Requires Playwright Chromium and Pillow. Writes docs/paper-studies/
+(or docs/paper-studies-02 when STUDY=2).
 """
 
 from __future__ import annotations
@@ -19,12 +20,14 @@ from PIL import Image, ImageDraw, ImageFont
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = Path(os.environ.get("OUT_DIR", str(ROOT / "docs" / "paper-studies")))
 BASE = os.environ.get("BASE_URL", "http://127.0.0.1:43123/").rstrip("/") + "/"
 VIEWPORT = {"width": 900, "height": 680}
 
-# Swatch order. The diagnostic grid stays hidden and is not part of the study.
-PAPERS = [
+# STUDY=1 (default) is the first collection. STUDY=2 captures the second
+# collection into docs/paper-studies-02. OUT_DIR overrides either folder.
+STUDY = os.environ.get("STUDY", "1")
+
+PAPERS_1 = [
     ("stripe-disc", "Stripe and disc"),
     ("ivory-border", "Ivory, ink border"),
     ("indigo-lattice", "Indigo lattice"),
@@ -36,10 +39,51 @@ PAPERS = [
     ("seed-dashes", "Seed dashes"),
     ("ink-reverse", "Ink reverse"),
 ]
-
 # Rotation changes where these land on the dress. Ink reverse's drawn back
 # does not rotate with the pattern, and seed dashes only swap dash direction.
-ROTATION_IDS = ["corner-bloom", "falling-chevrons", "wide-frame", "open-stems"]
+ROTATIONS_1 = {pid: (0, 90, 180, 270) for pid in ("corner-bloom", "falling-chevrons", "wide-frame", "open-stems")}
+
+PAPERS_2 = [
+    ("midnight-orchard", "Midnight orchard"),
+    ("tidal-bands", "Tidal bands"),
+    ("plum-scatter", "Plum scatter"),
+    ("cut-paper-mosaic", "Cut-paper mosaic"),
+    ("woven-checks", "Woven checks"),
+    ("reverse-garden", "Reverse garden"),
+]
+# 0° and 90° for every study-2 paper. 180° and 270° where the placement is
+# asymmetric enough that a half turn moves the picture.
+ROTATIONS_2 = {
+    "midnight-orchard": (0, 90, 180, 270),
+    "tidal-bands": (0, 90, 180, 270),
+    "plum-scatter": (0, 90, 180, 270),
+    "cut-paper-mosaic": (0, 90, 180, 270),
+    "woven-checks": (0, 90),
+    "reverse-garden": (0, 90),
+}
+
+if STUDY in ("2", "02"):
+    PAPERS = PAPERS_2
+    ROTATIONS = ROTATIONS_2
+    DEFAULT_OUT = ROOT / "docs" / "paper-studies-02"
+    FLAT_COLS = 3
+    FOLDED_COLS = 6
+    ROTATION_COLS = 4
+    FLAT_HEADING = "Study 2 — flat square, workshop, step 0"
+    FOLDED_HEADING = "Study 2 — finished dress, front preset, then angle, then back"
+    ROTATION_HEADING = "Study 2 — finished dress, front preset, pattern rotations"
+else:
+    PAPERS = PAPERS_1
+    ROTATIONS = ROTATIONS_1
+    DEFAULT_OUT = ROOT / "docs" / "paper-studies"
+    FLAT_COLS = 5
+    FOLDED_COLS = 5
+    ROTATION_COLS = 4
+    FLAT_HEADING = "Flat square, workshop, step 0"
+    FOLDED_HEADING = "Finished dress — front preset, then angle, then back"
+    ROTATION_HEADING = "Finished dress, front preset, four pattern rotations"
+
+OUT = Path(os.environ.get("OUT_DIR", str(DEFAULT_OUT)))
 
 LAUNCH = [
     "--use-angle=swiftshader",
@@ -166,8 +210,9 @@ async def main():
             await grab(pid, 0, "back", OUT / "back" / f"{pid}.png")
 
         names = dict(PAPERS)
-        for pid in ROTATION_IDS:
-            for turn, deg in enumerate((0, 90, 180, 270)):
+        for pid, degrees in ROTATIONS.items():
+            for deg in degrees:
+                turn = deg // 90
                 await grab(pid, turn, "rotation", OUT / "rotations" / f"{pid}-{deg}.png")
 
         for kind, shots in cams.items():
@@ -187,27 +232,27 @@ async def main():
 
     make_sheet(
         [(OUT / "flat" / f"{pid}.png", label(pid, 0)) for pid, _ in PAPERS],
-        5,
+        FLAT_COLS,
         OUT / "flat-grid.png",
-        "Flat square, workshop, step 0",
+        FLAT_HEADING,
     )
     make_sheet(
         [(OUT / "front" / f"{pid}.png", f"{names[pid]} · front") for pid, _ in PAPERS]
         + [(OUT / "angle" / f"{pid}.png", f"{names[pid]} · angle") for pid, _ in PAPERS]
         + [(OUT / "back" / f"{pid}.png", f"{names[pid]} · back") for pid, _ in PAPERS],
-        5,
+        FOLDED_COLS,
         OUT / "folded-grid.png",
-        "Finished dress — front preset, then angle, then back",
+        FOLDED_HEADING,
     )
     make_sheet(
         [
             (OUT / "rotations" / f"{pid}-{deg}.png", label(pid, deg))
-            for pid in ROTATION_IDS
-            for deg in (0, 90, 180, 270)
+            for pid, degrees in ROTATIONS.items()
+            for deg in degrees
         ],
-        4,
+        ROTATION_COLS,
         OUT / "rotation-grid.png",
-        "Finished dress, front preset, four pattern rotations",
+        ROTATION_HEADING,
     )
 
 

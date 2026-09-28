@@ -169,8 +169,9 @@ button:focus-visible {
 [hidden] { display: none !important; }
 
 /* ---- paper picker: a column at the left on wide screens, a row under the title on phones.
-   Ten swatches do not fit a centred column beside the step dock, or a single
-   unscrolling row at 390px. The list scrolls; the name and rotate control stay put. */
+   Sixteen swatches use the same scroller as the ten: the desktop column sits
+   under the title and above the step dock, and the phone row scrolls sideways.
+   The name and rotate control stay outside the scroller. */
 
 .papers {
   position: absolute;

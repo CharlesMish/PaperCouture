@@ -1,14 +1,20 @@
 import { botanical } from './botanical';
 import { cornerBloom } from './cornerBloom';
+import { cutPaperMosaic } from './cutPaperMosaic';
 import { diagnosticPaper } from './diagnostic';
 import { fallingChevrons } from './fallingChevrons';
 import { indigoLattice } from './indigoLattice';
 import { inkReverse } from './inkReverse';
 import { ivoryBorder } from './ivoryBorder';
+import { midnightOrchard } from './midnightOrchard';
 import { openStems } from './openStems';
+import { plumScatter } from './plumScatter';
+import { reverseGarden } from './reverseGarden';
 import { seedDashes } from './seedDashes';
 import { stripeDisc } from './stripeDisc';
+import { tidalBands } from './tidalBands';
 import { wideFrame } from './wideFrame';
+import { wovenChecks } from './wovenChecks';
 import { PaperDesign } from './types';
 
 export type { PaperDesign } from './types';
@@ -28,6 +34,12 @@ export const PAPERS: PaperDesign[] = [
   fallingChevrons,
   seedDashes,
   inkReverse,
+  midnightOrchard,
+  tidalBands,
+  plumScatter,
+  cutPaperMosaic,
+  wovenChecks,
+  reverseGarden,
   diagnosticPaper,
 ];
 
