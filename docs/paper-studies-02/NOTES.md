@@ -2,15 +2,15 @@
 
 Captures are from one Chromium session (Playwright, software WebGL), viewport 900×680, of the production build. Every shot in a category used the same camera position (matched to 0.001). Flat shots are workshop step 0. `folded-grid.png` is the finished dress at the Front preset, then Angle, then Back. `rotation-grid.png` is the Front preset.
 
-On the display frames, the top-left and top-right corners are a flat room grey. The flat frames show the table grain in those corners. No lettering is visible there. The stand and the floor are part of the scene.
+On the display frames, the top-left and top-right corners are a flat room grey. The flat frames show the table grain in those corners. No lettering is visible in those corners. The stand and the floor are part of the scene. Every folded tile and every rotation tile shows the display panel across the lower middle of the frame: the paper name, Workshop, Front, Angle, Back, Turntable, and Reset view. The flat frames do not show that panel.
 
-Pattern rotation turns the front drawing only. The reverse does not rotate. On the finished dress the collar and the sleeves show the reverse. The back is mostly that reverse in the centre, with a patch of the front where a side flap lies on top.
+Pattern rotation turns the front drawing only. The reverse does not rotate. On the finished dress the collar and the sleeves show the reverse. On the back, that reverse fills the centre, and the front paper shows on both lower sides.
 
 ## Midnight orchard
 
 Flat, the sheet is deep blue. A few broad warm-brown limbs and large fruit (gold, apricot, persimmon) sit in the middle of the sheet, with blue ground around them and along the bottom edge.
 
-At 0° the collar and the sleeves are ochre. The front keeps several fruits: one high on the bodice, a gold and a persimmon through the middle, and an apricot lower on the skirt. Blue ground separates them. The hem row is blue. The back is the ochre reverse, with a blue patch of the front on one side.
+At 0° the collar and the sleeves are ochre. The front keeps several fruits: one high on the bodice, a gold and a persimmon through the middle, and an apricot lower on the skirt. Blue ground separates them. The hem row is blue. The back is the ochre reverse in the centre, with the blue front on both lower sides.
 
 90°, 180°, and 270° move the same fruits. At 270° they sit higher; the lower skirt is blue. 0° is the one that carries a fruit down into the skirt.
 
@@ -18,35 +18,35 @@ At 0° the collar and the sleeves are ochre. The front keeps several fruits: one
 
 Flat, the sheet is wide bands with a gentle curve: deep teal, pale blue, teal, cream, then a green-teal. None of them is a hairline.
 
-At 0° the collar is the deep teal reverse. On the front, top to bottom: a pale band, a wider teal band, a cream band, and the green-teal at the hem. At 90° those colours sit side by side instead of stacked (green at the left, cream in the middle, teal at the right). At 180° the stack is flipped: the green-teal is up under the collar and the pale band is low, above a dark teal hem.
+At 0° the collar is the deep teal reverse. On the front, top to bottom: a pale band, a wider teal band, a cream band, and the green-teal at the hem. At 90° those colours sit side by side instead of stacked (green at the left, cream in the middle, teal at the right). At 180° the stack is flipped: the green-teal is up under the collar and the pale band is low, above a dark teal hem. The back is the deep teal reverse in the centre. Both lower sides show the front: green-teal and cream.
 
 ## Plum scatter
 
 Flat, the ground is blush. Plum and coral petal clusters sit in three sizes, with open ground between them.
 
-At 0° the collar and the sleeves are plum. The front shows a large dark cluster on the bodice, a coral cluster to the right of centre, another dark cluster lower, and a smaller coral mark. Rows of plain blush sit between them. At 90° and 270° fewer marks remain on the front; most of the skirt is blush. The back is the plum reverse, with a blush patch from the front flap.
+At 0° the collar and the sleeves are plum. The front shows a large dark cluster on the bodice, a coral cluster to the right of centre, another dark cluster lower, and a smaller coral mark. Rows of plain blush sit between them. At 90° and 270° fewer marks remain on the front; most of the skirt is blush. The back is the plum reverse in the centre, with the blush front on both lower sides.
 
 ## Cut-paper mosaic
 
 Flat, a few large angular fields: ink at the upper left, rose at the upper right, terracotta across the lower left and centre, oxblood at the lower right, and the warm ground showing in the gaps.
 
-At 0° the collar is ink. A rose piece sits at the upper right of the bodice, then the skirt is mostly terracotta, with ground along the right side. At 90° terracotta fills the upper dress and oxblood sits low. At 180° oxblood is at the shoulder and rose runs along the hem. At 270° rose and oxblood are high, terracotta is low, and a strip of ink stays on the left edge. The back is the ink reverse, with a warm patch of the front on one side.
+At 0° the collar is ink. A rose piece sits at the upper right of the bodice, then the skirt is mostly terracotta, with ground along the right side. At 90° terracotta fills the upper dress and oxblood sits low. At 180° oxblood is at the shoulder and rose runs along the hem. At 270° rose and oxblood are high, terracotta is low, and a strip of ink stays on the left edge. The back is the ink reverse in the centre, with oxblood on the lower left and terracotta on the lower right.
 
 ## Woven checks
 
 Flat, ochre and blue ribbons cross. At each crossing one colour lies on top of the other, so it reads as a printed weave rather than a flat checker alone. Six ribbons cross the sheet.
 
-At 0° the collar and the sleeves are a quiet slate. The front keeps both colours in the same rows, and the check continues to the hem. At 90° the same check is turned. The back is the slate reverse, with a patch of the ochre and blue check where the front flap lies on top.
+At 0° the collar and the sleeves are a quiet slate. The front keeps both colours in the same rows, and the check continues to the hem. At 90° the same check is turned. The back is the slate reverse in the centre, with the ochre and blue check on both lower sides.
 
 ## Reverse garden
 
 Flat, the front is one mist colour. No motif is drawn on it.
 
-At 0° the body of the dress is that mist. The collar is dark green with a cream shape and a pink shape in the band. Both sleeve areas show warm colour (coral, cream, pink) on the green. The back is dark green in the centre, with cream, pink, and leaf green blossoms down that centre, and a mist-coloured patch of the plain front on one side. 90° does not change the front: rotation does not turn the reverse, and the front has nothing to turn.
+At 0° the body of the dress is that mist. The collar is dark green with a cream shape and a pink shape in the band. Both sleeve areas show warm colour (coral, cream, pink) on the green. The back is dark green in the centre, with cream, pink, and leaf green blossoms down that centre, and the mist front on both lower sides. 90° does not change the front: rotation does not turn the reverse, and the front has nothing to turn.
 
 ## Refinement
 
-The first capture showed three problems, and only those drawings changed:
+The first capture showed four problems, and only those drawings changed:
 
 - Tidal bands. The pale band sat in the collar zone, so the front was mostly teal and a wide cream. The pale band now starts below that zone. The recapture shows pale, teal, cream, and the hem green as separate bands.
 - Plum scatter. The marks on the dress were small. They are larger, and the clusters are farther apart. The recapture shows whole dark and coral clusters with blush between them.
