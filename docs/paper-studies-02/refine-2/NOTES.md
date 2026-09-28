@@ -6,7 +6,7 @@ Before tiles are `542d7d1`. After tiles are this revision, with the reverse turn
 
 ## Midnight orchard
 
-The before front has several separate brown limbs and round fruits with a pale spot on each. The after front has one limb, a short fork to the right-hand fruit, a branch down to the lower fruit, and a thin bare spur. The fruits are round, with a small stem notch. The gold one is slightly wider, the lower apricot slightly taller, the persimmon a little flatter across the top where the calyx sits. A darker flat tone sits along the bottom of each fruit. There is no pale round spot. Deep blue ground, ochre collar and sleeves, and a bare blue hem are unchanged. One fruit still sits in the skirt.
+The before front has several separate brown limbs and round fruits with a pale spot on each. The after front has one limb. It is thicker at the base and tapers toward the tip. Two short side branches leave it, curve downward, and end in fruit. The other fruits hang against the limb on short stems that bend down and taper. There is no bare spur. The fruits stay round: the gold one slightly wider, the lower apricot slightly taller, the persimmon a little flatter across the top where the calyx sits, each with a small stem notch and a darker flat tone along the bottom. No pale spot. Deep blue ground, ochre collar and sleeves, and a bare blue hem are unchanged. One fruit still sits in the skirt.
 
 At 90° the fruits sit more to one side. At 180° they are higher and the lower skirt is blue. At 270° they sit high, toward the collar, and the hem is blue. Those quieter hems are the same drawing turned.
 

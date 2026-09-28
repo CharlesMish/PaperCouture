@@ -1,8 +1,9 @@
 import { PaperDesign } from './types';
 import { solid } from './util';
 
-// One rising limb on deep blue. Two shorter branches leave it and stop:
-// one holds a fruit, one ends bare. The hem and the lower right stay open.
+// One rising limb on deep blue. It tapers. One or two side branches leave it,
+// curve down, and end in fruit. Each fruit hangs close, on a short stem.
+// The hem and the lower right stay open.
 
 const GROUND = '#16325a';
 const BRANCH = '#a87545';
@@ -31,16 +32,6 @@ function quadTan(p0: Pt, c: Pt, p1: Pt, t: number): Pt {
     x: 2 * u * (c.x - p0.x) + 2 * t * (p1.x - c.x),
     y: 2 * u * (c.y - p0.y) + 2 * t * (p1.y - c.y),
   };
-}
-
-/** Gentle bend from `from` toward `to`. Small `bow` keeps the joint from hooking. */
-function depart(from: Pt, to: Pt, bow: number): Pt {
-  const mx = (from.x + to.x) / 2;
-  const my = (from.y + to.y) / 2;
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const len = Math.hypot(dx, dy) || 1;
-  return { x: mx - (dy / len) * bow, y: my + (dx / len) * bow };
 }
 
 function stemRot(from: Pt, to: Pt): number {
@@ -161,28 +152,56 @@ export const midnightOrchard: PaperDesign = {
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
 
-    const root: Pt = { x: 0.32, y: 0.8 };
-    const bend: Pt = { x: 0.2, y: 0.54 };
-    const tip: Pt = { x: 0.5, y: 0.3 };
-    limb(ctx, S, root, bend, tip, 0.022, 0.005);
+    // Canvas +y is down the sheet, so a droop is the way fruit hangs.
+    // Side branches are short and thick. The fruit sits against them.
+    const root: Pt = { x: 0.31, y: 0.86 };
+    const bend: Pt = { x: 0.22, y: 0.56 };
+    const tip: Pt = { x: 0.47, y: 0.36 };
+    limb(ctx, S, root, bend, tip, 0.034, 0.014);
 
-    const apricotAt: Pt = { x: 0.48, y: 0.72 };
-    const low = quad(root, bend, tip, 0.22);
-    limb(ctx, S, low, depart(low, apricotAt, 0.012), apricotAt, 0.012, 0.005);
+    const at = (t: number) => quad(root, bend, tip, t);
 
-    const persimmonAt: Pt = { x: 0.62, y: 0.48 };
-    const mid = quad(root, bend, tip, 0.5);
-    limb(ctx, S, mid, depart(mid, persimmonAt, -0.015), persimmonAt, 0.013, 0.005);
+    // Lower fork: a short curve down into the apricot, still in the skirt.
+    const low = at(0.3);
+    const apricotEnd: Pt = { x: low.x + 0.032, y: low.y + 0.05 };
+    const apricotC: Pt = { x: low.x + 0.006, y: low.y + 0.038 };
+    limb(ctx, S, low, apricotC, apricotEnd, 0.022, 0.01);
 
-    const spurEnd: Pt = { x: 0.3, y: 0.36 };
-    const spur = quad(root, bend, tip, 0.72);
-    limb(ctx, S, spur, depart(spur, spurEnd, 0.008), spurEnd, 0.008, 0.001);
+    // Upper fork, shorter, drooping into the persimmon.
+    const mid = at(0.78);
+    const persimmonEnd: Pt = { x: mid.x + 0.028, y: mid.y + 0.042 };
+    const persimmonC: Pt = { x: mid.x + 0.004, y: mid.y + 0.03 };
+    limb(ctx, S, mid, persimmonC, persimmonEnd, 0.018, 0.009);
 
-    const goldAt = quad(root, bend, tip, 0.62);
-    fruit(ctx, S, goldAt.x - 0.01, goldAt.y, 0.07, GOLD, 'gold', stemRot(quad(root, bend, tip, 0.45), goldAt));
-    fruit(ctx, S, persimmonAt.x, persimmonAt.y, 0.056, PERSIMMON, 'persimmon', stemRot(mid, persimmonAt));
-    fruit(ctx, S, apricotAt.x, apricotAt.y, 0.062, APRICOT, 'apricot', stemRot(low, apricotAt));
-    fruit(ctx, S, tip.x, tip.y, 0.046, APRICOT, 'apricot', stemRot(quad(root, bend, tip, 0.82), tip));
+    // Gold hangs on a short neck under the limb.
+    const goldFrom = at(0.52);
+    const goldEnd: Pt = { x: goldFrom.x + 0.01, y: goldFrom.y + 0.036 };
+    const goldC: Pt = { x: goldFrom.x + 0.002, y: goldFrom.y + 0.024 };
+    limb(ctx, S, goldFrom, goldC, goldEnd, 0.015, 0.008);
+
+    // The tip tapers into a short droop and the smaller apricot.
+    const tipEnd: Pt = { x: tip.x + 0.008, y: tip.y + 0.03 };
+    const tipC: Pt = { x: tip.x + 0.014, y: tip.y + 0.008 };
+    limb(ctx, S, tip, tipC, tipEnd, 0.014, 0.008);
+
+    // The notch meets the wood. The stem does not run to the middle of the fruit.
+    const seat = (from: Pt, end: Pt, r: number): Pt => {
+      const dx = end.x - from.x;
+      const dy = end.y - from.y;
+      const len = Math.hypot(dx, dy) || 1;
+      const reach = r * 0.48;
+      return { x: end.x + (dx / len) * reach, y: end.y + (dy / len) * reach };
+    };
+
+    const goldAt = seat(goldC, goldEnd, 0.07);
+    const persimmonAt = seat(persimmonC, persimmonEnd, 0.056);
+    const apricotAt = seat(apricotC, apricotEnd, 0.062);
+    const tipAt = seat(tipC, tipEnd, 0.046);
+
+    fruit(ctx, S, goldAt.x, goldAt.y, 0.07, GOLD, 'gold', stemRot(goldEnd, goldAt));
+    fruit(ctx, S, persimmonAt.x, persimmonAt.y, 0.056, PERSIMMON, 'persimmon', stemRot(persimmonEnd, persimmonAt));
+    fruit(ctx, S, apricotAt.x, apricotAt.y, 0.062, APRICOT, 'apricot', stemRot(apricotEnd, apricotAt));
+    fruit(ctx, S, tipAt.x, tipAt.y, 0.046, APRICOT, 'apricot', stemRot(tipEnd, tipAt));
   },
   drawBack(ctx, S) {
     solid(ctx, S, OCHRE);
