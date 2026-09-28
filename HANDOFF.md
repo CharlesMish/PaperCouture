@@ -2,68 +2,50 @@
 
 ## Status
 
-Ready for owner inspection and continuation in Cursor. Claude reached its usage limit
-before the final handoff, but chunk 3 contains a substantially complete v0.1 application.
-**All application files in `src/` remain byte-for-byte identical to Claude's export.**
+Continuation of Claude's chunk-3 export. The unmodified export is tag `baseline-chunk3`. Later work is on `experiment/paper-studies`. `src/fold/` is unchanged from that tag (`git diff baseline-chunk3 -- src/fold` is empty).
 
-Implemented: four visible procedural papers and contrasting reverse colors, quarter-turn
-pattern rotation, six guided operations (collar, turn, sides, sleeves, hem points, turn),
-forward/back/reset, constrained drag-to-fold, and a separate display view with orbit,
-zoom, front/angle/back presets, optional turntable, and return to the workshop.
-The same mesh representation is used throughout; there is no unrelated finished dress swap.
+Six procedural papers were added beside the original four. The hidden diagnostic grid is unchanged. No new garment, editor, persistence, or backend.
 
-Charlie clarified that any depth should reveal the paper layers and folds. A shallow folded
-paper dress is the goal. A hollow wearable garment, body, or full dressmaking simulator is
-outside the current concept.
+## Blockers
 
-## Preparation changes
+None. The production build was driven in headless Chromium (Playwright, software WebGL). No page exception or console error. No fold or rendering fix was made.
 
-- Added Node 24 selection, README, AGENTS.md, this status record and CURSOR_START.md.
-- Changed the geometry-check launcher from the `tsx` CLI to `node --import tsx`.
-  The checks are unchanged; this avoids the CLI's unnecessary IPC listener, which was
-  blocked in the audit environment. `npm test` now aliases that check.
-- Made Python diagnostics use their own project root and configurable preview/capture
-  locations rather than `/home/claude/...`. Checked all three scripts for Python syntax.
-- Recorded current build/check/browser evidence and original-export provenance.
-- No geometry, construction parameters, materials, display controls, styling, or runtime
-  application source was rewritten or polished in this preparation.
+## Picker
 
-## Verification
+Ten swatches do not fit the old centred column, or one unscrolling row at 390px wide. `src/styles.css` only: swatches are 48px, the desktop column sits under the title and above the step dock and scrolls if it must, and the phone row scrolls sideways. On 1280×800 all ten are on screen (about 9px of the last swatch sits in the scroller). On 390×844 the page does not scroll horizontally; Seed dashes and Ink reverse are reached by scrolling the row. The rotate control stays outside that scroller.
 
-Linux, Node 24.19.0; clean `npm ci` succeeded. Typechecks for app and scripts passed.
-`npm test` / `npm run check` passed. Production build passed.
+## Papers
 
-Geometry report: six operations, 12 final facets (five flipped); final extent 1.707×1.800
-from a 2×2 square. Maximum reported stack height 0.0290; worst sampled mid-fold hinge gap
-0.0165, inside the existing test tolerance; minimum sampled z 0.0015. These are rendering
-model units, not physical paper thickness measurements.
+| id | name | file |
+| --- | --- | --- |
+| wide-frame | Wide frame | `src/papers/wideFrame.ts` |
+| corner-bloom | Corner bloom | `src/papers/cornerBloom.ts` |
+| open-stems | Open stems | `src/papers/openStems.ts` |
+| falling-chevrons | Falling chevrons | `src/papers/fallingChevrons.ts` |
+| seed-dashes | Seed dashes | `src/papers/seedDashes.ts` |
+| ink-reverse | Ink reverse | `src/papers/inkReverse.ts` |
 
-Fresh software-WebGL Chromium checks covered:
-- both development and production rendering, with no page exceptions or console errors;
-- all six forward operations through actual interface buttons;
-- changing paper and rotating its pattern during a fold;
-- display entry, angle/back presets, turntable toggle, reset view and workshop return;
-- all six backward operations and reset during animation;
-- 390×844 workshop/display layout with no horizontal overflow.
+Folding notes are in `docs/paper-studies/NOTES.md`. Short version, matched to the sheets: Falling chevrons at 0° are heavier toward the hem. Corner bloom at 0° keeps most of the flower on the left edge, with the leaves cut off; at 270° it sits on the lower right. Ink reverse’s collar, sleeves, and back field are dark ink; the ring drawn on the reverse does not show on the dress. Wide frame leaves the front empty apart from a hem band or a narrow side strip. Seed dashes stay a fine texture. Open stems keeps more on the front at 0° than at 180° or 270°.
 
-New screenshots and machine-readable reports are in `docs/verification`. The existing
-screenshots in `docs/screenshots` are Claude's earlier evidence, not new audit results.
+## What was tested
 
-## Limits and sensible next step
+Headless Chromium via Playwright, `--use-angle=swiftshader`. Not a phone and not physical paper.
 
-The engine models rigid facets and authored layering with small rendering offsets. The
-construction source calls this an original prototype pattern; it does not claim a named
-traditional design. Passing checks for area, seams, resting states, sampled animation and
-controller behavior is **not** a proof of physical foldability or a complete continuous
-self-collision test. Layer spacing deliberately opens small gaps at some hinges. Physical
-paper reproduction has not been attempted.
+- `npm run typecheck`, `npm test` (`scripts/check.ts`: geometry, seams, sampled animation, controller), `npm run build`. All passed. Node 24.21.0.
+- Dev server and production preview both served. The interaction pass below was on the production preview.
+- Buttons, not `jumpTo`: all six forward steps and all six backward steps; Start over while the first fold was in motion (step returned to 0); Start over from the finished piece.
+- Paper and quarter-turns during a fold (Indigo lattice) and between steps (Botanical sprigs, then Corner bloom at 90°). On the finished piece: Ivory, ink border turned, then Falling chevrons. Ten swatches present.
+- Display: enter, Front / Angle / Back, drag orbit, wheel zoom, Reset view, Turntable, paper change while displayed, return to Workshop with step still 6.
+- 390×844 workshop and display: no horizontal page overflow. Phone row scrolls.
 
-Actual mobile Safari, touch orbit/pinch, and the feel of dragging a fold have not been
-validated on a real phone. Mobile controls are compact; inspect comfort before expanding.
-Changes are not persisted across page reloads. No saved collection is implemented.
+`scripts/capture_papers.py` shot all ten visible papers at one camera (positions matched to 0.001). Sheets: `docs/paper-studies/flat-grid.png`, `folded-grid.png` (front, then angle, then back), `rotation-grid.png` (Corner bloom, Falling chevrons, Wide frame, Open stems).
 
-First let Charlie try the existing complete sequence and inspect the final object. Ask:
-can he follow the transformation, do the layers read as paper, does inspection feel good,
-and does another paper make him want to repeat the experience? Address a visible issue
-before adding patterns or alternate garments. Avoid an engine rewrite or open-ended
-physics research as the next task.
+A later pass changed only `src/papers/inkReverse.ts` `drawBack`. The first reverse painted a pale band and pale corners, so the collar and sleeves came out pale. The back is now the dark ink, with a ring kept in the middle. New Front, Angle, and Back tiles show dark collar and sleeves. The ring is not visible on the dress. Ink reverse was selected from the swatches during a fold and again on the finished piece, then Display was opened. No console errors. `npm run typecheck`, `npm test`, and `npm run build` were run again after that change.
+
+## Not tested
+
+A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fold. No physical sheet has been folded from this pattern. The geometry checks do not prove continuous collision-free folding. Layer gaps are rendering offsets (stack height 0.0290, worst sampled hinge gap 0.0165). Nothing is saved across reload.
+
+## Remaining
+
+The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.

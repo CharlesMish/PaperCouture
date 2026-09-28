@@ -1,8 +1,14 @@
 import { botanical } from './botanical';
+import { cornerBloom } from './cornerBloom';
 import { diagnosticPaper } from './diagnostic';
+import { fallingChevrons } from './fallingChevrons';
 import { indigoLattice } from './indigoLattice';
+import { inkReverse } from './inkReverse';
 import { ivoryBorder } from './ivoryBorder';
+import { openStems } from './openStems';
+import { seedDashes } from './seedDashes';
 import { stripeDisc } from './stripeDisc';
+import { wideFrame } from './wideFrame';
 import { PaperDesign } from './types';
 
 export type { PaperDesign } from './types';
@@ -11,7 +17,19 @@ export type { PaperDesign } from './types';
  * Every paper, in swatch order. To add one: write a PaperDesign (see types.ts)
  * and list it here. Hidden papers are reachable with ?paper=<id>.
  */
-export const PAPERS: PaperDesign[] = [stripeDisc, ivoryBorder, indigoLattice, botanical, diagnosticPaper];
+export const PAPERS: PaperDesign[] = [
+  stripeDisc,
+  ivoryBorder,
+  indigoLattice,
+  botanical,
+  wideFrame,
+  cornerBloom,
+  openStems,
+  fallingChevrons,
+  seedDashes,
+  inkReverse,
+  diagnosticPaper,
+];
 
 export const DEFAULT_PAPER_ID = 'stripe-disc';
 
