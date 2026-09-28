@@ -14,11 +14,11 @@ The limb is still fairly even through its middle. The smallest fruit is easy to 
 
 ## Plum scatter
 
-The before front’s main cluster is a sharp fan. The after front is one partly open blossom: five rounded petals, overlapping, with a shorter coral petal on the open side. The centre is the meeting of those petals, not a separate dot. A closed bud sits above, a small three-petal blossom sits to the lower right, one fallen coral petal sits to the left, and a small pair sits lower down. Blush ground stays open around them.
+The before front’s main cluster is a sharp fan. The after front is one partly open blossom of five broad petals. Each petal is wider at a round tip, and the petals overlap in a ring. Two of them are shorter, so the ring does not close. Blush shows in the gaps between several tips. The front petal is a lighter plum where it lies over the others. A small coral cluster sits where the petals meet. It is not a separate petal. Down and to the right, along one diagonal: a closed round bud, a small half-open blossom of three rounded petals, and two fallen petals, one plum and one coral. Blush ground stays open around them.
 
 At 90° the blossom is high and to one side. At 180° and 270° it has turned, and much of the skirt stays blush. Those quieter turns were left quiet.
 
-At dress size the blossom reads as one dark flower. The separate petal edges are softer than they are on the flat sheet, and the coral petal is the least distinct of the five.
+At dress size the blossom is about 90 by 85 pixels. The tips are round. On the shaded upper part of the bodice the three plum tones sit closer together, so the overlaps there read more clearly as blush gaps than as a change of tone. The lower petals keep both a gap and the lighter front petal. The half-open mark is one small cluster, not a pair of wings.
 
 ## Woven checks
 
