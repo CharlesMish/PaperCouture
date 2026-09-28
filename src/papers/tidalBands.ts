@@ -5,8 +5,8 @@ import { solid } from './util';
 // them on a slant, so the dress front keeps broad cropped colour rather than
 // a field of fine stripes.
 
-const CREAM = '#f4efe4';
-const PALE = '#d5ebe7';
+const CREAM = '#f6f1e6';
+const PALE = '#e4f4f1';
 const TEAL = '#1a6b72';
 const MID = '#3e9188';
 const DEEP = '#0e454c';

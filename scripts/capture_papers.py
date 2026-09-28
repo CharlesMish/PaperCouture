@@ -91,6 +91,8 @@ LAUNCH = [
     "--ignore-gpu-blocklist",
     "--disable-dev-shm-usage",
 ]
+# Optional system Chrome. Unset, Playwright's Chromium is used.
+CHROME = os.environ.get("CHROME_PATH", "").strip()
 
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONT_BOLD = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
@@ -182,7 +184,10 @@ async def main():
         (OUT / sub).mkdir(parents=True, exist_ok=True)
 
     async with async_playwright() as p:
-        browser = await p.chromium.launch(args=LAUNCH)
+        launch_kwargs = {"args": LAUNCH}
+        if CHROME:
+            launch_kwargs["executable_path"] = CHROME
+        browser = await p.chromium.launch(**launch_kwargs)
         context = await browser.new_context(viewport=VIEWPORT, device_scale_factor=1)
         page = await context.new_page()
         errors: list[str] = []

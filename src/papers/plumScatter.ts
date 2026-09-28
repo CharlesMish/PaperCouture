@@ -1,9 +1,9 @@
 import { PaperDesign } from './types';
-import { rng, solid } from './util';
+import { solid } from './util';
 
-// Irregular petal marks in three sizes. Positions are authored so clusters
-// have gaps between them; the largest sit in the centre panel, where the
-// dress front can still show a whole mark.
+// An authored drift of plum and coral, not a repeat of the same flower.
+// One cluster leads. Smaller marks follow it downhill, with open ground
+// between them. Quiet parts of the sheet stay quiet.
 
 const GROUND = '#f0d4de';
 const PLUM = '#6e2448';
@@ -11,50 +11,94 @@ const DEEP = '#4c1834';
 const CORAL = '#e36a55';
 const REVERSE = '#6a2a48';
 
-interface Mark {
-  x: number;
-  y: number;
-  scale: number;
+interface Petal {
   rot: number;
-  petals: number;
+  len: number;
+  wid: number;
+  lean: number;
   colour: string;
-  seed: number;
+  ox: number;
+  oy: number;
 }
 
-// Centres sit inside the dress front, with a gap of bare ground between clusters.
-const MARKS: Mark[] = [
-  { x: 0.4, y: 0.4, scale: 0.125, rot: 0.4, petals: 4, colour: PLUM, seed: 3 },
-  { x: 0.6, y: 0.64, scale: 0.115, rot: 1.55, petals: 3, colour: CORAL, seed: 8 },
-  { x: 0.34, y: 0.8, scale: 0.1, rot: 2.4, petals: 5, colour: DEEP, seed: 5 },
-  { x: 0.68, y: 0.4, scale: 0.072, rot: 0.85, petals: 3, colour: CORAL, seed: 11 },
-  { x: 0.28, y: 0.62, scale: 0.068, rot: 2.2, petals: 4, colour: PLUM, seed: 14 },
-  { x: 0.54, y: 0.28, scale: 0.046, rot: 0.5, petals: 3, colour: DEEP, seed: 17 },
-  { x: 0.48, y: 0.88, scale: 0.044, rot: 1.3, petals: 3, colour: CORAL, seed: 21 },
-  { x: 0.74, y: 0.58, scale: 0.042, rot: 2.7, petals: 4, colour: PLUM, seed: 24 },
-];
-
-function mark(ctx: CanvasRenderingContext2D, S: number, m: Mark) {
-  const rand = rng(m.seed);
+function petal(ctx: CanvasRenderingContext2D, S: number, p: Petal) {
+  const len = S * p.len;
+  const wid = S * p.wid;
+  const tip = p.lean * wid;
   ctx.save();
-  ctx.translate(S * m.x, S * m.y);
-  ctx.rotate(m.rot);
-  for (let i = 0; i < m.petals; i++) {
-    const span = (Math.PI * 2) / m.petals;
-    const wobble = (rand() - 0.5) * span * 0.45;
-    const len = S * m.scale * (0.82 + rand() * 0.28);
-    const wid = len * (0.38 + rand() * 0.16);
-    ctx.save();
-    ctx.rotate(i * span + wobble);
-    ctx.fillStyle = m.colour;
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(wid, -len * 0.28, wid * 0.72, -len * 0.82, 0, -len);
-    ctx.bezierCurveTo(-wid * 0.48, -len * 0.7, -wid * 0.62, -len * 0.22, 0, 0);
-    ctx.fill();
-    ctx.restore();
-  }
+  ctx.translate(S * p.ox, S * p.oy);
+  ctx.rotate(p.rot);
+  ctx.fillStyle = p.colour;
+  ctx.beginPath();
+  // A thick base, so neighbouring petals fuse instead of meeting at a point.
+  ctx.moveTo(0, len * 0.12);
+  ctx.bezierCurveTo(wid * 1.25, len * 0.02, wid * 0.35 + tip, -len * 0.7, tip * 0.15, -len);
+  ctx.bezierCurveTo(-wid * 0.15 + tip * 0.4, -len * 0.62, -wid, len * 0.04, 0, len * 0.12);
+  ctx.closePath();
+  ctx.fill();
   ctx.restore();
 }
+
+function cluster(ctx: CanvasRenderingContext2D, S: number, x: number, y: number, turn: number, petals: Petal[], core?: { rx: number; ry: number; rot: number }) {
+  ctx.save();
+  ctx.translate(S * x, S * y);
+  ctx.rotate(turn);
+  if (core) {
+    ctx.fillStyle = DEEP;
+    ctx.beginPath();
+    ctx.ellipse(0, S * 0.012, S * core.rx, S * core.ry, core.rot, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  for (const p of petals) petal(ctx, S, p);
+  ctx.restore();
+}
+
+function bud(ctx: CanvasRenderingContext2D, S: number, x: number, y: number, len: number, rot: number) {
+  const L = S * len;
+  ctx.save();
+  ctx.translate(S * x, S * y);
+  ctx.rotate(rot);
+  ctx.fillStyle = DEEP;
+  ctx.beginPath();
+  ctx.moveTo(0, L * 0.15);
+  ctx.bezierCurveTo(L * 0.42, -L * 0.05, L * 0.28, -L * 0.72, 0, -L);
+  ctx.bezierCurveTo(-L * 0.22, -L * 0.7, -L * 0.36, -L * 0.08, 0, L * 0.15);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = CORAL;
+  ctx.beginPath();
+  ctx.moveTo(0, -L * 0.62);
+  ctx.bezierCurveTo(L * 0.12, -L * 0.78, L * 0.08, -L * 0.98, 0, -L);
+  ctx.bezierCurveTo(-L * 0.08, -L * 0.96, -L * 0.1, -L * 0.76, 0, -L * 0.62);
+  ctx.fill();
+  ctx.restore();
+}
+
+// Bases are spread and angles stay inside a fan, so the mark is one
+// overlapping silhouette with an opening, not a ring of equal petals.
+// A short fan. The opening faces one way; bases sit on a small core.
+const DOMINANT: Petal[] = [
+  { rot: -0.35, len: 0.12, wid: 0.062, lean: 0.2, colour: DEEP, ox: -0.01, oy: -0.01 },
+  { rot: -1.15, len: 0.1, wid: 0.04, lean: -0.55, colour: PLUM, ox: -0.04, oy: 0.012 },
+  { rot: 0.55, len: 0.095, wid: 0.05, lean: 0.45, colour: PLUM, ox: 0.034, oy: 0.006 },
+  { rot: 1.05, len: 0.07, wid: 0.032, lean: -0.2, colour: PLUM, ox: 0.01, oy: 0.04 },
+];
+
+const SECONDARY: Petal[] = [
+  { rot: -0.35, len: 0.1, wid: 0.032, lean: 0.75, colour: CORAL, ox: -0.02, oy: 0.0 },
+  { rot: 0.85, len: 0.09, wid: 0.046, lean: -0.25, colour: CORAL, ox: 0.028, oy: 0.022 },
+  { rot: 2.15, len: 0.062, wid: 0.024, lean: 0.2, colour: PLUM, ox: -0.008, oy: 0.04 },
+];
+
+const FRAGMENT: Petal[] = [
+  { rot: -0.45, len: 0.082, wid: 0.036, lean: -0.25, colour: PLUM, ox: 0, oy: 0 },
+  { rot: 0.28, len: 0.06, wid: 0.028, lean: 0.45, colour: DEEP, ox: 0.016, oy: 0.012 },
+];
+
+const TRAILING: Petal[] = [
+  { rot: 0.2, len: 0.062, wid: 0.03, lean: 0.65, colour: CORAL, ox: 0, oy: 0 },
+  { rot: 0.95, len: 0.034, wid: 0.016, lean: -0.15, colour: DEEP, ox: 0.014, oy: 0.01 },
+];
 
 export const plumScatter: PaperDesign = {
   id: 'plum-scatter',
@@ -63,7 +107,11 @@ export const plumScatter: PaperDesign = {
   reverse: REVERSE,
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
-    for (const m of MARKS) mark(ctx, S, m);
+    bud(ctx, S, 0.56, 0.24, 0.045, -0.4);
+    cluster(ctx, S, 0.38, 0.42, -0.35, DOMINANT, { rx: 0.026, ry: 0.018, rot: -0.4 });
+    cluster(ctx, S, 0.26, 0.6, -0.85, FRAGMENT);
+    cluster(ctx, S, 0.7, 0.48, 0.25, TRAILING);
+    cluster(ctx, S, 0.58, 0.76, 0.5, SECONDARY);
   },
   drawBack(ctx, S) {
     solid(ctx, S, REVERSE);
