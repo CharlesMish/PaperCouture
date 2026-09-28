@@ -12,8 +12,8 @@ No account, API key, external image service, or backend is needed. All papers ar
 procedurally. The source is standard Three.js + TypeScript + Vite.
 
 For the first agent session, paste **CURSOR_START.md**. Read **HANDOFF.md** before editing.
-Claude stopped before its final handoff, but the exported application already has a complete
-six-step sequence, ten visible papers, fold/back/reset controls, and a display view.
+Claude's export supplied the complete six-step sequence and four papers. The merged
+paper study adds six more, for ten visible papers, with fold/back/reset and Display.
 
 ## Checks and production preview
 
@@ -58,3 +58,10 @@ They now use project-relative output paths. `BASE_URL` overrides the default pre
 `CAPTURE_DIR` overrides `docs/captures`. These optional Python tools are not needed to
 run or build the application. Their syntax was checked during this handoff; the fresh
 browser verification used a separate audit harness, not these Python scripts.
+
+## Repository checks and hosting
+
+GitHub Actions runs the existing checks and production build on pull requests and
+pushes to `main`, using Node 24 and the lockfile. See
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for hosting setup and preview verification.
+The workflow checks code; connecting a host and making a live deployment are separate steps.
