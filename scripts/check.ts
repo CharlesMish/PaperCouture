@@ -8,6 +8,9 @@
 //  - pieces coming apart mid-animation, or paper dipping into the table
 
 import { writeFileSync } from 'node:fs';
+import { attachmentAnchors } from '../src/fold/garments';
+import { buildWrapSkirt } from '../src/fold/wrapSkirt';
+import { buildLapelVest } from '../src/fold/lapelVest';
 import { buildDress } from '../src/fold/construction';
 import { buildJacket } from '../src/fold/jacket';
 import { buildBowWing } from '../src/fold/bow';
@@ -20,7 +23,7 @@ import { FoldController } from '../src/app/controller';
 import { checkTwoSidedRotation } from './rotationCheck';
 
 const errors: string[] = [];
-for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing()]) {
+for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing(), buildWrapSkirt(), buildLapelVest()]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
@@ -173,6 +176,29 @@ if (process.argv.includes('--dump')) {
     // The explanatory hint differs, but crease and motion definitions must not.
     const folds = (c: typeof base) => c.ops.map(o => o.kind === 'fold' ? o.folds : o.kind);
     if (JSON.stringify(folds(buildSilhouette('classic'))) !== JSON.stringify(folds(base))) errors.push('classic changed the original folds');
+  }
+}
+
+// Attachments must be anchored on retained paper, including the asymmetric
+// skirt band and vest panels. A generic dress coordinate is not sufficient.
+{
+  const insidePolygon = (poly: Vec2[], p: Vec2) => {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a.y > p.y) !== (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+  };
+  for (const [id, construction] of [['skirt', buildWrapSkirt()], ['vest', buildLapelVest()]] as const) {
+    const states = buildTimeline(construction.ops).states;
+    const polys = states[states.length - 1].facets.map(modelPoly);
+    const ys = polys.flat().map(p => p.y);
+    const anchors = attachmentAnchors(id, Math.max(...ys), Math.min(...ys));
+    if (new Set(anchors.map(a => a.id)).size !== anchors.length) errors.push(`${id}: duplicate attachment ids`);
+    for (const anchor of anchors) {
+      if (!polys.some(poly => insidePolygon(poly, anchor))) errors.push(`${id}: ${anchor.label} is not on the folded paper`);
+    }
   }
 }
 

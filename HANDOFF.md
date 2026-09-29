@@ -1,3 +1,12 @@
+# Paper Couture — wrap skirt and lapel vest
+
+Owner authorized Wrap Skirt and Lapel Vest, with permission to stop the cape early.
+Both garments are integrated in Design with their own attachment anchors and the
+existing papers, pin, bow and Display controls. See `docs/garment-studies/NOTES.md`.
+The cape was tried and rejected at visual review; it is not registered or shipped.
+This pass builds on merged PR #6 (`019fb1f` on `polish/plum-petals`). The entries
+below are historical and describe the scope at their own dates.
+
 # Paper Couture — silhouette and bow experiment
 
 Owner authorized three dress silhouette choices, a bow experiment and more optional
