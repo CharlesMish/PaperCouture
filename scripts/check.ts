@@ -9,6 +9,8 @@
 
 import { writeFileSync } from 'node:fs';
 import { buildDress } from '../src/fold/construction';
+import { buildJacket } from '../src/fold/jacket';
+import { buildPin } from '../src/fold/pin';
 import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
@@ -16,7 +18,7 @@ import { FoldController } from '../src/app/controller';
 import { checkTwoSidedRotation } from './rotationCheck';
 
 const errors: string[] = [];
-const construction = buildDress();
+for (const construction of [buildDress(), buildJacket(), buildPin()]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
@@ -149,8 +151,10 @@ if (process.argv.includes('--dump')) {
       area: signedArea(f.poly),
     })),
   );
-  writeFileSync('docs/states.json', JSON.stringify(dump));
+  writeFileSync(`docs/states-${construction.name.toLowerCase().replaceAll(' ', '-')}.json`, JSON.stringify(dump));
   console.log('wrote docs/states.json');
+}
+
 }
 
 checkTwoSidedRotation(errors);

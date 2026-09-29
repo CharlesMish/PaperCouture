@@ -27,6 +27,12 @@ npm run preview
 Production preview normally uses http://localhost:4173/. The static build is in `dist/`
 and uses relative asset paths. Serve it over HTTP; do not double-click index.html.
 
+## Jacket and accessory prototype
+
+Choose A-line dress or Box jacket from Design. After folding the garment, optionally
+fold a separate diamond pin, choose its own paper and place or remove it. See
+[the prototype notes](docs/astra-review/JACKET_AND_PIN.md) for behavior and checks.
+
 ## Try it
 
 Choose a paper swatch and press Fold/Turn over for each step. Back reverses a step;
@@ -58,3 +64,4 @@ They now use project-relative output paths. `BASE_URL` overrides the default pre
 `CAPTURE_DIR` overrides `docs/captures`. These optional Python tools are not needed to
 run or build the application. Their syntax was checked during this handoff; the fresh
 browser verification used a separate audit harness, not these Python scripts.
+
