@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "engine": "Headless Chromium; software WebGL",
+  "checks": [
+    "skirt: 7 steps forward and reverse",
+    "vest: 6 steps forward and reverse",
+    "reset during motion",
+    "rotation between folds preserves step",
+    "front/angle/back presets",
+    "finished paper change and all four rotations",
+    "skirt: both bow wings and three positions",
+    "vest: diamond pin and five positions",
+    "accessory edit/return/remove",
+    "portrait and landscape controls",
+    "design change preserves paper and turn",
+    "attachment position normalized",
+    "jacket available and dress silhouette choice"
+  ],
+  "errors": []
+}

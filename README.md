@@ -27,13 +27,16 @@ npm run preview
 Production preview normally uses http://localhost:4173/. The static build is in `dist/`
 and uses relative asset paths. Serve it over HTTP; do not double-click index.html.
 
-## Jacket and accessory prototype
+## Garments and optional accessories
 
-Choose A-line dress or Box jacket from Design. After folding the garment, optionally
+Choose Dress, Box jacket, Wrap skirt or Lapel vest from Design. After folding the garment, optionally
 fold a separate diamond pin or a two-sheet bow, choose its own paper and place or remove it.
 At dress step 3, choose Straight, Classic A-line or Wide flare. Revisit shape fold
 returns to that decision. See [styling notes](docs/astra-review/STYLING_CHOICES.md). See
 [the prototype notes](docs/astra-review/JACKET_AND_PIN.md) for behavior and checks.
+
+The Wrap skirt has seven steps and three waistband attachment positions; the Lapel vest
+has six steps and five clasp/lapel/panel positions. See [garment study notes](docs/garment-studies/NOTES.md).
 
 ## Try it
 
@@ -47,6 +50,8 @@ from display. A constrained drag-to-fold interaction also exists for owner evalu
 ## Code map
 
 - `src/fold/construction.ts`: authored original A-line dress, six steps.
+- `src/fold/garments.ts`: garment registry and attachment anchors.
+- `src/fold/wrapSkirt.ts`, `lapelVest.ts`: new authored single-square sequences.
 - `src/fold/engine.ts`, `geometry.ts`: material polygons, creases and resting states.
 - `src/fold/timeline.ts`: animated rigid facet transforms and layer spacing.
 - `src/app/controller.ts`: forward, reverse, reset, and scrub state.

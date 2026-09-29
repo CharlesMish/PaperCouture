@@ -1,7 +1,7 @@
-export type GarmentId = 'dress' | 'jacket';
+import { GARMENTS, GarmentId, AttachmentPosition, AttachmentAnchor } from '../fold/garments';
+export type { GarmentId };
+export type PinPosition = AttachmentPosition;
 export type AccessoryId = 'pin' | 'bow';
-export type PinPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
-export const POSITIONS: [string, PinPosition][] = [['Neckline', 'neckline'], ['Left chest', 'chest-left'], ['Right chest', 'chest-right'], ['Left waist', 'waist-left'], ['Centre waist', 'waist'], ['Right waist', 'waist-right']];
 export class StudioControls {
   readonly root = document.createElement('section');
   private design = document.createElement('select');
@@ -22,7 +22,7 @@ export class StudioControls {
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
-    this.design.add(new Option('Dress', 'dress')); this.design.add(new Option('Box jacket', 'jacket'));
+    for (const garment of GARMENTS) this.design.add(new Option(garment.name, garment.id));
     this.design.title = 'Changing design starts a new square; your paper choices are kept.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
@@ -37,20 +37,24 @@ export class StudioControls {
     this.revisit.textContent = 'Revisit shape fold'; this.revisit.onclick = h.onRevisit;
     this.positionLabel.textContent = 'Place ';
     this.position.setAttribute('aria-label', 'Accessory position');
-    for (const [name, value] of POSITIONS) this.position.add(new Option(name, value));
     this.position.onchange = () => h.onPosition(this.position.value as PinPosition);
     this.positionLabel.append(this.position);
     this.note.className = 'studio-note';
     this.root.append(label, this.revisit, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.returnButton, this.note);
     parent.append(this.root);
   }
-  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, canRevisit: boolean) {
+  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, canRevisit: boolean, anchors: AttachmentAnchor[]) {
     this.design.value = id; this.design.disabled = accessoryMode;
     this.edit.textContent = attached && this.accessory.value === activeAccessory ? 'Edit accessory' : 'Fold accessory';
     this.edit.hidden = accessoryMode || !finished; this.edit.disabled = !finished;
     this.accessoryLabel.hidden = accessoryMode || !finished;
     this.remove.hidden = accessoryMode || !attached || !finished;
     this.positionLabel.hidden = accessoryMode || !attached || !finished;
+    const key = anchors.map(a => a.id + ':' + a.label).join('|');
+    if (this.position.dataset.anchors !== key) {
+      this.position.replaceChildren(...anchors.map(a => new Option(a.label, a.id)));
+      this.position.dataset.anchors = key;
+    }
     this.position.value = position;
     this.returnButton.hidden = !accessoryMode;
     this.revisit.hidden = accessoryMode || id !== 'dress' || !canRevisit;
