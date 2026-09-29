@@ -27,7 +27,7 @@ export class StudioControls {
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
-    this.accessory.add(new Option('Diamond pin', 'pin')); this.accessory.add(new Option('Two-sheet bow', 'bow'));
+    this.accessory.add(new Option('Diamond pin', 'pin')); this.accessory.add(new Option('Two-piece bow', 'bow'));
     this.accessoryLabel.append(this.accessory);
     for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
@@ -58,7 +58,7 @@ export class StudioControls {
     this.position.value = position;
     this.returnButton.hidden = !accessoryMode;
     this.revisit.hidden = accessoryMode || id !== 'dress' || !canRevisit;
-    this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-sheet bow · wing ${wing + 1} of 2` : 'Diamond pin · separate square' : finished ? 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
+    this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : 'Diamond pin · separate square' : finished ? 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
   }
   topInset(): number { return this.root.getBoundingClientRect().bottom + 10; }
 }

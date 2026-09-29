@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "engine": "Headless Chromium; software WebGL; emulated touch",
+  "checks": [
+    "three dress silhouettes: both hem handles at least 44px",
+    "mouse drag commits",
+    "short drag rolls back",
+    "keyboard activation",
+    "390x844 touch drag, tap and cancellation",
+    "reset releases pointer capture",
+    "background click does not fold",
+    "handles hidden in Display",
+    "bow naming",
+    "vest front at desktop, portrait and landscape"
+  ],
+  "errors": []
+}

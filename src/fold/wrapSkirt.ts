@@ -8,12 +8,12 @@ export function buildWrapSkirt(): Construction {
     name: 'Wrap skirt',
     meta: { top: 0.72, shoulderPoint: v2(-0.2, 1), sleeveCutDir: v2(1, 0) },
     ops: [
-      { kind: 'turn', id: 'skirt-turn', title: 'Put the print underneath', hint: 'The wrap folds will bring the print back to the front, leaving a reveal of the reverse beneath them.' },
       {
         kind: 'fold', id: 'skirt-length', title: 'Establish the skirt length',
-        hint: 'Tuck the bottom edge behind before making the wrap panels. This keeps the hem compact.',
-        folds: [{ name: 'skirt-length', a: v2(-1.5, -0.55), b: v2(1.5, -0.55), moving: v2(0, -1), sense: 'mountain' }],
+        hint: 'Lift the bottom edge up onto the printed face. We will turn the whole sheet over next.',
+        folds: [{ name: 'skirt-length', a: v2(-1.5, -0.55), b: v2(1.5, -0.55), moving: v2(0, -1), sense: 'valley' }],
       },
+      { kind: 'turn', id: 'skirt-turn', title: 'Turn over for the wrap panels', hint: 'The length fold is underneath. Bring the side panels up onto this side next.' },
       {
         kind: 'fold', id: 'skirt-wrap-left', title: 'Bring the broad panel across',
         hint: 'Fold the left side inward along the slanted guide. Its printed face becomes the broad wrap panel.',
@@ -24,11 +24,13 @@ export function buildWrapSkirt(): Construction {
         hint: 'Bring the narrower right side inward. The two slanted edges overlap near the waist.',
         folds: [{ name: 'skirt-wrap-right', a: v2(0.5, 1), b: v2(0.82, -0.55), moving: v2(1, 0), sense: 'valley' }],
       },
+      { kind: 'turn', id: 'skirt-hem-back', title: 'Turn over to reach the hem points', hint: 'Work from the back so the little points can fold upward in view.' },
       {
-        kind: 'fold', id: 'skirt-hem', title: 'Tuck the small hem points',
-        hint: 'The slanted folds leave small points below the hem. Turn just those points underneath.',
-        folds: [{ name: 'skirt-hem', a: v2(-1.5, -0.55), b: v2(1.5, -0.55), moving: v2(0, -1.5), sense: 'mountain' }],
+        kind: 'fold', id: 'skirt-hem', title: 'Lift the small hem points up',
+        hint: 'Lift the small points onto this side, following the handles. They will be hidden when we turn back.',
+        folds: [{ name: 'skirt-hem', a: v2(-1.5, -0.55), b: v2(1.5, -0.55), moving: v2(0, -1.5), sense: 'valley' }],
       },
+      { kind: 'turn', id: 'skirt-front', title: 'Return to the patterned front', hint: 'The hem points are tucked away. Finish with the narrow waistband.' },
       {
         kind: 'fold', id: 'skirt-waist', title: 'Start the narrow waistband',
         hint: 'Fold down a narrow strip. One more turn will make a compact waistband.',
