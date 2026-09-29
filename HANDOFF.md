@@ -1,3 +1,14 @@
+# Paper Couture — owner feedback: folding access and lapel clarity
+
+Built on merged source PR #7 (`7280cbf`) and website PR #25 (`aaba27d`).
+Small moving flaps now get 44px on-canvas grips with drag, tap and keyboard support.
+The skirt and vest use explicit turn-over steps instead of mountain folds; they
+have nine and eight steps respectively. Skirt final geometry is unchanged.
+Vest lapels are smaller and have fine highlights along their actual boundaries.
+The accessory is consistently called Two-piece bow, with one square per wing.
+See `docs/feedback-pass/NOTES.md` for evidence and remaining limits. Earlier entries
+below describe historical versions.
+
 # Paper Couture — wrap skirt and lapel vest
 
 Owner authorized Wrap Skirt and Lapel Vest, with permission to stop the cape early.

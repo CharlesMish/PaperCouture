@@ -7,6 +7,7 @@
 //  - a jump between the end of one fold and the start of the next
 //  - pieces coming apart mid-animation, or paper dipping into the table
 
+import { dragVector } from '../src/ui/foldHandles';
 import { writeFileSync } from 'node:fs';
 import { attachmentAnchors } from '../src/fold/garments';
 import { buildWrapSkirt } from '../src/fold/wrapSkirt';
@@ -200,6 +201,17 @@ if (process.argv.includes('--dump')) {
       if (!polys.some(poly => insidePolygon(poly, anchor))) errors.push(`${id}: ${anchor.label} is not on the folded paper`);
     }
   }
+}
+
+// Small folds must have a usable gesture distance without changing direction.
+for (const [x, y] of [[0, 0], [0.1, -0.2], [40, 0], [-200, 30]]) {
+  const v = dragVector(x, y), length = Math.hypot(v.vx, v.vy);
+  if (!Number.isFinite(length) || length < 72 - 1e-8) errors.push('drag vector has no stable minimum distance');
+  if (Math.hypot(x, y) > 1e-5 && (Math.abs(x * v.vy - y * v.vx) > 1e-7 || x * v.vx + y * v.vy <= 0)) errors.push('drag vector changed fold direction');
+  if (Math.hypot(x, y) >= 72 && (v.vx !== x || v.vy !== y)) errors.push('large fold gesture was changed');
+}
+for (const c of [buildWrapSkirt(), buildLapelVest()]) {
+  if (c.ops.some(op => op.kind === 'fold' && op.folds.some(f => f.sense !== 'valley'))) errors.push(`${c.name}: fold pushes away from the visible face`);
 }
 
 checkTwoSidedRotation(errors);

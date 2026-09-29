@@ -2,6 +2,8 @@ import './styles.css';
 import * as THREE from 'three';
 import { buildSilhouette, SilhouetteId } from './fold/silhouettes';
 import { buildBowWing } from './fold/bow';
+import { centroid } from './fold/geometry';
+import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
 import { ShapeChoices } from './ui/shapeChoices';
 import { buildGarment, garmentIdFrom, attachmentAnchors, attachmentSize } from './fold/garments';
 import { buildPin } from './fold/pin';
@@ -14,6 +16,7 @@ import { PAPERS, findPaper } from './papers';
 import { rotationCheckPaper } from './papers/rotationCheck';
 import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
+import { LapelEdges } from './render/lapelEdges';
 import { FoldGuides } from './render/guides';
 import { Stage } from './render/stage';
 import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
@@ -63,6 +66,8 @@ const frontMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 }
 const backMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
 const sheet = new SheetView(frontMat, backMat);
 const guides = new FoldGuides();
+const lapelEdges = new LapelEdges();
+stage.modelRoot.add(lapelEdges.lines);
 stage.modelRoot.add(sheet.group, guides.group);
 const pinFront = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinBack = new THREE.MeshStandardMaterial({ roughness: 0.9 });
@@ -347,6 +352,8 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => controller.next());
+
 // ---- pose evaluation
 const PEEK_FOLD = 8; // degrees the pending flap lifts while waiting
 const PEEK_TURN = 4;
@@ -387,19 +394,22 @@ function draw() {
   const t = pose.pending && workshop ? tForAngle(anim.op.kind === 'turn' ? PEEK_TURN : PEEK_FOLD) : pose.t;
   frame = evaluateFrame(anim, t, frame);
   sheet.pose(frame);
+  const lapels = new Set(timeline.states[pose.op + 1].facets.filter(f => f.tags.some(t => t.startsWith('vest-lapel-'))).map(f => f.id));
+  lapelEdges.update(anim, frame, lapels, garmentId === 'vest' && !accessoryMode && lapels.size > 0);
   const preview = workshop && (pose.pending || controller.isScrubbing);
   sheet.setTint(preview && anim.op.kind === 'fold' ? movingPieces(anim) : new Set(), 0.55);
   if (preview) guides.show(anim, anim.maxPreZ + LAYER_GAP);
   else guides.hide();
+  updateFoldHandles(anim, frame, preview);
   stage.render();
 }
 
 // ---- drag to fold: grab paper that the pending fold moves, pull it toward the arrow
 const raycaster = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
-let drag: { id: number; x0: number; y0: number; vx: number; vy: number } | null = null;
+let drag: { id: number; x0: number; y0: number; vx: number; vy: number; target: HTMLElement; handle: boolean; travel: number } | null = null;
 function cancelDrag() {
-  if (drag && canvas.hasPointerCapture(drag.id)) canvas.releasePointerCapture(drag.id);
+  if (drag?.target.hasPointerCapture(drag.id)) drag.target.releasePointerCapture(drag.id);
   drag = null;
 }
 
@@ -420,35 +430,47 @@ function pickMovingPiece(e: PointerEvent): number {
   return anim.pieces[idx].spec >= 0 ? idx : -1;
 }
 
-canvas.addEventListener('pointerdown', (e) => {
-  if (!view.inWorkshop) return;
+function startDrag(e: PointerEvent, idx: number, handle = false) {
+  if (!view.inWorkshop || drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
   const pose = controller.pose();
-  if (!pose.pending) return;
-  const idx = pickMovingPiece(e);
-  if (idx < 0) return;
+  if (!pose.pending || idx < 0) return;
   const anim = ops[pose.op];
-  let from: THREE.Vector3;
-  let to: THREE.Vector3;
-  if (anim.op.kind === 'turn') {
-    from = new THREE.Vector3(0.8, 0, 0);
-    to = new THREE.Vector3(-0.8, 0, 0);
-  } else {
-    const ar = anim.arrows[anim.pieces[idx].spec];
-    from = new THREE.Vector3(ar.from.x, ar.from.y, 0);
-    to = new THREE.Vector3(ar.to.x, ar.to.y, 0);
-  }
-  const a = toScreen(from);
-  const b = toScreen(to);
+  if (!anim.pieces[idx] || anim.pieces[idx].spec < 0) return;
+  const vector = foldDirection(anim, anim.pieces[idx].spec);
+  const target = e.currentTarget as HTMLElement;
   if (!controller.beginScrub()) return;
-  drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, vx: b.x - a.x, vy: b.y - a.y };
-  canvas.setPointerCapture(e.pointerId);
+  drag = { id: e.pointerId, x0: e.clientX, y0: e.clientY, ...dragVector(vector.x, vector.y), target, handle, travel: 0 };
+  target.setPointerCapture(e.pointerId);
   e.preventDefault();
-});
+}
+function foldDirection(anim: OpAnim, spec: number): THREE.Vector2 {
+  const ar = anim.op.kind === 'turn' ? { from: { x: 0.8, y: 0 }, to: { x: -0.8, y: 0 } } : anim.arrows[spec];
+  return toScreen(new THREE.Vector3(ar.to.x, ar.to.y, 0)).sub(toScreen(new THREE.Vector3(ar.from.x, ar.from.y, 0)));
+}
+function updateFoldHandles(anim: OpAnim, M: Mat34, preview: boolean) {
+  const targets: FoldTarget[] = [];
+  if (preview && anim.op.kind === 'fold') {
+    for (const piece of anim.pieces) {
+      if (piece.spec < 0) continue;
+      const points = piece.poly.map(p => toScreen(new THREE.Vector3(...posePoint(M, piece.index * 12, p.x, p.y))));
+      const w = Math.max(...points.map(p => p.x)) - Math.min(...points.map(p => p.x));
+      const h = Math.max(...points.map(p => p.y)) - Math.min(...points.map(p => p.y));
+      if (Math.min(w, h) >= 28 && w * h >= 1300) continue;
+      const c = centroid(piece.poly);
+      const screen = toScreen(new THREE.Vector3(...posePoint(M, piece.index * 12, c.x, c.y)));
+      const vector = foldDirection(anim, piece.spec);
+      targets.push({ piece: piece.index, x: screen.x, y: screen.y, vx: vector.x, vy: vector.y });
+    }
+  }
+  foldHandles.render(targets, controller.isScrubbing);
+}
+canvas.addEventListener('pointerdown', e => startDrag(e, pickMovingPiece(e)));
 
-canvas.addEventListener('pointermove', (e) => {
+window.addEventListener('pointermove', (e) => {
   if (drag && e.pointerId === drag.id) {
     const dx = e.clientX - drag.x0;
     const dy = e.clientY - drag.y0;
+    drag.travel = Math.max(drag.travel, Math.hypot(dx, dy));
     controller.scrubTo((dx * drag.vx + dy * drag.vy) / (drag.vx * drag.vx + drag.vy * drag.vy));
     return;
   }
@@ -461,11 +483,12 @@ canvas.addEventListener('pointermove', (e) => {
 function endDrag(e: PointerEvent, cancelled: boolean) {
   if (!drag || e.pointerId !== drag.id) return;
   const t = controller.pose().t;
-  drag = null;
-  controller.endScrub(!cancelled && t > 0.35);
+  const tap = drag.handle && drag.travel < 6;
+  cancelDrag();
+  controller.endScrub(!cancelled && (tap || t > 0.35));
 }
-canvas.addEventListener('pointerup', (e) => endDrag(e, false));
-canvas.addEventListener('pointercancel', (e) => endDrag(e, true));
+window.addEventListener('pointerup', (e) => endDrag(e, false));
+window.addEventListener('pointercancel', (e) => endDrag(e, true));
 
 // ---- start-up state from the URL (?step=6&view=display&paper=grid&turn=1)
 const startStep = Number(params.get('step'));

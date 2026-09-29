@@ -6,7 +6,7 @@ const path = require('node:path');
 const http = require('node:http');
 const assert = require('node:assert/strict');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
-const output = 'docs/garment-studies/final';
+const output = 'docs/feedback-pass/garments';
 const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'self'; form-action 'none'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; upgrade-insecure-requests";
 (async () => {
   fs.mkdirSync(output, { recursive: true });
@@ -58,7 +58,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.waitForFunction(() => !paperCouture.displayCam.glide);
       await p.screenshot({ path: `${output}/${name}.png` });
     };
-    for (const [id, steps] of [['skirt', 7], ['vest', 6]]) {
+    for (const [id, steps] of [['skirt', 9], ['vest', 8]]) {
       console.log(`Checking ${id}`);
       await p.goto(root + `?design=${id}&paper=tidal-bands&turn=1`);
       await p.waitForFunction(() => window.paperCouture);
@@ -141,7 +141,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     await p.getByRole('button', { name: 'Wide flare', exact: true }).click();
     assert.equal((await state()).shape, 'flare');
     assert.deepEqual(errors, []);
-    fs.writeFileSync(`${output}/browser-result.json`, JSON.stringify({ passed: true, engine: 'Headless Chromium; software WebGL', checks: ['skirt: 7 steps forward and reverse', 'vest: 6 steps forward and reverse', 'reset during motion', 'rotation between folds preserves step', 'front/angle/back presets', 'finished paper change and all four rotations', 'skirt: both bow wings and three positions', 'vest: diamond pin and five positions', 'accessory edit/return/remove', 'portrait and landscape controls', 'design change preserves paper and turn', 'attachment position normalized', 'jacket available and dress silhouette choice'], errors }, null, 2));
+    fs.writeFileSync(`${output}/browser-result.json`, JSON.stringify({ passed: true, engine: 'Headless Chromium; software WebGL', checks: ['skirt: 9 steps forward and reverse', 'vest: 8 steps forward and reverse', 'reset during motion', 'rotation between folds preserves step', 'front/angle/back presets', 'finished paper change and all four rotations', 'skirt: both bow wings and three positions', 'vest: diamond pin and five positions', 'accessory edit/return/remove', 'portrait and landscape controls', 'design change preserves paper and turn', 'attachment position normalized', 'jacket available and dress silhouette choice'], errors }, null, 2));
     console.log('Garment browser checks passed');
   } finally { await browser?.close(); server.close(); }
 })().catch(e => { console.error(e); process.exitCode = 1; });

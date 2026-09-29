@@ -379,3 +379,14 @@ button:focus-visible {
   .display-dock { padding: 8px 10px; bottom: 8px; }
   .display-dock .btn, .display-dock .seg { min-height: 32px; }
 }
+
+/* Small folds get a screen-sized grip instead of a sub-pixel paper hit target. */
+.fold-handles { position: absolute; inset: 0; pointer-events: none; }
+.fold-handle {
+  position: absolute; transform: translate(-50%, -50%); width: 44px; height: 44px;
+  border-radius: 50%; border: 1px solid var(--ink-soft); padding: 0;
+  background: rgba(246, 242, 235, .88); box-shadow: 0 2px 7px #302b2633;
+  display: grid; place-items: center; pointer-events: auto; touch-action: none; cursor: grab;
+}
+.fold-handle span { display: block; font-size: 25px; line-height: 1; }
+.fold-handle:active { cursor: grabbing; background: #fff; }
