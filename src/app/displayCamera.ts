@@ -79,6 +79,13 @@ export class DisplayCamera {
     this.controls.maxDistance = d * 1.7;
   }
 
+  /** Preserve orbit and relative zoom when the available viewport changes. */
+  reframe(ratio: number): void {
+    this.glide = null;
+    this.stage.camera.position.sub(this.target).multiplyScalar(ratio).add(this.target);
+    this.controls.update();
+  }
+
   defaultDistance(): number {
     return this.stage.fitDistance(this.halfW, this.halfH);
   }

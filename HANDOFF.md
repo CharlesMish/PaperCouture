@@ -1,3 +1,12 @@
+# Paper Couture handoff — jacket and optional pin prototype
+
+Owner playtest authorized a second garment and a separate accessory experiment.
+The Design selector adds Box jacket. After either garment is folded, Fold a pin
+opens a separate five-step square with independent paper and rotation. Attach,
+move or remove it in Display. Details, checks and screenshots:
+`docs/astra-review/JACKET_AND_PIN.md`. The fold engine and paper drawings are unchanged.
+This is based on the played `43774efb` snapshot, not the older main branch.
+
 # Paper Couture handoff — 2026-09-28 (refine 2)
 
 ## Status
@@ -65,3 +74,4 @@ A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fol
 ## Remaining
 
 The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.
+

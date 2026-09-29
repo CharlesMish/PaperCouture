@@ -1,6 +1,9 @@
 import './styles.css';
 import * as THREE from 'three';
 import { buildDress } from './fold/construction';
+import { buildJacket } from './fold/jacket';
+import { buildPin } from './fold/pin';
+import { StudioControls, GarmentId, PinPosition } from './ui/studioControls';
 import { buildTimeline, evaluateFrame, Mat34, OpAnim, LAYER_GAP, posePoint } from './fold/timeline';
 import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
@@ -20,13 +23,17 @@ const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ---- folding data (pure, precomputed once)
-const construction = buildDress();
-const timeline = buildTimeline(construction.ops);
-const ops = timeline.ops;
-const lastOp = ops[ops.length - 1];
+let garmentId: GarmentId = params.get('design') === 'jacket' ? 'jacket' : 'dress';
+let accessoryMode = false;
+let attached = false;
+let pinPosition: PinPosition = 'neckline';
+let construction = garmentId === 'jacket' ? buildJacket() : buildDress();
+let timeline = buildTimeline(construction.ops);
+let ops = timeline.ops;
+let lastOp = ops[ops.length - 1];
 
 // extent of the finished piece in model coordinates, for the stand and framing
-const finished = (() => {
+function measureFinished() {
   const M = evaluateFrame(lastOp, 1);
   const lo = new THREE.Vector3(Infinity, Infinity, Infinity);
   const hi = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
@@ -38,7 +45,8 @@ const finished = (() => {
     }
   }
   return { lo, hi };
-})();
+}
+let finished = measureFinished();
 
 // ---- scene
 const app = document.getElementById('app')!;
@@ -50,6 +58,35 @@ const backMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 })
 const sheet = new SheetView(frontMat, backMat);
 const guides = new FoldGuides();
 stage.modelRoot.add(sheet.group, guides.group);
+const pinFront = new THREE.MeshStandardMaterial({ roughness: 0.9 });
+const pinBack = new THREE.MeshStandardMaterial({ roughness: 0.9 });
+const pinSheet = new SheetView(pinFront, pinBack);
+const pinTimeline = buildTimeline(buildPin().ops);
+const pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
+pinSheet.setAnim(pinFinal);
+pinSheet.pose(evaluateFrame(pinFinal, 1));
+pinSheet.group.scale.setScalar(0.16);
+pinSheet.group.visible = false;
+stage.modelRoot.add(pinSheet.group);
+// Visible outlines follow the actual resting facets, not a decorative drawn cross.
+const seamPoints: number[] = [];
+const pinPose = evaluateFrame(pinFinal, 1);
+for (const p of pinFinal.pieces) {
+  if (pinPose[p.index * 12 + 10] < 0) continue;
+  for (let i = 0; i < p.poly.length; i++) {
+    for (const m of [p.poly[i], p.poly[(i + 1) % p.poly.length]]) {
+      const point = posePoint(pinPose, p.index * 12, m.x, m.y);
+      seamPoints.push(point[0], point[1], point[2] + 0.0008);
+    }
+  }
+}
+const seamGeometry = new THREE.BufferGeometry();
+seamGeometry.setAttribute('position', new THREE.Float32BufferAttribute(seamPoints, 3));
+const seamMaterial = new THREE.LineBasicMaterial({ color: '#302b26', transparent: true, opacity: 0.3 });
+pinSheet.group.add(new THREE.LineSegments(seamGeometry, seamMaterial));
+const studySeams = new THREE.LineSegments(seamGeometry, seamMaterial);
+studySeams.visible = false;
+stage.modelRoot.add(studySeams);
 const stand = makeStand();
 stand.setOpacity(0);
 stage.scene.add(stand.group);
@@ -63,7 +100,20 @@ function resolvePaper(id: string | null | undefined) {
 let paper = resolvePaper(params.get('paper'));
 let quarterTurns = ((Number(params.get('turn')) || 0) % 4 + 4) % 4;
 let textures: PaperTextures | null = null;
+let garmentPaper = paper;
+let garmentTurns = quarterTurns;
+let pinPaper = findPaper('tidal-bands');
+let pinTurns = 0;
+let pinTextures: PaperTextures | null = null;
+function applyPinPaper() {
+  pinTextures?.dispose();
+  pinTextures = makePaperTextures(pinPaper, pinTurns, stage.renderer.capabilities.getMaxAnisotropy());
+  pinFront.map = pinTextures.front; pinBack.map = pinTextures.back;
+  pinFront.needsUpdate = pinBack.needsUpdate = true;
+}
 function applyPaper() {
+  if (accessoryMode) { pinPaper = paper; pinTurns = quarterTurns; applyPinPaper(); }
+  else { garmentPaper = paper; garmentTurns = quarterTurns; }
   textures?.dispose();
   textures = makePaperTextures(paper, quarterTurns, stage.renderer.capabilities.getMaxAnisotropy());
   frontMat.map = textures.front;
@@ -75,7 +125,7 @@ function applyPaper() {
 }
 
 // ---- state
-const controller = new FoldController(ops.length, (i) => {
+let controller = new FoldController(ops.length, (i) => {
   const base = ops[i].op.kind === 'turn' ? 1.5 : 1.15;
   return reducedMotion ? base * 0.6 : base;
 });
@@ -96,7 +146,7 @@ const picker = new PaperPicker(app, PAPERS, {
 
 const workshopPanel = new WorkshopPanel(app, {
   onBack: () => controller.prev(),
-  onFold: () => (controller.finished ? enterDisplay() : controller.next()),
+  onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
   onReset: () => controller.reset(),
 });
 
@@ -108,48 +158,94 @@ const displayPanel = new DisplayPanel(app, {
 });
 
 function refreshWorkshopPanel() {
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition);
   const a = controller.activeOp;
   const op = a === null ? null : ops[a].op;
   workshopPanel.render({
     total: ops.length,
     done: controller.step,
     active: a,
-    title: op ? op.title : 'The dress is folded',
-    hint: op ? op.hint : 'Put it on display to see the front, the back and every layer.',
-    foldLabel: controller.finished ? 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
+    title: op ? op.title : `${construction.name} is folded`,
+    hint: op ? op.hint : accessoryMode ? 'Attach this separate paper pin, or return to the garment without adding it.' : 'Put it on display, or fold a small pin from another paper.',
+    foldLabel: controller.finished ? accessoryMode ? 'Attach pin' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
   });
 }
 function refreshDisplayPanel() {
-  displayPanel.render(paper.name, displayCam.turntable);
+  displayPanel.render(`${construction.name} · ${paper.name}`, displayCam.turntable);
 }
-controller.onChange(refreshWorkshopPanel);
+const studio = new StudioControls(app, {
+  onDesign: changeGarment,
+  onEdit: editPin,
+  onRemove: () => { attached = false; refreshWorkshopPanel(); layout(); },
+  onReturn: returnToGarment,
+  onPosition: (p) => { pinPosition = p; refreshWorkshopPanel(); },
+});
+let unsubscribeController = controller.onChange(refreshWorkshopPanel);
 displayCam.onChange(refreshDisplayPanel);
 refreshWorkshopPanel();
 applyPaper();
+applyPinPaper();
 
 // ---- views
 const WORK_TARGET = new THREE.Vector3(0, 0.08, 0);
 const WORK_DIR = new THREE.Vector3(0, Math.sin(THREE.MathUtils.degToRad(57)), Math.cos(THREE.MathUtils.degToRad(57)));
 let workCamPos = new THREE.Vector3();
+let lastDisplayFit = 0;
 /** The display end of the camera transition: default front view going in, wherever the user left it coming out. */
 const displayCamPos = new THREE.Vector3();
 
 const QUAT_WORK = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), -Math.PI / 2);
 const QUAT_DISPLAY = new THREE.Quaternion();
-const POS_DISPLAY = new THREE.Vector3(
-  0,
-  STAND_HEIGHT - SLOT_DEPTH - finished.lo.y,
-  -(finished.lo.z + finished.hi.z) / 2,
-);
-const pieceTop = POS_DISPLAY.y + finished.hi.y;
-displayCam.setSubject(
-  new THREE.Vector3(0, pieceTop / 2, 0),
-  Math.max(-finished.lo.x, finished.hi.x) + 0.12,
-  pieceTop / 2 + 0.1,
-);
+const POS_DISPLAY = new THREE.Vector3();
+function frameSubject() {
+  POS_DISPLAY.set(0, STAND_HEIGHT - SLOT_DEPTH - finished.lo.y, -(finished.lo.z + finished.hi.z) / 2);
+  const pieceTop = POS_DISPLAY.y + finished.hi.y;
+  displayCam.setSubject(new THREE.Vector3(0, pieceTop / 2, 0), Math.max(-finished.lo.x, finished.hi.x) + 0.12, pieceTop / 2 + 0.1);
+}
+frameSubject();
+let savedGarment: { construction: typeof construction; timeline: typeof timeline; controller: FoldController } | null = null;
+let savedPinStep = 0;
+function replaceConstruction(next: typeof construction, nextTimeline = buildTimeline(next.ops), nextController?: FoldController) {
+  cancelDrag();
+  unsubscribeController();
+  construction = next; timeline = nextTimeline; ops = timeline.ops; lastOp = ops[ops.length - 1];
+  controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : 1.15) * (reducedMotion ? 0.6 : 1));
+  unsubscribeController = controller.onChange(refreshWorkshopPanel);
+  frame = undefined;
+  finished = measureFinished(); frameSubject();
+  displayCam.setEnabled(false); displayCam.setTurntable(false);
+  view.jump('workshop');
+  refreshWorkshopPanel(); applyPaper(); layout();
+}
+function changeGarment(id: GarmentId) {
+  if (accessoryMode || id === garmentId) return;
+  garmentId = id;
+  replaceConstruction(id === 'jacket' ? buildJacket() : buildDress());
+}
+function editPin() {
+  if (accessoryMode || !controller.finished) return;
+  savedGarment = { construction, timeline, controller };
+  accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns;
+  replaceConstruction(buildPin(), pinTimeline);
+  controller.jumpTo(savedPinStep);
+}
+function returnToGarment() {
+  if (!accessoryMode || !savedGarment) return;
+  savedPinStep = controller.step;
+  if (!controller.finished) attached = false;
+  const saved = savedGarment; savedGarment = null;
+  accessoryMode = false; paper = garmentPaper; quarterTurns = garmentTurns;
+  replaceConstruction(saved.construction, saved.timeline, saved.controller);
+  enterDisplay();
+}
+function finishPin() {
+  if (!accessoryMode || !controller.finished) return;
+  attached = true;
+  returnToGarment();
+}
 
 // Endpoints are only re-captured from a settled view, so reversing mid-transition
 // retraces the same path instead of jumping.
@@ -177,7 +273,7 @@ function insets() {
   const p = picker.insets();
   const bottom = view.target === 1 ? displayPanel.bottomInset() : workshopPanel.bottomInset();
   const mobile = window.innerWidth < 720;
-  return { top: Math.max(p.top, mobile ? 44 : 56), left: p.left, right: 0, bottom };
+  return { top: Math.max(p.top, studio.topInset(), mobile ? 44 : 56), left: p.left, right: 0, bottom };
 }
 
 function layout() {
@@ -185,12 +281,17 @@ function layout() {
   stage.setInsets(insets());
   workCamPos = stage.framePose(WORK_TARGET, 1.3, 1.08, WORK_DIR);
   displayCam.updateLimits();
+  const fit = displayCam.defaultDistance();
+  if (view.inDisplay && lastDisplayFit > 0 && Math.abs(fit - lastDisplayFit) > 1e-6) displayCam.reframe(fit / lastDisplayFit);
+  lastDisplayFit = fit;
   if (view.inWorkshop) stage.placeCamera(workCamPos, WORK_TARGET);
 }
 new ResizeObserver(layout).observe(app);
+new ResizeObserver(layout).observe(studio.root);
 layout();
 
 window.addEventListener('keydown', (e) => {
+  if (e.target instanceof HTMLElement && e.target.closest('button, select, input, textarea')) return;
   if (view.inWorkshop) {
     if (e.key === 'ArrowRight') controller.next();
     else if (e.key === 'ArrowLeft') controller.prev();
@@ -226,6 +327,11 @@ function placePiece() {
 }
 
 function draw() {
+  studySeams.visible = accessoryMode && controller.finished;
+  pinSheet.group.visible = attached && !accessoryMode && controller.finished;
+  const top = finished.hi.y, bottom = finished.lo.y;
+  const y = pinPosition === 'neckline' ? top - 0.17 : pinPosition === 'chest' ? top - 0.42 : bottom + (top - bottom) * 0.40;
+  pinSheet.group.position.set(pinPosition === 'chest' ? -0.29 : 0, y, finished.hi.z + 0.014);
   const pose = controller.pose();
   const anim = ops[pose.op];
   sheet.setAnim(anim);
@@ -244,6 +350,10 @@ function draw() {
 const raycaster = new THREE.Raycaster();
 const ndc = new THREE.Vector2();
 let drag: { id: number; x0: number; y0: number; vx: number; vy: number } | null = null;
+function cancelDrag() {
+  if (drag && canvas.hasPointerCapture(drag.id)) canvas.releasePointerCapture(drag.id);
+  drag = null;
+}
 
 function toScreen(p: THREE.Vector3): THREE.Vector2 {
   const v = p.clone().applyMatrix4(stage.modelRoot.matrixWorld).project(stage.camera);
@@ -336,8 +446,14 @@ requestAnimationFrame(tick);
 // Handle for manual inspection and automated checks in the browser console.
 Object.assign(window, {
   paperCouture: {
-    controller,
-    timeline,
+    get controller() { return controller; },
+    get timeline() { return timeline; },
+    get garmentId() { return garmentId; },
+    get accessoryMode() { return accessoryMode; },
+    get attached() { return attached; },
+    get paperId() { return paper.id; },
+    get quarterTurns() { return quarterTurns; },
+    pinSheet,
     view,
     displayCam,
     stage,
