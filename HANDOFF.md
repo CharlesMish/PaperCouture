@@ -1,3 +1,10 @@
+# Paper Couture — silhouette and bow experiment
+
+Owner authorized three dress silhouette choices, a bow experiment and more optional
+attachment positions. See `docs/astra-review/STYLING_CHOICES.md`. Choice is offered
+before step 3; later changes explicitly revisit that fold. Bow uses two separately
+folded squares. Original dress, jacket, pin, paper art and fold engine are retained.
+
 # Paper Couture handoff — jacket and optional pin prototype
 
 Owner playtest authorized a second garment and a separate accessory experiment.
@@ -74,4 +81,5 @@ A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fol
 ## Remaining
 
 The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.
+
 

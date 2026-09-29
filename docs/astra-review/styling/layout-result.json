@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "engine": "Headless Chromium; software WebGL",
+  "checks": [
+    "final layout correction",
+    "portrait and landscape attachment controls including horizontal scroll",
+    "phone shape choice"
+  ],
+  "errors": []
+}

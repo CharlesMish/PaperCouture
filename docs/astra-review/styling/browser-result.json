@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "engine": "Headless Chromium; software WebGL",
+  "checks": [
+    "three silhouettes through UI",
+    "revisit preserves paper and turn",
+    "both bow wings folded separately",
+    "six attachment positions",
+    "independent accessory rotation",
+    "remove and switch to pin",
+    "mid-fold reset and reverse",
+    "jacket with accessory",
+    "portrait and landscape controls",
+    "phone shape choice"
+  ],
+  "errors": []
+}

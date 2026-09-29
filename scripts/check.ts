@@ -10,6 +10,8 @@
 import { writeFileSync } from 'node:fs';
 import { buildDress } from '../src/fold/construction';
 import { buildJacket } from '../src/fold/jacket';
+import { buildBowWing } from '../src/fold/bow';
+import { buildSilhouette } from '../src/fold/silhouettes';
 import { buildPin } from '../src/fold/pin';
 import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
@@ -18,7 +20,7 @@ import { FoldController } from '../src/app/controller';
 import { checkTwoSidedRotation } from './rotationCheck';
 
 const errors: string[] = [];
-for (const construction of [buildDress(), buildJacket(), buildPin()]) {
+for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing()]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
@@ -157,6 +159,23 @@ if (process.argv.includes('--dump')) {
 
 }
 
+// Silhouette switching is allowed at step 3 because the first two operations
+// are exactly shared. Verify material mappings at that decision boundary.
+{
+  const base = buildDress();
+  for (const id of ['straight', 'classic', 'flare'] as const) {
+    const variant = buildSilhouette(id);
+    if (JSON.stringify(base.ops.slice(0, 2)) !== JSON.stringify(variant.ops.slice(0, 2))) {
+      errors.push(`${id}: shape choice would alter an already completed fold`);
+    }
+  }
+  if (JSON.stringify(buildSilhouette('classic').ops) !== JSON.stringify(base.ops)) {
+    // The explanatory hint differs, but crease and motion definitions must not.
+    const folds = (c: typeof base) => c.ops.map(o => o.kind === 'fold' ? o.folds : o.kind);
+    if (JSON.stringify(folds(buildSilhouette('classic'))) !== JSON.stringify(folds(base))) errors.push('classic changed the original folds');
+  }
+}
+
 checkTwoSidedRotation(errors);
 
 if (errors.length) {
@@ -165,3 +184,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log('\nall checks passed');
+

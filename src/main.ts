@@ -1,9 +1,11 @@
 import './styles.css';
 import * as THREE from 'three';
-import { buildDress } from './fold/construction';
+import { buildSilhouette, SilhouetteId } from './fold/silhouettes';
+import { buildBowWing } from './fold/bow';
+import { ShapeChoices } from './ui/shapeChoices';
 import { buildJacket } from './fold/jacket';
 import { buildPin } from './fold/pin';
-import { StudioControls, GarmentId, PinPosition } from './ui/studioControls';
+import { StudioControls, GarmentId, PinPosition, AccessoryId } from './ui/studioControls';
 import { buildTimeline, evaluateFrame, Mat34, OpAnim, LAYER_GAP, posePoint } from './fold/timeline';
 import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
@@ -24,10 +26,13 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 // ---- folding data (pure, precomputed once)
 let garmentId: GarmentId = params.get('design') === 'jacket' ? 'jacket' : 'dress';
+let silhouetteId: SilhouetteId = ['straight', 'flare'].includes(params.get('shape') ?? '') ? params.get('shape') as SilhouetteId : 'classic';
+let accessoryId: AccessoryId = 'pin';
+let bowWing = 0;
 let accessoryMode = false;
 let attached = false;
 let pinPosition: PinPosition = 'neckline';
-let construction = garmentId === 'jacket' ? buildJacket() : buildDress();
+let construction = garmentId === 'jacket' ? buildJacket() : buildSilhouette(silhouetteId);
 let timeline = buildTimeline(construction.ops);
 let ops = timeline.ops;
 let lastOp = ops[ops.length - 1];
@@ -61,32 +66,48 @@ stage.modelRoot.add(sheet.group, guides.group);
 const pinFront = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinBack = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinSheet = new SheetView(pinFront, pinBack);
-const pinTimeline = buildTimeline(buildPin().ops);
-const pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
-pinSheet.setAnim(pinFinal);
-pinSheet.pose(evaluateFrame(pinFinal, 1));
-pinSheet.group.scale.setScalar(0.16);
-pinSheet.group.visible = false;
-stage.modelRoot.add(pinSheet.group);
-// Visible outlines follow the actual resting facets, not a decorative drawn cross.
-const seamPoints: number[] = [];
-const pinPose = evaluateFrame(pinFinal, 1);
-for (const p of pinFinal.pieces) {
-  if (pinPose[p.index * 12 + 10] < 0) continue;
-  for (let i = 0; i < p.poly.length; i++) {
-    for (const m of [p.poly[i], p.poly[(i + 1) % p.poly.length]]) {
+let pinTimeline = buildTimeline(buildPin().ops);
+let pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
+const secondWing = new SheetView(pinFront, pinBack);
+const accessoryRoot = new THREE.Group();
+accessoryRoot.add(pinSheet.group, secondWing.group);
+accessoryRoot.visible = false;
+stage.modelRoot.add(accessoryRoot);
+let seamGeometry = new THREE.BufferGeometry();
+const seamMaterial = new THREE.LineBasicMaterial({ color: '#302b26', transparent: true, opacity: 0.3 });
+const attachedSeams = new THREE.LineSegments(seamGeometry, seamMaterial);
+const secondSeams = new THREE.LineSegments(seamGeometry, seamMaterial);
+pinSheet.group.add(attachedSeams);
+secondWing.group.add(secondSeams);
+const studySeams = new THREE.LineSegments(seamGeometry, seamMaterial);
+studySeams.visible = false;
+stage.modelRoot.add(studySeams);
+function prepareAccessory() {
+  pinTimeline = buildTimeline(accessoryId === 'bow' ? buildBowWing().ops : buildPin().ops);
+  pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
+  const pinPose = evaluateFrame(pinFinal, 1);
+  const seamPoints: number[] = [];
+  for (const p of pinFinal.pieces) {
+    if (pinPose[p.index * 12 + 10] < 0) continue;
+    for (let i = 0; i < p.poly.length; i++) for (const m of [p.poly[i], p.poly[(i + 1) % p.poly.length]]) {
       const point = posePoint(pinPose, p.index * 12, m.x, m.y);
       seamPoints.push(point[0], point[1], point[2] + 0.0008);
     }
   }
+  seamGeometry.dispose();
+  seamGeometry = new THREE.BufferGeometry();
+  seamGeometry.setAttribute('position', new THREE.Float32BufferAttribute(seamPoints, 3));
+  attachedSeams.geometry = secondSeams.geometry = studySeams.geometry = seamGeometry;
+  for (const wing of [pinSheet, secondWing]) { wing.setAnim(pinFinal); wing.pose(pinPose); }
+  const bow = accessoryId === 'bow';
+  accessoryRoot.scale.setScalar(bow ? 0.19 : 0.16);
+  secondWing.group.visible = bow;
+  pinSheet.group.rotation.z = bow ? -Math.PI / 4 : 0;
+  pinSheet.group.position.set(bow ? -1.27 : 0, 0, 0);
+  secondWing.group.rotation.z = 3 * Math.PI / 4;
+  secondWing.group.position.set(1.27, 0, 0.012);
 }
-const seamGeometry = new THREE.BufferGeometry();
-seamGeometry.setAttribute('position', new THREE.Float32BufferAttribute(seamPoints, 3));
-const seamMaterial = new THREE.LineBasicMaterial({ color: '#302b26', transparent: true, opacity: 0.3 });
-pinSheet.group.add(new THREE.LineSegments(seamGeometry, seamMaterial));
-const studySeams = new THREE.LineSegments(seamGeometry, seamMaterial);
-studySeams.visible = false;
-stage.modelRoot.add(studySeams);
+prepareAccessory();
 const stand = makeStand();
 stand.setOpacity(0);
 stage.scene.add(stand.group);
@@ -147,7 +168,7 @@ const picker = new PaperPicker(app, PAPERS, {
 const workshopPanel = new WorkshopPanel(app, {
   onBack: () => controller.prev(),
   onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
-  onReset: () => controller.reset(),
+  onReset: () => { cancelDrag(); controller.reset(); },
 });
 
 const displayPanel = new DisplayPanel(app, {
@@ -157,8 +178,10 @@ const displayPanel = new DisplayPanel(app, {
   onReturn: () => leaveDisplay(),
 });
 
+const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseSilhouette);
 function refreshWorkshopPanel() {
-  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition);
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, controller.step > 2 || (controller.step === 2 && controller.moving));
+  shapeChoices.render(silhouetteId, !accessoryMode && garmentId === 'dress' && controller.step === 2 && !controller.moving);
   const a = controller.activeOp;
   const op = a === null ? null : ops[a].op;
   workshopPanel.render({
@@ -166,8 +189,8 @@ function refreshWorkshopPanel() {
     done: controller.step,
     active: a,
     title: op ? op.title : `${construction.name} is folded`,
-    hint: op ? op.hint : accessoryMode ? 'Attach this separate paper pin, or return to the garment without adding it.' : 'Put it on display, or fold a small pin from another paper.',
-    foldLabel: controller.finished ? accessoryMode ? 'Attach pin' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
+    hint: op ? op.hint : accessoryMode ? accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : 'Put it on display, or fold an optional paper accessory.',
+    foldLabel: controller.finished ? accessoryMode ? accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
@@ -179,6 +202,7 @@ function refreshDisplayPanel() {
 const studio = new StudioControls(app, {
   onDesign: changeGarment,
   onEdit: editPin,
+  onRevisit: revisitShape,
   onRemove: () => { attached = false; refreshWorkshopPanel(); layout(); },
   onReturn: returnToGarment,
   onPosition: (p) => { pinPosition = p; refreshWorkshopPanel(); },
@@ -223,13 +247,27 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
 function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
   garmentId = id;
-  replaceConstruction(id === 'jacket' ? buildJacket() : buildDress());
+  replaceConstruction(id === 'jacket' ? buildJacket() : buildSilhouette(silhouetteId));
 }
-function editPin() {
+function chooseSilhouette(id: SilhouetteId) {
+  if (accessoryMode || garmentId !== 'dress' || controller.step !== 2 || controller.moving || id === silhouetteId) return;
+  silhouetteId = id;
+  replaceConstruction(buildSilhouette(id));
+  controller.jumpTo(2);
+  layout();
+}
+function revisitShape() {
+  if (accessoryMode || garmentId !== 'dress') return;
+  cancelDrag();
+  view.jump('workshop'); displayCam.setEnabled(false); displayCam.setTurntable(false);
+  controller.jumpTo(2); layout();
+}
+function editPin(id: AccessoryId) {
   if (accessoryMode || !controller.finished) return;
   savedGarment = { construction, timeline, controller };
+  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; prepareAccessory(); }
   accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns;
-  replaceConstruction(buildPin(), pinTimeline);
+  replaceConstruction(accessoryId === 'bow' ? buildBowWing() : buildPin(), pinTimeline);
   controller.jumpTo(savedPinStep);
 }
 function returnToGarment() {
@@ -243,6 +281,9 @@ function returnToGarment() {
 }
 function finishPin() {
   if (!accessoryMode || !controller.finished) return;
+  if (accessoryId === 'bow' && bowWing === 0) {
+    bowWing = 1; savedPinStep = 0; controller.reset(); refreshWorkshopPanel(); layout(); return;
+  }
   attached = true;
   returnToGarment();
 }
@@ -288,6 +329,7 @@ function layout() {
 }
 new ResizeObserver(layout).observe(app);
 new ResizeObserver(layout).observe(studio.root);
+new ResizeObserver(layout).observe(workshopPanel.dock);
 layout();
 
 window.addEventListener('keydown', (e) => {
@@ -328,10 +370,12 @@ function placePiece() {
 
 function draw() {
   studySeams.visible = accessoryMode && controller.finished;
-  pinSheet.group.visible = attached && !accessoryMode && controller.finished;
+  accessoryRoot.visible = attached && !accessoryMode && controller.finished;
   const top = finished.hi.y, bottom = finished.lo.y;
-  const y = pinPosition === 'neckline' ? top - 0.17 : pinPosition === 'chest' ? top - 0.42 : bottom + (top - bottom) * 0.40;
-  pinSheet.group.position.set(pinPosition === 'chest' ? -0.29 : 0, y, finished.hi.z + 0.014);
+  const chest = pinPosition.startsWith('chest');
+  const y = pinPosition === 'neckline' ? top - 0.17 : chest ? top - 0.42 : bottom + (top - bottom) * 0.40;
+  const x = pinPosition.endsWith('-left') ? -0.25 : pinPosition.endsWith('-right') ? 0.25 : 0;
+  accessoryRoot.position.set(x, y, finished.hi.z + 0.014);
   const pose = controller.pose();
   const anim = ops[pose.op];
   sheet.setAnim(anim);
@@ -448,6 +492,11 @@ Object.assign(window, {
   paperCouture: {
     get controller() { return controller; },
     get timeline() { return timeline; },
+    get silhouetteId() { return silhouetteId; },
+    get accessoryId() { return accessoryId; },
+    get bowWing() { return bowWing; },
+    get pinPosition() { return pinPosition; },
+    accessoryRoot,
     get garmentId() { return garmentId; },
     get accessoryMode() { return accessoryMode; },
     get attached() { return attached; },
@@ -469,3 +518,4 @@ Object.assign(window, {
     },
   },
 });
+
