@@ -68,9 +68,9 @@ const DECISIONS: Record<string, FoldDecision[]> = {
   pleats: [{ id: 'pleatDepth', label: 'Pleat depth', title: 'Choose the pleat depth', before: 'pleats-return', choices: [
     { id: 'shallow', name: 'Shallow' }, { id: 'classic', name: 'Classic' }, { id: 'deep', name: 'Deep' },
   ] }],
-  // Draft (PR #14): the pointed hem joins the length choice (one decision per fold).
+  // Draft (PR #14): the tapered hem (id `pointed`) joins the length choice (one decision per fold).
   vest: [{ id: 'vestLength', label: 'Body length', title: 'Choose the body length and hem', before: 'vest-shorten', choices: [
-    { id: 'short', name: 'Short' }, { id: 'longline', name: 'Longline' }, { id: 'pointed', name: 'Pointed hem' },
+    { id: 'short', name: 'Short' }, { id: 'longline', name: 'Longline' }, { id: 'pointed', name: 'Tapered hem' },
   ] }],
 };
 export function garmentDecisions(id: GarmentId): FoldDecision[] { return DECISIONS[id] ?? []; }

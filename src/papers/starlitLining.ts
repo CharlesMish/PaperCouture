@@ -42,7 +42,7 @@ function star(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, co
 export const starlitLining: PaperDesign = {
   id: 'starlit-lining',
   name: 'Starlit lining',
-  note: 'A quiet dove front; the night sky is on the reverse',
+  note: 'Dove front, night-sky reverse; set for 0°. Try the Back view',
   reverse: NIGHT,
   drawFront(ctx, S) {
     solid(ctx, S, DOVE);

@@ -2,9 +2,11 @@ import { Construction } from './construction';
 import { v2 } from './geometry';
 
 export type VestLength = 'short' | 'longline' | 'pointed';
-/** Draft (PR #14): the pointed hem lifts each lower outer corner of the longline
+/** Draft (PR #14): the tapered hem lifts each lower outer corner of the longline
  * body along a crease from the side seam down to near the front opening, so the
- * hem falls to two points either side of the reveal (a waistcoat hem). */
+ * hem tapers down to the reveal. The backing joins the two low tips, so it reads
+ * as a tapered, blunt V rather than two separate points (Astra's review of PR #14);
+ * the id stays `pointed` so existing URLs keep working. */
 export const VEST_POINTS = { rise: 0.25, run: 0.45 };
 
 /** Gate-fold panels and genuine flap lapels. The apparent opening exposes a
@@ -61,10 +63,10 @@ export function buildLapelVest(length: VestLength = 'short'): Construction {
   }
   if (length === 'pointed') {
     const y = -0.78, { rise, run } = VEST_POINTS;
-    construction.name = 'Lapel vest, pointed hem';
+    construction.name = 'Lapel vest, tapered hem';
     construction.ops.splice(construction.ops.findIndex(op => op.id === 'vest-shorten') + 1, 0, {
-      kind: 'fold', id: 'vest-hem-points', title: 'Fold the hem points',
-      hint: 'Lift both lower outer corners onto this side. The hem now slopes down to two points beside the front opening.',
+      kind: 'fold', id: 'vest-hem-points', title: 'Taper the hem',
+      hint: 'Lift both lower outer corners onto this side. The hem now tapers down to the front opening.',
       folds: [
         { name: 'vest-point-left', a: v2(-0.55, y + rise), b: v2(-0.55 + run, y), moving: v2(-0.55, y), sense: 'valley' },
         { name: 'vest-point-right', a: v2(0.55, y + rise), b: v2(0.55 - run, y), moving: v2(0.55, y), sense: 'valley' },
