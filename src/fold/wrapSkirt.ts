@@ -3,14 +3,24 @@ import { v2 } from './geometry';
 
 export type WrapDirection = 'original' | 'opposite';
 export type WaistbandFinish = 'double' | 'single';
+export type SkirtLength = 'short' | 'classic' | 'long';
+/** Discrete skirt lengths: the first crease (and the matching hem-point fold)
+ * moves up or down. The side, wrap and waistband creases are unchanged, so the
+ * lower edge stays well away from the thick waistband layers. */
+export const SKIRT_LENGTHS: { id: SkirtLength; name: string; y: number; hint: string }[] = [
+  { id: 'short', name: 'Short', y: -0.3, hint: 'Lift a deep lower panel onto the printed face for a short skirt.' },
+  { id: 'classic', name: 'Classic', y: -0.55, hint: 'Lift the bottom edge up onto the printed face. We will turn the whole sheet over next.' },
+  { id: 'long', name: 'Long', y: -0.8, hint: 'Lift only a narrow strip of the lower edge, leaving a long skirt.' },
+];
 export interface WrapSkirtOptions {
   wrap?: WrapDirection;
   band?: WaistbandFinish;
+  length?: SkirtLength;
 }
 
 /** An asymmetric wrap study. Every panel is retained from one square; the
  * wrap faces and doubled waistband carry the print over a reverse backing. */
-export function buildWrapSkirt({ wrap = 'original', band = 'double' }: WrapSkirtOptions = {}): Construction {
+export function buildWrapSkirt({ wrap = 'original', band = 'double', length = 'classic' }: WrapSkirtOptions = {}): Construction {
   const construction: Construction = {
     name: 'Wrap skirt',
     meta: { top: 0.72, shoulderPoint: v2(-0.2, 1), sleeveCutDir: v2(1, 0) },
@@ -66,6 +76,16 @@ export function buildWrapSkirt({ wrap = 'original', band = 'double' }: WrapSkirt
         : 'Bring the narrower left side inward. The two slanted edges overlap near the waist.';
     }
     construction.meta.shoulderPoint = v2(0.2, 1);
+  }
+
+  if (length !== 'classic') {
+    const option = SKIRT_LENGTHS.find(l => l.id === length)!;
+    construction.name = `${option.name} wrap skirt`;
+    for (const op of construction.ops) {
+      if (op.kind !== 'fold' || (op.id !== 'skirt-length' && op.id !== 'skirt-hem')) continue;
+      op.folds = op.folds.map(fold => ({ ...fold, a: v2(fold.a.x, option.y), b: v2(fold.b.x, option.y) }));
+      if (op.id === 'skirt-length') op.hint = option.hint;
+    }
   }
 
   if (band === 'single') {

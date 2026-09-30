@@ -2,7 +2,7 @@ import type { Construction } from './construction';
 import type { GarmentId } from './garments';
 import type { SilhouetteId, SleeveId } from './silhouettes';
 import type { CuffStyle, JacketLength } from './jacket';
-import type { WrapDirection, WaistbandFinish } from './wrapSkirt';
+import type { SkirtLength, WrapDirection, WaistbandFinish } from './wrapSkirt';
 import type { VestLength } from './lapelVest';
 import type { PleatDepth } from './pleatedSkirt';
 
@@ -15,11 +15,12 @@ export interface GarmentOptions {
   vestLength: VestLength;
   pleatDepth: PleatDepth;
   cuffs: CuffStyle;
+  skirtLength: SkirtLength;
 }
 export const DEFAULT_OPTIONS: GarmentOptions = {
   silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
   wrap: 'original', band: 'double', vestLength: 'short',
-  pleatDepth: 'classic', cuffs: 'plain',
+  pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic',
 };
 export type DecisionId = keyof GarmentOptions;
 export interface FoldChoice { id: string; name: string }
@@ -52,6 +53,10 @@ const DECISIONS: Record<string, FoldDecision[]> = {
     ] },
   ],
   skirt: [
+    // Draft (PR #13): the length is the first crease, far from the waistband.
+    { id: 'skirtLength', label: 'Skirt length', title: 'Choose the skirt length', before: 'skirt-length', choices: [
+      { id: 'short', name: 'Short' }, { id: 'classic', name: 'Classic' }, { id: 'long', name: 'Long' },
+    ] },
     { id: 'wrap', label: 'Wrap direction', title: 'Choose the wrap direction', before: 'skirt-wrap-left', choices: [
       { id: 'original', name: 'Original wrap' }, { id: 'opposite', name: 'Opposite wrap' },
     ] },
@@ -85,7 +90,7 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
 }
 export function optionsFromParams(params: URLSearchParams): GarmentOptions {
   let options = { ...DEFAULT_OPTIONS };
-  const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs' };
+  const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength' };
   for (const decisions of Object.values(DECISIONS)) for (const decision of decisions) {
     const value = params.get(keys[decision.id]);
     if (value) options = selectOption(options, decision, value);
