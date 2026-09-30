@@ -5,7 +5,7 @@
 `drafts/papercouture-drafter-astra-followup` applies Astra's review of PR #11; see
 [Astra follow-up](#astra-follow-up). The exploration branch
 `drafts/papercouture-drafter-explore-13` (PR #13) is described in
-[PR #13 exploration](#pr-13-exploration), and PR #14 in [PR #14](#pr-14) at the end. Charles asked for these drafts. Nothing
+[PR #13 exploration](#pr-13-exploration), PR #14 in [PR #14](#pr-14), and PR #15 in [PR #15](#pr-15) at the end. Charles asked for these drafts. Nothing
 here is accepted until he reviews it in the browser. All of it uses the existing fold and turn
 ops, as valley folds with explicit turn-overs. There is no engine change, no painted fold, no
 slider and no new primitive. Every default stays at baseline parity.
@@ -26,7 +26,7 @@ papers below as a separate request, so they are included here as proposals.
 | Paper: Starlit lining (PR #13, reverse-first) | Passes checks, including placement checks for where the reverse lands |
 | Wrap skirt: short / classic / long (PR #13) | Passes checks. Classic matches PR #10 byte for byte |
 | Folded tulip (PR #13, waist anchors) | Passes checks. It shows one face only (the print) |
-| Lapel vest: Short / Longline / Pointed hem (PR #14) | Passes checks. Short and Longline match PR #13 byte for byte |
+| Lapel vest: Short / Longline / Tapered hem (PR #14; named "Pointed hem" until PR #15, id `pointed`) | Passes checks. Short and Longline match PR #13 byte for byte |
 | Paper: Compass lining (PR #14 experiment) | Hidden (URL `?paper=compass-lining` only). Passes the coverage experiment check |
 | Paper coverage report (PR #14) | `scripts/paperCoverage.ts`, report in `coverage/coverage.md` |
 
@@ -325,10 +325,16 @@ One issue comment on PR #13 (review of `81abb15`); no formal reviews and no inli
 | # | Item | Outcome | What I learned |
 | --- | --- | --- | --- |
 | Idea 1 | **Paper coverage report**: the landing map turned into a committed, reproducible report that flags garment fronts with no motif | **Kept** (a report plus a `--check` mode; not part of `npm test`, because it needs Chromium) | The papers are drawn by their own draw functions in headless Chromium (`scripts/paperRaster.ts`, bundled with esbuild), then mapped through `paperLanding.ts` at 128x128 samples. See "Coverage lessons" below |
-| Idea 2 | **Vest pointed hem**, as a third choice of the vest-length decision: Short / Longline / **Pointed hem** | **Kept** | Pointed is the longline body plus one extra valley fold (`vest-hem-points`, right after `vest-shorten`). The fold lifts each lower outer corner along a crease from the side (rise 0.25) down to near the front opening (run 0.45). The hem then falls to two points beside the reveal, like a waistcoat. All tested rise/run pairs pass the gates for both lengths (hinge 0.0385). Putting it inside the length decision avoided #13's "one decision per fold" problem. `check-collection` passes: 31 constructions, 172 transitions, 414 attachment placements with 0 outside the paper, so the tulip and pin waist anchors still fit. Short and Longline are unchanged (fingerprints asserted) |
-| Experiment | **Compass lining**: can a reverse-first paper keep Starlit's placement at *every* turn? Draw the reverse with four-fold rotational symmetry (one quarter drawn four times, rotated 90°; trims mitred at the corners; four-point sparkles, which are symmetric themselves) | **Confirmed; kept as a hidden paper** (`?paper=compass-lining`, not in the swatch row) | A turn rotates both canvases about the sheet centre, so a symmetric reverse lands identically at every turn: the report measures exactly the same drawing at 0/90/180/270°. At 0° it keeps Starlit's front motif (dress 0.031 against 0.031, jacket 0.051/0.051, vest 0.029/0.027, pleats 0.031/0.031) and triples it on the wrap skirt (0.059 against 0.019). Starlit's worst turns fall to 0.003-0.004 on the dress, jacket and pleats. The costs: the reverse is busier (four crescents; the dress back shows all four, the skirt front up to three), and first attempts with plain crossing trims made plaid-like corners on the sleeves and skirt sides, which mitring fixed. The capture share of the reverse ink drops from 0.33 to 0.16, but only because more ink is drawn, so that number does not rank these two |
+| Idea 2 | **Vest pointed hem**, as a third choice of the vest-length decision: Short / Longline / **Pointed hem** | **Kept** | Pointed is the longline body plus one extra valley fold (`vest-hem-points`, right after `vest-shorten`). The fold lifts each lower outer corner along a crease from the side (rise 0.25) down to near the front opening (run 0.45). The hem then falls to two points beside the reveal, like a waistcoat. (PR #15: the backing joins the low tips, so it reads as a tapered, blunt V; the choice is now named **Tapered hem**.) All tested rise/run pairs pass the gates for both lengths (hinge 0.0385). Putting it inside the length decision avoided #13's "one decision per fold" problem. `check-collection` passes: 31 constructions, 172 transitions, 414 attachment placements with 0 outside the paper, so the tulip and pin waist anchors still fit. Short and Longline are unchanged (fingerprints asserted) |
+| Experiment | **Compass lining**: can a reverse-first paper keep Starlit's placement at *every* turn? Draw the reverse with four-fold rotational symmetry (one quarter drawn four times, rotated 90°; trims mitred at the corners; four-point sparkles, which are symmetric themselves) | **Confirmed; kept as a hidden paper** (`?paper=compass-lining`, not in the swatch row) | A turn rotates both canvases about the sheet centre, so a symmetric reverse lands identically at every turn: the report measures exactly the same drawing at 0/90/180/270°. (PR #15: equal totals alone do not prove this, so the check now compares ink per sample as well.) At 0° it keeps Starlit's front motif (dress 0.031 against 0.031, jacket 0.051/0.051, vest 0.029/0.027, pleats 0.031/0.031) and triples it on the wrap skirt (0.059 against 0.019). Starlit's worst turns fall to 0.003-0.004 on the dress, jacket and pleats. The costs: the reverse is busier (four crescents; the dress back shows all four, the skirt front up to three), and first attempts with plain crossing trims made plaid-like corners on the sleeves and skirt sides, which mitring fixed. The capture share of the reverse ink drops from 0.33 to 0.16, but only because more ink is drawn, so that number does not rank these two |
 
 ### Coverage lessons (idea 1)
+
+> **Corrected in PR #15** (Astra's review of PR #14): "no motif" below should read **low
+> visible ink (< 0.5%)**. It is a measurement, not a guarantee that nothing shows: Plum
+> scatter on the classic skirt at 270° keeps two small petal marks at 0.00498. The report
+> covers each garment's **default shape** only. The set constant is now `KNOWN_LOW_INK`. The
+> Compass claim is now checked per sample, not only in total.
 
 - **A "plain front" test is vacuous.** Every garment shows both faces (collars, lapels, the
   skirt's wrap), so the smallest share of any front that differs from its main colour is 0.13.
@@ -394,6 +400,61 @@ Safari or physical paper): `npm run typecheck`, `npm test`, `node --import tsx s
    point?
 4. Should `paperCoverage.ts --check` run in CI? It needs Playwright's Chromium, like the
    browser review.
-5. Midnight orchard and Plum scatter show no motif on the vest (and Plum scatter on the wrap
+5. (PR #15: read "low visible ink" for "no motif"; see [PR #15](#pr-15).) Midnight orchard and Plum scatter show no motif on the vest (and Plum scatter on the wrap
    skirt) at any turn. Is that acceptable for single-motif papers, or should they be adjusted
    in a later round?
+
+## PR #15
+
+Branch `drafts/papercouture-drafter-15`, taken from PR #14's head `8015d59`, targeting
+`feature/geometry-collection-20260930`. It is stacked like #11-#14, so GitHub's diff is
+cumulative; this PR's own commits are `8015d59...` the #15 head. This round applies Astra's
+review of PR #14. There is no engine change, no new fold primitive, no painted fold, no
+slider and no progression system.
+
+**No new ideas this round.** Charles allowed one if it was genuinely strong. I did not have one
+in the proven areas (landing-map papers, small safe choices, accessories on their own
+square) strong enough to justify the extra review, so none was added.
+
+### Astra's review of PR #14
+
+One issue comment on PR #14 (review of `8015d59`); no formal reviews and no inline comments.
+
+| Astra point | Status | What changed |
+| --- | --- | --- |
+| Keep the start-up framing fix, the normal-projection wording, the committed ink helper, the softened "best turn" claim, the tulip step wording, the draft wording and the vest body choice | Kept, no change | - |
+| **P3:** the Display entry endpoint depends on frame timing. The unmodified harness failed (classic skirt entry 4.1874 against 4.1937 default); also present in PR #13. `view.update()` reaches the endpoint before `placePiece()`, whose camera branch skips `inDisplay`. Apply the final pose when the transition completes | **Addressed** | `src/main.ts`: when the view reports that Display is reached, the camera is set to the Display pose (`stage.placeCamera(displayCamPos, target)`) before orbit is enabled, so the end of the tween no longer depends on the last frame's progress. And if the fit changes during the transition (a resize), the Display pose is scaled with it, as `reframe` already does once in Display. Probe before the fix: entry minus default -0.0065 / -0.0008 / -0.0065 on three skirt entries, up to -0.032 on the dress. After: 0 (float noise, about 1e-15) over three round trips for the short, classic and long skirts, the dress and the tapered vest |
+| Acceptance: repeated entry, fresh URL and Reset agree across lengths and resizes, and the harness passes **without widening the tolerance** | **Addressed** (tolerance tightened) | `scripts/check-drafts-review.cjs` now enters Display from the workshop three times per construction and compares each entry, the fresh URL and Reset view at 1e-9 relative (was 1e-3), and prints 6 decimals. It passes: for example, classic skirt fresh 4.193719 = reset 4.193719 = entry x3 4.193719; at 390x844, 7.591948 = 7.591948. Control: the same harness fails on PR #14's `src/main.ts` (short skirt, second workshop entry: camera 3.508320 against default 3.502599; the first entry happened to pass, which is the frame dependence) |
+| **P3:** "no motif" is wrong where a small mark survives (Plum scatter, wrap skirt, 270°: two petal marks, 0.00498). Call it "low visible ink (<0.5%)", and say the report covers default garment shapes only (Midnight orchard on the short skirt stays under the threshold at every turn, max 0.00189) | **Addressed** | `scripts/paperCoverage.ts` and `coverage/coverage.md`: the flag is now **low visible ink (< 0.5%)**, described as a measurement, not "no motif", with Astra's Plum example. The report states that it measures the default shape of each garment only, lists those defaults, and gives the Midnight short-skirt example. The `--check` names and messages match. The numbers are unchanged (`coverage.json` is byte-identical). The PR #14 notes above carry a correction |
+| Add variant rows only if exhaustive coverage is intended | **Declined** (for now) | Exhaustive coverage is not the aim: the report is a diagnostic for the default shapes, and the scope is now stated. Adding variants would multiply the rows (lengths, pleat depths, cuffs, hems) without a decision that needs them. Easy to add later if Charles wants it |
+| Equal ink totals do not prove spatial identity (Compass) | **Addressed** | `paperCoverage.ts --check` now compares Compass's ink **per sample** across the four turns and fails if more than 0.1% of the visible samples change. Result: dress, jacket, vest and pleats 0.00%, wrap skirt 0.03% |
+| Keep Compass hidden; its catalogue status is Charles's call | Kept hidden | Still `?paper=compass-lining` only |
+| Keep Pinstripe, Border and the calmer Starlit, with a brief 0° / Back-view cue | **Partly addressed**; the rest deferred to Charles | Starlit's swatch tooltip now reads "Dove front, night-sky reverse; set for 0°. Try the Back view" (the only change; within the 60-character limit). A visible cue in the panel is a UI addition that depends on Charles cataloguing Starlit, so it was not added |
+| Optional rename: "Tapered hem", since the hem reads as a tapered, blunt V | **Addressed** | The choice button, construction name ("Lapel vest, tapered hem"), step title ("Taper the hem"), hint and checks now say tapered. The ids stay `pointed` and `vest-hem-points`, so `?vestLength=pointed` URLs keep working |
+| The quiet Midnight / Plum results and the parked dress length can stay | Kept, no change | - |
+| Keep coverage opt-in; CI adoption is the owner's choice | Kept opt-in | Deferred to Charles |
+| Validation: all passed except the author harness stopping at framing; no CI entries | Noted | The harness now passes with the stricter tolerance. All results are local runs, not CI |
+
+### Checks
+
+Run on this branch (Node 24.21, headless Chromium with software WebGL; no real phone, Safari
+or physical paper): `npm run typecheck`, `npm test` (31 constructions, 172 transitions, 414
+attachment placements, 0 outside), `node --import tsx scripts/check-drafts.ts`,
+`scripts/paperCoverage.ts --check` (27 low-ink cells at some turn, 3 at every turn; Compass
+per-sample check as above), `npm run build -- --base /play/paper-couture/` and
+`scripts/check-drafts-review.cjs`. All passed.
+
+Updated contact sheet: `vest-pointed-hem.jpg` (same file name; relabelled Tapered hem and
+re-shot with the new step title). `display-framing.jpg` and `compass-lining.jpg` are
+unchanged: the framing fix changes the entry distance by about 0.03 at most, which does not
+show in a screenshot, and nothing about Compass's drawing changed.
+
+### Open questions after PR #15
+
+1. Is **Tapered hem** the right name (ids kept as `pointed`)?
+2. Starlit: is the tooltip cue enough, or do you want a visible 0° / Back-view cue in the
+   panel if Starlit is catalogued?
+3. Compass: keep hidden, offer it, or swap it for Starlit?
+4. Should `paperCoverage.ts --check` run in CI? It needs Playwright's Chromium.
+5. Should the coverage report also cover variant shapes (lengths, pleat depths, hems), or
+   stay on the defaults?
