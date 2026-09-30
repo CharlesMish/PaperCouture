@@ -3,7 +3,7 @@
 // Geometry gates for the parked sailor-collar study, turned cuffs, pleat depths, the
 // neckerchief and folded patch pocket, plus drawing/placement checks for the
 // draft papers. PR #13 exploration adds Starlit lining landing checks, wrap skirt
-// lengths and the folded tulip. Like the other checks, this is not physical-paper or
+// lengths and the folded tulip; PR #14 adds the vest pointed hem. Like the other checks, this is not physical-paper or
 // continuous-collision certification.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -13,7 +13,7 @@ import { buildPleatedSkirt, PLEAT_DEPTHS } from '../src/fold/pleatedSkirt';
 import { buildNeckerchief } from '../src/fold/neckerchief';
 import { buildPocketSquare } from '../src/fold/pocketSquare';
 import { buildSilhouette } from '../src/fold/silhouettes';
-import { buildLapelVest } from '../src/fold/lapelVest';
+import { buildLapelVest, VEST_POINTS } from '../src/fold/lapelVest';
 import { ACCESSORIES, accessoryAnchors } from '../src/fold/accessories';
 import { attachmentAnchors, buildGarment, GARMENTS } from '../src/fold/garments';
 import { Construction } from '../src/fold/construction';
@@ -277,6 +277,31 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   const tips = pts.filter(p => up(p) > 0.85 * height && Math.abs(across(p)) > 0.3);
   assert(tips.some(p => across(p) < 0) && tips.some(p => across(p) > 0), 'two petal tips, one either side');
   for (const g of GARMENTS) assert(accessoryAnchors('tulip', attachmentAnchors(g.id, 1, -1)).length > 0, `${g.id}: the tulip needs a waist position`);
-  console.log(`Folded tulip: ${c.ops.length} steps, ${final.facets.length} facets, ${height.toFixed(2)} x ${width.toFixed(2)} upright; hinge ${worstGap.toFixed(4)}; printed faces; waist positions on every garment.`);
+  console.log(`Folded tulip: ${c.ops.length} steps (1 turn-over, ${c.ops.filter(o => o.kind === 'fold').length} valley folds), ${final.facets.length} facets, ${height.toFixed(2)} x ${width.toFixed(2)} upright; hinge ${worstGap.toFixed(4)}; printed faces; waist positions on every garment.`);
+}
+// --- PR #14: vest pointed hem, folded into the vest-length choice -------------------
+{
+  // Short and Longline are the PR #13 constructions, byte for byte.
+  assert.equal(fingerprint(buildLapelVest('short')), 'b7c4b2da96e9097ee60d6a4136c568a9ba3dbdee148c56d3bc0e28f1711d3218', 'short vest changed');
+  assert.equal(fingerprint(buildLapelVest('longline')), 'b52e78ceaa495b31f9a4901247e3cfe596f98d0247c17ffc2c4b8c6eec9ae1fc', 'longline vest changed');
+  const c = buildLapelVest('pointed');
+  const { final, worstGap } = validate(c);
+  const longline = buildLapelVest('longline');
+  assert.equal(c.ops.length, longline.ops.length + 1, 'the pointed hem is one extra fold');
+  const ids = c.ops.map(op => op.id);
+  assert.equal(ids.indexOf('vest-hem-points'), ids.indexOf('vest-shorten') + 1, 'the points fold right after the length fold');
+  assert.deepEqual(ids.filter(id => id !== 'vest-hem-points'), longline.ops.map(op => op.id), 'otherwise the longline sequence');
+  const op = c.ops.find(o => o.id === 'vest-hem-points');
+  assert(op?.kind === 'fold' && op.folds.every(f => f.sense === 'valley'), 'valley folds only');
+  // far from the neckline and shoulders: every crease stays in the lower body
+  assert(op.folds.every(f => Math.max(f.a.y, f.b.y) < -0.5), 'hem creases stay well below the waist');
+  const hemY = -0.78, pts = final.facets.flatMap(modelPoly);
+  const low = Math.min(...pts.map(p => p.y));
+  assert(Math.abs(low - hemY) < 1e-9, `the points reach the longline hem (${low})`);
+  const pointX = Math.max(...pts.filter(p => Math.abs(p.y - hemY) < 1e-9).map(p => Math.abs(p.x)));
+  assert(pointX <= 0.55 - VEST_POINTS.run + 1e-9, `the lowest hem sits beside the front opening (|x| ${pointX.toFixed(2)})`);
+  const sideLow = Math.min(...pts.filter(p => Math.abs(p.x) > 0.55 - 1e-6).map(p => p.y));
+  assert(sideLow >= hemY + VEST_POINTS.rise - 1e-9, `the side seams are lifted by the points (${sideLow.toFixed(2)})`);
+  console.log(`Vest pointed hem: ${c.ops.length} steps (longline + 1 valley fold), hinge ${worstGap.toFixed(4)}; points at |x| <= ${pointX.toFixed(2)} on the hem, sides raised to ${sideLow.toFixed(2)}; short/longline match PR #13.`);
 }
 console.log('Draft checks passed.');

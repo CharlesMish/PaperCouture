@@ -290,7 +290,83 @@ const errors = [];
     await p.getByLabel('Accessory type').selectOption('tulip');
     await p.getByRole('button', { name: 'Fold accessory', exact: true }).click();
     for (let i = 0; i < 4; i++) { await fold(); await capture(`tulip-studio-step-${i + 1}`); }
-    checks.push(`folded tulip: 4 folds in the studio; waist positions ${tulip.join('; ')}`);
+    checks.push(`folded tulip: 4 steps in the studio (1 turn-over, 3 valley folds); waist positions ${tulip.join('; ')}`);
+    // 11. Display framing (Astra review of PR #13, P3): a fresh finished-garment
+    // URL must open at the same camera distance that Reset view uses, and keep it
+    // through ordinary workshop entry and resizing, for all three skirt lengths.
+    const distance = () => p.evaluate(() => ({ at: paperCouture.stage.camera.position.distanceTo(paperCouture.displayCam.target), fit: paperCouture.displayCam.defaultDistance() }));
+    const same = (d, what) => assert(Math.abs(d.at - d.fit) < 1e-3 * d.fit, `${what}: camera ${d.at.toFixed(4)} vs default ${d.fit.toFixed(4)}`);
+    const framing = [];
+    for (const [query, steps] of [['?design=skirt&paper=tidal-bands&skirtLength=short', 9], ['?design=skirt&paper=tidal-bands', 9], ['?design=skirt&paper=tidal-bands&skirtLength=long', 9], ['?design=vest&paper=border-print&vestLength=pointed', 9], ['?design=dress&paper=tidal-bands', 6]]) {
+      await open(`${query}&step=${steps}&view=display`, steps);
+      await settle(); await p.waitForTimeout(300);
+      const fresh = await distance(); same(fresh, `${query} fresh URL`);
+      await p.getByRole('button', { name: 'Reset view', exact: true }).click(); await settle(); await p.waitForTimeout(200);
+      const reset = await distance(); same(reset, `${query} after Reset view`);
+      assert(Math.abs(fresh.at - reset.at) < 1e-3 * reset.at, `${query}: fresh ${fresh.at} vs reset ${reset.at}`);
+      // ordinary workshop entry: open the finished fold in the workshop, then Display
+      await p.goto(root + `${query}&step=${steps}`); await p.waitForFunction(() => window.paperCouture);
+      await p.getByRole('button', { name: 'Display', exact: true }).click();
+      await p.waitForFunction(() => paperCouture.view.inDisplay); await settle(); await p.waitForTimeout(200);
+      const entered = await distance(); same(entered, `${query} workshop entry`);
+      // resizing keeps the default framing
+      await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(400);
+      const phone = await distance(); same(phone, `${query} at 390x844`);
+      await p.setViewportSize({ width: 1280, height: 800 }); await p.waitForTimeout(400);
+      const desk = await distance(); same(desk, `${query} back at 1280x800`);
+      framing.push(`${query.replace('?design=', '')}: fresh ${fresh.at.toFixed(3)} = reset ${reset.at.toFixed(3)} = entry ${entered.at.toFixed(3)}; 390x844 ${phone.at.toFixed(3)}/${phone.fit.toFixed(3)}`);
+    }
+    await p.goto(root + '?design=skirt&paper=tidal-bands&skirtLength=long&step=9&view=display'); await p.waitForFunction(() => window.paperCouture); await settle();
+    await capture('framing-skirt-long-fresh');
+    checks.push('display framing: ' + framing.join('; '));
+    // 12. Vest pointed hem (PR #14): a third choice at the vest-length fold.
+    await p.goto(root + '?design=vest&paper=border-print');
+    await p.waitForFunction(() => window.paperCouture);
+    const vestDecision = await p.evaluate(() => paperCouture.timeline.ops.findIndex(o => o.op.id === 'vest-shorten'));
+    for (let i = 0; i < vestDecision; i++) await fold();
+    const vestChoice = await p.locator('.shape-choices').evaluate(f => ({
+      legend: f.querySelector('legend').textContent,
+      names: Array.from(f.querySelectorAll('button')).map(b => b.getAttribute('aria-label')),
+      overflow: f.scrollWidth > f.clientWidth + 1,
+    }));
+    assert.deepEqual(vestChoice.names, ['Short', 'Longline', 'Pointed hem']);
+    assert(!vestChoice.overflow, 'vest choices overflow at 1280x800');
+    await p.screenshot({ path: `${output}/vest-hem-choice.png` });
+    await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(200);
+    assert(!await p.locator('.shape-choices').evaluate(f => f.scrollWidth > f.clientWidth + 1 || document.documentElement.scrollWidth > window.innerWidth), 'vest choices overflow at 390x844');
+    await p.screenshot({ path: `${output}/vest-hem-choice-390.png` });
+    await p.setViewportSize({ width: 1280, height: 800 });
+    await p.getByRole('button', { name: 'Pointed hem', exact: true }).click();
+    await p.waitForFunction(() => paperCouture.options.vestLength === 'pointed');
+    assert.equal(await step(), vestDecision, 'choosing the hem keeps the completed folds');
+    assert.equal(await p.evaluate(() => paperCouture.timeline.ops.length), 9, 'the pointed hem adds one fold');
+    await fold();
+    assert.equal(await p.evaluate(() => paperCouture.timeline.ops[paperCouture.controller.step].op.id), 'vest-hem-points');
+    await p.screenshot({ path: `${output}/vest-hem-points-step.png` });
+    await finish();
+    await p.getByRole('button', { name: 'Display', exact: true }).click();
+    await p.waitForFunction(() => paperCouture.view.inDisplay);
+    await capture('vest-hem-pointed-ui');
+    for (const [length, n] of [['short', 8], ['longline', 8], ['pointed', 9]]) {
+      await open(`?design=vest&paper=border-print&vestLength=${length}&step=${n}&view=display`, n);
+      await capture(`vest-${length}`);
+      if (length === 'pointed') { await preset('Back'); await capture('vest-pointed-back'); }
+    }
+    await open('?design=vest&paper=pinstripe-lining&vestLength=pointed&step=9&view=display', 9); await capture('vest-pointed-pinstripe');
+    checks.push(`vest hem: legend ${JSON.stringify(vestChoice.legend)}, choices ${JSON.stringify(vestChoice.names)} at step ${vestDecision}, no overflow at 1280x800 or 390x844; Pointed hem chosen through the UI keeps the completed folds and adds the hem-points fold (9 steps)`);
+    // 13. Compass lining (PR #14 experiment, hidden paper): the same drawing at every turn.
+    for (const [garment, n] of [['dress', 6], ['jacket', 6], ['skirt', 9], ['vest', 8], ['pleats', await finished('?design=pleats&paper=compass-lining')]]) {
+      for (const turn of [0, 1]) {
+        await open(`?design=${garment}&paper=compass-lining&turn=${turn}&step=${n}&view=display`, n);
+        assert.equal(await p.evaluate(() => paperCouture.quarterTurns), turn);
+        await capture(`compass-${garment}-turn${turn}`);
+      }
+    }
+    await open('?design=dress&paper=compass-lining&turn=2&step=6&view=display', 6); await preset('Back'); await capture('compass-dress-back-turn2');
+    await open('?design=dress&paper=starlit-lining&turn=2&step=6&view=display', 6); await capture('starlit-dress-turn2'); await preset('Back'); await capture('starlit-dress-back-turn2');
+    const swatches = await p.evaluate(() => Array.from(document.querySelectorAll('[aria-label], [title]')).map(x => x.getAttribute('aria-label') || x.getAttribute('title')).filter(x => /Compass/.test(x || '')));
+    assert.deepEqual(swatches, [], 'Compass lining stays out of the swatch row (hidden, URL only)');
+    checks.push('Compass lining (hidden): five garments at turns 0 and 1, dress back at turn 2; not in the swatch row. Starlit at turn 2 captured for comparison');
     assert.deepEqual(errors, []);
     fs.writeFileSync(`${output}/browser-result.json`, JSON.stringify({ passed: true, engine: 'Headless Chromium; software WebGL', checks, errors, note: 'Browser review only; not a real-phone check.' }, null, 2));
     console.log('Draft browser review passed'); checks.forEach(c => console.log(' - ' + c));

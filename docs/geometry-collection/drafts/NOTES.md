@@ -5,7 +5,7 @@
 `drafts/papercouture-drafter-astra-followup` applies Astra's review of PR #11; see
 [Astra follow-up](#astra-follow-up). The exploration branch
 `drafts/papercouture-drafter-explore-13` (PR #13) is described in
-[PR #13 exploration](#pr-13-exploration) at the end. Charles asked for these drafts. Nothing
+[PR #13 exploration](#pr-13-exploration), and PR #14 in [PR #14](#pr-14) at the end. Charles asked for these drafts. Nothing
 here is accepted until he reviews it in the browser. All of it uses the existing fold and turn
 ops, as valley folds with explicit turn-overs. There is no engine change, no painted fold, no
 slider and no new primitive. Every default stays at baseline parity.
@@ -26,6 +26,9 @@ papers below as a separate request, so they are included here as proposals.
 | Paper: Starlit lining (PR #13, reverse-first) | Passes checks, including placement checks for where the reverse lands |
 | Wrap skirt: short / classic / long (PR #13) | Passes checks. Classic matches PR #10 byte for byte |
 | Folded tulip (PR #13, waist anchors) | Passes checks. It shows one face only (the print) |
+| Lapel vest: Short / Longline / Pointed hem (PR #14) | Passes checks. Short and Longline match PR #13 byte for byte |
+| Paper: Compass lining (PR #14 experiment) | Hidden (URL `?paper=compass-lining` only). Passes the coverage experiment check |
+| Paper coverage report (PR #14) | `scripts/paperCoverage.ts`, report in `coverage/coverage.md` |
 
 ## Papers
 
@@ -215,26 +218,29 @@ and no inline comments.
   `landingMaps.py` draws them as `landing-maps.png`.
 - For each paper and turn, the "capture" metric is the share of each face's ink that reaches
   the Front view. It came from a box-only helper (it rasterizes the real paper drawings in
-  Chromium) and is not committed. The numbers are quoted below.
+  Chromium) and is not committed. The numbers quoted below are **provisional**. PR #14
+  commits the measurement as `scripts/paperCoverage.ts`, and its report replaces them
+  (`coverage/coverage.md`). Both landing tools are flat normal-projection diagnostics, not
+  exact Display-camera visibility (see PR #14).
 
 ### Hypotheses
 
 | # | Hypothesis | Outcome | What I learned |
 | --- | --- | --- | --- |
-| H1 | A **reverse-first** paper, designed from the landing maps: the reverse is the star and the front is quiet | **Kept (shipped)**: *Starlit lining* | At turn 0 the reverse shows in four predictable places: the top band (dress and jacket collar and sleeve tops, the pleats waistband, the vest lapel tips), a centre column (the vest front opening, the dress back, the pleats back), the wrap-skirt front triangle and the dress back. Every drawn feature is put in one of these. 48-50% of the reverse ink reaches the Front view on the dress and jacket. Averaged over all five garments at 0°, Starlit scores 0.34, against 0.29 for Reverse garden and 0.21 for Ink reverse. Border print scores 0.53, but its only reverse drawing is the small collar rule. The design is turn-specific: the average falls to 0.09-0.10 at the other turns |
+| H1 | A **reverse-first** paper, designed from the landing maps: the reverse is the star and the front is quiet | **Kept (in this draft)**: *Starlit lining* | At turn 0 the reverse shows in four predictable places: the top band (dress and jacket collar and sleeve tops, the pleats waistband, the vest lapel tips), a centre column (the vest front opening, the dress back, the pleats back), the wrap-skirt front triangle and the dress back. Every drawn feature is put in one of these. 48-50% of the reverse ink reaches the Front view on the dress and jacket. Averaged over all five garments at 0°, Starlit scores 0.34, against 0.29 for Reverse garden and 0.21 for Ink reverse. Border print scores 0.53, but its only reverse drawing is the small collar rule. The design is turn-specific: the average falls to 0.09-0.10 at the other turns |
 | H2 | One motif that a **quarter turn** moves from the dress hem to the jacket chest | **Confirmed, with an existing paper** (finding; no new paper) | A quarter turn hardly does it: at 90° or 270° only about 2% of the canvas is both on the dress hem (turn 0) and on the jacket chest. A half turn works for one compact region: cols 0.28-0.72, rows 0.69-0.81 (about 5-6% of the sheet). Border print's hem band already sits there. At 0° it is the dress hem, and at 180° it lands across the jacket chest (`h2-border-print-turn.jpg`). A second paper would duplicate it |
-| H3 | A small **paper-level recommended turn**, without a progression system | **Disproved** as one hint per paper (finding only) | The capture metric matches the known rankings (Corner bloom best at 270° on the dress; Falling chevrons at 0°). But where the turn matters, the best turn depends on the garment. Corner bloom is best at 270° on the dress, 90° on the jacket and 180° on the skirt. Reverse garden is best at 0° on the dress and 180° on the skirt. The all-over repeats (lattice, seed dashes, checks, pinstripe) are flat across turns. A hint would have to be per paper and per garment, so none was added |
-| H4a | **Wrap-skirt length**: Short / Classic / Long | **Kept (shipped)** | This is the first skirt decision, at the length crease, far from the waistband. The `skirt-length` and `skirt-hem` creases move together (y -0.30 / -0.55 / -0.80). Heights are 1.02 / 1.27 / 1.52. All 3 lengths x 2 wraps x 2 bands pass the gates, with a worst hinge of 0.0385. Classic is unchanged from PR #10 (fingerprint asserted). The long skirt also shows more of Border print's band |
+| H3 | A small **paper-level recommended turn**, without a progression system | **Not supported by ink coverage** for one hint per paper (finding only; wording corrected in PR #14) | The capture metric matches the known rankings (Corner bloom best at 270° on the dress; Falling chevrons at 0°). But where the turn matters, the best turn depends on the garment. Corner bloom is best at 270° on the dress, 90° on the jacket and 180° on the skirt. Reverse garden is best at 0° on the dress and 180° on the skirt. The all-over repeats (lattice, seed dashes, checks, pinstripe) are flat across turns. A hint would have to be per paper and per garment, so none was added |
+| H4a | **Wrap-skirt length**: Short / Classic / Long | **Kept (in this draft)** | This is the first skirt decision, at the length crease, far from the waistband. The `skirt-length` and `skirt-hem` creases move together (y -0.30 / -0.55 / -0.80). Heights are 1.02 / 1.27 / 1.52. All 3 lengths x 2 wraps x 2 bands pass the gates, with a worst hinge of 0.0385. Classic is unchanged from PR #10 (fingerprint asserted). The long skirt also shows more of Border print's band |
 | H4b | **Vest pointed / cutaway hem** | **Parked** | The corner folds pass the gates (hinge 0.0385). But the natural place for them is after `vest-shorten`, which already holds the vest-length decision (one decision per fold). Adding it would also move the reveal turn, which shifts the decision indices. It needs a combined length-and-hem decision or three more steps. I held it back to keep scope down |
 | H4c | **Dress length** (hem crease y -0.6 / -0.7 / -0.8) | **Parked** (passes the gates) | All 9 silhouette x sleeve combinations pass. I did not ship it: it would be the third dress decision, and it folds away part of Border print's hem band, the placement that paper is designed around |
-| H5 | A **folded tulip** from its own square, valley folds only, at the waist anchors | **Kept (shipped)** | 4 steps: turn over, fold in half along the diagonal, then two petal folds at 33° from the centre line. It gives a three-point tulip and is placed at `waist-left` / `waist` / `waist-right` on all five garments (the vest has only left and right). The angle only works from 30° to 36°. Below that, the second petal catches the first; at 29° the facets split. The tulip needed a per-accessory `lift` so it sits below the skirt and pleats waistband edges. Without it, 45 placements were outside the paper |
+| H5 | A **folded tulip** from its own square, valley folds only, at the waist anchors | **Kept (in this draft)** | 4 steps (one turn-over and three valley folds): turn over, fold in half along the diagonal, then two petal folds at 33° from the centre line. It gives a three-point tulip and is placed at `waist-left` / `waist` / `waist-right` on all five garments (the vest has only left and right). The angle only works from 30° to 36°. Below that, the second petal catches the first; at 29° the facets split. The tulip needed a per-accessory `lift` so it sits below the skirt and pleats waistband edges. Without it, 45 placements were outside the paper |
 
 Negative results that are worth keeping:
 
 - **Tulip, first version.** Petal folds hinged at the right-angle corner gave long, thin
   "arrow" petals. They were rejected by eye before any checks.
 - **Two-tone tulip.** Folding only the top layer of each petal, so that the reverse shows,
-  tears: the crease crosses the joined diagonal edge. The shipped tulip is **one face (the
+  tears: the crease crosses the joined diagonal edge. The drafted tulip is **one face (the
   print)**. A two-tone flower needs a different base, not a partial fold.
 - **Single-motif papers barely reach the skirt and vest fronts.** For example, Corner bloom
   on the skirt at 0° shows 0.00 of its motif. Such papers suit the dress and jacket.
@@ -286,3 +292,108 @@ Safari or physical paper): `npm run typecheck`, `npm test`, `node --import tsx s
 4. Is a per-garment "try this turn" hint wanted at all? The data supports only per paper and
    garment, and I have not built it.
 5. Catalogue scope: Pinstripe, Border print and Starlit are all proposals. Keep which ones?
+
+## PR #14
+
+Branch `drafts/papercouture-drafter-14`, taken from PR #13's head `81abb15`, targeting
+`feature/geometry-collection-20260930`. It is stacked like #11-#13, so GitHub's diff is
+cumulative; this PR's own commits are `81abb15...` the #14 head. "Kept" / "in this draft"
+means included in this open draft PR, not released.
+
+There is no engine change, no new fold primitive, no painted fold, no slider and no
+progression system. There is no new garment and no fold near the neckline or shoulders.
+
+### Astra's review of PR #13
+
+One issue comment on PR #13 (review of `81abb15`); no formal reviews and no inline comments.
+
+| Astra point | Status | What changed |
+| --- | --- | --- |
+| Keep the re-selection fix, the qualified cuff wording, the sailor parked, the discrete skirt lengths | Kept, no change | - |
+| **P3:** a fresh finished-skirt URL (`?design=skirt&paper=tidal-bands&step=9&view=display`) opened at camera distance 4.84, but Reset view gives 4.19. Resolve the final insets before seeding the camera | **Addressed** | Reproduced here as 4.80 against 4.19 (long skirt: 5.59 against 4.88; the dress also started at 5.52 against 5.66, the older inconsistency). Cause: the start-up code in `src/main.ts` computed the front view **before** `view.jump('display')`, so the distance came from the workshop dock measured at step 0 (now taller, with the skirt-length choice). The jump re-runs `layout()` with the display panel's insets, so the fix switches first and then seeds the camera. New browser check, for short/classic/long skirts, the pointed vest and the dress: the fresh URL, Reset view and ordinary workshop entry (finished fold, then Display) all give the default distance, which is kept after resizing to 390x844 and back. Before and after: `display-framing.jpg` |
+| Landing tool: label it a flat normal-projection diagnostic, not an exact Display-camera oracle | **Addressed** | Stated in `scripts/paperLanding.ts`, in the #13 notes and in the coverage report, with Astra's verification numbers and the tilted-preset example |
+| The ink-capture numbers use an uncommitted helper: commit it or keep them provisional | **Addressed** | Committed as `scripts/paperCoverage.ts` (idea 1 below). The #13 numbers are marked provisional; the committed report replaces them. They agree within a few hundredths (for example Starlit's reverse ink at 0°: 0.34 provisional, 0.33 committed) |
+| Ink coverage does not establish the best turn, nor disprove all per-paper hints | **Addressed** | #13's H3 now reads "not supported by ink coverage" instead of "disproved", and the report says coverage is not a judgement of which turn looks best |
+| Owner recommendations: keep Pinstripe and Border; keep Starlit as an optional 0° paper with a short alignment/Back-view cue if it is selected; keep rotation | **Deferred to Charles** (no change) | The cue depends on Charles selecting Starlit for the catalogue, so I did not add one. The Compass experiment below is an alternative that works at every turn and needs no cue. Noted: Starlit at 180° gives the dress back a hem trim |
+| Tulip: one face is fine; it has **four steps: one turn-over and three valley folds**, not four folds | **Addressed** (wording) | The #13 notes, the `check-drafts.ts` output and the browser-review line now say "4 steps (1 turn-over, 3 valley folds)" |
+| Keeping the vest hem and dress length parked, and no generic turn hint, are useful outcomes | Partly superseded | Charles asked this round for the vest pointed hem combined with the length choice, so it is idea 2. Dress length stays parked, and there is still no turn hint |
+| "Shipped" means included in the open draft | **Addressed** (wording) | #13's "Kept (shipped)" now reads "Kept (in this draft)" |
+| No CI status or workflow entries | Noted | All results here are local runs, not CI |
+
+### Ideas and experiment
+
+| # | Item | Outcome | What I learned |
+| --- | --- | --- | --- |
+| Idea 1 | **Paper coverage report**: the landing map turned into a committed, reproducible report that flags garment fronts with no motif | **Kept** (a report plus a `--check` mode; not part of `npm test`, because it needs Chromium) | The papers are drawn by their own draw functions in headless Chromium (`scripts/paperRaster.ts`, bundled with esbuild), then mapped through `paperLanding.ts` at 128x128 samples. See "Coverage lessons" below |
+| Idea 2 | **Vest pointed hem**, as a third choice of the vest-length decision: Short / Longline / **Pointed hem** | **Kept** | Pointed is the longline body plus one extra valley fold (`vest-hem-points`, right after `vest-shorten`). The fold lifts each lower outer corner along a crease from the side (rise 0.25) down to near the front opening (run 0.45). The hem then falls to two points beside the reveal, like a waistcoat. All tested rise/run pairs pass the gates for both lengths (hinge 0.0385). Putting it inside the length decision avoided #13's "one decision per fold" problem. `check-collection` passes: 31 constructions, 172 transitions, 414 attachment placements with 0 outside the paper, so the tulip and pin waist anchors still fit. Short and Longline are unchanged (fingerprints asserted) |
+| Experiment | **Compass lining**: can a reverse-first paper keep Starlit's placement at *every* turn? Draw the reverse with four-fold rotational symmetry (one quarter drawn four times, rotated 90°; trims mitred at the corners; four-point sparkles, which are symmetric themselves) | **Confirmed; kept as a hidden paper** (`?paper=compass-lining`, not in the swatch row) | A turn rotates both canvases about the sheet centre, so a symmetric reverse lands identically at every turn: the report measures exactly the same drawing at 0/90/180/270°. At 0° it keeps Starlit's front motif (dress 0.031 against 0.031, jacket 0.051/0.051, vest 0.029/0.027, pleats 0.031/0.031) and triples it on the wrap skirt (0.059 against 0.019). Starlit's worst turns fall to 0.003-0.004 on the dress, jacket and pleats. The costs: the reverse is busier (four crescents; the dress back shows all four, the skirt front up to three), and first attempts with plain crossing trims made plaid-like corners on the sleeves and skirt sides, which mitring fixed. The capture share of the reverse ink drops from 0.33 to 0.16, but only because more ink is drawn, so that number does not rank these two |
+
+### Coverage lessons (idea 1)
+
+- **A "plain front" test is vacuous.** Every garment shows both faces (collars, lapels, the
+  skirt's wrap), so the smallest share of any front that differs from its main colour is 0.13.
+  No paper can leave a garment front plain, and the check says so.
+- **The useful flag is "no motif"**: the front shows at most a fleck of either face's
+  drawing (under 0.005 of its area). I set the threshold against 16 screenshots. At 0.006 and
+  above a small but real motif showed (a Reverse garden sprig, an Open stems leaf, Ink
+  reverse's line). At 0.003 and below there was nothing, or one star. Starlit's dress at 180°
+  (0.003) shows one star on the collar.
+- **No motif at any turn:** Midnight orchard on the vest, and Plum scatter on the wrap skirt
+  and the vest. These single-motif papers put their motif where the vest folds (and the skirt
+  wrap) hide it. `--check` records this set (`KNOWN_NO_MOTIF`) and fails if it changes, so a
+  new or edited paper gets noticed. 27 paper/garment/turn cells show no motif at some turn;
+  most are single-motif papers on the skirt or vest, and Starlit away from 0°.
+- **Two measurement bugs, found by the Compass experiment:**
+  - Sampling a 256px canvas at 128 samples put every sample exactly on a pixel edge, so a
+    quarter turn shifted thin features by a pixel. The symmetric paper measured 0.037 at 0°
+    against 0.048 at 90°.
+  - Point sampling also aliased regular thin repeats: at one raster size every Seed dash was
+    missed.
+  - The report now uses a 384px canvas (an odd multiple of the sample grid) and averages ink
+    over each sample's pixel block. The symmetric paper now measures equal at every turn,
+    within 0.001.
+- The report is a flat normal-projection diagnostic like the landing tool, and coverage is
+  not taste: it says where drawing lands, not which turn looks best.
+
+### Checks
+
+`check-drafts.ts` adds the pointed-hem gates and structure:
+
+- one extra valley fold after the length fold, otherwise the longline sequence;
+- creases below the waist;
+- the lowest hem beside the opening, with the sides raised by the rise;
+- Short and Longline fingerprints.
+
+The tulip line now reports its turn-over and folds. `check.ts` adds the pointed vest.
+`paperCoverage.ts --check` covers the no-motif set and the Compass experiment (the same
+drawing at every turn, and at least 90% of Starlit at 0° on every garment).
+
+The browser review adds:
+
+- the display-framing case (5 constructions: fresh URL, Reset view, workshop entry,
+  390x844 and back);
+- the vest hem choice at 1280x800 and 390x844, chosen and folded through the UI;
+- Compass on all five garments at turns 0 and 1, and the dress back at turn 2;
+- Starlit at turn 2 for comparison.
+
+New contact sheets: `display-framing.jpg`, `vest-pointed-hem.jpg` and `compass-lining.jpg`.
+The report is in `coverage/coverage.md` (data in `coverage/coverage.json`).
+
+Checks run on this branch (Node 24.21, headless Chromium with software WebGL; no real phone,
+Safari or physical paper): `npm run typecheck`, `npm test`, `node --import tsx scripts/check-drafts.ts`,
+`scripts/paperCoverage.ts --check`, `npm run build -- --base /play/paper-couture/` and
+`scripts/check-drafts-review.cjs`. All passed. As a control, the probe on PR #13's
+`src/main.ts` gave 4.80 (fresh) against 4.19 (reset) for the skirt URL.
+
+### Open questions after PR #14
+
+1. Compass or Starlit? Compass works at every turn but is busier (four crescents). Keep
+   Starlit, swap it for Compass, offer both, or leave Compass hidden?
+2. If Starlit stays and is catalogued, do you want Astra's short alignment/Back-view cue?
+3. Vest: is "Pointed hem" the right name, and is rise 0.25 / run 0.45 the right amount of
+   point?
+4. Should `paperCoverage.ts --check` run in CI? It needs Playwright's Chromium, like the
+   browser review.
+5. Midnight orchard and Plum scatter show no motif on the vest (and Plum scatter on the wrap
+   skirt) at any turn. Is that acceptable for single-motif papers, or should they be adjusted
+   in a later round?

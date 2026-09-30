@@ -32,7 +32,9 @@ for (const construction of [buildDress(), buildSilhouette('straight'), buildSilh
   // Drafts (docs/geometry-collection/drafts/NOTES.md)
   buildJacket(undefined, 'turned'), buildSailorTop() /* parked study */, buildNeckerchief(), buildPocketSquare(),
   // PR #13 exploration
-  buildTulip(), buildWrapSkirt({ length: 'short' }), buildWrapSkirt({ length: 'long' })]) {
+  buildTulip(), buildWrapSkirt({ length: 'short' }), buildWrapSkirt({ length: 'long' }),
+  // PR #14
+  buildLapelVest('pointed')]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
