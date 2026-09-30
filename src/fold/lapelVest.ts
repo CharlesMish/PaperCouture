@@ -1,7 +1,11 @@
 import { Construction } from './construction';
 import { v2 } from './geometry';
 
-export type VestLength = 'short' | 'longline';
+export type VestLength = 'short' | 'longline' | 'pointed';
+/** Draft (PR #14): the pointed hem lifts each lower outer corner of the longline
+ * body along a crease from the side seam down to near the front opening, so the
+ * hem falls to two points either side of the reveal (a waistcoat hem). */
+export const VEST_POINTS = { rise: 0.25, run: 0.45 };
 
 /** Gate-fold panels and genuine flap lapels. The apparent opening exposes a
  * continuous backing layer, rather than a cut hole or a hollow garment. */
@@ -46,7 +50,7 @@ export function buildLapelVest(length: VestLength = 'short'): Construction {
       { kind: 'turn', id: 'vest-front', title: 'Reveal the lapels', hint: 'Turn back to the printed panels. The smaller lapels leave broad shoulders on either side.' },
     ],
   };
-  if (length === 'longline') {
+  if (length === 'longline' || length === 'pointed') {
     const hem = construction.ops.find(op => op.id === 'vest-shorten');
     if (hem?.kind === 'fold') {
       hem.title = 'Finish the longline body';
@@ -54,6 +58,18 @@ export function buildLapelVest(length: VestLength = 'short'): Construction {
       hem.folds[0].a.y = -0.78;
       hem.folds[0].b.y = -0.78;
     }
+  }
+  if (length === 'pointed') {
+    const y = -0.78, { rise, run } = VEST_POINTS;
+    construction.name = 'Lapel vest, pointed hem';
+    construction.ops.splice(construction.ops.findIndex(op => op.id === 'vest-shorten') + 1, 0, {
+      kind: 'fold', id: 'vest-hem-points', title: 'Fold the hem points',
+      hint: 'Lift both lower outer corners onto this side. The hem now slopes down to two points beside the front opening.',
+      folds: [
+        { name: 'vest-point-left', a: v2(-0.55, y + rise), b: v2(-0.55 + run, y), moving: v2(-0.55, y), sense: 'valley' },
+        { name: 'vest-point-right', a: v2(0.55, y + rise), b: v2(0.55 - run, y), moving: v2(0.55, y), sense: 'valley' },
+      ],
+    });
   }
   return construction;
 }
