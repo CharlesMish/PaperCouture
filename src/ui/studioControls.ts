@@ -25,6 +25,9 @@ export class StudioControls {
    * has no place for it. It is restored when it becomes available again, unless
    * the user has deliberately picked another accessory in the meantime. */
   private displaced: AccessoryId | null = null;
+  /** The folded accessory and whether it is attached, from the last render, so
+   * a selection change can label the action without waiting for a re-render. */
+  private kept: { id: AccessoryId; attached: boolean } = { id: 'pin', attached: false };
   constructor(parent: HTMLElement, h: {
     onDesign(id: GarmentId): void; onEdit(id: AccessoryId): void; onRemove(): void;
     onReturn(): void; onPosition(position: PinPosition): void; onRevisit(id: DecisionId): void;
@@ -43,7 +46,7 @@ export class StudioControls {
     this.accessoryLabel.append(this.accessory);
     for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
-    this.accessory.onchange = () => { this.displaced = null; this.edit.textContent = 'Fold accessory'; };
+    this.accessory.onchange = () => { this.displaced = null; this.edit.textContent = this.actionLabel(); };
     this.remove.textContent = 'Remove accessory'; this.remove.onclick = h.onRemove;
     this.returnButton.textContent = 'Back to garment'; this.returnButton.onclick = h.onReturn;
     this.revisitLabel.textContent = 'Revisit ';
@@ -83,7 +86,8 @@ export class StudioControls {
       this.accessory.value = available[0];
     }
     this.design.value = id; this.design.disabled = accessoryMode;
-    this.edit.textContent = attached && this.accessory.value === activeAccessory ? 'Edit accessory' : 'Fold accessory';
+    this.kept = { id: activeAccessory, attached };
+    this.edit.textContent = this.actionLabel();
     this.edit.hidden = accessoryMode || !finished; this.edit.disabled = !finished;
     this.accessoryLabel.hidden = accessoryMode || !finished;
     this.remove.hidden = accessoryMode || !attached || !finished;
@@ -106,6 +110,10 @@ export class StudioControls {
     const accessoryName = ACCESSORIES.find(a => a.id === activeAccessory)!.name;
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
       : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
+  }
+  /** Edit reopens the attached piece with its progress; Fold starts a new square of another type. */
+  private actionLabel(): string {
+    return this.kept.attached && this.accessory.value === this.kept.id ? 'Edit accessory' : 'Fold accessory';
   }
   topInset(): number { return this.root.getBoundingClientRect().bottom + 10; }
 }
