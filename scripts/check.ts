@@ -17,6 +17,9 @@ import { buildJacket } from '../src/fold/jacket';
 import { buildBowWing } from '../src/fold/bow';
 import { buildSilhouette } from '../src/fold/silhouettes';
 import { buildPin } from '../src/fold/pin';
+import { buildSailorTop } from '../src/fold/sailorTop';
+import { buildNeckerchief } from '../src/fold/neckerchief';
+import { buildPocketSquare } from '../src/fold/pocketSquare';
 import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
@@ -24,7 +27,9 @@ import { FoldController } from '../src/app/controller';
 import { checkTwoSidedRotation } from './rotationCheck';
 
 const errors: string[] = [];
-for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing(), buildWrapSkirt(), buildLapelVest()]) {
+for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing(), buildWrapSkirt(), buildLapelVest(),
+  // Drafts (docs/geometry-collection/drafts/NOTES.md)
+  buildJacket(undefined, 'turned'), buildSailorTop(), buildNeckerchief(), buildPocketSquare()]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));

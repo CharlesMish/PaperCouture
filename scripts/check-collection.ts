@@ -5,6 +5,7 @@ import './check-skirt-vest';
 import './check-pleats';
 import './check-trousers-centre';
 import './check-attachments';
+import './check-drafts';
 import assert from 'node:assert/strict';
 import { buildGarment, GARMENTS, garmentIdFrom, GarmentId } from '../src/fold/garments';
 import {
