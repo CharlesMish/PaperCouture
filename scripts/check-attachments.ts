@@ -33,7 +33,7 @@ function coverage(garment: Vec2[][], anchor: Pick<AttachmentAnchor, 'x' | 'y'>, 
   for (const tr of transforms) for (const poly of components[accessory]) {
     const footprint = ccw(poly.map(p => ({
       x: anchor.x + (p.x * Math.cos(tr.angle) - p.y * Math.sin(tr.angle) + tr.offset) * tr.scale,
-      y: anchor.y + (p.x * Math.sin(tr.angle) + p.y * Math.cos(tr.angle)) * tr.scale,
+      y: anchor.y + (p.x * Math.sin(tr.angle) + p.y * Math.cos(tr.angle) + (tr.lift ?? 0)) * tr.scale,
     })));
     materialArea += Math.abs(signedArea(footprint));
     let remaining = [footprint];

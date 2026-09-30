@@ -142,8 +142,11 @@ function prepareAccessory() {
   const bow = accessoryId === 'bow';
   accessoryRoot.scale.setScalar(findAccessory(accessoryId).pieces[0].scale);
   secondWing.group.visible = bow;
-  pinSheet.group.rotation.z = bow ? -Math.PI / 4 : 0;
-  pinSheet.group.position.set(bow ? -1.27 : 0, 0, 0);
+  // Placement comes from the accessory registry (the bow's first wing is
+  // -π/4 at -1.27; the tulip is turned -3π/4 to stand upright; the others are unrotated).
+  const first = findAccessory(accessoryId).pieces[0];
+  pinSheet.group.rotation.z = first.angle;
+  pinSheet.group.position.set(first.offset, first.lift ?? 0, 0);
   secondWing.group.rotation.z = 3 * Math.PI / 4;
   secondWing.group.position.set(1.27, 0, 0.012);
 }
