@@ -4,8 +4,7 @@
 import assert from 'node:assert/strict';
 import { buildGarment, GARMENTS, attachmentAnchors, attachmentSize, GarmentId, AttachmentAnchor } from '../src/fold/garments';
 import { DEFAULT_OPTIONS, GarmentOptions, garmentDecisions, selectOption } from '../src/fold/garmentOptions';
-import { buildPin } from '../src/fold/pin';
-import { buildBowWing } from '../src/fold/bow';
+import { ACCESSORIES, AccessoryId, accessoryAnchors, findAccessory } from '../src/fold/accessories';
 import { buildTimeline } from '../src/fold/timeline';
 import { modelPoly } from '../src/fold/engine';
 import { Vec2, signedArea, splitConvex } from '../src/fold/geometry';
@@ -25,11 +24,11 @@ function outsideConvex(subject: Vec2[], clip: Vec2[]): Vec2[][] {
   }
   return outside;
 }
-const geometry = (id: 'pin' | 'bow') => buildTimeline((id === 'pin' ? buildPin() : buildBowWing()).ops).states.at(-1)!.facets.map(modelPoly);
-const components = { pin: geometry('pin'), bow: geometry('bow') };
-function coverage(garment: Vec2[][], anchor: Pick<AttachmentAnchor, 'x' | 'y'>, size: number, accessory: 'pin' | 'bow') {
-  const transforms = accessory === 'pin' ? [{ angle: 0, offset: 0, scale: .16 * size }]
-    : [{ angle: -Math.PI / 4, offset: -1.27, scale: .19 * size }, { angle: 3 * Math.PI / 4, offset: 1.27, scale: .19 * size }];
+// Placement transforms come from the shared accessory registry (the same
+// values main.ts renders). Pin and bow keep their original numbers.
+const components = Object.fromEntries(ACCESSORIES.map(a => [a.id, buildTimeline(a.build().ops).states.at(-1)!.facets.map(modelPoly)])) as Record<AccessoryId, Vec2[][]>;
+function coverage(garment: Vec2[][], anchor: Pick<AttachmentAnchor, 'x' | 'y'>, size: number, accessory: AccessoryId) {
+  const transforms = findAccessory(accessory).pieces.map(piece => ({ ...piece, scale: piece.scale * size }));
   let uncoveredArea = 0, materialArea = 0;
   for (const tr of transforms) for (const poly of components[accessory]) {
     const footprint = ccw(poly.map(p => ({
@@ -58,7 +57,8 @@ for (const garment of GARMENTS) for (const options of combinations(garment.id)) 
   const polygons = buildTimeline(c.ops).states.at(-1)!.facets.map(modelPoly).map(ccw);
   const points = polygons.flat(), top = Math.max(...points.map(p => p.y)), bottom = Math.min(...points.map(p => p.y));
   const size = attachmentSize(garment.id);
-  for (const anchor of attachmentAnchors(garment.id, top, bottom, options)) for (const accessory of ['pin', 'bow'] as const) {
+  const anchors = attachmentAnchors(garment.id, top, bottom, options);
+  for (const { id: accessory } of ACCESSORIES) for (const anchor of accessoryAnchors(accessory, anchors)) {
     checked++;
     const result = coverage(polygons, anchor, size, accessory);
     if (result.uncoveredArea > 1e-10) {
@@ -73,7 +73,8 @@ for (const garment of GARMENTS) for (const options of combinations(garment.id)) 
           if (point.distance <= .150001) candidates.push(point);
         }
         candidates.sort((a, b) => a.distance - b.distance);
-        failure.proposed = candidates.find(candidate => coverage(polygons, candidate, size, 'pin').uncoveredArea < 1e-10 && coverage(polygons, candidate, size, 'bow').uncoveredArea < 1e-10);
+        const sharing = ACCESSORIES.filter(a => accessoryAnchors(a.id, [anchor]).length > 0).map(a => a.id);
+        failure.proposed = candidates.find(candidate => sharing.every(id => coverage(polygons, candidate, size, id).uncoveredArea < 1e-10));
       }
       failures.push(failure);
     }

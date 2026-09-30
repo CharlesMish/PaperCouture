@@ -1,13 +1,13 @@
 import './styles.css';
 import * as THREE from 'three';
 import { garmentDecisions, optionsFromParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
-import { buildBowWing } from './fold/bow';
 import { buildBowCentre } from './fold/bowCentre';
 import { centroid } from './fold/geometry';
 import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
 import { ShapeChoices } from './ui/shapeChoices';
 import { buildGarment, garmentIdFrom, attachmentAnchors, attachmentSize } from './fold/garments';
 import { buildPin } from './fold/pin';
+import { ACCESSORIES, accessoryAnchors, findAccessory } from './fold/accessories';
 import { StudioControls, GarmentId, PinPosition, AccessoryId } from './ui/studioControls';
 import { buildTimeline, evaluateFrame, Mat34, OpAnim, LAYER_GAP, posePoint } from './fold/timeline';
 import { FoldController } from './app/controller';
@@ -61,7 +61,13 @@ function measureFinished() {
 }
 let finished = measureFinished();
 const garmentAnchors = () => attachmentAnchors(garmentId, finished.hi.y, finished.lo.y, garmentOptions);
-if (!garmentAnchors().some(a => a.id === pinPosition)) pinPosition = garmentAnchors()[0].id;
+/** Positions the current accessory may use on this garment (may be empty). */
+const placementAnchors = () => accessoryAnchors(accessoryId, garmentAnchors());
+function settlePosition() {
+  const anchors = placementAnchors();
+  if (anchors.length && !anchors.some(a => a.id === pinPosition)) pinPosition = anchors[0].id;
+}
+settlePosition();
 
 // ---- scene
 const app = document.getElementById('app')!;
@@ -117,7 +123,7 @@ function accessorySeams(final: OpAnim) {
 const centreSeamGeometry = accessorySeams(centreFinal);
 centreSheet.group.add(new THREE.LineSegments(centreSeamGeometry, seamMaterial));
 function prepareAccessory() {
-  pinTimeline = buildTimeline(accessoryId === 'bow' ? buildBowWing().ops : buildPin().ops);
+  pinTimeline = buildTimeline(findAccessory(accessoryId).build().ops);
   pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
   const pinPose = evaluateFrame(pinFinal, 1);
   const seamPoints: number[] = [];
@@ -134,7 +140,7 @@ function prepareAccessory() {
   attachedSeams.geometry = secondSeams.geometry = studySeams.geometry = seamGeometry;
   for (const wing of [pinSheet, secondWing]) { wing.setAnim(pinFinal); wing.pose(pinPose); }
   const bow = accessoryId === 'bow';
-  accessoryRoot.scale.setScalar(bow ? 0.19 : 0.16);
+  accessoryRoot.scale.setScalar(findAccessory(accessoryId).pieces[0].scale);
   secondWing.group.visible = bow;
   pinSheet.group.rotation.z = bow ? -Math.PI / 4 : 0;
   pinSheet.group.position.set(bow ? -1.27 : 0, 0, 0);
@@ -226,7 +232,8 @@ const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
 function refreshWorkshopPanel() {
   const decisions = garmentDecisions(garmentId);
   const revisit = controller.moving ? [] : decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
-  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, garmentAnchors());
+  const available = ACCESSORIES.filter(a => accessoryAnchors(a.id, garmentAnchors()).length > 0).map(a => a.id);
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available);
   const bowReady = accessoryId === 'bow' && bowWing === 1 && savedPinStep === pinTimeline.ops.length;
   studio.renderCentre(!accessoryMode && controller.finished && bowReady, savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
   const decision = !accessoryMode && !controller.moving ? decisions.find(d => decisionStep(construction, d) === controller.step) : undefined;
@@ -292,8 +299,7 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   frame = undefined;
   finished = measureFinished(); frameSubject();
   if (!accessoryMode) {
-    const anchors = garmentAnchors();
-    if (!anchors.some(a => a.id === pinPosition)) pinPosition = anchors[0].id;
+    settlePosition();
   }
   displayCam.setEnabled(false); displayCam.setTurntable(false);
   view.jump('workshop');
@@ -330,10 +336,10 @@ function revisitFold(id: DecisionId) {
 function editPin(id: AccessoryId) {
   if (accessoryMode || !controller.finished) return;
   savedGarment = { construction, timeline, controller };
-  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); }
+  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); settlePosition(); }
   studySeams.geometry = seamGeometry;
   accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns;
-  replaceConstruction(accessoryId === 'bow' ? buildBowWing() : buildPin(), pinTimeline);
+  replaceConstruction(findAccessory(accessoryId).build(), pinTimeline);
   controller.jumpTo(savedPinStep);
 }
 function editCentre() {
@@ -452,12 +458,14 @@ function placePiece() {
 
 function draw() {
   studySeams.visible = accessoryMode && controller.finished;
-  accessoryRoot.visible = attached && !accessoryMode && controller.finished;
-  centreSheet.group.visible = accessoryId === 'bow' && centreAttached;
-  const anchors = garmentAnchors();
+  // An accessory whose positions this garment lacks (a neckerchief on a
+  // skirt) stays folded and stored, but is not shown until it fits again.
+  const anchors = placementAnchors();
   const anchor = anchors.find(a => a.id === pinPosition) ?? anchors[0];
-  accessoryRoot.scale.setScalar((accessoryId === 'bow' ? 0.19 : 0.16) * attachmentSize(garmentId));
-  accessoryRoot.position.set(anchor.x, anchor.y, finished.hi.z + 0.014);
+  accessoryRoot.visible = attached && !accessoryMode && controller.finished && !!anchor;
+  centreSheet.group.visible = accessoryId === 'bow' && centreAttached;
+  accessoryRoot.scale.setScalar(findAccessory(accessoryId).pieces[0].scale * attachmentSize(garmentId));
+  if (anchor) accessoryRoot.position.set(anchor.x, anchor.y, finished.hi.z + 0.014);
   const pose = controller.pose();
   const anim = ops[pose.op];
   sheet.setAnim(anim);
