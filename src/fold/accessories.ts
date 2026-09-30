@@ -12,7 +12,7 @@ export interface AccessoryPiece { angle: number; offset: number; scale: number }
 
 /** Registry of separately folded accessories. The pin and bow values are the
  * ones main.ts and check-attachments.ts already used; the draft neckerchief
- * and pocket square add a restricted list of garment positions. */
+ * and folded patch pocket add a restricted list of garment positions. */
 export const ACCESSORIES: {
   id: AccessoryId; name: string; build(): Construction; pieces: AccessoryPiece[];
   positions?: readonly AttachmentPosition[];
@@ -22,7 +22,7 @@ export const ACCESSORIES: {
     { angle: -Math.PI / 4, offset: -1.27, scale: 0.19 }, { angle: 3 * Math.PI / 4, offset: 1.27, scale: 0.19 },
   ] },
   { id: 'kerchief', name: 'Neckerchief', build: buildNeckerchief, pieces: [{ angle: 0, offset: 0, scale: NECKERCHIEF_SCALE }], positions: NECKERCHIEF_POSITIONS },
-  { id: 'pocket', name: 'Pocket square', build: buildPocketSquare, pieces: [{ angle: 0, offset: 0, scale: POCKET_SCALE }], positions: POCKET_POSITIONS },
+  { id: 'pocket', name: 'Folded patch pocket', build: buildPocketSquare, pieces: [{ angle: 0, offset: 0, scale: POCKET_SCALE }], positions: POCKET_POSITIONS },
 ];
 export function findAccessory(id: AccessoryId) { return ACCESSORIES.find(a => a.id === id)!; }
 /** The garment positions an accessory may use. Empty means it cannot be placed. */

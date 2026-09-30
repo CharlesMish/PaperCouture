@@ -1,10 +1,11 @@
 import { Construction } from './construction';
 import { v2 } from './geometry';
 
-/** A pocket square from its own square, in the flat "TV fold": a printed
- * pocket with a straight band of the reverse along the top where the square
- * peeks out. It is placed on the chest as a styled piece; no pocket is cut
- * into the garment.
+/** A folded patch pocket from its own square (the flat "TV fold" of a pocket
+ * square): a printed patch with a straight band of the reverse along its top.
+ * The whole piece lies flat on the chest as a styled patch-pocket motif. It is
+ * not a hankie tucked into a garment pocket; no pocket or slot is folded into
+ * the garment (Astra review of PR #11: name and hints say so).
  *
  * A pointed version (folding the two top corners down to a peak) was tried
  * and removed: the corners are four layers deep by then and the turn opened a
@@ -14,12 +15,12 @@ export const POCKET_POSITIONS = ['chest-left', 'chest-right'] as const;
 
 export function buildPocketSquare(): Construction {
   return {
-    name: 'Pocket square',
+    name: 'Folded patch pocket',
     meta: { top: 0.7, shoulderPoint: v2(0, 0.7), sleeveCutDir: v2(1, 0) },
     ops: [
       {
         kind: 'fold', id: 'pocket-band', title: 'Fold down the top edge',
-        hint: 'Bring the top edge down onto the print. This reverse-colour band is the strip that shows above the pocket.',
+        hint: 'Bring the top edge down onto the print. This reverse-colour band becomes the top edge of the patch.',
         folds: [{ name: 'pocket-band', a: v2(-1.5, 0.7), b: v2(1.5, 0.7), moving: v2(0, 1.5), sense: 'valley' }],
       },
       { kind: 'turn', id: 'pocket-turn', title: 'Turn the square over', hint: 'The band is underneath. Narrow the square from this side.' },
@@ -33,10 +34,10 @@ export function buildPocketSquare(): Construction {
       },
       {
         kind: 'fold', id: 'pocket-bottom', title: 'Fold the lower edge up',
-        hint: 'Lift the bottom panel onto this side to make a small, firm pocket.',
+        hint: 'Lift the bottom panel onto this side to make a small, firm patch.',
         folds: [{ name: 'pocket-bottom', a: v2(-1.5, -0.2), b: v2(1.5, -0.2), moving: v2(0, -1.5), sense: 'valley' }],
       },
-      { kind: 'turn', id: 'pocket-front', title: 'Reveal the pocket square', hint: 'A printed pocket with a straight reverse band along the top. Place it on the chest.' },
+      { kind: 'turn', id: 'pocket-front', title: 'Reveal the patch pocket', hint: 'A printed patch with a straight reverse band along the top. Place it flat on the chest; nothing is tucked into the garment.' },
     ],
   };
 }

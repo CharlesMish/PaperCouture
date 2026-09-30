@@ -45,8 +45,10 @@ const DECISIONS: Record<string, FoldDecision[]> = {
     ] },
     // Draft: the cuff fold is worked on the front, so it follows the reveal.
     // The choice is offered at the reveal turn, the last shared operation.
-    { id: 'cuffs', label: 'Cuffs', title: 'Choose the sleeve ends', before: 'turn-2', choices: [
-      { id: 'plain', name: 'Plain' }, { id: 'turned', name: 'Turned back' },
+    // The turned option is a printed top-layer corner, not a reverse cuff band,
+    // so the choice says so before the extra fold is made.
+    { id: 'cuffs', label: 'Sleeve ends', title: 'Sleeve ends: plain, or small turned corners that show the print', before: 'turn-2', choices: [
+      { id: 'plain', name: 'Plain' }, { id: 'turned', name: 'Printed corners' },
     ] },
   ],
   skirt: [

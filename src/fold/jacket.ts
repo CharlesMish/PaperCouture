@@ -11,7 +11,7 @@ export const JACKET_LENGTHS: { id: JacketLength; name: string; hem: number; hint
 export type CuffStyle = 'plain' | 'turned';
 export const CUFF_STYLES: { id: CuffStyle; name: string; hint: string }[] = [
   { id: 'plain', name: 'Plain', hint: 'Finish with the sleeves as they are.' },
-  { id: 'turned', name: 'Turned back', hint: 'After the reveal, turn back one corner at each sleeve end.' },
+  { id: 'turned', name: 'Printed corners', hint: 'After the reveal, turn back a small corner of the top layer at each sleeve end. It shows the print; it is not a reverse-colour cuff band.' },
 ];
 /** How far along the sleeve's raw end the turned-back corner reaches. Larger
  * values make the crease flatter; by about 0.11 it starts to catch the other
@@ -26,7 +26,9 @@ const CUFF_REACH = 0.1;
  * layers is trapped, and folding a band of the top layer alone would tear the
  * joined edge. The one clean flap is a corner of the top layer whose crease
  * starts exactly at the sleeve tip: turning it back shows its printed face and
- * uncovers the printed under-layer, so the sleeve end becomes a printed cuff. */
+ * uncovers the printed under-layer, so the sleeve end shows a printed corner.
+ * It is named and described as a turned corner at the choice, not as a
+ * reverse cuff band (Astra review of PR #11). */
 function cuffOp(c: Construction): Op {
   const reflection = (i: number, j: number): Affine2 => {
     const op = c.ops[i];
@@ -43,8 +45,8 @@ function cuffOp(c: Construction): Op {
   const reach = applyAffine(M, v2(-1 + CUFF_REACH, 1)); // along the top raw edge
   const mirror = (p: Vec2) => v2(-p.x, p.y);
   return {
-    kind: 'fold', id: 'jacket-cuffs', title: 'Turn back the cuffs',
-    hint: 'Lift only the top layer at each sleeve end, hinged at the tip. The printed side of the paper shows as a cuff.',
+    kind: 'fold', id: 'jacket-cuffs', title: 'Turn back the sleeve corners',
+    hint: 'Lift only the top layer at each sleeve end, hinged at the tip. Each corner shows the printed side: a turned corner, not a reverse cuff band.',
     folds: [
       { name: 'cuff-left', a: tip, b: reach, moving: corner, sense: 'valley', only: 'collar' },
       { name: 'cuff-right', a: mirror(tip), b: mirror(reach), moving: mirror(corner), sense: 'valley', only: 'collar' },
@@ -76,9 +78,9 @@ export function buildJacket(length: JacketLength = 'cropped', cuffs: CuffStyle =
     c.ops[5].hint = 'A broad collar, longer body and open sleeves, folded from one square.';
   }
   if (cuffs === 'turned') {
-    c.ops[5].hint = 'Reveal the jacket. One more small fold at each sleeve end turns back the cuffs.';
+    c.ops[5].hint = 'Reveal the jacket. One more small fold turns back a printed corner at each sleeve end.';
     c.ops.push(cuffOp(c));
-    c.name = c.name.replace('box jacket', 'box jacket, turned cuffs').replace('Box jacket', 'Box jacket, turned cuffs');
+    c.name = c.name.replace('box jacket', 'box jacket, turned sleeve corners').replace('Box jacket', 'Box jacket, turned sleeve corners');
   }
   return c;
 }

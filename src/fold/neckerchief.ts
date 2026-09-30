@@ -15,7 +15,7 @@ export function buildNeckerchief(): Construction {
     ops: [
       {
         kind: 'fold', id: 'kerchief-band', title: 'Fold down the neckband',
-        hint: 'Bring the top edge down onto the print. The band shows the reverse and becomes the rolled neckband.',
+        hint: 'Bring the top edge down onto the print. The band shows the reverse and becomes the folded neckband.',
         folds: [{ name: 'kerchief-band', a: v2(-1.5, 0.6), b: v2(1.5, 0.6), moving: v2(0, 1.5), sense: 'valley' }],
       },
       { kind: 'turn', id: 'kerchief-turn', title: 'Turn the square over', hint: 'The band is underneath. The two sides fold in on this side.' },
@@ -31,7 +31,7 @@ export function buildNeckerchief(): Construction {
         hint: 'Fold the right side over the first along the matching guide. The square is now a triangle.',
         folds: [{ name: 'kerchief-right', a: v2(1, 0.6), b: v2(0, -1), moving: v2(1, -1), sense: 'valley' }],
       },
-      { kind: 'turn', id: 'kerchief-front', title: 'Reveal the neckerchief', hint: 'A printed triangle with a reverse-colour neckband. Tie it on at the neckline.' },
+      { kind: 'turn', id: 'kerchief-front', title: 'Reveal the neckerchief', hint: 'A printed triangle with a reverse-colour neckband. Place it at the neckline; it is not knotted or locked on.' },
     ],
   };
 }
