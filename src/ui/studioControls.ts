@@ -21,6 +21,10 @@ export class StudioControls {
   private centreControls = document.createElement('span');
   private centreEdit = document.createElement('button');
   private centreToggle = document.createElement('button');
+  /** The selection that was replaced by a fallback because the current garment
+   * has no place for it. It is restored when it becomes available again, unless
+   * the user has deliberately picked another accessory in the meantime. */
+  private displaced: AccessoryId | null = null;
   constructor(parent: HTMLElement, h: {
     onDesign(id: GarmentId): void; onEdit(id: AccessoryId): void; onRemove(): void;
     onReturn(): void; onPosition(position: PinPosition): void; onRevisit(id: DecisionId): void;
@@ -39,7 +43,7 @@ export class StudioControls {
     this.accessoryLabel.append(this.accessory);
     for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
-    this.accessory.onchange = () => { this.edit.textContent = 'Fold accessory'; };
+    this.accessory.onchange = () => { this.displaced = null; this.edit.textContent = 'Fold accessory'; };
     this.remove.textContent = 'Remove accessory'; this.remove.onclick = h.onRemove;
     this.returnButton.textContent = 'Back to garment'; this.returnButton.onclick = h.onReturn;
     this.revisitLabel.textContent = 'Revisit ';
@@ -68,10 +72,16 @@ export class StudioControls {
     else if (available && shown) this.note.textContent = 'Three-piece bow · optional folded centre';
   }
   render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[], available: AccessoryId[] = ACCESSORIES.map(a => a.id)) {
-    // Accessories with a restricted placement (neckerchief, pocket square) are
-    // only offered on garments that have one of their positions.
+    // Accessories with a restricted placement (neckerchief, patch pocket) are
+    // only offered on garments that have one of their positions. An unavailable
+    // selection falls back to the first available type, and is restored on the
+    // way back so a kept accessory still shows its own name and edit action.
     for (const option of Array.from(this.accessory.options)) option.disabled = !available.includes(option.value as AccessoryId);
-    if (!available.includes(this.accessory.value as AccessoryId) && available.length) this.accessory.value = available[0];
+    if (this.displaced && available.includes(this.displaced)) { this.accessory.value = this.displaced; this.displaced = null; }
+    if (!available.includes(this.accessory.value as AccessoryId) && available.length) {
+      this.displaced ??= this.accessory.value as AccessoryId;
+      this.accessory.value = available[0];
+    }
     this.design.value = id; this.design.disabled = accessoryMode;
     this.edit.textContent = attached && this.accessory.value === activeAccessory ? 'Edit accessory' : 'Fold accessory';
     this.edit.hidden = accessoryMode || !finished; this.edit.disabled = !finished;
