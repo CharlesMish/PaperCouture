@@ -395,7 +395,10 @@ view.onChange(() => {
   const toDisplay = view.target === 1;
   workshopPanel.setVisible(!toDisplay);
   displayPanel.setVisible(toDisplay);
-  if (view.inDisplay) displayCam.setEnabled(true);
+  // Arriving in Display: land exactly on the transition's endpoint. placePiece()
+  // only moves the camera while the view is between modes, so without this the
+  // camera kept the last in-between frame's pose (frame-rate dependent).
+  if (view.inDisplay) { stage.placeCamera(displayCamPos, displayCam.target); displayCam.setEnabled(true); }
   layout();
 });
 
@@ -412,7 +415,13 @@ function layout() {
   workCamPos = stage.framePose(WORK_TARGET, 1.3, 1.08, WORK_DIR);
   displayCam.updateLimits();
   const fit = displayCam.defaultDistance();
-  if (view.inDisplay && lastDisplayFit > 0 && Math.abs(fit - lastDisplayFit) > 1e-6) displayCam.reframe(fit / lastDisplayFit);
+  if (lastDisplayFit > 0 && Math.abs(fit - lastDisplayFit) > 1e-6) {
+    const ratio = fit / lastDisplayFit;
+    if (view.inDisplay) displayCam.reframe(ratio);
+    // Not settled in Display (e.g. mid-transition, when the panels swap and
+    // resize): keep the pending Display endpoint at the same relative zoom.
+    else displayCamPos.sub(displayCam.target).multiplyScalar(ratio).add(displayCam.target);
+  }
   lastDisplayFit = fit;
   if (view.inWorkshop) stage.placeCamera(workCamPos, WORK_TARGET);
 }

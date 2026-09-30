@@ -295,7 +295,8 @@ const errors = [];
     // URL must open at the same camera distance that Reset view uses, and keep it
     // through ordinary workshop entry and resizing, for all three skirt lengths.
     const distance = () => p.evaluate(() => ({ at: paperCouture.stage.camera.position.distanceTo(paperCouture.displayCam.target), fit: paperCouture.displayCam.defaultDistance() }));
-    const same = (d, what) => assert(Math.abs(d.at - d.fit) < 1e-3 * d.fit, `${what}: camera ${d.at.toFixed(4)} vs default ${d.fit.toFixed(4)}`);
+    // Exact up to float noise (Astra review of PR #14: do not hide an endpoint error behind a tolerance).
+    const same = (d, what) => assert(Math.abs(d.at - d.fit) < 1e-9 * d.fit, `${what}: camera ${d.at.toFixed(6)} vs default ${d.fit.toFixed(6)}`);
     const framing = [];
     for (const [query, steps] of [['?design=skirt&paper=tidal-bands&skirtLength=short', 9], ['?design=skirt&paper=tidal-bands', 9], ['?design=skirt&paper=tidal-bands&skirtLength=long', 9], ['?design=vest&paper=border-print&vestLength=pointed', 9], ['?design=dress&paper=tidal-bands', 6]]) {
       await open(`${query}&step=${steps}&view=display`, steps);
@@ -303,18 +304,27 @@ const errors = [];
       const fresh = await distance(); same(fresh, `${query} fresh URL`);
       await p.getByRole('button', { name: 'Reset view', exact: true }).click(); await settle(); await p.waitForTimeout(200);
       const reset = await distance(); same(reset, `${query} after Reset view`);
-      assert(Math.abs(fresh.at - reset.at) < 1e-3 * reset.at, `${query}: fresh ${fresh.at} vs reset ${reset.at}`);
-      // ordinary workshop entry: open the finished fold in the workshop, then Display
+      assert(Math.abs(fresh.at - reset.at) < 1e-9 * reset.at, `${query}: fresh ${fresh.at} vs reset ${reset.at}`);
+      // ordinary workshop entry, repeated (Astra review of PR #14: the endpoint
+      // used to depend on the last animation frame): finished fold, Display,
+      // back to the workshop, three times
       await p.goto(root + `${query}&step=${steps}`); await p.waitForFunction(() => window.paperCouture);
-      await p.getByRole('button', { name: 'Display', exact: true }).click();
-      await p.waitForFunction(() => paperCouture.view.inDisplay); await settle(); await p.waitForTimeout(200);
-      const entered = await distance(); same(entered, `${query} workshop entry`);
+      let entered;
+      for (let round = 0; round < 3; round++) {
+        if (round) {
+          await p.getByRole('button', { name: 'Return to the workshop', exact: true }).click();
+          await p.waitForFunction(() => paperCouture.view.inWorkshop);
+        }
+        await p.getByRole('button', { name: 'Display', exact: true }).click();
+        await p.waitForFunction(() => paperCouture.view.inDisplay); await settle(); await p.waitForTimeout(200);
+        entered = await distance(); same(entered, `${query} workshop entry ${round + 1}`);
+      }
       // resizing keeps the default framing
       await p.setViewportSize({ width: 390, height: 844 }); await p.waitForTimeout(400);
       const phone = await distance(); same(phone, `${query} at 390x844`);
       await p.setViewportSize({ width: 1280, height: 800 }); await p.waitForTimeout(400);
       const desk = await distance(); same(desk, `${query} back at 1280x800`);
-      framing.push(`${query.replace('?design=', '')}: fresh ${fresh.at.toFixed(3)} = reset ${reset.at.toFixed(3)} = entry ${entered.at.toFixed(3)}; 390x844 ${phone.at.toFixed(3)}/${phone.fit.toFixed(3)}`);
+      framing.push(`${query.replace('?design=', '')}: fresh ${fresh.at.toFixed(6)} = reset ${reset.at.toFixed(6)} = entry x3 ${entered.at.toFixed(6)}; 390x844 ${phone.at.toFixed(6)} = ${phone.fit.toFixed(6)}`);
     }
     await p.goto(root + '?design=skirt&paper=tidal-bands&skirtLength=long&step=9&view=display'); await p.waitForFunction(() => window.paperCouture); await settle();
     await capture('framing-skirt-long-fresh');
