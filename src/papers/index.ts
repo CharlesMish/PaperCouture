@@ -1,3 +1,4 @@
+import { borderPrint } from './borderPrint';
 import { botanical } from './botanical';
 import { cornerBloom } from './cornerBloom';
 import { cutPaperMosaic } from './cutPaperMosaic';
@@ -8,6 +9,7 @@ import { inkReverse } from './inkReverse';
 import { ivoryBorder } from './ivoryBorder';
 import { midnightOrchard } from './midnightOrchard';
 import { openStems } from './openStems';
+import { pinstripeLining } from './pinstripeLining';
 import { plumScatter } from './plumScatter';
 import { reverseGarden } from './reverseGarden';
 import { seedDashes } from './seedDashes';
@@ -40,6 +42,8 @@ export const PAPERS: PaperDesign[] = [
   cutPaperMosaic,
   wovenChecks,
   reverseGarden,
+  pinstripeLining,
+  borderPrint,
   diagnosticPaper,
 ];
 
