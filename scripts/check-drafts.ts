@@ -1,12 +1,12 @@
 // Drafted proposal items (branch drafts/papercouture-drafter-20260930).
 // Run: node --import tsx scripts/check-drafts.ts   (also part of npm test)
-// Geometry gates for the sailor-collar top, turned cuffs, pleat depths, the
-// neckerchief and pocket square, plus drawing/placement checks for the two
+// Geometry gates for the parked sailor-collar study, turned cuffs, pleat depths, the
+// neckerchief and folded patch pocket, plus drawing/placement checks for the two
 // draft papers. Like the other checks, this is not physical-paper or
 // continuous-collision certification.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { buildSailorTop } from '../src/fold/sailorTop';
+import { buildSailorTop } from '../docs/geometry-collection/drafts/sailor/sailorTopStudy';
 import { buildJacket } from '../src/fold/jacket';
 import { buildPleatedSkirt, PLEAT_DEPTHS } from '../src/fold/pleatedSkirt';
 import { buildNeckerchief } from '../src/fold/neckerchief';
@@ -70,8 +70,9 @@ const bounds = (s: SheetState) => {
 };
 const fingerprint = (c: Construction) => createHash('sha256').update(JSON.stringify(buildTimeline(c.ops).states.map(s => s.facets.map(({ id: _id, ...f }) => f)))).digest('hex');
 
-// --- Sailor-collar top -----------------------------------------------------
+// --- Sailor-collar top (parked study, not selectable) ------------------------
 {
+  assert(!GARMENTS.some(g => (g.id as string) === 'sailor'), 'the sailor top is parked: it must not be a selectable garment');
   const c = buildSailorTop();
   const { final, worstGap } = validate(c);
   assert.equal(c.ops.filter(op => op.kind === 'turn').length, 2, 'sailor top: explicit turn-overs');
@@ -80,11 +81,11 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   assert(faceAt(final, v2(0, 0.05), 'front').reverse, 'sailor neckline strip should be reverse');
   for (const [x, y] of [[0, -0.4], [-0.3, -0.6], [0.3, -0.3]]) assert(!faceAt(final, v2(x, y), 'front').reverse, `sailor front body should be printed (${x}, ${y})`);
   const b = bounds(final);
-  for (const g of GARMENTS.filter(g => g.id !== 'sailor')) {
+  for (const g of GARMENTS) {
     const o = bounds(buildTimeline(buildGarment(g.id).ops).states.at(-1)!);
     assert(Math.abs(o.w - b.w) > 0.05 || Math.abs(o.h - b.h) > 0.05, `sailor top outline duplicates ${g.id}`);
   }
-  console.log(`Sailor-collar top: ${c.ops.length} steps, ${final.facets.length} facets, ${b.w.toFixed(2)} x ${b.h.toFixed(2)}; hinge ${worstGap.toFixed(4)}; back collar reverse, front neckline strip reverse.`);
+  console.log(`Sailor-collar top (parked study, not selectable): ${c.ops.length} steps, ${final.facets.length} facets, ${b.w.toFixed(2)} x ${b.h.toFixed(2)}; hinge ${worstGap.toFixed(4)}; back collar reverse, front neckline strip reverse.`);
 }
 
 // --- Box jacket cuffs --------------------------------------------------------
@@ -132,13 +133,13 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   console.log(`Pleat depth: reverse share of the mid row shallow ${shares.shallow.toFixed(2)}, classic ${shares.classic.toFixed(2)}, deep ${shares.deep.toFixed(2)}; classic matches the PR #10 fingerprint.`);
 }
 
-// --- Neckerchief and pocket square ---------------------------------------------
+// --- Neckerchief and folded patch pocket -----------------------------------------
 {
   const k = validate(buildNeckerchief()).final;
   assert(faceAt(k, v2(0, 0.4), 'front').reverse, 'neckband should be reverse');
   assert(!faceAt(k, v2(0, -0.4), 'front').reverse, 'neckerchief triangle should be printed');
   const p = validate(buildPocketSquare()).final;
-  assert(faceAt(p, v2(0, 0.55), 'front').reverse, 'pocket square top band should be reverse');
+  assert(faceAt(p, v2(0, 0.55), 'front').reverse, 'patch pocket top band should be reverse');
   assert(!faceAt(p, v2(0, 0.1), 'front').reverse, 'pocket should be printed');
   for (const g of GARMENTS) {
     const anchors = attachmentAnchors(g.id, 1, -1);
@@ -149,7 +150,7 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   assert.equal(accessoryAnchors('pin', attachmentAnchors('dress', 1, -1)).length, 6, 'pin keeps every position');
   assert.deepEqual(ACCESSORIES.slice(0, 2).map(a => a.pieces), [[{ angle: 0, offset: 0, scale: 0.16 }],
     [{ angle: -Math.PI / 4, offset: -1.27, scale: 0.19 }, { angle: 3 * Math.PI / 4, offset: 1.27, scale: 0.19 }]], 'pin/bow placement changed');
-  console.log('Neckerchief (5 steps) and pocket square (5 steps): geometry gates pass; reverse neckband / top band over a printed body; positions restricted to neckline / chest.');
+  console.log('Neckerchief (5 steps) and folded patch pocket (5 steps): geometry gates pass; reverse neckband / top band over a printed body; positions restricted to neckline / chest.');
 }
 
 // --- Draft papers ----------------------------------------------------------------

@@ -1,5 +1,12 @@
-import { Construction } from './construction';
-import { v2 } from './geometry';
+import { Construction } from '../../../../src/fold/construction';
+import { v2 } from '../../../../src/fold/geometry';
+import type { AttachmentAnchor } from '../../../../src/fold/garments';
+
+// PARKED STUDY (Astra review of PR #11): not a selectable garment. The back
+// collar is real layer order, but the front is a plain rectangle with a top
+// strip, and there is no front neckline or shoulder treatment. Re-entry needs
+// a recognizable front neckline/shoulders under the existing continuity and
+// hinge-gap gates. scripts/check-drafts.ts still runs these gates.
 
 /** A sleeveless top whose large square collar is folded down at the back.
  *
@@ -53,3 +60,13 @@ export function buildSailorTop(): Construction {
     ],
   };
 }
+
+/** The anchors the draft used when it was selectable (for re-entry only). */
+export const SAILOR_STUDY_ANCHORS: AttachmentAnchor[] = [
+  { id: 'neckline', label: 'Neckline', x: 0, y: -0.06 },
+  { id: 'chest-left', label: 'Left chest', x: -0.22, y: -0.3 },
+  { id: 'chest-right', label: 'Right chest', x: 0.22, y: -0.3 },
+  { id: 'waist-left', label: 'Left waist', x: -0.22, y: -0.56 },
+  { id: 'waist', label: 'Centre waist', x: 0, y: -0.56 },
+  { id: 'waist-right', label: 'Right waist', x: 0.22, y: -0.56 },
+];

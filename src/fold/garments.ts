@@ -3,17 +3,15 @@ import { buildJacket } from './jacket';
 import { buildWrapSkirt } from './wrapSkirt';
 import { buildLapelVest } from './lapelVest';
 import { buildPleatedSkirt } from './pleatedSkirt';
-import { buildSailorTop } from './sailorTop';
 import { DEFAULT_OPTIONS, GarmentOptions } from './garmentOptions';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'sailor';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string }[] = [
   { id: 'dress', name: 'Dress' }, { id: 'jacket', name: 'Box jacket' },
   { id: 'skirt', name: 'Wrap skirt' }, { id: 'vest', name: 'Lapel vest' },
   { id: 'pleats', name: 'Pleated skirt' },
-  { id: 'sailor', name: 'Sailor-collar top' },
 ];
 export function garmentIdFrom(value: string | null): GarmentId {
   return GARMENTS.find(g => g.id === value)?.id ?? 'dress';
@@ -25,7 +23,6 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
     case 'skirt': return buildWrapSkirt({ wrap: options.wrap, band: options.band });
     case 'vest': return buildLapelVest(options.vestLength);
     case 'pleats': return buildPleatedSkirt(options.pleatDepth);
-    case 'sailor': return buildSailorTop();
     default: return buildSilhouette(options.silhouette, options.sleeves);
   }
 }
@@ -50,15 +47,6 @@ export function attachmentAnchors(id: GarmentId, top: number, bottom: number, op
     { id: 'waist', label: 'Centre waistband', x: 0, y: .635 },
     { id: 'waist-right', label: 'Right waistband', x: .34, y: .635 },
   ];
-  // Draft sailor top: anchors sit below the neckline strip on the flat front.
-  if (id === 'sailor') return [
-    { id: 'neckline', label: 'Neckline', x: 0, y: -0.06 },
-    { id: 'chest-left', label: 'Left chest', x: -0.22, y: -0.3 },
-    { id: 'chest-right', label: 'Right chest', x: 0.22, y: -0.3 },
-    { id: 'waist-left', label: 'Left waist', x: -0.22, y: -0.56 },
-    { id: 'waist', label: 'Centre waist', x: 0, y: -0.56 },
-    { id: 'waist-right', label: 'Right waist', x: 0.22, y: -0.56 },
-  ];
   return [
     { id: 'neckline', label: 'Neckline', x: 0, y: top - 0.18 },
     { id: 'chest-left', label: 'Left chest', x: -0.25, y: top - 0.42 },
@@ -69,5 +57,5 @@ export function attachmentAnchors(id: GarmentId, top: number, bottom: number, op
   ];
 }
 export function attachmentSize(id: GarmentId): number {
-  return id === 'skirt' || id === 'vest' || id === 'pleats' || id === 'sailor' ? 0.75 : 1;
+  return id === 'skirt' || id === 'vest' || id === 'pleats' ? 0.75 : 1;
 }

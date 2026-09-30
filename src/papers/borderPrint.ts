@@ -61,8 +61,8 @@ export const borderPrint: PaperDesign = {
   },
   drawBack(ctx, S) {
     solid(ctx, S, INDIGO);
-    // A narrow cream wave rule inside the top tenth: on the dress, jacket and
-    // sailor top that strip is turned down and shows as the collar.
+    // A narrow cream wave rule inside the top tenth: on the dress and jacket
+    // that strip is turned down and shows as the collar.
     ctx.fillStyle = CORAL;
     ctx.fillRect(0, S * 0.035, S, S * 0.006);
     waves(ctx, S, S * 0.045, S * 0.045, 16, FOAM, '#2e5580');

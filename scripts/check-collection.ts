@@ -107,6 +107,6 @@ for (const raw of ['shape=%00&wrap=%F0%9F%93%84', 'sleeves=lifted%20&band=%ZZ', 
   assert.deepEqual(optionsFromParams(new URLSearchParams(raw)), DEFAULT_OPTIONS, 'encoded invalid options should fall back to defaults');
 }
 assert.deepEqual(optionsFromParams(new URLSearchParams('unknown=longline&garmentOptions=%7B%7D')), DEFAULT_OPTIONS, 'unknown query fields changed fold options');
-for (const invalid of [null, '', 'robe', 'trousers', 'constructor', '__proto__']) assert.equal(garmentIdFrom(invalid), 'dress', 'unknown or parked garment should open a usable default');
+for (const invalid of [null, '', 'robe', 'trousers', 'sailor', 'constructor', '__proto__']) assert.equal(garmentIdFrom(invalid), 'dress', 'unknown or parked garment should open a usable default');
 assert.deepEqual(DEFAULT_OPTIONS, { silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped', wrap: 'original', band: 'double', vestLength: 'short', pleatDepth: 'classic', cuffs: 'plain' }, 'normalizing options mutated the default selections');
 console.log(`Collection integration: ${constructions} supported constructions, ${transitions} decision transitions, evaluated shared prefixes, preference retention and malformed URL recovery pass.`);
