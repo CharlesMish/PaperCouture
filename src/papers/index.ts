@@ -13,6 +13,7 @@ import { pinstripeLining } from './pinstripeLining';
 import { plumScatter } from './plumScatter';
 import { reverseGarden } from './reverseGarden';
 import { seedDashes } from './seedDashes';
+import { starlitLining } from './starlitLining';
 import { stripeDisc } from './stripeDisc';
 import { tidalBands } from './tidalBands';
 import { wideFrame } from './wideFrame';
@@ -44,6 +45,7 @@ export const PAPERS: PaperDesign[] = [
   reverseGarden,
   pinstripeLining,
   borderPrint,
+  starlitLining,
   diagnosticPaper,
 ];
 
