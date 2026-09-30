@@ -3,7 +3,9 @@
 **Proposal only.** First drafted on branch `drafts/papercouture-drafter-20260930` (PR #11), taken from
 `feature/geometry-collection-20260930` (PR #10). The follow-up branch
 `drafts/papercouture-drafter-astra-followup` applies Astra's review of PR #11; see
-[Astra follow-up](#astra-follow-up) at the end. Charles asked for these drafts. Nothing
+[Astra follow-up](#astra-follow-up). The exploration branch
+`drafts/papercouture-drafter-explore-13` (PR #13) is described in
+[PR #13 exploration](#pr-13-exploration) at the end. Charles asked for these drafts. Nothing
 here is accepted until he reviews it in the browser. All of it uses the existing fold and turn
 ops, as valley folds with explicit turn-overs. There is no engine change, no painted fold, no
 slider and no new primitive. Every default stays at baseline parity.
@@ -21,6 +23,9 @@ papers below as a separate request, so they are included here as proposals.
 | Neckerchief (neckline) | Passes checks |
 | Folded patch pocket (was "Pocket square"; chest-left / chest-right) | Passes checks as a flat "TV fold" patch. The pointed version was removed |
 | Pinafore (fallback) | Not attempted |
+| Paper: Starlit lining (PR #13, reverse-first) | Passes checks, including placement checks for where the reverse lands |
+| Wrap skirt: short / classic / long (PR #13) | Passes checks. Classic matches PR #10 byte for byte |
+| Folded tulip (PR #13, waist anchors) | Passes checks. It shows one face only (the print) |
 
 ## Papers
 
@@ -125,7 +130,7 @@ This section describes PR #11. The follow-up's changed counts and checks are lis
 
 ## Open questions for Charles (PR #11; see the follow-up for their status)
 
-1. Cuffs: is a small **printed** turned-back corner acceptable? If not, the choice should be parked. The engine can't show a reverse cuff without a trapped or torn fold.
+1. Cuffs: is a small **printed** turned-back corner acceptable? If not, the choice should be parked. With the current layered sleeve construction, the reverse-band folds I tried trapped or tore paper (a result of that construction, not a general limit; see PR #13).
 2. Pleats: three depths, or just classic and deep? Shallow shows no reverse.
 3. Sailor top: is a sleeveless box with the collar at the back worth keeping? Or should it be parked, like the robe, until the hinge gap limit (or a thinner neckline stack) allows the shoulder triangles?
 4. Accessory position rules: is kerchief-at-neckline-only and pocket-at-chest-only right? Kerchief and pocket scales (0.17 and 0.14) are guesses.
@@ -164,10 +169,120 @@ Safari or physical paper): `npm run typecheck`, `npm test`, `node --import tsx s
 ### Open questions after the follow-up
 
 1. Cuffs: is a clearly labelled **printed** turned corner acceptable? If a reverse-colour cuff band
-   is required, Astra and I agree the choice should be parked. The engine cannot fold one without
-   trapping or tearing paper.
+   is required, Astra and I agree the choice should be parked. With the current layered sleeve construction,
+   the reverse-band folds I tried trapped or tore paper. That is a result of the attempted
+   construction, not a proof that no reverse cuff can be folded.
 2. Papers: keep both, one, or neither? This is still your scope decision.
 3. Sailor top: now parked. Re-entry needs a front neckline or shoulders. The shoulder-triangle
    fold failed the hinge gate (0.083 against the 0.044 limit), and I did not relax that gate.
 4. Patch pocket: is "Folded patch pocket" the right name? A pocket square that tucks into a pocket
    would need a pocket mechanism in the garment, which is out of scope here.
+
+## PR #13 exploration
+
+Branch `drafts/papercouture-drafter-explore-13`, taken from PR #12's head `0b21556`, targeting
+`feature/geometry-collection-20260930`. Charles asked for a broader exploration in three areas:
+
+- drawn reverses designed around where each face lands;
+- discrete choices on existing garments, kept away from the neckline and shoulders;
+- valley-fold accessories at existing anchors.
+
+There is no engine change, no new fold primitive, no painted fold, no slider and no
+progression system. There are no new garment families and no small folds near the neckline
+or shoulders.
+
+### Astra's review of PR #12
+
+Astra left one issue comment on PR #12, reviewing `0b21556`. There were no formal reviews
+and no inline comments.
+
+| Astra point | Status | What changed |
+| --- | --- | --- |
+| Keep the follow-up: the round trip is verified and the deliberate Bow choice is right | Kept | Both round-trip cases and the Bow override still pass in the browser review |
+| Keep the sailor top parked, the cuff/accessory copy, the papers and the pleat depths | Kept, no change | Catalogue scope and the printed-corner style are still Charles's calls |
+| P3 (inherited): attach a Neckerchief, pick Two-piece bow without folding, then pick Neckerchief again. The button said **Fold accessory** but opened the finished piece | Addressed | `StudioControls` remembers the kept accessory and whether it is attached from the last render (`kept`). `actionLabel()` is now the single rule for **Edit** or **Fold**, used both by `render()` and by the selector's `onchange`. `onchange` still clears `displaced`. New browser case: turn the kept kerchief's paper once, attach it, pick Bow (**Fold accessory**), then Neckerchief (**Edit accessory** at once). Edit reopens it at step 5 with the same paper and turn (`{"id":"kerchief","step":5,"paper":"tidal-bands","turns":1}`), and Back to garment keeps it attached. As a control, the same case fails on PR #12's `studioControls.ts` (`kerchief`/`Fold accessory`) |
+| Doc: #12's GitHub diff is cumulative from PR #10 (nine commits). Only [`caecb0f...0b21556`](https://github.com/CharlesMish/PaperCouture/compare/caecb0f...0b21556) holds the four follow-up commits | Noted | Recorded here and in the PR #13 body. #13 is also stacked: its own commits are `0b21556...` the #13 head |
+| Doc: "the engine cannot" make a reverse cuff is too strong | Addressed | Both places now say that, with the current layered sleeve construction, the reverse-band folds I tried trapped or tore paper. That is a result of that construction, not a general limit |
+| Optional: a timeout knob for the harness under concurrent software-WebGL load | Addressed (optional) | `REVIEW_TIMEOUT_MS` sets the per-action timeout (default 20000). This round's run used 40000 |
+
+### Tools
+
+- `scripts/paperLanding.ts` maps each sheet sample to the face (print or reverse) seen in the
+  Front and Back views of a finished construction. It maps canvas points in both directions
+  (`canvasPoint` / `materialPoint`), using the same canvas conventions as `textures.ts` /
+  `sheetOrientation`.
+- `docs/geometry-collection/explore/landingMaps.ts` writes these maps for all five garments.
+  `landingMaps.py` draws them as `landing-maps.png`.
+- For each paper and turn, the "capture" metric is the share of each face's ink that reaches
+  the Front view. It came from a box-only helper (it rasterizes the real paper drawings in
+  Chromium) and is not committed. The numbers are quoted below.
+
+### Hypotheses
+
+| # | Hypothesis | Outcome | What I learned |
+| --- | --- | --- | --- |
+| H1 | A **reverse-first** paper, designed from the landing maps: the reverse is the star and the front is quiet | **Kept (shipped)**: *Starlit lining* | At turn 0 the reverse shows in four predictable places: the top band (dress and jacket collar and sleeve tops, the pleats waistband, the vest lapel tips), a centre column (the vest front opening, the dress back, the pleats back), the wrap-skirt front triangle and the dress back. Every drawn feature is put in one of these. 48-50% of the reverse ink reaches the Front view on the dress and jacket. Averaged over all five garments at 0°, Starlit scores 0.34, against 0.29 for Reverse garden and 0.21 for Ink reverse. Border print scores 0.53, but its only reverse drawing is the small collar rule. The design is turn-specific: the average falls to 0.09-0.10 at the other turns |
+| H2 | One motif that a **quarter turn** moves from the dress hem to the jacket chest | **Confirmed, with an existing paper** (finding; no new paper) | A quarter turn hardly does it: at 90° or 270° only about 2% of the canvas is both on the dress hem (turn 0) and on the jacket chest. A half turn works for one compact region: cols 0.28-0.72, rows 0.69-0.81 (about 5-6% of the sheet). Border print's hem band already sits there. At 0° it is the dress hem, and at 180° it lands across the jacket chest (`h2-border-print-turn.jpg`). A second paper would duplicate it |
+| H3 | A small **paper-level recommended turn**, without a progression system | **Disproved** as one hint per paper (finding only) | The capture metric matches the known rankings (Corner bloom best at 270° on the dress; Falling chevrons at 0°). But where the turn matters, the best turn depends on the garment. Corner bloom is best at 270° on the dress, 90° on the jacket and 180° on the skirt. Reverse garden is best at 0° on the dress and 180° on the skirt. The all-over repeats (lattice, seed dashes, checks, pinstripe) are flat across turns. A hint would have to be per paper and per garment, so none was added |
+| H4a | **Wrap-skirt length**: Short / Classic / Long | **Kept (shipped)** | This is the first skirt decision, at the length crease, far from the waistband. The `skirt-length` and `skirt-hem` creases move together (y -0.30 / -0.55 / -0.80). Heights are 1.02 / 1.27 / 1.52. All 3 lengths x 2 wraps x 2 bands pass the gates, with a worst hinge of 0.0385. Classic is unchanged from PR #10 (fingerprint asserted). The long skirt also shows more of Border print's band |
+| H4b | **Vest pointed / cutaway hem** | **Parked** | The corner folds pass the gates (hinge 0.0385). But the natural place for them is after `vest-shorten`, which already holds the vest-length decision (one decision per fold). Adding it would also move the reveal turn, which shifts the decision indices. It needs a combined length-and-hem decision or three more steps. I held it back to keep scope down |
+| H4c | **Dress length** (hem crease y -0.6 / -0.7 / -0.8) | **Parked** (passes the gates) | All 9 silhouette x sleeve combinations pass. I did not ship it: it would be the third dress decision, and it folds away part of Border print's hem band, the placement that paper is designed around |
+| H5 | A **folded tulip** from its own square, valley folds only, at the waist anchors | **Kept (shipped)** | 4 steps: turn over, fold in half along the diagonal, then two petal folds at 33° from the centre line. It gives a three-point tulip and is placed at `waist-left` / `waist` / `waist-right` on all five garments (the vest has only left and right). The angle only works from 30° to 36°. Below that, the second petal catches the first; at 29° the facets split. The tulip needed a per-accessory `lift` so it sits below the skirt and pleats waistband edges. Without it, 45 placements were outside the paper |
+
+Negative results that are worth keeping:
+
+- **Tulip, first version.** Petal folds hinged at the right-angle corner gave long, thin
+  "arrow" petals. They were rejected by eye before any checks.
+- **Two-tone tulip.** Folding only the top layer of each petal, so that the reverse shows,
+  tears: the crease crosses the joined diagonal edge. The shipped tulip is **one face (the
+  print)**. A two-tone flower needs a different base, not a partial fold.
+- **Single-motif papers barely reach the skirt and vest fronts.** For example, Corner bloom
+  on the skirt at 0° shows 0.00 of its motif. Such papers suit the dress and jacket.
+- **Ink reverse's ring is not "lost".** It is 100% visible on the dress Back view and 74% on
+  the wrap-skirt front, so nothing needs to change there.
+
+### Counts and checks
+
+The collection now has 30 supported constructions (was 22), 167 decision transitions (was 99)
+and 399 attachment placements (0 outside the retained paper).
+
+`check-drafts.ts` adds:
+
+- Starlit landing assertions, sampled through the real constructions at 128 x 128. Trim in
+  the Front view: dress 0.87, jacket 0.88, pleats 0.60. Column: vest front 1.00, dress back
+  1.00. Moon: skirt front 1.00, dress back 0.91.
+- Skirt-length gates, heights and the classic fingerprint.
+- Tulip gates and shape: the base is the lowest point; two petal tips, one each side; the
+  cup tip shows between them; every visible face is print; waist positions on every
+  garment.
+
+`check.ts` adds the tulip and the short and long skirts.
+
+The browser review adds:
+
+- the direct reselect case;
+- Starlit on all five garments;
+- Border print at turns 0 and 2;
+- the skirt-length choice at 1280x800 and 390x844, walked through the UI;
+- the tulip folded in the studio and attached on the dress, skirt, vest and pleats.
+
+New contact sheets: `starlit-lining.jpg`, `skirt-lengths.jpg`, `tulip.jpg`,
+`h2-border-print-turn.jpg` and `landing-maps.png`. `accessory-roundtrip.jpg` was refreshed
+with the reselect cell.
+
+Checks run on this branch (Node 24.21, headless Chromium with software WebGL; no real phone,
+Safari or physical paper): `npm run typecheck`, `npm test`, `node --import tsx scripts/check-drafts.ts`,
+`npm run build -- --base /play/paper-couture/` and `scripts/check-drafts-review.cjs`. All passed.
+
+### Open questions after PR #13
+
+1. Starlit lining is designed for turn 0 (at other turns its reverse mostly hides). Is a
+   turn-specific paper acceptable, or should the catalogue only hold papers that work at
+   every turn? This is also part of the paper-count question.
+2. Tulip: is a one-face (print only) tulip acceptable? A two-tone version needs a different
+   base.
+3. Should dress length or the vest hem ship in a later round? Both pass the gates. The vest
+   hem needs a combined decision.
+4. Is a per-garment "try this turn" hint wanted at all? The data supports only per paper and
+   garment, and I have not built it.
+5. Catalogue scope: Pinstripe, Border print and Starlit are all proposals. Keep which ones?

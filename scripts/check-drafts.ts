@@ -1,8 +1,9 @@
 // Drafted proposal items (branch drafts/papercouture-drafter-20260930).
 // Run: node --import tsx scripts/check-drafts.ts   (also part of npm test)
 // Geometry gates for the parked sailor-collar study, turned cuffs, pleat depths, the
-// neckerchief and folded patch pocket, plus drawing/placement checks for the two
-// draft papers. Like the other checks, this is not physical-paper or
+// neckerchief and folded patch pocket, plus drawing/placement checks for the
+// draft papers. PR #13 exploration adds Starlit lining landing checks, wrap skirt
+// lengths and the folded tulip. Like the other checks, this is not physical-paper or
 // continuous-collision certification.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -21,6 +22,10 @@ import { Vec2, applyAffine, centroid, signedArea, v2 } from '../src/fold/geometr
 import { buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
 import { PAPERS } from '../src/papers';
 import { BORDER_BAND } from '../src/papers/borderPrint';
+import { STARLIT } from '../src/papers/starlitLining';
+import { buildWrapSkirt, SKIRT_LENGTHS } from '../src/fold/wrapSkirt';
+import { buildTulip, TULIP_ANGLE } from '../src/fold/tulip';
+import { canvasPoint, finalState, landings } from './paperLanding';
 
 const dist = (a: number[], b: number[]) => Math.hypot(...a.map((v, i) => v - b[i]));
 const insideConvex = (poly: Vec2[], p: Vec2) => {
@@ -167,7 +172,7 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   const ids = PAPERS.map(p => p.id);
   assert.equal(new Set(ids).size, ids.length, 'duplicate paper id');
   assert(ids.indexOf('diagnostic') < 0 || ids.indexOf('border-print') < ids.length - 1, 'diagnostic paper stays last');
-  for (const id of ['pinstripe-lining', 'border-print']) {
+  for (const id of ['pinstripe-lining', 'border-print', 'starlit-lining']) {
     const paper = PAPERS.find(p => p.id === id);
     assert(paper && !paper.hidden, `${id} is not a visible swatch`);
     assert(paper.note.length <= 60, `${id}: swatch note should be one short line`);
@@ -207,5 +212,71 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   const vest = buildTimeline(buildLapelVest().ops).states.at(-1)!;
   assert(vest.facets.some(f => f.tags.some(t => t.startsWith('vest-lapel-')) && isFlipped(f) === (faceAt(vest, centroid(modelPoly(f)), 'front').facet === f)), 'vest lapels expose the reverse');
   console.log('Draft papers: Pinstripe and lining, Border print registered with drawn reverses; border band lands on the dress front near the hem; reverse wave rule shows on the collar.');
+}
+// --- PR #13 exploration: Starlit lining (reverse-first paper) -------------------
+{
+  // Each part of the reverse drawing must land where the folds really turn the
+  // reverse outward (turn 0), measured through the real constructions.
+  const share = (garment: Parameters<typeof buildGarment>[0], inRegion: (c: { col: number; row: number }) => boolean, view: 'front' | 'back') => {
+    const L = landings(finalState(buildGarment(garment)), 128).filter(l => inRegion(canvasPoint(l.m, 'reverse', 0)));
+    assert(L.length > 50, `${garment}: region too small to measure`);
+    return L.filter(l => l[view] === 'reverse').length / L.length;
+  };
+  const { trim, column, moon } = STARLIT;
+  const inTrim = (c: { col: number; row: number }) => c.row > trim.top && c.row < trim.bottom;
+  const inColumn = (top: number, bottom: number) => (c: { col: number; row: number }) => Math.abs(c.col - column.col) < column.halfWidth && c.row > top && c.row < bottom;
+  const inMoon = (c: { col: number; row: number }) => Math.hypot(c.col - moon.col, c.row - moon.row) < moon.radius;
+  const found = {
+    dressTrim: share('dress', inTrim, 'front'), jacketTrim: share('jacket', inTrim, 'front'), pleatsTrim: share('pleats', inTrim, 'front'),
+    vestColumn: share('vest', inColumn(0.15, 0.66), 'front'), dressBackColumn: share('dress', inColumn(column.top, column.bottom), 'back'),
+    skirtMoon: share('skirt', inMoon, 'front'), dressBackMoon: share('dress', inMoon, 'back'),
+  };
+  assert(found.dressTrim > 0.85 && found.jacketTrim > 0.85, `starlit trim should be the dress and jacket collar/sleeve tops ${JSON.stringify(found)}`);
+  assert(found.pleatsTrim > 0.55, 'starlit trim should be most of the pleated waistband');
+  assert(found.vestColumn > 0.98, 'starlit star column should fill the vest front opening');
+  assert(found.dressBackColumn > 0.98, 'starlit star column should run down the dress back');
+  assert(found.skirtMoon > 0.98, 'starlit moon should be on the wrap skirt front');
+  assert(found.dressBackMoon > 0.85, 'starlit moon should be on the dress back');
+  console.log(`Starlit lining: reverse features land as designed at turn 0 ${Object.entries(found).map(([k, v]) => `${k} ${v.toFixed(2)}`).join(', ')}.`);
+}
+
+// --- PR #13 exploration: wrap skirt length ---------------------------------------
+{
+  // Classic is the PR #10 construction, byte for byte (geometry and captions).
+  const fp = (c: Construction) => createHash('sha256').update(JSON.stringify(buildTimeline(c.ops).states.map(s => s.facets.map(({ id: _id, ...f }) => f)))).digest('hex');
+  assert.equal(fp(buildWrapSkirt()), '4961d9ef9db169d2d535f25b5d5d9297f1be26cbee97f907658ebdb212862432', 'classic wrap skirt changed from the PR #10 baseline');
+  assert.equal(JSON.stringify(buildWrapSkirt({ length: 'classic' })), JSON.stringify(buildWrapSkirt()), 'classic length must be the unchanged default');
+  const heights: Record<string, number> = {};
+  for (const length of SKIRT_LENGTHS) for (const wrap of ['original', 'opposite'] as const) for (const band of ['double', 'single'] as const) {
+    const c = buildWrapSkirt({ length: length.id, wrap, band });
+    const { final } = validate(c);
+    assert.equal(c.ops.length, buildWrapSkirt({ wrap, band }).ops.length, 'a length choice adds no steps');
+    if (wrap === 'original' && band === 'double') heights[length.id] = bounds(final).h;
+  }
+  assert(heights.classic - heights.short > 0.2 && heights.long - heights.classic > 0.2, `skirt lengths should be visibly distinct ${JSON.stringify(heights)}`);
+  console.log(`Wrap skirt length: short/classic/long x wrap x band all pass the gates; heights ${Object.entries(heights).map(([k, v]) => `${k} ${v.toFixed(2)}`).join(', ')}; classic matches PR #10.`);
+}
+
+// --- PR #13 exploration: folded tulip --------------------------------------------
+{
+  const c = buildTulip();
+  const { final, worstGap } = validate(c);
+  assert(TULIP_ANGLE > 30 && TULIP_ANGLE < 45, 'tulip crease angle leaves the petals crossing without catching');
+  assert(final.facets.every(f => faceAt(final, centroid(modelPoly(f)), 'front').facet !== f || !isFlipped(f)), 'every visible tulip face is printed');
+  // upright frame: base at the origin, tip along (-1, -1)
+  const up = (p: Vec2) => -(p.x + p.y) / Math.SQRT2, across = (p: Vec2) => (p.x - p.y) / Math.SQRT2;
+  const pts = final.facets.flatMap(modelPoly);
+  const height = Math.max(...pts.map(up)), width = Math.max(...pts.map(across)) - Math.min(...pts.map(across));
+  assert(Math.min(...pts.map(up)) > -1e-9, 'the base of the tulip is its lowest point');
+  assert(height > 1.3 && width > 1, `tulip should be a broad head, not a sliver (${height.toFixed(2)} x ${width.toFixed(2)})`);
+  // two petal tips either side of the centre line, with the tip of the cup showing between them
+  const tipPoint = v2(-1, -1);
+  const atTip = faceAt(final, v2(tipPoint.x + 0.03, tipPoint.y + 0.03), 'front').facet;
+  assert(!atTip.tags.some(t => t === 'tulip-left' || t === 'tulip-right'), 'the tip of the cup should show between the petals, not under them');
+  // the petal tips sit a little below the cup's tip, well out to each side
+  const tips = pts.filter(p => up(p) > 0.85 * height && Math.abs(across(p)) > 0.3);
+  assert(tips.some(p => across(p) < 0) && tips.some(p => across(p) > 0), 'two petal tips, one either side');
+  for (const g of GARMENTS) assert(accessoryAnchors('tulip', attachmentAnchors(g.id, 1, -1)).length > 0, `${g.id}: the tulip needs a waist position`);
+  console.log(`Folded tulip: ${c.ops.length} steps, ${final.facets.length} facets, ${height.toFixed(2)} x ${width.toFixed(2)} upright; hinge ${worstGap.toFixed(4)}; printed faces; waist positions on every garment.`);
 }
 console.log('Draft checks passed.');

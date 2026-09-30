@@ -1,7 +1,8 @@
 // Optional production-browser review of the draft proposals
 // (docs/geometry-collection/drafts/NOTES.md). npm install --no-save playwright, then
 // npm run build -- --base /play/paper-couture/ && node scripts/check-drafts-review.cjs
-// PLAYWRIGHT_MODULE may point to external browser tooling; SHOTS_DIR overrides the output.
+// PLAYWRIGHT_MODULE may point to external browser tooling; SHOTS_DIR overrides the output;
+// REVIEW_TIMEOUT_MS raises the per-action timeout (software WebGL under load is slow).
 const fs = require('node:fs');
 const path = require('node:path');
 const http = require('node:http');
@@ -29,7 +30,7 @@ const errors = [];
   try {
     browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--use-angle=swiftshader'] });
     const p = await browser.newPage({ viewport: { width: 1280, height: 800 }, reducedMotion: 'reduce' });
-    p.setDefaultTimeout(20000);
+    p.setDefaultTimeout(Number(process.env.REVIEW_TIMEOUT_MS) || 20000);
     p.on('pageerror', e => errors.push(String(e)));
     p.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
     p.on('requestfailed', r => errors.push(`${r.url()}: ${r.failure()?.errorText}`));
@@ -198,6 +199,98 @@ const errors = [];
     // Existing accessories still fold and attach.
     const pin = await accessory('dress', 6, 'pin', 5, 'neckline', 'pin-dress-neckline-regression');
     checks.push(`diamond pin still attaches; dress positions ${JSON.stringify(pin.positions)}`);
+    // 6. Direct reselect (Astra review of PR #12, P3): with a neckerchief
+    // attached, pick the bow without folding it, then pick the neckerchief
+    // again. The button must offer Edit at once, and Edit must reopen the kept
+    // piece with its step, paper and rotation.
+    await open('?design=jacket&paper=pinstripe-lining&step=6&view=display', 6);
+    await p.getByLabel('Accessory type').selectOption('kerchief');
+    await p.getByRole('button', { name: 'Fold accessory', exact: true }).click();
+    for (let i = 0; i < 5; i++) await fold();
+    await p.getByRole('button', { name: /^Turn paper/ }).click();
+    await p.locator('.dock .btn-primary').click();
+    await p.waitForFunction(() => paperCouture.view.inDisplay && paperCouture.attached);
+    const keptPiece = await p.evaluate(() => ({ id: paperCouture.accessoryId, paper: paperCouture.accessoryPaperId, turns: paperCouture.accessoryQuarterTurns }));
+    assert.equal(keptPiece.turns, 1, 'the kept neckerchief was turned once');
+    await p.getByLabel('Accessory type').selectOption('bow');
+    const other = await selector();
+    assert.deepEqual([other.value, other.edit], ['bow', 'Fold accessory'], `another type offers Fold ${JSON.stringify(other)}`);
+    await p.getByLabel('Accessory type').selectOption('kerchief');
+    const reselected = await selector();
+    assert.deepEqual([reselected.value, reselected.edit], ['kerchief', 'Edit accessory'], `reselecting the attached type offers Edit ${JSON.stringify(reselected)}`);
+    await p.screenshot({ path: `${output}/reselect-kerchief-edit.png` });
+    await p.getByRole('button', { name: 'Edit accessory', exact: true }).click();
+    await p.waitForFunction(() => paperCouture.accessoryMode);
+    const reopened = await p.evaluate(() => ({ id: paperCouture.accessoryId, step: paperCouture.controller.step, paper: paperCouture.accessoryPaperId, turns: paperCouture.accessoryQuarterTurns }));
+    assert.deepEqual(reopened, { ...keptPiece, step: 5 }, `Edit reopens the finished neckerchief ${JSON.stringify(reopened)}`);
+    await p.getByRole('button', { name: 'Back to garment', exact: true }).click();
+    await p.waitForFunction(() => !paperCouture.accessoryMode);
+    assert.equal(await p.evaluate(() => paperCouture.attached), true, 'returning keeps the neckerchief attached');
+    checks.push(`direct reselect: bow offers ${other.edit}, neckerchief again offers ${reselected.edit}; Edit reopens ${JSON.stringify(reopened)}; still attached after Back to garment`);
+    // 7. Starlit lining (PR #13 H1): reverse-first paper on every garment.
+    const finished = async (query, name) => {
+      await p.goto(root + query);
+      await p.waitForFunction(() => window.paperCouture);
+      const n = await p.evaluate(() => paperCouture.timeline.ops.length);
+      await open(`${query}&step=${n}&view=display`, n);
+      if (name) await capture(name);
+      return n;
+    };
+    for (const garment of ['dress', 'jacket', 'vest', 'skirt', 'pleats']) {
+      await finished(`?design=${garment}&paper=starlit-lining`, `starlit-${garment}-front`);
+      assert.equal(await p.evaluate(() => paperCouture.paperId), 'starlit-lining');
+      if (garment === 'dress' || garment === 'pleats' || garment === 'skirt') { await preset('Back'); await capture(`starlit-${garment}-back`); }
+    }
+    checks.push('Starlit lining selectable and shown on all five garments (front; back for dress, skirt, pleats)');
+    // 8. Border print turned twice on the jacket (PR #13 H2): the hem band lands on the chest.
+    await finished('?design=jacket&paper=border-print&turn=2', 'h2-border-print-jacket-turn2');
+    await finished('?design=jacket&paper=border-print', 'h2-border-print-jacket-turn0');
+    await finished('?design=dress&paper=border-print&turn=2', 'h2-border-print-dress-turn2');
+    checks.push('Border print turn 0/2 on the jacket and turn 2 on the dress captured');
+    // 9. Wrap skirt length (PR #13 H4): the first skirt decision, walked through the UI.
+    await p.goto(root + '?design=skirt&paper=border-print');
+    await p.waitForFunction(() => window.paperCouture);
+    const lengthChoice = await p.locator('.shape-choices').evaluate(f => ({
+      legend: f.querySelector('legend').textContent,
+      names: Array.from(f.querySelectorAll('button')).map(b => b.getAttribute('aria-label')),
+      overflow: f.scrollWidth > f.clientWidth + 1,
+    }));
+    assert.deepEqual(lengthChoice.names, ['Short', 'Classic', 'Long']);
+    assert(!lengthChoice.overflow, 'skirt length choices overflow at 1280x800');
+    await p.screenshot({ path: `${output}/skirt-length-choice.png` });
+    await p.setViewportSize({ width: 390, height: 844 });
+    await p.waitForTimeout(200);
+    assert(!await p.locator('.shape-choices').evaluate(f => f.scrollWidth > f.clientWidth + 1 || document.documentElement.scrollWidth > window.innerWidth), 'skirt length choices overflow at 390x844');
+    await p.screenshot({ path: `${output}/skirt-length-choice-390.png` });
+    await p.setViewportSize({ width: 1280, height: 800 });
+    await p.getByRole('button', { name: 'Long', exact: true }).click();
+    await p.waitForFunction(() => paperCouture.options.skirtLength === 'long');
+    assert.equal(await step(), 0, 'choosing the length keeps the skirt at its first fold');
+    await finish();
+    await p.getByRole('button', { name: 'Display', exact: true }).click();
+    await p.waitForFunction(() => paperCouture.view.inDisplay);
+    await capture('skirt-length-long-ui');
+    assert.equal(await p.evaluate(() => paperCouture.timeline.ops.length), 9, 'a length choice adds no steps');
+    for (const length of ['short', 'classic', 'long']) {
+      await finished(`?design=skirt&paper=border-print&skirtLength=${length}`, `skirt-length-${length}`);
+      assert.equal(await p.evaluate(() => paperCouture.options.skirtLength), length);
+    }
+    checks.push(`skirt length: legend ${JSON.stringify(lengthChoice.legend)}, choices ${JSON.stringify(lengthChoice.names)}, no overflow at 1280x800 or 390x844; Long chosen at step 0 through the UI and folded to the end (9 steps); short/classic/long via URL`);
+    // 10. Folded tulip (PR #13 H5): valley folds from its own square, at waist anchors.
+    const tulipSteps = { dress: 6, skirt: 9, vest: 8, pleats: await finished('?design=pleats&paper=pinstripe-lining') };
+    const tulip = [];
+    for (const [garment, position, paper] of [['dress', 'waist', 'starlit-lining'], ['skirt', 'waist-left', 'pinstripe-lining'], ['vest', 'waist-right', 'border-print'], ['pleats', 'waist', 'pinstripe-lining']]) {
+      const r = await accessory(garment, tulipSteps[garment], 'tulip', 4, position, `tulip-${garment}-${position}`, paper);
+      assert(r.types.some(([v, disabled]) => v === 'tulip' && !disabled), `${garment}: tulip selectable`);
+      assert(r.positions.every(x => /^waist/.test(x)), `${garment}: tulip positions are waist anchors ${JSON.stringify(r.positions)}`);
+      tulip.push(`${garment} ${JSON.stringify(r.positions)}`);
+    }
+    // One studio shot mid-fold for the contact sheet.
+    await open('?design=dress&paper=border-print&step=6&view=display', 6);
+    await p.getByLabel('Accessory type').selectOption('tulip');
+    await p.getByRole('button', { name: 'Fold accessory', exact: true }).click();
+    for (let i = 0; i < 4; i++) { await fold(); await capture(`tulip-studio-step-${i + 1}`); }
+    checks.push(`folded tulip: 4 folds in the studio; waist positions ${tulip.join('; ')}`);
     assert.deepEqual(errors, []);
     fs.writeFileSync(`${output}/browser-result.json`, JSON.stringify({ passed: true, engine: 'Headless Chromium; software WebGL', checks, errors, note: 'Browser review only; not a real-phone check.' }, null, 2));
     console.log('Draft browser review passed'); checks.forEach(c => console.log(' - ' + c));
