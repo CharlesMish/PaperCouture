@@ -1,4 +1,5 @@
 import { GARMENTS, GarmentId, AttachmentPosition, AttachmentAnchor } from '../fold/garments';
+import type { DecisionId, FoldDecision } from '../fold/garmentOptions';
 export type { GarmentId };
 export type PinPosition = AttachmentPosition;
 export type AccessoryId = 'pin' | 'bow';
@@ -11,12 +12,18 @@ export class StudioControls {
   private remove = document.createElement('button');
   private returnButton = document.createElement('button');
   private revisit = document.createElement('button');
+  private revisitChoice = document.createElement('select');
+  private revisitLabel = document.createElement('label');
   private position = document.createElement('select');
   private positionLabel = document.createElement('label');
   private note = document.createElement('span');
+  private centreControls = document.createElement('span');
+  private centreEdit = document.createElement('button');
+  private centreToggle = document.createElement('button');
   constructor(parent: HTMLElement, h: {
     onDesign(id: GarmentId): void; onEdit(id: AccessoryId): void; onRemove(): void;
-    onReturn(): void; onPosition(position: PinPosition): void; onRevisit(): void;
+    onReturn(): void; onPosition(position: PinPosition): void; onRevisit(id: DecisionId): void;
+    onCentre(): void; onCentreToggle(): void;
   }) {
     this.root.className = 'studio-controls';
     this.root.setAttribute('aria-label', 'Garment and accessory');
@@ -34,16 +41,32 @@ export class StudioControls {
     this.accessory.onchange = () => { this.edit.textContent = 'Fold accessory'; };
     this.remove.textContent = 'Remove accessory'; this.remove.onclick = h.onRemove;
     this.returnButton.textContent = 'Back to garment'; this.returnButton.onclick = h.onReturn;
-    this.revisit.textContent = 'Revisit shape fold'; this.revisit.onclick = h.onRevisit;
+    this.revisitLabel.textContent = 'Revisit ';
+    this.revisitChoice.setAttribute('aria-label', 'Fold to revisit');
+    this.revisit.textContent = 'Revisit fold'; this.revisit.onclick = () => h.onRevisit(this.revisitChoice.value as DecisionId);
+    this.revisitLabel.append(this.revisitChoice, this.revisit);
     this.positionLabel.textContent = 'Place ';
     this.position.setAttribute('aria-label', 'Accessory position');
     this.position.onchange = () => h.onPosition(this.position.value as PinPosition);
     this.positionLabel.append(this.position);
     this.note.className = 'studio-note';
-    this.root.append(label, this.revisit, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.returnButton, this.note);
+    this.centreControls.className = 'centre-controls';
+    this.centreEdit.className = this.centreToggle.className = 'studio-button';
+    this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
+    this.centreToggle.textContent = 'Show folded centre';
+    this.centreControls.append(this.centreEdit, this.centreToggle);
+    this.root.append(label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
     parent.append(this.root);
   }
-  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, canRevisit: boolean, anchors: AttachmentAnchor[]) {
+  renderCentre(available: boolean, complete: boolean, shown: boolean, editing: boolean) {
+    this.centreControls.hidden = !available;
+    this.centreEdit.textContent = complete ? 'Edit centre' : 'Fold centre';
+    this.centreToggle.hidden = !complete;
+    this.centreToggle.setAttribute('aria-pressed', String(shown));
+    if (editing) this.note.textContent = 'Folded centre · third square · both wings are kept';
+    else if (available && shown) this.note.textContent = 'Three-piece bow · optional folded centre';
+  }
+  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[]) {
     this.design.value = id; this.design.disabled = accessoryMode;
     this.edit.textContent = attached && this.accessory.value === activeAccessory ? 'Edit accessory' : 'Fold accessory';
     this.edit.hidden = accessoryMode || !finished; this.edit.disabled = !finished;
@@ -57,7 +80,14 @@ export class StudioControls {
     }
     this.position.value = position;
     this.returnButton.hidden = !accessoryMode;
-    this.revisit.hidden = accessoryMode || id !== 'dress' || !canRevisit;
+    this.revisitLabel.hidden = accessoryMode || revisit.length === 0;
+    const revisitKey = revisit.map(d => d.id).join('|');
+    if (this.revisitChoice.dataset.choices !== revisitKey) {
+      const selected = this.revisitChoice.value;
+      this.revisitChoice.replaceChildren(...revisit.map(d => new Option(d.label, d.id)));
+      if (revisit.some(d => d.id === selected)) this.revisitChoice.value = selected;
+      this.revisitChoice.dataset.choices = revisitKey;
+    }
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : 'Diamond pin · separate square' : finished ? 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
   }
   topInset(): number { return this.root.getBoundingClientRect().bottom + 10; }

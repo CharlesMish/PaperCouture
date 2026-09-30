@@ -1,0 +1,570 @@
+{
+  "passed": true,
+  "engine": "Headless Chromium; software WebGL; emulated touch viewport",
+  "checks": [
+    "Dress sleeve/side choices use real controls, preserve prior choices/paper/turn, rewind honestly, retain keyboard focus",
+    "Completed accessory, independent paper/rotation and placement survive garment refold; hidden until garment finishes",
+    "Opposite skirt wrap and one/two-turn band update construction count/progress and revisit separately",
+    "Jacket and vest length choices preserve their common fold prefix and revisit from Display",
+    "Portrait/landscape contextual choices, completed garment and attached-accessory controls remain usable"
+  ],
+  "layouts": [
+    {
+      "name": "sleeve-choice-390",
+      "width": 390,
+      "height": 844,
+      "studio": {
+        "x": 12,
+        "y": 100,
+        "width": 366,
+        "height": 110,
+        "bottom": 210
+      },
+      "dock": {
+        "x": 10,
+        "y": 598.296875,
+        "width": 370,
+        "height": 231.703125,
+        "bottom": 830
+      },
+      "gap": 388.296875,
+      "controls": [
+        {
+          "label": "Classic",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Lifted",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Dropped",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "name": "dress-display-390",
+      "width": 390,
+      "height": 844,
+      "studio": {
+        "x": 12,
+        "y": 100,
+        "width": 366,
+        "height": 151,
+        "bottom": 251
+      },
+      "dock": {
+        "x": 10,
+        "y": 676.6875,
+        "width": 370,
+        "height": 153.3125,
+        "bottom": 830
+      },
+      "gap": 425.6875,
+      "controls": [
+        {
+          "label": "Return to the workshop",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Front",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Angle",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Turntable",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Reset view",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Accessory type",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold accessory",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "name": "accessory-display-390",
+      "width": 390,
+      "height": 844,
+      "studio": {
+        "x": 12,
+        "y": 100,
+        "width": 366,
+        "height": 192,
+        "bottom": 292
+      },
+      "dock": {
+        "x": 10,
+        "y": 676.6875,
+        "width": 370,
+        "height": 153.3125,
+        "bottom": 830
+      },
+      "gap": 384.6875,
+      "controls": [
+        {
+          "label": "Return to the workshop",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Front",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Angle",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Turntable",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Reset view",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Accessory type",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Edit accessory",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Accessory position",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Remove accessory",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "name": "side-choice-390",
+      "width": 390,
+      "height": 844,
+      "studio": {
+        "x": 12,
+        "y": 100,
+        "width": 366,
+        "height": 69,
+        "bottom": 169
+      },
+      "dock": {
+        "x": 10,
+        "y": 618.6875,
+        "width": 370,
+        "height": 211.3125,
+        "bottom": 830
+      },
+      "gap": 449.6875,
+      "controls": [
+        {
+          "label": "Straight",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Classic A-line",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Wide flare",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "name": "sleeve-choice-844",
+      "width": 844,
+      "height": 390,
+      "studio": {
+        "x": 128,
+        "y": 50,
+        "width": 440.390625,
+        "height": 44,
+        "bottom": 94
+      },
+      "dock": {
+        "x": 142,
+        "y": 225.21875,
+        "width": 560,
+        "height": 150.78125,
+        "bottom": 376
+      },
+      "gap": 131.21875,
+      "controls": [
+        {
+          "label": "Classic",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Lifted",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Dropped",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    },
+    {
+      "name": "dress-display-844",
+      "width": 844,
+      "height": 390,
+      "studio": {
+        "x": 128,
+        "y": 50,
+        "width": 700,
+        "height": 44,
+        "bottom": 94
+      },
+      "dock": {
+        "x": 142,
+        "y": 291,
+        "width": 560,
+        "height": 91,
+        "bottom": 382
+      },
+      "gap": 197,
+      "controls": [
+        {
+          "label": "Return to the workshop",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Front",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Angle",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Turntable",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Reset view",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Accessory type",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold accessory",
+          "visible": false,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "name": "accessory-display-844",
+      "width": 844,
+      "height": 390,
+      "studio": {
+        "x": 128,
+        "y": 50,
+        "width": 700,
+        "height": 44,
+        "bottom": 94
+      },
+      "dock": {
+        "x": 142,
+        "y": 291,
+        "width": 560,
+        "height": 91,
+        "bottom": 382
+      },
+      "gap": 197,
+      "controls": [
+        {
+          "label": "Return to the workshop",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Front",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Angle",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Turntable",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Reset view",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold to revisit",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Revisit fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Accessory type",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Edit accessory",
+          "visible": false,
+          "hit": false
+        },
+        {
+          "label": "Accessory position",
+          "visible": false,
+          "hit": false
+        },
+        {
+          "label": "Remove accessory",
+          "visible": false,
+          "hit": false
+        }
+      ]
+    },
+    {
+      "name": "side-choice-844",
+      "width": 844,
+      "height": 390,
+      "studio": {
+        "x": 128,
+        "y": 50,
+        "width": 186.1875,
+        "height": 44,
+        "bottom": 94
+      },
+      "dock": {
+        "x": 142,
+        "y": 237,
+        "width": 560,
+        "height": 139,
+        "bottom": 376
+      },
+      "gap": 143,
+      "controls": [
+        {
+          "label": "Straight",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Classic A-line",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Wide flare",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Back",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Fold",
+          "visible": true,
+          "hit": true
+        },
+        {
+          "label": "Garment design",
+          "visible": true,
+          "hit": true
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

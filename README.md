@@ -29,14 +29,19 @@ and uses relative asset paths. Serve it over HTTP; do not double-click index.htm
 
 ## Garments and optional accessories
 
-Choose Dress, Box jacket, Wrap skirt or Lapel vest from Design. After folding the garment, optionally
+Choose Dress, Box jacket, Wrap skirt, Lapel vest or Pleated skirt from Design. After folding the garment, optionally
 fold a separate diamond pin or a two-piece bow (one square per wing), choose its own paper and place or remove it.
-At dress step 3, choose Straight, Classic A-line or Wide flare. Revisit shape fold
-returns to that decision. See [styling notes](docs/astra-review/STYLING_CHOICES.md). See
+At dress step 3, choose Straight, Classic A-line or Wide flare, then choose the sleeve angle at step 4.
+The jacket and vest offer two body lengths. The wrap skirt offers either wrap direction and a broad
+one-turn or narrow two-turn waistband. Use Revisit to return to a completed choice; paper, other
+preferences and finished accessories are kept while affected folds are redone.
+After folding both bow wings, optionally fold a third centre square with its own paper and rotation.
+See [collection notes](docs/geometry-collection/NOTES.md) and [styling notes](docs/astra-review/STYLING_CHOICES.md). See
 [the prototype notes](docs/astra-review/JACKET_AND_PIN.md) for behavior and checks.
 
-The Wrap skirt has nine steps and three waistband attachment positions; the Lapel vest
-has eight steps and five clasp/lapel/panel positions. See [garment study notes](docs/garment-studies/NOTES.md).
+The Wrap skirt has eight or nine steps, the Pleated skirt seven; both have three waistband
+attachment positions. The Lapel vest has eight steps and five clasp/lapel/panel positions.
+See [garment study notes](docs/garment-studies/NOTES.md).
 
 Small flaps have 44px arrow handles: drag toward the arrow or tap to complete the
 pending fold. See [owner-feedback fixes](docs/feedback-pass/NOTES.md).
@@ -74,5 +79,4 @@ They now use project-relative output paths. `BASE_URL` overrides the default pre
 `CAPTURE_DIR` overrides `docs/captures`. These optional Python tools are not needed to
 run or build the application. Their syntax was checked during this handoff; the fresh
 browser verification used a separate audit harness, not these Python scripts.
-
 

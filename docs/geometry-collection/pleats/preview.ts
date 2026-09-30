@@ -1,0 +1,32 @@
+import * as THREE from 'three';
+import {buildPleatedSkirt} from '../../../src/fold/pleatedSkirt';
+import {buildWrapSkirt} from '../../../src/fold/wrapSkirt';
+import {buildDress} from '../../../src/fold/construction';
+import {buildTimeline,evaluateFrame} from '../../../src/fold/timeline';
+import {Stage} from '../../../src/render/stage';
+import {SheetView} from '../../../src/render/sheetView';
+import {makePaperTextures} from '../../../src/render/textures';
+import {PAPERS} from '../../../src/papers/index';
+import {PaperDesign} from '../../../src/papers/types';
+const canvas=document.querySelector('canvas')!;
+const stage=new Stage(canvas);
+stage.modelRoot.rotation.x=0;
+const front=new THREE.MeshStandardMaterial({roughness:.93,metalness:0});
+const back=new THREE.MeshStandardMaterial({roughness:.93,metalness:0});
+const sheet=new SheetView(front,back);stage.modelRoot.add(sheet.group);stage.backLight.intensity=.9;
+const contrast:PaperDesign={id:'contrast',name:'Plain contrast',note:'',reverse:'#234959',drawFront(c,s){c.fillStyle='#d9a65d';c.fillRect(0,0,s,s)},drawBack(c,s){c.fillStyle='#234959';c.fillRect(0,0,s,s)}};
+let tex:ReturnType<typeof makePaperTextures>;
+const constructions={pleats:buildPleatedSkirt,wrap:buildWrapSkirt,dress:buildDress};
+function show(garment='pleats',paper='contrast',view='front',step=-1,t=1){
+ const c=constructions[garment as keyof typeof constructions]();const timeline=buildTimeline(c.ops);const ix=step<0?timeline.ops.length-1:step;
+ sheet.setAnim(timeline.ops[ix]);sheet.pose(evaluateFrame(timeline.ops[ix],t));
+ const design=paper==='contrast'?contrast:PAPERS.find(p=>p.id===paper)!;
+ tex?.dispose();tex=makePaperTextures(design,0,stage.renderer.capabilities.getMaxAnisotropy());front.map=tex.front;back.map=tex.back;front.needsUpdate=back.needsUpdate=true;
+ const bounds=sheet.bounds();const center=bounds.getCenter(new THREE.Vector3());stage.modelRoot.position.y=-bounds.min.y+.012;
+ const target=new THREE.Vector3(center.x,center.y+stage.modelRoot.position.y,0);
+ const dir=view==='back'?new THREE.Vector3(0,.08,-1):view==='angle'?new THREE.Vector3(.65,.2,1):new THREE.Vector3(0,.06,1);
+ stage.resize();const pos=target.clone().addScaledVector(dir.normalize(),4.5);stage.placeCamera(pos,target);
+ document.querySelector('#label')!.textContent=`${c.name} · ${design.name} · ${view}${step>=0?' · '+timeline.ops[ix].op.title:''}`;
+ stage.render();
+}
+Object.assign(window,{study:{show}});show();

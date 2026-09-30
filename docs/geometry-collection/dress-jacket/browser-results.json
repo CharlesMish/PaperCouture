@@ -1,0 +1,13 @@
+{
+  "browser": "Headless Chromium; production SheetView with real evaluated facets, isolated study page",
+  "cases": 11,
+  "views": [
+    "plain front",
+    "plain angle",
+    "plain back",
+    "mosaic front",
+    "reverse garden back",
+    "halfway sleeves/hem"
+  ],
+  "errors": []
+}

@@ -1,10 +1,12 @@
 import { Construction } from './construction';
 import { v2 } from './geometry';
 
+export type VestLength = 'short' | 'longline';
+
 /** Gate-fold panels and genuine flap lapels. The apparent opening exposes a
  * continuous backing layer, rather than a cut hole or a hollow garment. */
-export function buildLapelVest(): Construction {
-  return {
+export function buildLapelVest(length: VestLength = 'short'): Construction {
+  const construction: Construction = {
     name: 'Lapel vest',
     meta: { top: 1, shoulderPoint: v2(-0.55, 1), sleeveCutDir: v2(1, 0) },
     ops: [
@@ -44,4 +46,14 @@ export function buildLapelVest(): Construction {
       { kind: 'turn', id: 'vest-front', title: 'Reveal the lapels', hint: 'Turn back to the printed panels. The smaller lapels leave broad shoulders on either side.' },
     ],
   };
+  if (length === 'longline') {
+    const hem = construction.ops.find(op => op.id === 'vest-shorten');
+    if (hem?.kind === 'fold') {
+      hem.title = 'Finish the longline body';
+      hem.hint = 'Lift a smaller strip of the lower edge onto this side, leaving a longer waistcoat body.';
+      hem.folds[0].a.y = -0.78;
+      hem.folds[0].b.y = -0.78;
+    }
+  }
+  return construction;
 }

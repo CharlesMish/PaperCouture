@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Dress sleeve and jacket length study</title><style>body{margin:0;padding:20px;background:#eee9df;color:#262f32;font:15px system-ui}h1{font-size:22px;margin:0 0 8px}p{margin:0 0 20px}.grid{display:grid;grid-template-columns:repeat(3,320px);gap:12px}.card{background:#e4dfd5;padding:8px}.card img{display:block;width:320px;height:320px}.label{font-size:15px;margin-bottom:6px;font-weight:600}</style></head><body><h1>Actual folded geometry — sleeve and body choices</h1><p id="subtitle"></p><div class="grid"></div><script type="module">
+import * as THREE from '/node_modules/three/build/three.module.js';
+import {buildSilhouette,SILHOUETTES,SLEEVES} from '/src/fold/silhouettes.ts';
+import {buildJacket,JACKET_LENGTHS} from '/src/fold/jacket.ts';
+import {buildTimeline,evaluateFrame} from '/src/fold/timeline.ts';
+import {SheetView} from '/src/render/sheetView.ts';
+import {makePaperTextures} from '/src/render/textures.ts';
+import {findPaper} from '/src/papers/index.ts';
+const params=new URLSearchParams(location.search), view=params.get('view')||'front', paper=params.get('paper')||'plain', phase=params.get('phase')||'finished';
+document.querySelector('#subtitle').textContent=`${view} view · ${paper} · ${phase} · same model-space scale in every tile · production SheetView / evaluated fold facets`;
+const cases=SILHOUETTES.flatMap(shape=>SLEEVES.map(sleeve=>({name:shape.name+' / '+sleeve.name,construction:buildSilhouette(shape.id,sleeve.id)}))).concat(JACKET_LENGTHS.map(length=>({name:'Box jacket / '+length.name,construction:buildJacket(length.id)})));
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setSize(320,320);renderer.setPixelRatio(1.5);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NeutralToneMapping;renderer.toneMappingExposure=1.05;
+for(const c of cases){
+ const scene=new THREE.Scene();scene.background=new THREE.Color('#e4dfd5');scene.add(new THREE.AmbientLight('#fff4e6',1.3));
+ const light=new THREE.DirectionalLight('#fff7ed',2);light.position.set(-3,4,5);scene.add(light);
+ const backlight=new THREE.DirectionalLight('#fff7ed',2);backlight.position.set(3,4,-5);scene.add(backlight);
+ const camera=new THREE.OrthographicCamera(-1.3,1.3,1.15,-1.45,.01,30);camera.position.set(...(view==='back'?[0,0,-5]:view==='angle'?[2.1,1.2,5]:[0,0,5]));camera.lookAt(0,0,0);camera.updateMatrixWorld();
+ let textures=null;
+ const fm=new THREE.MeshStandardMaterial({color:paper==='plain'?'#426f7a':'#fff',roughness:.9}), bm=new THREE.MeshStandardMaterial({color:paper==='plain'?'#e8bc75':'#fff',roughness:.9});
+ if(paper!=='plain'){textures=makePaperTextures(findPaper(paper),Number(params.get('turn')||0),renderer.capabilities.getMaxAnisotropy());fm.map=textures.front;bm.map=textures.back;}
+ const sheet=new SheetView(fm,bm), timeline=buildTimeline(c.construction.ops);const op=phase==='motion'?timeline.ops.find(o=>o.op.id===(c.name.startsWith('Box jacket')?'jacket-hem':'sleeves')):timeline.ops.at(-1);sheet.setAnim(op);sheet.pose(evaluateFrame(op,phase==='motion'?.5:1));scene.add(sheet.group);
+ renderer.render(scene,camera);
+ const card=document.createElement('div');card.className='card';const title=document.createElement('div');title.className='label';title.textContent=c.name;const image=document.createElement('img');image.src=renderer.domElement.toDataURL();image.alt=c.name;card.append(title,image);document.querySelector('.grid').append(card);
+ textures?.dispose();fm.dispose();bm.dispose();sheet.front.geometry.dispose();
+}
+renderer.dispose();window.studyReady=true;
+</script></body></html>

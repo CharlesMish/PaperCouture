@@ -1,10 +1,17 @@
 import { Construction } from './construction';
 import { v2 } from './geometry';
 
+export type WrapDirection = 'original' | 'opposite';
+export type WaistbandFinish = 'double' | 'single';
+export interface WrapSkirtOptions {
+  wrap?: WrapDirection;
+  band?: WaistbandFinish;
+}
+
 /** An asymmetric wrap study. Every panel is retained from one square; the
  * wrap faces and doubled waistband carry the print over a reverse backing. */
-export function buildWrapSkirt(): Construction {
-  return {
+export function buildWrapSkirt({ wrap = 'original', band = 'double' }: WrapSkirtOptions = {}): Construction {
+  const construction: Construction = {
     name: 'Wrap skirt',
     meta: { top: 0.72, shoulderPoint: v2(-0.2, 1), sleeveCutDir: v2(1, 0) },
     ops: [
@@ -43,4 +50,35 @@ export function buildWrapSkirt(): Construction {
       },
     ],
   };
+
+  if (wrap === 'opposite') {
+    // Only the asymmetric panel creases change. The symmetric length fold and
+    // turn-over are an identical prefix, so the choice is safe at the first
+    // wrap fold. Reflect model-space creases, never paper material/UV coordinates.
+    for (const op of construction.ops) {
+      if (op.kind !== 'fold' || !['skirt-wrap-left', 'skirt-wrap-right'].includes(op.id)) continue;
+      op.folds = op.folds.map(fold => ({
+        ...fold,
+        a: v2(-fold.a.x, fold.a.y), b: v2(-fold.b.x, fold.b.y), moving: v2(-fold.moving.x, fold.moving.y),
+      }));
+      op.hint = op.id === 'skirt-wrap-left'
+        ? 'Fold the right side inward along the slanted guide. Its printed face becomes the broad wrap panel.'
+        : 'Bring the narrower left side inward. The two slanted edges overlap near the waist.';
+    }
+    construction.meta.shoulderPoint = v2(0.2, 1);
+  }
+
+  if (band === 'single') {
+    construction.meta.top = 0.78;
+    construction.ops = construction.ops.filter(op => op.id !== 'skirt-waist-finish');
+    const waist = construction.ops.find(op => op.id === 'skirt-waist')!;
+    waist.title = 'Fold one broad waistband';
+    waist.hint = 'Fold the top strip down once along the deeper guide. This leaves a broader printed waistband.';
+    if (waist.kind === 'fold') {
+      waist.folds[0].a.y = 0.78;
+      waist.folds[0].b.y = 0.78;
+    }
+  }
+
+  return construction;
 }

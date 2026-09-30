@@ -1,7 +1,8 @@
 import './styles.css';
 import * as THREE from 'three';
-import { buildSilhouette, SilhouetteId } from './fold/silhouettes';
+import { garmentDecisions, optionsFromParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
 import { buildBowWing } from './fold/bow';
+import { buildBowCentre } from './fold/bowCentre';
 import { centroid } from './fold/geometry';
 import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
 import { ShapeChoices } from './ui/shapeChoices';
@@ -29,13 +30,17 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 
 // ---- folding data (pure, precomputed once)
 let garmentId: GarmentId = garmentIdFrom(params.get('design'));
-let silhouetteId: SilhouetteId = ['straight', 'flare'].includes(params.get('shape') ?? '') ? params.get('shape') as SilhouetteId : 'classic';
+let garmentOptions = optionsFromParams(params);
 let accessoryId: AccessoryId = 'pin';
 let bowWing = 0;
+let savedPinStep = 0;
 let accessoryMode = false;
+let editingCentre = false;
+let centreAttached = false;
+let savedCentreStep = 0;
 let attached = false;
 let pinPosition: PinPosition = 'neckline';
-let construction = buildGarment(garmentId, silhouetteId);
+let construction = buildGarment(garmentId, garmentOptions);
 let timeline = buildTimeline(construction.ops);
 let ops = timeline.ops;
 let lastOp = ops[ops.length - 1];
@@ -55,7 +60,8 @@ function measureFinished() {
   return { lo, hi };
 }
 let finished = measureFinished();
-if (!attachmentAnchors(garmentId, finished.hi.y, finished.lo.y).some(a => a.id === pinPosition)) pinPosition = attachmentAnchors(garmentId, finished.hi.y, finished.lo.y)[0].id;
+const garmentAnchors = () => attachmentAnchors(garmentId, finished.hi.y, finished.lo.y, garmentOptions);
+if (!garmentAnchors().some(a => a.id === pinPosition)) pinPosition = garmentAnchors()[0].id;
 
 // ---- scene
 const app = document.getElementById('app')!;
@@ -75,8 +81,15 @@ const pinSheet = new SheetView(pinFront, pinBack);
 let pinTimeline = buildTimeline(buildPin().ops);
 let pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
 const secondWing = new SheetView(pinFront, pinBack);
+const centreFront = new THREE.MeshStandardMaterial({ roughness: .9 });
+const centreBack = new THREE.MeshStandardMaterial({ roughness: .9 });
+const centreSheet = new SheetView(centreFront, centreBack);
+const centreTimeline = buildTimeline(buildBowCentre().ops);
+const centreFinal = centreTimeline.ops[centreTimeline.ops.length - 1];
+centreSheet.setAnim(centreFinal); centreSheet.pose(evaluateFrame(centreFinal, 1));
+centreSheet.group.scale.setScalar(.85); centreSheet.group.position.set(0, 0, .08);
 const accessoryRoot = new THREE.Group();
-accessoryRoot.add(pinSheet.group, secondWing.group);
+accessoryRoot.add(pinSheet.group, secondWing.group, centreSheet.group);
 accessoryRoot.visible = false;
 stage.modelRoot.add(accessoryRoot);
 let seamGeometry = new THREE.BufferGeometry();
@@ -88,6 +101,21 @@ secondWing.group.add(secondSeams);
 const studySeams = new THREE.LineSegments(seamGeometry, seamMaterial);
 studySeams.visible = false;
 stage.modelRoot.add(studySeams);
+function accessorySeams(final: OpAnim) {
+  const pose = evaluateFrame(final, 1), points: number[] = [];
+  for (const piece of final.pieces) {
+    if (pose[piece.index * 12 + 10] < 0) continue;
+    for (let i = 0; i < piece.poly.length; i++) for (const m of [piece.poly[i], piece.poly[(i + 1) % piece.poly.length]]) {
+      const p = posePoint(pose, piece.index * 12, m.x, m.y);
+      points.push(p[0], p[1], p[2] + .0008);
+    }
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+  return geometry;
+}
+const centreSeamGeometry = accessorySeams(centreFinal);
+centreSheet.group.add(new THREE.LineSegments(centreSeamGeometry, seamMaterial));
 function prepareAccessory() {
   pinTimeline = buildTimeline(accessoryId === 'bow' ? buildBowWing().ops : buildPin().ops);
   pinFinal = pinTimeline.ops[pinTimeline.ops.length - 1];
@@ -132,6 +160,15 @@ let garmentTurns = quarterTurns;
 let pinPaper = findPaper('tidal-bands');
 let pinTurns = 0;
 let pinTextures: PaperTextures | null = null;
+let centrePaper = findPaper('ink-reverse');
+let centreTurns = 0;
+let centreTextures: PaperTextures | null = null;
+function applyCentrePaper() {
+  centreTextures?.dispose();
+  centreTextures = makePaperTextures(centrePaper, centreTurns, stage.renderer.capabilities.getMaxAnisotropy());
+  centreFront.map = centreTextures.front; centreBack.map = centreTextures.back;
+  centreFront.needsUpdate = centreBack.needsUpdate = true;
+}
 function applyPinPaper() {
   pinTextures?.dispose();
   pinTextures = makePaperTextures(pinPaper, pinTurns, stage.renderer.capabilities.getMaxAnisotropy());
@@ -139,7 +176,8 @@ function applyPinPaper() {
   pinFront.needsUpdate = pinBack.needsUpdate = true;
 }
 function applyPaper() {
-  if (accessoryMode) { pinPaper = paper; pinTurns = quarterTurns; applyPinPaper(); }
+  if (accessoryMode && editingCentre) { centrePaper = paper; centreTurns = quarterTurns; applyCentrePaper(); }
+  else if (accessoryMode) { pinPaper = paper; pinTurns = quarterTurns; applyPinPaper(); }
   else { garmentPaper = paper; garmentTurns = quarterTurns; }
   textures?.dispose();
   textures = makePaperTextures(paper, quarterTurns, stage.renderer.capabilities.getMaxAnisotropy());
@@ -184,10 +222,15 @@ const displayPanel = new DisplayPanel(app, {
   onReturn: () => leaveDisplay(),
 });
 
-const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseSilhouette);
+const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
 function refreshWorkshopPanel() {
-  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, controller.step > 2 || (controller.step === 2 && controller.moving), attachmentAnchors(garmentId, finished.hi.y, finished.lo.y));
-  shapeChoices.render(silhouetteId, !accessoryMode && garmentId === 'dress' && controller.step === 2 && !controller.moving);
+  const decisions = garmentDecisions(garmentId);
+  const revisit = controller.moving ? [] : decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, garmentAnchors());
+  const bowReady = accessoryId === 'bow' && bowWing === 1 && savedPinStep === pinTimeline.ops.length;
+  studio.renderCentre(!accessoryMode && controller.finished && bowReady, savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
+  const decision = !accessoryMode && !controller.moving ? decisions.find(d => decisionStep(construction, d) === controller.step) : undefined;
+  shapeChoices.render(decision, garmentOptions, value => buildGarment(garmentId, selectOption(garmentOptions, decision!, value)));
   const a = controller.activeOp;
   const op = a === null ? null : ops[a].op;
   workshopPanel.render({
@@ -195,8 +238,8 @@ function refreshWorkshopPanel() {
     done: controller.step,
     active: a,
     title: op ? op.title : `${construction.name} is folded`,
-    hint: op ? op.hint : accessoryMode ? accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : 'Put it on display, or fold an optional paper accessory.',
-    foldLabel: controller.finished ? accessoryMode ? accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
+    hint: op ? op.hint : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : 'Put it on display, or fold an optional paper accessory.',
+    foldLabel: controller.finished ? accessoryMode ? editingCentre ? 'Attach centre' : accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
@@ -208,16 +251,19 @@ function refreshDisplayPanel() {
 const studio = new StudioControls(app, {
   onDesign: changeGarment,
   onEdit: editPin,
-  onRevisit: revisitShape,
+  onRevisit: revisitFold,
   onRemove: () => { attached = false; refreshWorkshopPanel(); layout(); },
   onReturn: returnToGarment,
   onPosition: (p) => { pinPosition = p; refreshWorkshopPanel(); },
+  onCentre: editCentre,
+  onCentreToggle: () => { centreAttached = !centreAttached; refreshWorkshopPanel(); layout(); },
 });
 let unsubscribeController = controller.onChange(refreshWorkshopPanel);
 displayCam.onChange(refreshDisplayPanel);
 refreshWorkshopPanel();
 applyPaper();
 applyPinPaper();
+applyCentrePaper();
 
 // ---- views
 const WORK_TARGET = new THREE.Vector3(0, 0.08, 0);
@@ -237,7 +283,6 @@ function frameSubject() {
 }
 frameSubject();
 let savedGarment: { construction: typeof construction; timeline: typeof timeline; controller: FoldController } | null = null;
-let savedPinStep = 0;
 function replaceConstruction(next: typeof construction, nextTimeline = buildTimeline(next.ops), nextController?: FoldController) {
   cancelDrag();
   unsubscribeController();
@@ -247,7 +292,7 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   frame = undefined;
   finished = measureFinished(); frameSubject();
   if (!accessoryMode) {
-    const anchors = attachmentAnchors(garmentId, finished.hi.y, finished.lo.y);
+    const anchors = garmentAnchors();
     if (!anchors.some(a => a.id === pinPosition)) pinPosition = anchors[0].id;
   }
   displayCam.setEnabled(false); displayCam.setTurntable(false);
@@ -257,40 +302,65 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
 function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
   garmentId = id;
-  replaceConstruction(buildGarment(id, silhouetteId));
+  replaceConstruction(buildGarment(id, garmentOptions));
 }
-function chooseSilhouette(id: SilhouetteId) {
-  if (accessoryMode || garmentId !== 'dress' || controller.step !== 2 || controller.moving || id === silhouetteId) return;
-  silhouetteId = id;
-  replaceConstruction(buildSilhouette(id));
-  controller.jumpTo(2);
+function chooseFoldOption(id: DecisionId, value: string) {
+  const decision = garmentDecisions(garmentId).find(d => d.id === id);
+  if (!decision || accessoryMode || controller.moving || controller.step !== decisionStep(construction, decision) || value === garmentOptions[id]) return;
+  const options = selectOption(garmentOptions, decision, value);
+  if (options === garmentOptions) return;
+  const next = buildGarment(garmentId, options);
+  const retain = Math.min(controller.step, sharedFoldPrefix(construction, next));
+  const refocus = shapeChoices.root.contains(document.activeElement);
+  garmentOptions = options;
+  replaceConstruction(next);
+  controller.jumpTo(retain);
+  if (refocus) shapeChoices.focusChoice(value);
   layout();
 }
-function revisitShape() {
-  if (accessoryMode || garmentId !== 'dress') return;
+function revisitFold(id: DecisionId) {
+  const decision = garmentDecisions(garmentId).find(d => d.id === id);
+  if (accessoryMode || controller.moving || !decision) return;
+  const step = decisionStep(construction, decision);
+  if (step < 0 || controller.step <= step) return;
   cancelDrag();
   view.jump('workshop'); displayCam.setEnabled(false); displayCam.setTurntable(false);
-  controller.jumpTo(2); layout();
+  controller.jumpTo(step); layout();
 }
 function editPin(id: AccessoryId) {
   if (accessoryMode || !controller.finished) return;
   savedGarment = { construction, timeline, controller };
-  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; prepareAccessory(); }
+  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); }
+  studySeams.geometry = seamGeometry;
   accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns;
   replaceConstruction(accessoryId === 'bow' ? buildBowWing() : buildPin(), pinTimeline);
   controller.jumpTo(savedPinStep);
 }
+function editCentre() {
+  if (accessoryMode || !controller.finished || accessoryId !== 'bow' || bowWing !== 1 || savedPinStep !== pinTimeline.ops.length) return;
+  savedGarment = { construction, timeline, controller };
+  editingCentre = true; accessoryMode = true; paper = centrePaper; quarterTurns = centreTurns;
+  studySeams.geometry = centreSeamGeometry;
+  replaceConstruction(buildBowCentre(), centreTimeline);
+  controller.jumpTo(savedCentreStep);
+}
 function returnToGarment() {
   if (!accessoryMode || !savedGarment) return;
-  savedPinStep = controller.step;
-  if (!controller.finished) attached = false;
+  if (editingCentre) {
+    savedCentreStep = controller.step;
+    if (!controller.finished) centreAttached = false;
+  } else {
+    savedPinStep = controller.step;
+    if (!controller.finished) attached = false;
+  }
   const saved = savedGarment; savedGarment = null;
-  accessoryMode = false; paper = garmentPaper; quarterTurns = garmentTurns;
+  accessoryMode = false; editingCentre = false; paper = garmentPaper; quarterTurns = garmentTurns;
   replaceConstruction(saved.construction, saved.timeline, saved.controller);
   enterDisplay();
 }
 function finishPin() {
   if (!accessoryMode || !controller.finished) return;
+  if (editingCentre) { centreAttached = true; attached = true; returnToGarment(); return; }
   if (accessoryId === 'bow' && bowWing === 0) {
     bowWing = 1; savedPinStep = 0; controller.reset(); refreshWorkshopPanel(); layout(); return;
   }
@@ -383,7 +453,8 @@ function placePiece() {
 function draw() {
   studySeams.visible = accessoryMode && controller.finished;
   accessoryRoot.visible = attached && !accessoryMode && controller.finished;
-  const anchors = attachmentAnchors(garmentId, finished.hi.y, finished.lo.y);
+  centreSheet.group.visible = accessoryId === 'bow' && centreAttached;
+  const anchors = garmentAnchors();
   const anchor = anchors.find(a => a.id === pinPosition) ?? anchors[0];
   accessoryRoot.scale.setScalar((accessoryId === 'bow' ? 0.19 : 0.16) * attachmentSize(garmentId));
   accessoryRoot.position.set(anchor.x, anchor.y, finished.hi.z + 0.014);
@@ -519,13 +590,22 @@ Object.assign(window, {
   paperCouture: {
     get controller() { return controller; },
     get timeline() { return timeline; },
-    get silhouetteId() { return silhouetteId; },
+    get silhouetteId() { return garmentOptions.silhouette; },
+    get options() { return { ...garmentOptions }; },
+    get decisions() { return garmentDecisions(garmentId); },
     get accessoryId() { return accessoryId; },
     get bowWing() { return bowWing; },
     get pinPosition() { return pinPosition; },
     accessoryRoot,
     get garmentId() { return garmentId; },
     get accessoryMode() { return accessoryMode; },
+    get editingCentre() { return editingCentre; },
+    get centreAttached() { return centreAttached; },
+    get centreComplete() { return savedCentreStep === centreTimeline.ops.length; },
+    get accessoryPaperId() { return pinPaper.id; },
+    get accessoryQuarterTurns() { return pinTurns; },
+    get centrePaperId() { return centrePaper.id; },
+    get centreQuarterTurns() { return centreTurns; },
     get attached() { return attached; },
     get paperId() { return paper.id; },
     get quarterTurns() { return quarterTurns; },
@@ -545,4 +625,3 @@ Object.assign(window, {
     },
   },
 });
-

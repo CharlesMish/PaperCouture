@@ -354,6 +354,8 @@ button:focus-visible {
 .studio-controls select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .studio-button:disabled { opacity: .45; }
 .studio-note { color: var(--ink-soft); }
+.centre-controls { display: inline-flex; gap: 6px; align-items: center; }
+.centre-controls button[aria-pressed='true'] { background: rgba(255,255,255,.65); border-color: var(--ink); }
 @media (max-width: 719px) {
   .studio-controls { top: 100px; left: 12px; right: 12px; max-width: none; width: auto; gap: 5px 8px; padding: 7px 9px; }
   .studio-note { font-size: .73rem; }

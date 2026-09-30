@@ -1,3 +1,25 @@
+# Paper Couture — garment choices and pleated skirt
+
+Built from played source `305f8ef` (the merged owner-feedback pass). The current source line is
+`polish/plum-petals`, not the older main branch. See `docs/geometry-collection/NOTES.md`.
+
+Dress has three sleeve choices across its three silhouettes; jacket and vest have two lengths;
+wrap skirt has two real wrap directions and one-/two-turn waistband finishes. The one-turn band
+is broader and printed, not reverse-facing. Decisions use named operations and verified common
+fold prefixes. Revisit preserves paper and option preferences, rewinds affected progress, and
+keeps completed accessories hidden until the garment is finished again.
+
+Pleated skirt is a new seven-step retained-paper construction. The Two-piece bow can optionally
+gain a separately folded centre, with independent paper and turn, to form a three-piece assembly.
+The robe and trousers studies were parked; neither is selectable. Current defaults, paper art,
+two-sided rotation and fold engine are unchanged. Some attachment positions move slightly inward
+to keep the complete bow on the paper.
+
+`npm test` now includes the geometry-collection checks. Browser review scripts are optional:
+`scripts/check-collection-review.cjs` and `scripts/check-centre-review.cjs`; use the same external
+Playwright/Chromium configuration as existing feedback scripts. Headless browser touch emulation
+does not establish real-phone/Safari or physical-paper behavior.
+
 # Paper Couture — owner feedback: folding access and lapel clarity
 
 Built on merged source PR #7 (`7280cbf`) and website PR #25 (`aaba27d`).
@@ -101,5 +123,4 @@ A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fol
 ## Remaining
 
 The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.
-
 

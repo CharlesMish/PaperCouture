@@ -1,0 +1,30 @@
+<!doctype html><meta charset="utf-8"><title>Skirt and vest geometry study</title>
+<style>html,body{margin:0;background:#eae5dc;font:16px sans-serif}h1{font-size:17px;position:absolute;left:18px;top:0;font-weight:500}canvas{width:640px;height:600px;display:block}</style>
+<h1></h1><canvas></canvas>
+<script type="module">
+import * as THREE from '/node_modules/.vite/deps/three.js';
+import { buildWrapSkirt } from '/src/fold/wrapSkirt.ts';
+import { buildLapelVest } from '/src/fold/lapelVest.ts';
+import { buildTimeline, evaluateFrame } from '/src/fold/timeline.ts';
+import { SheetView } from '/src/render/sheetView.ts';
+import { LapelEdges } from '/src/render/lapelEdges.ts';
+import { makePaperTextures } from '/src/render/textures.ts';
+import { findPaper } from '/src/papers/index.ts';
+const renderer=new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true,preserveDrawingBuffer:true});
+renderer.setSize(640,600,false);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.NeutralToneMapping;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#eae5dc');scene.add(new THREE.AmbientLight('#fffaf3',1.4));
+for(const z of [-3,3]){const light=new THREE.DirectionalLight('#fff5e6',1.1);light.position.set(-2,4,z);scene.add(light);}
+const camera=new THREE.OrthographicCamera(-1.65,1.65,1.55,-1.55,.01,30);camera.up.set(0,1,0);
+const front=new THREE.MeshStandardMaterial({roughness:.9}),back=new THREE.MeshStandardMaterial({roughness:.9});
+const sheet=new SheetView(front,back);scene.add(sheet.group);
+const edges=new LapelEdges();scene.add(edges.lines);
+let textures;
+window.renderStudy=async({garment='skirt',wrap='original',band='double',length='short',paper='grid',turn=0,view='front'})=>{
+const c=garment==='vest'?buildLapelVest(length):buildWrapSkirt({wrap,band});const tl=buildTimeline(c.ops),anim=tl.ops.at(-1),M=evaluateFrame(anim,1);
+sheet.setAnim(anim);sheet.pose(M);const tags=new Set(tl.states.at(-1).facets.filter(f=>f.tags.some(t=>t.startsWith('vest-lapel-'))).map(f=>f.id));edges.update(anim,M,tags,garment==='vest');
+textures?.dispose();textures=makePaperTextures(findPaper(paper),turn,renderer.capabilities.getMaxAnisotropy());front.map=textures.front;back.map=textures.back;front.needsUpdate=back.needsUpdate=true;
+const box=sheet.bounds(),center=box.getCenter(new THREE.Vector3());camera.position.copy(center).add(view==='back'?new THREE.Vector3(0,0,-5):view==='angle'?new THREE.Vector3(2,.2,5):new THREE.Vector3(0,0,5));camera.lookAt(center);camera.updateMatrixWorld();
+document.querySelector('h1').textContent=`${garment==='vest'?'Vest '+length:'Wrap '+wrap+' · '+band} · ${paper} ${turn*90}° · ${view}`;
+renderer.render(scene,camera);await new Promise(requestAnimationFrame);renderer.render(scene,camera);return{steps:c.ops.length};};
+window.ready=true;
+</script>
