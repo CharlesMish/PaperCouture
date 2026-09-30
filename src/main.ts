@@ -576,8 +576,11 @@ window.addEventListener('pointercancel', (e) => endDrag(e, true));
 const startStep = Number(params.get('step'));
 if (startStep > 0) controller.jumpTo(startStep);
 if (params.get('view') === 'display' && controller.finished) {
-  displayCamPos.copy(displayCam.positionFor('front'));
+  // Switch first: the jump re-runs layout() with the display panel's insets, so
+  // the front view is seeded from the final framing (the same distance Reset
+  // view uses), not from the workshop dock measured before the step jump.
   view.jump('display');
+  displayCamPos.copy(displayCam.positionFor('front'));
   stage.placeCamera(displayCamPos, displayCam.target);
   displayCam.setEnabled(true);
 }
