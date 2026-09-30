@@ -1,5 +1,6 @@
 import { borderPrint } from './borderPrint';
 import { botanical } from './botanical';
+import { compassLining } from './compassLining';
 import { cornerBloom } from './cornerBloom';
 import { cutPaperMosaic } from './cutPaperMosaic';
 import { diagnosticPaper } from './diagnostic';
@@ -46,6 +47,7 @@ export const PAPERS: PaperDesign[] = [
   pinstripeLining,
   borderPrint,
   starlitLining,
+  compassLining,
   diagnosticPaper,
 ];
 
