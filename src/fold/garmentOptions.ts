@@ -1,9 +1,10 @@
 import type { Construction } from './construction';
 import type { GarmentId } from './garments';
 import type { SilhouetteId, SleeveId } from './silhouettes';
-import type { JacketLength } from './jacket';
+import type { CuffStyle, JacketLength } from './jacket';
 import type { WrapDirection, WaistbandFinish } from './wrapSkirt';
 import type { VestLength } from './lapelVest';
+import type { PleatDepth } from './pleatedSkirt';
 
 export interface GarmentOptions {
   silhouette: SilhouetteId;
@@ -12,10 +13,13 @@ export interface GarmentOptions {
   wrap: WrapDirection;
   band: WaistbandFinish;
   vestLength: VestLength;
+  pleatDepth: PleatDepth;
+  cuffs: CuffStyle;
 }
 export const DEFAULT_OPTIONS: GarmentOptions = {
   silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
   wrap: 'original', band: 'double', vestLength: 'short',
+  pleatDepth: 'classic', cuffs: 'plain',
 };
 export type DecisionId = keyof GarmentOptions;
 export interface FoldChoice { id: string; name: string }
@@ -35,9 +39,16 @@ const DECISIONS: Record<string, FoldDecision[]> = {
       { id: 'classic', name: 'Classic' }, { id: 'lifted', name: 'Lifted' }, { id: 'dropped', name: 'Dropped' },
     ] },
   ],
-  jacket: [{ id: 'jacketLength', label: 'Body length', title: 'Choose the body length', before: 'jacket-hem', choices: [
-    { id: 'cropped', name: 'Cropped' }, { id: 'longer', name: 'Longer' },
-  ] }],
+  jacket: [
+    { id: 'jacketLength', label: 'Body length', title: 'Choose the body length', before: 'jacket-hem', choices: [
+      { id: 'cropped', name: 'Cropped' }, { id: 'longer', name: 'Longer' },
+    ] },
+    // Draft: the cuff fold is worked on the front, so it follows the reveal.
+    // The choice is offered at the reveal turn, the last shared operation.
+    { id: 'cuffs', label: 'Cuffs', title: 'Choose the sleeve ends', before: 'turn-2', choices: [
+      { id: 'plain', name: 'Plain' }, { id: 'turned', name: 'Turned back' },
+    ] },
+  ],
   skirt: [
     { id: 'wrap', label: 'Wrap direction', title: 'Choose the wrap direction', before: 'skirt-wrap-left', choices: [
       { id: 'original', name: 'Original wrap' }, { id: 'opposite', name: 'Opposite wrap' },
@@ -46,6 +57,10 @@ const DECISIONS: Record<string, FoldDecision[]> = {
       { id: 'single', name: 'Turn once' }, { id: 'double', name: 'Turn twice' },
     ] },
   ],
+  // Draft: pleat depth changes only the return creases.
+  pleats: [{ id: 'pleatDepth', label: 'Pleat depth', title: 'Choose the pleat depth', before: 'pleats-return', choices: [
+    { id: 'shallow', name: 'Shallow' }, { id: 'classic', name: 'Classic' }, { id: 'deep', name: 'Deep' },
+  ] }],
   vest: [{ id: 'vestLength', label: 'Body length', title: 'Choose the body length', before: 'vest-shorten', choices: [
     { id: 'short', name: 'Short' }, { id: 'longline', name: 'Longline' },
   ] }],
@@ -68,7 +83,7 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
 }
 export function optionsFromParams(params: URLSearchParams): GarmentOptions {
   let options = { ...DEFAULT_OPTIONS };
-  const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength' };
+  const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs' };
   for (const decisions of Object.values(DECISIONS)) for (const decision of decisions) {
     const value = params.get(keys[decision.id]);
     if (value) options = selectOption(options, decision, value);

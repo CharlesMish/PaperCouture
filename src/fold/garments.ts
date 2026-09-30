@@ -19,10 +19,10 @@ export function garmentIdFrom(value: string | null): GarmentId {
 export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOptions = DEFAULT_OPTIONS) {
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
-    case 'jacket': return buildJacket(options.jacketLength);
+    case 'jacket': return buildJacket(options.jacketLength, options.cuffs);
     case 'skirt': return buildWrapSkirt({ wrap: options.wrap, band: options.band });
     case 'vest': return buildLapelVest(options.vestLength);
-    case 'pleats': return buildPleatedSkirt();
+    case 'pleats': return buildPleatedSkirt(options.pleatDepth);
     default: return buildSilhouette(options.silhouette, options.sleeves);
   }
 }
