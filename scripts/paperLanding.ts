@@ -9,6 +9,15 @@
 //   front canvas (col, row) = (u', 1 - v'), back canvas = (1 - u', 1 - v'),
 // where (u', v') is the turned sample of the material uv ((x + 1) / 2, (y + 1) / 2).
 // This is a diagnostic for designing papers around the folds; it draws nothing.
+//
+// Limits (Astra's review of PR #13): it is a flat normal-projection diagnostic.
+// "Seen from the front" means the top layer of the finished flat piece along the
+// view axis, not an exact visibility test for the tilted Display camera. It was
+// verified against the rendered triangles (5,120 samples matched the face-normal
+// visibility; texture coordinates agreed to 2.3e-16 over both faces and all four
+// turns), but from the default-distance tilted presets a few samples near raised
+// flap edges differ (4 on the dress, 6 on the jacket; e.g. jacket material point
+// (-0.84375, 0.96875) is Front/reverse here but occluded from that camera).
 import type { Construction } from '../src/fold/construction';
 import { SheetState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Vec2, applyAffine, signedArea, v2 } from '../src/fold/geometry';
