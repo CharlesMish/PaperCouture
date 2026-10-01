@@ -1,0 +1,29 @@
+name: Fold study checks
+on:
+  push:
+    branches: [experiment/sol61-apron-clutch-20261001]
+  pull_request:
+    branches: [drafts/papercouture-drafter-15]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run test:experiment
+      - run: npm run build && npm run build:experiment
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/check-fold-study-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: fold-study-rendered-checks
+          path: .experiment-qa/

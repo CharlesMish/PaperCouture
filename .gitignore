@@ -8,3 +8,7 @@ __pycache__/
 *.log
 .DS_Store
 docs/captures/
+
+dist-experiment/
+.wrangler/
+.experiment-qa/
