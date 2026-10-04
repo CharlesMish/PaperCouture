@@ -276,8 +276,8 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   // the petal tips sit a little below the cup's tip, well out to each side
   const tips = pts.filter(p => up(p) > 0.85 * height && Math.abs(across(p)) > 0.3);
   assert(tips.some(p => across(p) < 0) && tips.some(p => across(p) > 0), 'two petal tips, one either side');
-  for (const g of GARMENTS) assert(accessoryAnchors('tulip', attachmentAnchors(g.id, 1, -1)).length > 0, `${g.id}: the tulip needs a waist position`);
-  console.log(`Folded tulip: ${c.ops.length} steps (1 turn-over, ${c.ops.filter(o => o.kind === 'fold').length} valley folds), ${final.facets.length} facets, ${height.toFixed(2)} x ${width.toFixed(2)} upright; hinge ${worstGap.toFixed(4)}; printed faces; waist positions on every garment.`);
+  for (const g of GARMENTS.filter(g => !g.experiment)) assert(accessoryAnchors('tulip', attachmentAnchors(g.id, 1, -1)).length > 0, `${g.id}: the tulip needs a waist position`);
+  console.log(`Folded tulip: ${c.ops.length} steps (1 turn-over, ${c.ops.filter(o => o.kind === 'fold').length} valley folds), ${final.facets.length} facets, ${height.toFixed(2)} x ${width.toFixed(2)} upright; hinge ${worstGap.toFixed(4)}; printed faces; waist positions on every collection garment.`);
 }
 // --- PR #14: vest tapered hem (id `pointed`), folded into the vest-length choice -----
 {

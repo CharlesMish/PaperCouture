@@ -1,4 +1,4 @@
-import { GARMENTS, GarmentId, AttachmentPosition, AttachmentAnchor } from '../fold/garments';
+import { GARMENTS, GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
 import type { DecisionId, FoldDecision } from '../fold/garmentOptions';
 export type { GarmentId };
 export type PinPosition = AttachmentPosition;
@@ -37,8 +37,13 @@ export class StudioControls {
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
-    for (const garment of GARMENTS) this.design.add(new Option(garment.name, garment.id));
-    this.design.title = 'Changing design starts a new square; your paper choices are kept.';
+    for (const experimental of [false, true]) {
+      const group = document.createElement('optgroup');
+      group.label = experimental ? 'Experiments · one square' : 'Collection';
+      for (const garment of GARMENTS.filter(g => !!g.experiment === experimental)) group.append(new Option(garment.name, garment.id));
+      this.design.append(group);
+    }
+    this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
@@ -88,9 +93,9 @@ export class StudioControls {
     this.design.value = id; this.design.disabled = accessoryMode;
     this.kept = { id: activeAccessory, attached };
     this.edit.textContent = this.actionLabel();
-    this.edit.hidden = accessoryMode || !finished; this.edit.disabled = !finished;
-    this.accessoryLabel.hidden = accessoryMode || !finished;
-    this.remove.hidden = accessoryMode || !attached || !finished;
+    this.edit.hidden = accessoryMode || !finished || !available.length; this.edit.disabled = !finished || !available.length;
+    this.accessoryLabel.hidden = accessoryMode || !finished || !available.length;
+    this.remove.hidden = accessoryMode || !attached || !finished || !available.length;
     this.positionLabel.hidden = accessoryMode || !attached || !finished || anchors.length === 0;
     const key = anchors.map(a => a.id + ':' + a.label).join('|');
     if (this.position.dataset.anchors !== key) {
@@ -110,6 +115,9 @@ export class StudioControls {
     const accessoryName = ACCESSORIES.find(a => a.id === activeAccessory)!.name;
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
       : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
+    const experiment = garmentExperiment(id);
+    if (experiment && !accessoryMode) this.note.textContent = `Experimental · ${experiment}${attached ? ' · accessory kept aside' : ''}`;
+    this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode);
   }
   /** Edit reopens the attached piece with its progress; Fold starts a new square of another type. */
   private actionLabel(): string {

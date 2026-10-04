@@ -1,11 +1,11 @@
 import './styles.css';
 import * as THREE from 'three';
-import { garmentDecisions, optionsFromParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
+import { garmentDecisions, optionsFromParams, optionsToParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
 import { buildBowCentre } from './fold/bowCentre';
 import { centroid } from './fold/geometry';
 import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
 import { ShapeChoices } from './ui/shapeChoices';
-import { buildGarment, garmentIdFrom, attachmentAnchors, attachmentSize } from './fold/garments';
+import { buildGarment, garmentIdFrom, attachmentAnchors, attachmentSize, garmentDisplayAngle } from './fold/garments';
 import { buildPin } from './fold/pin';
 import { ACCESSORIES, accessoryAnchors, findAccessory } from './fold/accessories';
 import { StudioControls, GarmentId, PinPosition, AccessoryId } from './ui/studioControls';
@@ -27,6 +27,19 @@ import { PaperPicker } from './ui/paperPicker';
 
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let ready = false;
+const designProgress = new Map<GarmentId, number>();
+function syncUrl() {
+  if (!ready || accessoryMode) return;
+  const url = new URL(location.href);
+  optionsToParams(garmentOptions, url.searchParams);
+  url.searchParams.set('design', garmentId);
+  url.searchParams.set('paper', garmentPaper.id);
+  url.searchParams.set('turn', String(garmentTurns));
+  url.searchParams.set('step', String(controller.step));
+  url.searchParams.set('view', view.target === 1 ? 'display' : 'workshop');
+  if (url.href !== location.href) history.replaceState(history.state, '', url);
+}
 
 // ---- folding data (pure, precomputed once)
 let garmentId: GarmentId = garmentIdFrom(params.get('design'));
@@ -53,6 +66,7 @@ function measureFinished() {
   for (const p of lastOp.pieces) {
     for (const m of p.poly) {
       const v = new THREE.Vector3(...posePoint(M, p.index * 12, m.x, m.y));
+      if (!accessoryMode) v.applyAxisAngle(new THREE.Vector3(0, 0, 1), garmentDisplayAngle(garmentId));
       lo.min(v);
       hi.max(v);
     }
@@ -196,6 +210,7 @@ function applyPaper() {
   document.documentElement.style.setProperty('--accent', paper.reverse);
   picker?.render(paper, quarterTurns);
   refreshDisplayPanel();
+  syncUrl();
 }
 
 // ---- state
@@ -238,7 +253,7 @@ function refreshWorkshopPanel() {
   const available = ACCESSORIES.filter(a => accessoryAnchors(a.id, garmentAnchors()).length > 0).map(a => a.id);
   studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available);
   const bowReady = accessoryId === 'bow' && bowWing === 1 && savedPinStep === pinTimeline.ops.length;
-  studio.renderCentre(!accessoryMode && controller.finished && bowReady, savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
+  studio.renderCentre(!accessoryMode && controller.finished && bowReady && available.includes('bow'), savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
   const decision = !accessoryMode && !controller.moving ? decisions.find(d => decisionStep(construction, d) === controller.step) : undefined;
   shapeChoices.render(decision, garmentOptions, value => buildGarment(garmentId, selectOption(garmentOptions, decision!, value)));
   const a = controller.activeOp;
@@ -248,12 +263,13 @@ function refreshWorkshopPanel() {
     done: controller.step,
     active: a,
     title: op ? op.title : `${construction.name} is folded`,
-    hint: op ? op.hint : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : 'Put it on display, or fold an optional paper accessory.',
+    hint: op ? op.hint : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : available.length ? 'Put it on display, or fold an optional paper accessory.' : 'Put it on display to inspect the front, back and edges.',
     foldLabel: controller.finished ? accessoryMode ? editingCentre ? 'Attach centre' : accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
   });
+  syncUrl();
 }
 function refreshDisplayPanel() {
   displayPanel.render(`${construction.name} · ${paper.name}`, displayCam.turntable);
@@ -287,6 +303,7 @@ const QUAT_WORK = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0
 const QUAT_DISPLAY = new THREE.Quaternion();
 const POS_DISPLAY = new THREE.Vector3();
 function frameSubject() {
+  QUAT_DISPLAY.setFromAxisAngle(new THREE.Vector3(0, 0, 1), accessoryMode ? 0 : garmentDisplayAngle(garmentId));
   POS_DISPLAY.set(0, STAND_HEIGHT - SLOT_DEPTH - finished.lo.y, -(finished.lo.z + finished.hi.z) / 2);
   const pieceTop = POS_DISPLAY.y + finished.hi.y;
   displayCam.setSubject(new THREE.Vector3(0, pieceTop / 2, 0), Math.max(-finished.lo.x, finished.hi.x) + 0.12, pieceTop / 2 + 0.1);
@@ -310,8 +327,10 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
 }
 function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
+  designProgress.set(garmentId, controller.step);
   garmentId = id;
   replaceConstruction(buildGarment(id, garmentOptions));
+  controller.jumpTo(designProgress.get(id) ?? 0);
 }
 function chooseFoldOption(id: DecisionId, value: string) {
   const decision = garmentDecisions(garmentId).find(d => d.id === id);
@@ -337,7 +356,7 @@ function revisitFold(id: DecisionId) {
   controller.jumpTo(step); layout();
 }
 function editPin(id: AccessoryId) {
-  if (accessoryMode || !controller.finished) return;
+  if (accessoryMode || !controller.finished || !accessoryAnchors(id, garmentAnchors()).length) return;
   savedGarment = { construction, timeline, controller };
   if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); settlePosition(); }
   studySeams.geometry = seamGeometry;
@@ -400,6 +419,7 @@ view.onChange(() => {
   // camera kept the last in-between frame's pose (frame-rate dependent).
   if (view.inDisplay) { stage.placeCamera(displayCamPos, displayCam.target); displayCam.setEnabled(true); }
   layout();
+  syncUrl();
 });
 
 function insets() {
@@ -593,6 +613,8 @@ if (params.get('view') === 'display' && controller.finished) {
   stage.placeCamera(displayCamPos, displayCam.target);
   displayCam.setEnabled(true);
 }
+ready = true;
+syncUrl();
 
 // ---- loop
 let last = performance.now();

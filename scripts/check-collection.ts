@@ -10,7 +10,7 @@ import assert from 'node:assert/strict';
 import { buildGarment, GARMENTS, garmentIdFrom, GarmentId } from '../src/fold/garments';
 import {
   DEFAULT_OPTIONS, GarmentOptions, garmentDecisions, decisionStep,
-  selectOption, sharedFoldPrefix, optionsFromParams,
+  selectOption, sharedFoldPrefix, optionsFromParams, optionsToParams,
 } from '../src/fold/garmentOptions';
 import { Construction } from '../src/fold/construction';
 import { buildTimeline } from '../src/fold/timeline';
@@ -110,3 +110,12 @@ assert.deepEqual(optionsFromParams(new URLSearchParams('unknown=longline&garment
 for (const invalid of [null, '', 'robe', 'trousers', 'sailor', 'constructor', '__proto__']) assert.equal(garmentIdFrom(invalid), 'dress', 'unknown or parked garment should open a usable default');
 assert.deepEqual(DEFAULT_OPTIONS, { silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped', wrap: 'original', band: 'double', vestLength: 'short', pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic' }, 'normalizing options mutated the default selections');
 console.log(`Collection integration: ${constructions} supported constructions, ${transitions} decision transitions, evaluated shared prefixes, preference retention and malformed URL recovery pass.`);
+
+for (const options of [DEFAULT_OPTIONS, valid]) {
+  const params = new URLSearchParams('unrelated=keep');
+  optionsToParams(options, params);
+  assert.deepEqual(optionsFromParams(params), options, 'URL reload loses a selected fold option');
+  assert.equal(params.get('unrelated'), 'keep');
+  optionsToParams(DEFAULT_OPTIONS, params);
+  assert.deepEqual(optionsFromParams(params), DEFAULT_OPTIONS, 'returning to defaults leaves stale choices');
+}

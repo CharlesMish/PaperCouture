@@ -89,9 +89,15 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
   while (i < a.ops.length && i < b.ops.length && signature(a.ops[i]) === signature(b.ops[i])) i++;
   return i;
 }
+const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength' };
+export function optionsToParams(options: GarmentOptions, params: URLSearchParams): void {
+  for (const id of Object.keys(keys) as DecisionId[]) {
+    if (options[id] === DEFAULT_OPTIONS[id]) params.delete(keys[id]);
+    else params.set(keys[id], options[id]);
+  }
+}
 export function optionsFromParams(params: URLSearchParams): GarmentOptions {
   let options = { ...DEFAULT_OPTIONS };
-  const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength' };
   for (const decisions of Object.values(DECISIONS)) for (const decision of decisions) {
     const value = params.get(keys[decision.id]);
     if (value) options = selectOption(options, decision, value);
