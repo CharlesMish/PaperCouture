@@ -8,6 +8,21 @@
 //    motifs read correctly once the paper is turned over. Canvas top-left is
 //    then material corner (1, 1).
 
+export interface PrintPosition { x: number; y: number }
+
+/** Artwork layers only. Ground and grain stay on the sheet, outside the translation. */
+export interface PrintLayers {
+  frontGround: string;
+  backGround: string;
+  front(ctx: CanvasRenderingContext2D, size: number): void;
+  back?(ctx: CanvasRenderingContext2D, size: number): void;
+}
+
+export type PrintPlacement = PrintLayers & (
+  | { kind: 'slide'; limit: number }
+  | { kind: 'snap'; positions: readonly (PrintPosition & { label: string })[] }
+);
+
 export interface PaperDesign {
   id: string;
   name: string;
@@ -19,4 +34,6 @@ export interface PaperDesign {
   drawBack(ctx: CanvasRenderingContext2D, size: number): void;
   /** Hidden from the swatch row (diagnostic papers). */
   hidden?: boolean;
+  placement?: PrintPlacement;
+  placementNote?: string;
 }

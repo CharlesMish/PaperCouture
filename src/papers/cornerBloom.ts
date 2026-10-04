@@ -13,55 +13,60 @@ const PETAL_LIT = '#e38974';
 const HEART = '#f0c36a';
 const SEED = '#3c2a24';
 
+function drawInk(ctx: CanvasRenderingContext2D, S: number) {
+  const cx = S * 0.3;
+  const cy = S * 0.66;
+  ctx.save();
+  ctx.translate(cx, cy);
+
+  // two leaves reaching toward the left edge, across the side crease
+  const leaf = (rot: number, len: number, wid: number, colour: string) => {
+    ctx.save();
+    ctx.rotate(rot);
+    ctx.fillStyle = colour;
+    ctx.beginPath();
+    ctx.ellipse(-len * 0.45, 0, len * 0.5, wid, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  };
+  leaf(0.55, S * 0.2, S * 0.055, LEAF);
+  leaf(2.35, S * 0.16, S * 0.042, LEAF_PALE);
+
+  const ring = (n: number, radius: number, len: number, wid: number, colour: string, spin: number) => {
+    for (let i = 0; i < n; i++) {
+      const a = spin + (i / n) * Math.PI * 2;
+      ctx.save();
+      ctx.rotate(a);
+      ctx.translate(0, -radius);
+      ctx.fillStyle = colour;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, wid, len, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  };
+  ring(8, S * 0.02, S * 0.095, S * 0.04, PETAL, 0.15);
+  ring(6, S * 0.012, S * 0.058, S * 0.026, PETAL_LIT, 0.45);
+  ctx.beginPath();
+  ctx.arc(0, 0, S * 0.028, 0, Math.PI * 2);
+  ctx.fillStyle = HEART;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(0, 0, S * 0.012, 0, Math.PI * 2);
+  ctx.fillStyle = SEED;
+  ctx.fill();
+  ctx.restore();
+}
+
 export const cornerBloom: PaperDesign = {
   id: 'corner-bloom',
   name: 'Corner bloom',
   note: 'One large flower set low and to the left',
   reverse: LEAF,
+  placement: { kind: 'slide', limit: .3, frontGround: GROUND, backGround: LEAF, front: drawInk },
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
-    const cx = S * 0.3;
-    const cy = S * 0.66;
-    ctx.save();
-    ctx.translate(cx, cy);
-
-    // two leaves reaching toward the left edge, across the side crease
-    const leaf = (rot: number, len: number, wid: number, colour: string) => {
-      ctx.save();
-      ctx.rotate(rot);
-      ctx.fillStyle = colour;
-      ctx.beginPath();
-      ctx.ellipse(-len * 0.45, 0, len * 0.5, wid, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    };
-    leaf(0.55, S * 0.2, S * 0.055, LEAF);
-    leaf(2.35, S * 0.16, S * 0.042, LEAF_PALE);
-
-    const ring = (n: number, radius: number, len: number, wid: number, colour: string, spin: number) => {
-      for (let i = 0; i < n; i++) {
-        const a = spin + (i / n) * Math.PI * 2;
-        ctx.save();
-        ctx.rotate(a);
-        ctx.translate(0, -radius);
-        ctx.fillStyle = colour;
-        ctx.beginPath();
-        ctx.ellipse(0, 0, wid, len, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-      }
-    };
-    ring(8, S * 0.02, S * 0.095, S * 0.04, PETAL, 0.15);
-    ring(6, S * 0.012, S * 0.058, S * 0.026, PETAL_LIT, 0.45);
-    ctx.beginPath();
-    ctx.arc(0, 0, S * 0.028, 0, Math.PI * 2);
-    ctx.fillStyle = HEART;
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(0, 0, S * 0.012, 0, Math.PI * 2);
-    ctx.fillStyle = SEED;
-    ctx.fill();
-    ctx.restore();
+    drawInk(ctx, S);
   },
   drawBack(ctx, S) {
     solid(ctx, S, LEAF);

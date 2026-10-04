@@ -399,3 +399,54 @@ button:focus-visible {
   .studio-controls:has(.experiment-note) { flex-wrap: wrap; overflow-x: visible; }
   .studio-note.experiment-note { flex: 1 1 240px; min-width: 0; font-size: .73rem; }
 }
+
+/* Print and pinboard editors use native modal focus/inert behavior. */
+.print-shifted { box-shadow: inset 0 0 0 2px var(--ink); }
+.rotate { min-height: 44px; }
+.display-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; max-width: 190px; }
+.editor-dialog {
+  color: var(--ink); background: #f6f2eb; border: 1px solid var(--rule);
+  border-radius: 18px; padding: 20px; max-height: calc(100dvh - 24px);
+  max-width: calc(100vw - 24px); overflow: auto; box-shadow: 0 16px 70px #302b2650;
+}
+.editor-dialog::backdrop { background: #302b2660; }
+.editor-dialog h2 { margin: 0 0 12px; font-size: 1.12rem; }
+.editor-dialog p { font-size: .88rem; line-height: 1.4; margin: 8px 0 12px; }
+.editor-dialog button, .editor-dialog select, .editor-dialog input { min-height: 44px; }
+.editor-dialog :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.editor-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.editor-actions [aria-pressed='true'] { background: #d7dbce; border-color: var(--ink); }
+.editor-dialog .editor-readout { font-size: .78rem; color: var(--ink-soft); }
+.print-dialog { width: 390px; }
+.print-preview { display: block; width: min(100%, 280px); height: auto; aspect-ratio: 1; margin: 12px auto; box-shadow: 0 2px 8px #302b2630; touch-action: none; }
+.print-preview.can-slide { cursor: grab; }
+.print-preview.can-slide:active { cursor: grabbing; }
+.pinboard-dialog { width: 1050px; }
+.board-body { display: grid; grid-template-columns: minmax(0, 1fr) 270px; align-items: start; gap: 20px; }
+.board-preview { min-width: 0; align-self: center; }
+.pinboard-canvas { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; touch-action: none; cursor: grab; border-radius: 4px; }
+.pinboard-canvas:active { cursor: grabbing; }
+.board-tools { display: flex; flex-direction: column; gap: 8px; }
+.board-tools label { display: flex; gap: 12px; align-items: center; justify-content: space-between; font-size: .9rem; }
+.board-tools select { font: inherit; color: inherit; background: transparent; border: 1px solid var(--rule); border-radius: 8px; padding: 0 10px; }
+.board-tools input { flex: 1; min-width: 0; accent-color: var(--accent); }
+.board-tools .editor-actions { display: grid; grid-template-columns: 1fr 1fr; margin: 0; }
+@media (max-width: 719px) {
+  .display-actions { max-width: 100px; }
+  .board-body { grid-template-columns: 1fr; gap: 12px; }
+  .editor-dialog { padding: 14px; }
+  .board-tools { gap: 6px; }
+}
+@media (max-height: 540px) and (min-width: 720px) {
+  .print-dialog { width: 680px; display: grid; grid-template-columns: 220px 1fr; gap: 8px 20px; align-items: center; }
+  .print-dialog:not([open]) { display: none; }
+  .print-dialog h2 { grid-column: 1 / -1; }
+  .print-preview { grid-column: 1; grid-row: 2 / 6; margin: 0; }
+  .print-dialog > :not(h2):not(canvas) { grid-column: 2; }
+  .board-tools .btn { font-size: .85rem; }
+}
+@media (max-height: 540px) and (min-width: 720px) {
+  .board-body { max-height: calc(100dvh - 110px); }
+  .board-preview { width: min(100%, calc((100dvh - 110px) * 4 / 3)); justify-self: center; align-self: start; }
+  .board-tools { max-height: calc(100dvh - 110px); overflow-y: auto; padding: 2px 4px 4px; }
+}

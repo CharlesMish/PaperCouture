@@ -86,25 +86,30 @@ function halfOpen(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.restore();
 }
 
+function drawInk(ctx: CanvasRenderingContext2D, S: number) {
+  ctx.save();
+  ctx.scale(S, S);
+  blossom(ctx, 0.40, 0.38);
+  bud(ctx, 0.55, 0.54);
+  halfOpen(ctx, 0.66, 0.65);
+  ctx.save();
+  ctx.translate(0.75, 0.75);
+  petal(ctx, 0.7, 0.042, 0.024, PLUM, 0.003);
+  ctx.restore();
+  ctx.translate(0.67, 0.83);
+  petal(ctx, 2.3, 0.034, 0.021, CORAL, -0.003);
+  ctx.restore();
+}
+
 export const plumScatter: PaperDesign = {
   id: 'plum-scatter',
   name: 'Plum scatter',
   note: 'Open plum petals and a small diagonal drift on blush',
   reverse: REVERSE,
+  placement: { kind: 'slide', limit: .3, frontGround: GROUND, backGround: REVERSE, front: drawInk },
   drawFront(ctx, S) {
     solid(ctx, S, GROUND);
-    ctx.save();
-    ctx.scale(S, S);
-    blossom(ctx, 0.40, 0.38);
-    bud(ctx, 0.55, 0.54);
-    halfOpen(ctx, 0.66, 0.65);
-    ctx.save();
-    ctx.translate(0.75, 0.75);
-    petal(ctx, 0.7, 0.042, 0.024, PLUM, 0.003);
-    ctx.restore();
-    ctx.translate(0.67, 0.83);
-    petal(ctx, 2.3, 0.034, 0.021, CORAL, -0.003);
-    ctx.restore();
+    drawInk(ctx, S);
   },
   drawBack(ctx, S) {
     solid(ctx, S, REVERSE);

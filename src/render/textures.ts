@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { PaperDesign } from '../papers/types';
+import { PaperDesign, PrintPosition } from '../papers/types';
+import { normalizePosition, ORIGINAL, sourceShift } from '../papers/printPosition';
 import { applySheetOrientation } from './sheetOrientation';
 
 const SIZE = 1024;
@@ -57,18 +58,37 @@ export interface PaperTextures {
   dispose(): void;
 }
 
+/** Bake translated ink on a finite sheet, then add stationary grain. Zero is
+ * deliberately the original drawing path, preserving every existing paper. */
+export function paperCanvas(design: PaperDesign, side: 'front' | 'back', quarterTurns: number, position: PrintPosition = ORIGINAL): HTMLCanvasElement {
+  const p = normalizePosition(design, position), layers = design.placement;
+  return paint((ctx, S) => {
+    if (!layers || (!p.x && !p.y)) {
+      if (side === 'front') design.drawFront(ctx, S); else design.drawBack(ctx, S);
+      return;
+    }
+    ctx.fillStyle = side === 'front' ? layers.frontGround : layers.backGround;
+    ctx.fillRect(0, 0, S, S);
+    const shift = sourceShift(p, quarterTurns);
+    ctx.save();
+    ctx.translate((side === 'front' ? shift.x : -shift.x) * S, -shift.y * S);
+    if (side === 'front') layers.front(ctx, S); else layers.back?.(ctx, S);
+    ctx.restore();
+  });
+}
+
 /**
  * Build the two textures for a paper. `quarterTurns` turns the whole sheet
  * relative to the folds (0..3): both faces, about the centre.
  */
-export function makePaperTextures(design: PaperDesign, quarterTurns: number, maxAnisotropy: number): PaperTextures {
+export function makePaperTextures(design: PaperDesign, quarterTurns: number, maxAnisotropy: number, position: PrintPosition = ORIGINAL): PaperTextures {
   const setup = (t: THREE.CanvasTexture) => {
     t.colorSpace = THREE.SRGBColorSpace;
     t.anisotropy = Math.min(8, maxAnisotropy);
     return t;
   };
-  const front = setup(new THREE.CanvasTexture(paint((c, s) => design.drawFront(c, s))));
-  const back = setup(new THREE.CanvasTexture(paint((c, s) => design.drawBack(c, s))));
+  const front = setup(new THREE.CanvasTexture(paperCanvas(design, 'front', quarterTurns, position)));
+  const back = setup(new THREE.CanvasTexture(paperCanvas(design, 'back', quarterTurns, position)));
   applySheetOrientation(front, 'front', quarterTurns);
   applySheetOrientation(back, 'back', quarterTurns);
   return {
