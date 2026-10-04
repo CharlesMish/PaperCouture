@@ -8,6 +8,7 @@
         "y": 0
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 176610
     },
     {
@@ -17,6 +18,7 @@
         "y": 0.0625
       },
       "mismatch": 4,
+      "unmatched": 0,
       "inkPixels": 180352
     },
     {
@@ -26,6 +28,7 @@
         "y": 0.25
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 131136
     },
     {
@@ -35,6 +38,7 @@
         "y": 0
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 176610
     },
     {
@@ -44,6 +48,7 @@
         "y": 0.0625
       },
       "mismatch": 2,
+      "unmatched": 0,
       "inkPixels": 163539
     },
     {
@@ -53,6 +58,7 @@
         "y": 0.25
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 117794
     },
     {
@@ -62,6 +68,7 @@
         "y": 0
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 176610
     },
     {
@@ -71,6 +78,7 @@
         "y": 0.0625
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 149487
     },
     {
@@ -80,6 +88,7 @@
         "y": 0.25
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 101328
     },
     {
@@ -89,6 +98,7 @@
         "y": 0
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 176610
     },
     {
@@ -98,6 +108,7 @@
         "y": 0.0625
       },
       "mismatch": 3,
+      "unmatched": 0,
       "inkPixels": 153068
     },
     {
@@ -107,6 +118,7 @@
         "y": 0.25
       },
       "mismatch": 4,
+      "unmatched": 0,
       "inkPixels": 145067
     }
   ],

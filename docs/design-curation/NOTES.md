@@ -71,8 +71,8 @@ Sash uses only the existing central waist anchor, with its complete footprint ch
   front/reverse views, independent accessory print/edit, design round trips, URL reload,
   old final swatch reachability, pinboard and a real 1600×1200 PNG export.
 - Arc study masks: corresponding printed contours agree after reverse mirroring at
-  four rotations and three offsets (within fewer than 64 antialiased boundary pixels
-  per 1024² canvas). Stationary background/grain and changed ink pixels checked separately.
+  four rotations and three offsets (every differing antialiased ink pixel has corresponding
+  ink within one raster pixel; no unmatched contours). Stationary background/grain and changed ink pixels checked separately.
 - New tabard camera: both zoom limits and three azimuths stay at or above table y=0.025
   in all three viewports. No horizontal page overflow or page exceptions in passing runs.
 
@@ -103,7 +103,7 @@ the current source at `DEV_URL` (5183), and an untouched exact PR17 source at
 `scripts/check-curation-browser.cjs`. The CI workflow creates that pinned baseline.
 `FLOW_ONLY=1` exercises just the accessory/mobile section for focused debugging.
 
-The Library packet includes a comparison/report, images, source hashes, raw captures,
+The review packet includes a comparison/report, images, source hashes, raw captures,
 test results and a frozen built preview. Full screenshots are omitted from Git to keep
 the draft small; summary sheets and passing results are retained here. To play the
 downloaded frozen preview, serve the packet's `preview` folder over localhost HTTP.
