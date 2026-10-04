@@ -29,12 +29,20 @@ export class PaperPicker {
     row.className = 'swatches';
     row.setAttribute('role', 'radiogroup');
     row.setAttribute('aria-label', 'Paper');
+    let lastGroup: PaperDesign['curation'];
     for (const p of papers.filter((q) => !q.hidden)) {
+      if (p.curation && p.curation !== lastGroup) {
+        const marker = document.createElement('span');
+        marker.className = 'paper-group-label';
+        marker.textContent = p.curation === 'curated' ? 'Curated' : 'Experiments';
+        row.append(marker);
+        lastGroup = p.curation;
+      }
       const btn = document.createElement('button');
       btn.className = 'swatch';
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-label', p.name);
-      btn.title = `${p.name}: ${p.note}`;
+      btn.title = `${p.curation === 'experimental' ? 'Experimental · ' : ''}${p.name}: ${p.note}`;
       btn.style.setProperty('--reverse', p.reverse);
       const img = document.createElement('img');
       img.src = thumbnail(p);

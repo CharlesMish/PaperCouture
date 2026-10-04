@@ -39,7 +39,7 @@ export class StudioControls {
     this.design.setAttribute('aria-label', 'Garment design');
     for (const experimental of [false, true]) {
       const group = document.createElement('optgroup');
-      group.label = experimental ? 'Experiments · one square' : 'Collection';
+      group.label = experimental ? 'Experiments · one square' : 'Curated · collection';
       for (const garment of GARMENTS.filter(g => !!g.experiment === experimental)) group.append(new Option(garment.name, garment.id));
       this.design.append(group);
     }
@@ -47,7 +47,12 @@ export class StudioControls {
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
-    for (const a of ACCESSORIES) this.accessory.add(new Option(a.name, a.id));
+    for (const experimental of [false, true]) {
+      const group = document.createElement('optgroup');
+      group.label = experimental ? 'Experiments · separate square' : 'Collection';
+      for (const a of ACCESSORIES.filter(a => !!a.experiment === experimental)) group.append(new Option(a.name, a.id));
+      this.accessory.append(group);
+    }
     this.accessoryLabel.append(this.accessory);
     for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
@@ -117,7 +122,9 @@ export class StudioControls {
       : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
     const experiment = garmentExperiment(id);
     if (experiment && !accessoryMode) this.note.textContent = `Experimental · ${experiment}${attached ? ' · accessory kept aside' : ''}`;
-    this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode);
+    const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;
+    if (accessoryExperiment && (accessoryMode || attached && !experiment)) this.note.textContent = `Experimental · ${accessoryExperiment}`;
+    this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode || !!accessoryExperiment && (accessoryMode || attached));
   }
   /** Edit reopens the attached piece with its progress; Fold starts a new square of another type. */
   private actionLabel(): string {

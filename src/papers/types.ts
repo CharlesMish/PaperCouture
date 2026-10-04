@@ -34,6 +34,8 @@ export interface PaperDesign {
   drawBack(ctx: CanvasRenderingContext2D, size: number): void;
   /** Hidden from the swatch row (diagnostic papers). */
   hidden?: boolean;
+  /** Picker guidance only; does not change print, defaults or URL identity. */
+  curation?: 'curated' | 'experimental';
   placement?: PrintPlacement;
   placementNote?: string;
 }

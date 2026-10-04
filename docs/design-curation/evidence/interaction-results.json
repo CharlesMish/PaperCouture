@@ -1,0 +1,29 @@
+{
+  "base": "http://127.0.0.1:4183",
+  "baselineSHA": "f3f735cd68d784ca3850dafdefa8030124d3088f",
+  "checks": [
+    "Sash five real folds, independent sliding paper, central waist-only placement, original garment paper retained, unsupported-design round trip, edit and actual pinboard PNG export",
+    "New tabard OrbitControls at both zoom bounds and three azimuths stays above the table in all three viewports",
+    "390×844 and 844×390: same paper scroll reaches old final paper, tabard/display/position/pinboard/sash, no horizontal overflow; synthetic old storage untouched"
+  ],
+  "errors": [],
+  "captures": 20,
+  "cameras": [
+    {
+      "width": 1100,
+      "height": 800,
+      "lowest": 0.0250000000000008
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "lowest": 0.025000000000000577
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "lowest": 0.0250000000000008
+    }
+  ],
+  "passed": true
+}

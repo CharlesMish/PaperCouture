@@ -5,8 +5,9 @@ import { buildBowWing } from './bow';
 import { buildNeckerchief, NECKERCHIEF_POSITIONS, NECKERCHIEF_SCALE } from './neckerchief';
 import { buildPocketSquare, POCKET_POSITIONS, POCKET_SCALE } from './pocketSquare';
 import { buildTulip, TULIP_LIFT, TULIP_POSITIONS, TULIP_SCALE } from './tulip';
+import { buildFoldedSash, SASH_POSITIONS, SASH_SCALE, SASH_LIFT } from './foldedSash';
 
-export type AccessoryId = 'pin' | 'bow' | 'kerchief' | 'pocket' | 'tulip';
+export type AccessoryId = 'pin' | 'bow' | 'kerchief' | 'pocket' | 'tulip' | 'sash';
 
 /** One placed component of an accessory, in the accessory group's units. */
 /** angle and offset/lift (x/y, in the piece's own units, after turning) place
@@ -19,6 +20,7 @@ export interface AccessoryPiece { angle: number; offset: number; scale: number; 
 export const ACCESSORIES: {
   id: AccessoryId; name: string; build(): Construction; pieces: AccessoryPiece[];
   positions?: readonly AttachmentPosition[];
+  experiment?: string;
 }[] = [
   { id: 'pin', name: 'Diamond pin', build: buildPin, pieces: [{ angle: 0, offset: 0, scale: 0.16 }] },
   { id: 'bow', name: 'Two-piece bow', build: buildBowWing, pieces: [
@@ -29,6 +31,8 @@ export const ACCESSORIES: {
   // Draft (PR #13): a folded tulip at the waist anchors, stood upright and
   // lowered so the flower (not its base point) is centred on the anchor.
   { id: 'tulip', name: 'Folded tulip', build: buildTulip, pieces: [{ angle: -3 * Math.PI / 4, offset: 0, scale: TULIP_SCALE, lift: TULIP_LIFT }], positions: TULIP_POSITIONS },
+  { id: 'sash', name: 'Folded sash', build: buildFoldedSash, pieces: [{ angle: 0, offset: 0, scale: SASH_SCALE, lift: SASH_LIFT }], positions: SASH_POSITIONS,
+    experiment: 'Separate square · placed at the waist, no tie or lock' },
 ];
 export function findAccessory(id: AccessoryId) { return ACCESSORIES.find(a => a.id === id)!; }
 /** The garment positions an accessory may use. Empty means it cannot be placed. */

@@ -1,0 +1,15 @@
+{
+  "base": "http://127.0.0.1:4183/",
+  "errors": [],
+  "badResponses": [],
+  "checks": [
+    "apron: real Fold/Back, Front/Angle/Back; experimental label and no unreviewed accessory anchors",
+    "clutch: real Fold/Back, Front/Angle/Back; experimental label and no unreviewed accessory anchors",
+    "tunic: real Fold/Back, Front/Angle/Back; experimental label and no unreviewed accessory anchors",
+    "Per-design progress/reset and completed neckerchief round trip retained",
+    "390x844: design selection, complete folds, front/back, visible caveat, free display area and no page overflow",
+    "844x390: design selection, complete folds, front/back, visible caveat, free display area and no page overflow",
+    "Reload retains current URL selections and progress; invalid choices recover; synthetic browser storage untouched"
+  ],
+  "passed": true
+}
