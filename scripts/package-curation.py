@@ -88,7 +88,7 @@ if not checks.get('passed') or not ink.get('passed'): raise RuntimeError('Passin
 head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip()
 changed=subprocess.check_output(['git','diff','--name-only','9e3fa0af830c4dccaa554c9e7bdec2b77be6ec96'],cwd=ROOT,text=True).splitlines()
 if not changed: changed=subprocess.check_output(['git','diff','--name-only','9e3fa0af830c4dccaa554c9e7bdec2b77be6ec96..HEAD'],cwd=ROOT,text=True).splitlines()
-source={'base':'9e3fa0af830c4dccaa554c9e7bdec2b77be6ec96','acceptedCandidate':'f3f735cd68d784ca3850dafdefa8030124d3088f','candidate':head,'draftPR':args.pr,
+source={'base':'9e3fa0af830c4dccaa554c9e7bdec2b77be6ec96','acceptedCandidate':'f3f735cd68d784ca3850dafdefa8030124d3088f','candidate':head,'draftPR':args.pr,'buildAssets':{str(f.relative_to(ROOT/'dist')):hashlib.sha256(f.read_bytes()).hexdigest() for f in (ROOT/'dist').rglob('*') if f.is_file()},
         'files':{name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in changed if (ROOT/name).is_file()}}
 (OUT/'source.json').write_text(json.dumps(source,indent=2)+'\n')
 sections=''.join('<section><div><p class="tag">'+html.escape(label)+'</p><h2>'+html.escape(name)+'</h2><p>'+html.escape(note)+'</p></div><div class="pair">'+''.join('<img alt="'+html.escape(name+' / '+n)+'" src="'+jpeg64(render(n))+'">' for n in shots)+'</div></section>' for name,label,note,shots in candidates)
@@ -115,7 +115,9 @@ if not patch: patch=subprocess.check_output(['git','diff','--binary','9e3fa0af83
 readme='''Paper Couture / design-curation draft packet
 
 Open Paper-Couture-curation-study.html for the comparison and exact source.
-The JPEGs are actual app render contact sheets.
+The JPEGs are actual app render contact sheets. Full-size screenshots in the
+evidence folder use JPEG compression to keep this packet compact; the actual
+pinboard export remains its original PNG.
 
 Play the frozen preview on a computer:
   cd preview
@@ -139,7 +141,12 @@ with zipfile.ZipFile(OUT/'Paper-Couture-curation-packet.zip','w',zipfile.ZIP_DEF
     for f in (ROOT/'dist').rglob('*'):
         if f.is_file(): z.write(f,'preview/'+str(f.relative_to(ROOT/'dist')))
     for f in EVIDENCE.iterdir():
-        if f.is_file() and f.name!='failure.png' and (f.suffix=='.json' or f.suffix=='.png'): z.write(f,'evidence/'+f.name)
+        if f.is_file() and f.name!='failure.png' and (f.suffix=='.json' or f.suffix=='.png'):
+            if f.suffix=='.png' and 'export' not in f.name:
+                import io
+                data=io.BytesIO();Image.open(f).convert('RGB').save(data,format='JPEG',quality=88)
+                z.writestr('evidence/'+f.stem+'.jpg',data.getvalue())
+            else: z.write(f,'evidence/'+f.name)
     for f in [ROOT/'docs/design-curation/NOTES.md',ROOT/'scripts/check-curation-browser.cjs',ROOT/'scripts/check-curation-ink.cjs',ROOT/'scripts/check-design-curation.ts']:
         z.write(f,str(f.relative_to(ROOT)))
 print(json.dumps({'candidate':head,'files':[{ 'name':f.name,'bytes':f.stat().st_size} for f in OUT.iterdir() if f.suffix in ['.html','.jpg','.zip']]},indent=2))
