@@ -29,7 +29,12 @@ def write(draw, xy, text, width, size=22, bold=False, fill=INK):
     return len(lines)*(size+7)
 def render(name, crop=True):
     im = Image.open(EVIDENCE / (name+'.png')).convert('RGB')
-    return im.crop((255,160 if name.startswith('jacket-sash') else 115,925,675 if '-mid-' in name else 615)) if crop else im
+    if not crop: return im
+    # At a half-turn the lifted square reaches near the top of the viewport.
+    # Keep that complete outline, including any real application controls.
+    half_turn = name in {'tabard-mid-2','tabard-mid-7','sash-mid-2','sash-mid-5'}
+    top = 0 if half_turn else (160 if name.startswith('jacket-sash') else 115)
+    return im.crop((255,top,925,690 if half_turn else (675 if '-mid-' in name else 615)))
 def fit(im, size):
     im=im.copy(); im.thumbnail(size)
     canvas=Image.new('RGB',size,BG); canvas.paste(im,((size[0]-im.width)//2,(size[1]-im.height)//2)); return canvas
