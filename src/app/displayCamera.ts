@@ -77,6 +77,10 @@ export class DisplayCamera {
     const d = this.defaultDistance();
     this.controls.minDistance = d * 0.45;
     this.controls.maxDistance = d * 1.7;
+    // At the furthest permitted zoom even a slight downward orbit used to
+    // put the eye below y=0. Bound that worst case, including after resize.
+    this.controls.maxPolarAngle = Math.min(0.53 * Math.PI,
+      Math.acos(THREE.MathUtils.clamp((0.025 - this.target.y) / this.controls.maxDistance, -1, 1)));
   }
 
   /** Preserve orbit and relative zoom when the available viewport changes. */

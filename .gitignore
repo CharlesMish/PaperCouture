@@ -12,3 +12,5 @@ docs/captures/
 dist-experiment/
 .wrangler/
 .experiment-qa/
+
+.positioning-qa/

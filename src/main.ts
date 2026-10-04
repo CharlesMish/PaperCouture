@@ -24,6 +24,9 @@ import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
 import { WorkshopPanel } from './ui/workshopPanel';
 import { DisplayPanel } from './ui/displayPanel';
 import { PaperPicker } from './ui/paperPicker';
+import { PrintPositionPanel } from './ui/printPositionPanel';
+import { Pinboard } from './ui/pinboard';
+import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
 
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -36,6 +39,7 @@ function syncUrl() {
   url.searchParams.set('design', garmentId);
   url.searchParams.set('paper', garmentPaper.id);
   url.searchParams.set('turn', String(garmentTurns));
+  positionToParams(garmentPosition, url.searchParams);
   url.searchParams.set('step', String(controller.step));
   url.searchParams.set('view', view.target === 1 ? 'display' : 'workshop');
   if (url.href !== location.href) history.replaceState(history.state, '', url);
@@ -176,39 +180,46 @@ function resolvePaper(id: string | null | undefined) {
 }
 
 let paper = resolvePaper(params.get('paper'));
-let quarterTurns = ((Number(params.get('turn')) || 0) % 4 + 4) % 4;
+const requestedTurn = Number(params.get('turn'));
+let quarterTurns = Number.isFinite(requestedTurn) ? ((Math.trunc(requestedTurn) % 4) + 4) % 4 : 0;
+let printPosition = positionFromParams(paper, params);
 let textures: PaperTextures | null = null;
 let garmentPaper = paper;
 let garmentTurns = quarterTurns;
+let garmentPosition = { ...printPosition };
 let pinPaper = findPaper('tidal-bands');
 let pinTurns = 0;
+let pinPrintPosition = { ...ORIGINAL };
 let pinTextures: PaperTextures | null = null;
 let centrePaper = findPaper('ink-reverse');
 let centreTurns = 0;
+let centrePrintPosition = { ...ORIGINAL };
 let centreTextures: PaperTextures | null = null;
 function applyCentrePaper() {
   centreTextures?.dispose();
-  centreTextures = makePaperTextures(centrePaper, centreTurns, stage.renderer.capabilities.getMaxAnisotropy());
+  centreTextures = makePaperTextures(centrePaper, centreTurns, stage.renderer.capabilities.getMaxAnisotropy(), centrePrintPosition);
   centreFront.map = centreTextures.front; centreBack.map = centreTextures.back;
   centreFront.needsUpdate = centreBack.needsUpdate = true;
 }
 function applyPinPaper() {
   pinTextures?.dispose();
-  pinTextures = makePaperTextures(pinPaper, pinTurns, stage.renderer.capabilities.getMaxAnisotropy());
+  pinTextures = makePaperTextures(pinPaper, pinTurns, stage.renderer.capabilities.getMaxAnisotropy(), pinPrintPosition);
   pinFront.map = pinTextures.front; pinBack.map = pinTextures.back;
   pinFront.needsUpdate = pinBack.needsUpdate = true;
 }
 function applyPaper() {
-  if (accessoryMode && editingCentre) { centrePaper = paper; centreTurns = quarterTurns; applyCentrePaper(); }
-  else if (accessoryMode) { pinPaper = paper; pinTurns = quarterTurns; applyPinPaper(); }
-  else { garmentPaper = paper; garmentTurns = quarterTurns; }
+  printPosition = normalizePosition(paper, printPosition);
+  if (accessoryMode && editingCentre) { centrePaper = paper; centreTurns = quarterTurns; centrePrintPosition = { ...printPosition }; applyCentrePaper(); }
+  else if (accessoryMode) { pinPaper = paper; pinTurns = quarterTurns; pinPrintPosition = { ...printPosition }; applyPinPaper(); }
+  else { garmentPaper = paper; garmentTurns = quarterTurns; garmentPosition = { ...printPosition }; }
   textures?.dispose();
-  textures = makePaperTextures(paper, quarterTurns, stage.renderer.capabilities.getMaxAnisotropy());
+  textures = makePaperTextures(paper, quarterTurns, stage.renderer.capabilities.getMaxAnisotropy(), printPosition);
   frontMat.map = textures.front;
   backMat.map = textures.back;
   frontMat.needsUpdate = backMat.needsUpdate = true;
   document.documentElement.style.setProperty('--accent', paper.reverse);
-  picker?.render(paper, quarterTurns);
+  picker?.render(paper, quarterTurns, !!(printPosition.x || printPosition.y));
+  positionPanel.render(paper, quarterTurns, printPosition, textures.front.image);
   refreshDisplayPanel();
   syncUrl();
 }
@@ -222,14 +233,24 @@ const view = new ViewSwitch(reducedMotion ? 0.6 : 1.1);
 const displayCam = new DisplayCamera(stage, canvas);
 
 // ---- interface
+const positionPanel = new PrintPositionPanel(app, p => {
+  printPosition = normalizePosition(paper, p); applyPaper();
+});
+const pinboard = new Pinboard(app);
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
+    if (id !== paper.id) printPosition = { ...ORIGINAL };
     paper = findPaper(id);
     applyPaper();
   },
   onRotate: () => {
     quarterTurns = (quarterTurns + 1) % 4;
     applyPaper();
+  },
+  onPosition: () => {
+    cancelDrag();
+    if (controller.isScrubbing) controller.endScrub(false);
+    positionPanel.open();
   },
 });
 
@@ -244,6 +265,12 @@ const displayPanel = new DisplayPanel(app, {
   onTurntable: () => displayCam.setTurntable(!displayCam.turntable),
   onReset: () => displayCam.resetView(),
   onReturn: () => leaveDisplay(),
+  onPinboard: () => {
+    if (!controller.finished || accessoryMode || !view.inDisplay) return;
+    draw();
+    pinboard.open([sheet.group, lapelEdges.lines, accessoryRoot], garmentDisplayAngle(garmentId),
+      `${construction.name} · ${paper.name}`, garmentId);
+  },
 });
 
 const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
@@ -360,14 +387,14 @@ function editPin(id: AccessoryId) {
   savedGarment = { construction, timeline, controller };
   if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); settlePosition(); }
   studySeams.geometry = seamGeometry;
-  accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns;
+  accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns; printPosition = { ...pinPrintPosition };
   replaceConstruction(findAccessory(accessoryId).build(), pinTimeline);
   controller.jumpTo(savedPinStep);
 }
 function editCentre() {
   if (accessoryMode || !controller.finished || accessoryId !== 'bow' || bowWing !== 1 || savedPinStep !== pinTimeline.ops.length) return;
   savedGarment = { construction, timeline, controller };
-  editingCentre = true; accessoryMode = true; paper = centrePaper; quarterTurns = centreTurns;
+  editingCentre = true; accessoryMode = true; paper = centrePaper; quarterTurns = centreTurns; printPosition = { ...centrePrintPosition };
   studySeams.geometry = centreSeamGeometry;
   replaceConstruction(buildBowCentre(), centreTimeline);
   controller.jumpTo(savedCentreStep);
@@ -382,7 +409,7 @@ function returnToGarment() {
     if (!controller.finished) attached = false;
   }
   const saved = savedGarment; savedGarment = null;
-  accessoryMode = false; editingCentre = false; paper = garmentPaper; quarterTurns = garmentTurns;
+  accessoryMode = false; editingCentre = false; paper = garmentPaper; quarterTurns = garmentTurns; printPosition = { ...garmentPosition };
   replaceConstruction(saved.construction, saved.timeline, saved.controller);
   enterDisplay();
 }
@@ -448,9 +475,11 @@ function layout() {
 new ResizeObserver(layout).observe(app);
 new ResizeObserver(layout).observe(studio.root);
 new ResizeObserver(layout).observe(workshopPanel.dock);
+new ResizeObserver(layout).observe(displayPanel.dock);
 layout();
 
 window.addEventListener('keydown', (e) => {
+  if (positionPanel.dialog.open || pinboard.dialog.open || e.defaultPrevented) return;
   if (e.target instanceof HTMLElement && e.target.closest('button, select, input, textarea')) return;
   if (view.inWorkshop) {
     if (e.key === 'ArrowRight') controller.next();
@@ -621,11 +650,15 @@ let last = performance.now();
 function tick(now: number) {
   const dt = Math.min(0.05, (now - last) / 1000);
   last = now;
-  controller.update(dt);
-  view.update(dt);
-  placePiece();
-  if (view.inDisplay) displayCam.update(dt);
-  draw();
+  if (!pinboard.dialog.open) {
+    if (!positionPanel.dialog.open) {
+      controller.update(dt);
+      view.update(dt);
+      placePiece();
+      if (view.inDisplay) displayCam.update(dt);
+    }
+    draw();
+  }
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
@@ -654,6 +687,12 @@ Object.assign(window, {
     get attached() { return attached; },
     get paperId() { return paper.id; },
     get quarterTurns() { return quarterTurns; },
+    get printPosition() { return { ...printPosition }; },
+    get garmentPrintPosition() { return { ...garmentPosition }; },
+    get pinPrintPosition() { return { ...pinPrintPosition }; },
+    get centrePrintPosition() { return { ...centrePrintPosition }; },
+    sheet,
+    pinboard,
     pinSheet,
     view,
     displayCam,
@@ -661,6 +700,7 @@ Object.assign(window, {
     enterDisplay,
     leaveDisplay,
     setPaper(id: string) {
+      if (id !== paper.id) printPosition = { ...ORIGINAL };
       paper = resolvePaper(id);
       applyPaper();
     },

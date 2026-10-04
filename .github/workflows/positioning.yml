@@ -1,0 +1,34 @@
+name: Print positioning and pinboard checks
+on:
+  pull_request:
+    branches: [experiment/integrated-studies-20261004]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Render and interact with the candidate
+        env:
+          BASE_URL: http://127.0.0.1:5199
+          CAPTURE_DIR: .positioning-qa
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 5199 --strictPort > /tmp/paper-vite.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:5199/ > /dev/null && break; sleep 1; done
+          node scripts/check-positioning-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: print-positioning-rendered-checks
+          path: .positioning-qa/
+          include-hidden-files: true

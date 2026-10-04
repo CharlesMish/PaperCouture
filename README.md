@@ -80,3 +80,10 @@ They now use project-relative output paths. `BASE_URL` overrides the default pre
 run or build the application. Their syntax was checked during this handoff; the fresh
 browser verification used a separate audit harness, not these Python scripts.
 
+
+## Print placement and pinboard candidate
+
+Corner bloom and Plum scatter support bounded artwork sliding; Seed dashes has
+verified half-cell positions. Fold any current piece, enter Display and use
+Pinboard to arrange and export that piece with its attached accessory. See
+[behavior, limits and checks](docs/print-position-pinboard/NOTES.md).

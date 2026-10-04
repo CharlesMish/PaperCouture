@@ -6,6 +6,7 @@ import { PaperDesign } from '../papers/types';
 export interface PickerHandlers {
   onSelect(id: string): void;
   onRotate(): void;
+  onPosition(): void;
 }
 
 function thumbnail(p: PaperDesign): string {
@@ -20,6 +21,7 @@ export class PaperPicker {
   private buttons = new Map<string, { btn: HTMLButtonElement; img: HTMLImageElement }>();
   private name = document.createElement('p');
   private rotate = document.createElement('button');
+  private position = document.createElement('button');
 
   constructor(parent: HTMLElement, papers: PaperDesign[], h: PickerHandlers) {
     this.root.className = 'papers';
@@ -49,13 +51,18 @@ export class PaperPicker {
       '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn paper</span>';
     this.rotate.title = 'Turn paper';
     this.rotate.addEventListener('click', h.onRotate);
+    this.position.className = 'rotate position-print';
+    this.position.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3M15 7l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Position print</span>';
+    this.position.title = 'Position print';
+    this.position.setAttribute('aria-label', 'Position print');
+    this.position.addEventListener('click', h.onPosition);
     this.name.className = 'paper-name';
     this.name.setAttribute('aria-live', 'polite');
-    this.root.append(row, this.name, this.rotate);
+    this.root.append(row, this.name, this.rotate, this.position);
     parent.append(this.root);
   }
 
-  render(current: PaperDesign, quarterTurns: number): void {
+  render(current: PaperDesign, quarterTurns: number, shifted = false): void {
     for (const [id, { btn, img }] of this.buttons) {
       const on = id === current.id;
       btn.setAttribute('aria-checked', String(on));
@@ -66,6 +73,8 @@ export class PaperPicker {
     const deg = (quarterTurns % 4) * 90;
     this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, paper turned ${deg}°` : ''}`;
     this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
+    this.position.classList.toggle('print-shifted', shifted);
+    this.position.title = shifted ? 'Position print · shifted' : 'Position print';
   }
 
   /** Screen space the picker covers: { top, left } in CSS px. */
