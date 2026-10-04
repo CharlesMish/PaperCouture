@@ -87,3 +87,10 @@ Corner bloom and Plum scatter support bounded artwork sliding; Seed dashes has
 verified half-cell positions. Fold any current piece, enter Display and use
 Pinboard to arrange and export that piece with its attached accessory. See
 [behavior, limits and checks](docs/print-position-pinboard/NOTES.md).
+
+## Design and curation draft
+
+Running stitch and Arc study add two papers. Pointed tabard is an experimental
+one-square silhouette; Folded sash is a separate-square waist accent. The existing
+paper scroll now shows curated choices first and experiments later, keeping every
+old paper available. See [comparison, limits and play steps](docs/design-curation/NOTES.md).

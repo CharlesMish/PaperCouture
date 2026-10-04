@@ -1,0 +1,13 @@
+{
+  "base": "http://127.0.0.1:4183",
+  "baselineSHA": "f3f735cd68d784ca3850dafdefa8030124d3088f",
+  "checks": [
+    "42 old front/back rasters, eight old garment constructions and five old accessory constructions/transforms exactly match PR17",
+    "Tabard real Fold/Back and reload, seven half-fold views, Front/Angle/Back; accessory kept aside",
+    "Both new papers rendered on dress/jacket/clutch/tabard at all four turns, with Back evidence at authored turn"
+  ],
+  "errors": [],
+  "captures": 59,
+  "passed": true,
+  "phase": "gallery"
+}

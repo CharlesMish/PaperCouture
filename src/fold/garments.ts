@@ -6,17 +6,19 @@ import { buildPleatedSkirt } from './pleatedSkirt';
 import { DEFAULT_OPTIONS, GarmentOptions } from './garmentOptions';
 import { buildApron, buildClutch } from './experimental';
 import { oneShoulder } from './oneShoulder';
+import { buildPointedTabard } from './pointedTabard';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
   { id: 'dress', name: 'Dress' }, { id: 'jacket', name: 'Box jacket' },
   { id: 'skirt', name: 'Wrap skirt' }, { id: 'vest', name: 'Lapel vest' },
   { id: 'pleats', name: 'Pleated skirt' },
-  { id: 'apron', name: 'Bib apron', experiment: 'One square · apron silhouette without ties' },
   { id: 'clutch', name: 'Envelope clutch', experiment: 'One square · flat envelope, no locking closure' },
+  { id: 'apron', name: 'Bib apron', experiment: 'One square · apron silhouette without ties' },
   { id: 'tunic', name: 'One-shoulder tunic', experiment: 'One square · asymmetric silhouette, no cut neckline' },
+  { id: 'tabard', name: 'Pointed tabard', experiment: 'One square · pointed silhouette, no neck opening or ties' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
 export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : 0; }
@@ -29,6 +31,7 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
     case 'apron': return buildApron();
     case 'clutch': return buildClutch();
     case 'tunic': return oneShoulder();
+    case 'tabard': return buildPointedTabard();
     case 'jacket': return buildJacket(options.jacketLength, options.cuffs);
     case 'skirt': return buildWrapSkirt({ wrap: options.wrap, band: options.band, length: options.skirtLength });
     case 'vest': return buildLapelVest(options.vestLength);

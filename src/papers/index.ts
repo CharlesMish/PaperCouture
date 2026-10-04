@@ -20,36 +20,42 @@ import { tidalBands } from './tidalBands';
 import { wideFrame } from './wideFrame';
 import { wovenChecks } from './wovenChecks';
 import { PaperDesign } from './types';
+import { runningStitch } from './runningStitch';
+import { arcStudy } from './arcStudy';
 
 export type { PaperDesign } from './types';
 
 /**
- * Every paper, in swatch order. To add one: write a PaperDesign (see types.ts)
- * and list it here. Hidden papers are reachable with ?paper=<id>.
+ * One scroll: quiet/reliable pairings first, placement-dependent studies later.
+ * Curation is editorial guidance, not physical-paper certification. Every old
+ * visible paper remains selectable by its original id. Default stays unchanged.
  */
 export const PAPERS: PaperDesign[] = [
   stripeDisc,
-  ivoryBorder,
-  indigoLattice,
+  runningStitch,
+  pinstripeLining,
+  plumScatter,
+  borderPrint,
   botanical,
-  wideFrame,
+  indigoLattice,
+  ivoryBorder,
+  // More placement-dependent and bolder alternatives, in the same scroller.
+  arcStudy,
   cornerBloom,
-  openStems,
-  fallingChevrons,
-  seedDashes,
-  inkReverse,
   midnightOrchard,
   tidalBands,
-  plumScatter,
-  cutPaperMosaic,
   wovenChecks,
+  seedDashes,
+  inkReverse,
   reverseGarden,
-  pinstripeLining,
-  borderPrint,
   starlitLining,
+  openStems,
+  fallingChevrons,
+  cutPaperMosaic,
+  wideFrame,
   compassLining,
   diagnosticPaper,
-];
+].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
 
 export const DEFAULT_PAPER_ID = 'stripe-disc';
 

@@ -8,7 +8,7 @@ const fold=async()=>{const s=await p.evaluate(()=>paperCouture.controller.step);
 const finish=async()=>{while(await p.evaluate(()=>!paperCouture.controller.finished))await fold()};
 try{
 await p.goto(base);await settle();await p.evaluate(()=>localStorage.setItem('__astra_synthetic_save','keep'));
-assert.deepEqual(await p.getByLabel('Garment design').locator('option').evaluateAll(xs=>xs.map(x=>x.value)),['dress','jacket','skirt','vest','pleats','apron','clutch','tunic']);
+assert.deepEqual(await p.getByLabel('Garment design').locator('option').evaluateAll(xs=>xs.map(x=>x.value)),['dress','jacket','skirt','vest','pleats','clutch','apron','tunic','tabard']);
 for(const id of ['apron','clutch','tunic']){
  await p.getByLabel('Garment design').selectOption(id);await settle();assert.match(await p.locator('.experiment-note').innerText(),/Experimental/);await p.getByRole('radio',{name:'Border print',exact:true}).click();
  const count=await p.evaluate(()=>paperCouture.timeline.ops.length);
