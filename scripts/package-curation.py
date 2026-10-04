@@ -29,7 +29,7 @@ def write(draw, xy, text, width, size=22, bold=False, fill=INK):
     return len(lines)*(size+7)
 def render(name, crop=True):
     im = Image.open(EVIDENCE / (name+'.png')).convert('RGB')
-    return im.crop((255,160 if name.startswith('jacket-sash') else 115,925,615)) if crop else im
+    return im.crop((255,160 if name.startswith('jacket-sash') else 115,925,675 if '-mid-' in name else 615)) if crop else im
 def fit(im, size):
     im=im.copy(); im.thumbnail(size)
     canvas=Image.new('RGB',size,BG); canvas.paste(im,((size[0]-im.width)//2,(size[1]-im.height)//2)); return canvas
