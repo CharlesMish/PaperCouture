@@ -175,7 +175,8 @@ button:focus-visible {
 
 .papers {
   position: absolute;
-  top: calc(env(safe-area-inset-top, 0px) + 52px);
+  /* 6px higher than the swatches so the scroller's padding can hold the ring. */
+  top: calc(env(safe-area-inset-top, 0px) + 46px);
   bottom: 118px;
   left: calc(env(safe-area-inset-left, 0px) + 16px);
   width: 92px;
@@ -190,6 +191,8 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /* Room for the selected swatch's 4px ring and lift; the scroller clips at its padding edge. */
+  padding: 6px;
   min-height: 0;
   flex: 0 1 auto;
   overflow-y: auto;
@@ -268,12 +271,12 @@ button:focus-visible {
 
 @media (max-width: 719px) {
   .papers {
-    top: calc(env(safe-area-inset-top, 0px) + 46px);
+    top: calc(env(safe-area-inset-top, 0px) + 40px);
     bottom: auto;
     left: 12px;
     right: 12px;
     width: auto;
-    height: 44px;
+    height: 56px;
     flex-direction: row;
     justify-content: flex-start;
     align-items: center;
