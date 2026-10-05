@@ -40,7 +40,7 @@ function dashGeometry(segments: [Vec2, Vec2][], z: number): THREE.BufferGeometry
   return g;
 }
 
-function arrowObject(from: Vec2, to: Vec2, z: number, mat: THREE.Material): THREE.Object3D {
+function arrowObject(from: Vec2, to: Vec2, z: number, mat: THREE.Material, halo: THREE.Material): THREE.Object3D {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const L = Math.hypot(dx, dy);
@@ -51,12 +51,16 @@ function arrowObject(from: Vec2, to: Vec2, z: number, mat: THREE.Material): THRE
   mid.z += Math.max(0.12, L * 0.32);
   const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
   const obj = new THREE.Group();
-  obj.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.0075, 6, false), mat));
-  const head = new THREE.Mesh(new THREE.ConeGeometry(0.028, 0.075, 12), mat);
   const tan = curve.getTangent(1);
-  head.position.copy(b);
-  head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
-  obj.add(head);
+  // A pale paper-coloured halo behind the ink keeps the arrow readable on dark prints.
+  for (const [m, grow, order] of [[halo, 0.0055, 1], [mat, 0, 2]] as const) {
+    const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 24, 0.0075 + grow, 6, false), m);
+    const head = new THREE.Mesh(new THREE.ConeGeometry(0.028 + grow * 1.6, 0.075 + grow * 2.4, 12), m);
+    head.position.copy(b);
+    head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tan);
+    tube.renderOrder = head.renderOrder = order;
+    obj.add(tube, head);
+  }
   return obj;
 }
 
@@ -70,6 +74,7 @@ export class FoldGuides {
     side: THREE.DoubleSide,
   });
   private arrowMat = new THREE.MeshBasicMaterial({ color: '#2e2a25', transparent: true, opacity: 0.5, depthWrite: false });
+  private haloMat = new THREE.MeshBasicMaterial({ color: '#f6f2eb', transparent: true, opacity: 0.55, depthWrite: false });
   private shownFor: OpAnim | null = null;
 
   constructor() {
@@ -100,9 +105,9 @@ export class FoldGuides {
         }
       }
       const y = minY - 0.16;
-      this.group.add(arrowObject({ x: maxX * 0.75, y }, { x: -maxX * 0.75, y }, 0.01, this.arrowMat));
+      this.group.add(arrowObject({ x: maxX * 0.75, y }, { x: -maxX * 0.75, y }, 0.01, this.arrowMat, this.haloMat));
     } else {
-      for (const ar of anim.arrows) this.group.add(arrowObject(ar.from, ar.to, z, this.arrowMat));
+      for (const ar of anim.arrows) this.group.add(arrowObject(ar.from, ar.to, z, this.arrowMat, this.haloMat));
     }
   }
 
