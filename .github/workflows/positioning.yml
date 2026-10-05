@@ -26,9 +26,24 @@ jobs:
           npm run dev -- --host 127.0.0.1 --port 5199 --strictPort > /tmp/paper-vite.log 2>&1 &
           for i in {1..30}; do curl -fsS http://127.0.0.1:5199/ > /dev/null && break; sleep 1; done
           node scripts/check-positioning-browser.cjs
+      - name: Check playtest clarity in the built preview
+        env:
+          BASE_URL: http://127.0.0.1:4199
+          DEV_URL: http://127.0.0.1:5199
+          CAPTURE_DIR: .usability-qa
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 4199 --strictPort > /tmp/paper-usability-preview.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:4199/ > /dev/null && break; sleep 1; done
+          node scripts/check-usability-browser.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: print-positioning-rendered-checks
           path: .positioning-qa/
+          include-hidden-files: true
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: playtest-clarity-rendered-checks
+          path: .usability-qa/
           include-hidden-files: true

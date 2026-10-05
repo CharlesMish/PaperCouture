@@ -18,6 +18,7 @@ export class StudioControls {
   private position = document.createElement('select');
   private positionLabel = document.createElement('label');
   private note = document.createElement('span');
+  private accessoryPaper = document.createElement('span');
   private centreControls = document.createElement('span');
   private centreEdit = document.createElement('button');
   private centreToggle = document.createElement('button');
@@ -68,12 +69,15 @@ export class StudioControls {
     this.position.onchange = () => h.onPosition(this.position.value as PinPosition);
     this.positionLabel.append(this.position);
     this.note.className = 'studio-note';
+    this.accessoryPaper.id = 'accessory-paper-note';
+    this.accessoryPaper.className = 'accessory-paper-note';
+    this.edit.setAttribute('aria-describedby', this.accessoryPaper.id);
     this.centreControls.className = 'centre-controls';
     this.centreEdit.className = this.centreToggle.className = 'studio-button';
     this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
     this.centreToggle.textContent = 'Show folded centre';
     this.centreControls.append(this.centreEdit, this.centreToggle);
-    this.root.append(label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
+    this.root.append(label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note, this.accessoryPaper);
     parent.append(this.root);
   }
   renderCentre(available: boolean, complete: boolean, shown: boolean, editing: boolean) {
@@ -84,7 +88,7 @@ export class StudioControls {
     if (editing) this.note.textContent = 'Folded centre · third square · both wings are kept';
     else if (available && shown) this.note.textContent = 'Three-piece bow · optional folded centre';
   }
-  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[], available: AccessoryId[] = ACCESSORIES.map(a => a.id)) {
+  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[], available: AccessoryId[] = ACCESSORIES.map(a => a.id), accessoryPaperName?: string) {
     // Accessories with a restricted placement (neckerchief, patch pocket) are
     // only offered on garments that have one of their positions. An unavailable
     // selection falls back to the first available type, and is restored on the
@@ -99,6 +103,8 @@ export class StudioControls {
     this.kept = { id: activeAccessory, attached };
     this.edit.textContent = this.actionLabel();
     this.edit.hidden = accessoryMode || !finished || !available.length; this.edit.disabled = !finished || !available.length;
+    this.accessoryPaper.hidden = this.edit.hidden || !accessoryPaperName;
+    this.accessoryPaper.textContent = accessoryPaperName ? `Accessory paper: ${accessoryPaperName} · change in its workshop` : '';
     this.accessoryLabel.hidden = accessoryMode || !finished || !available.length;
     this.remove.hidden = accessoryMode || !attached || !finished || !available.length;
     this.positionLabel.hidden = accessoryMode || !attached || !finished || anchors.length === 0;

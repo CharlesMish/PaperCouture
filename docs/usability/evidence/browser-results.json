@@ -1,0 +1,18 @@
+{
+  "base": "http://127.0.0.1:4187",
+  "baselineSHA": "ce3431b54492cd01553219087fa1a257e720c0c6",
+  "checks": [
+    "46 front/back paper rasters, 9 garment sequences and 6 accessory constructions match the published base exactly",
+    "Visible Fixed/Movable/Set shifts labels agree with actual editor controls; fixed papers remain inspectable",
+    "Shift/turn/reload plus fold, Back, rapid second press and Start over preserve offsets and step semantics",
+    "Either 44px hem handle completes only the shared current operation; keyboard, Back and numbered handle descriptions work",
+    "Mouse short-drag rollback/full drag and portrait emulated-touch handle tap retain the existing fold semantics",
+    "Separate default Tidal bands disclosed before Bow; selected Plum scatter and its offset retained across both wings, edit/return and switching to pin; garment paper/offset restored",
+    "Actual 1600×1200 Pinboard PNG export succeeds and return preserves garment/attachment state",
+    "1100×800: capability readable within its 44px target, separate-paper cue visible without clipping, no toolbar/dock overlap or horizontal page overflow",
+    "390×844: capability readable within its 44px target, separate-paper cue visible without clipping, no toolbar/dock overlap or horizontal page overflow",
+    "844×390: capability readable within its 44px target, separate-paper cue visible without clipping, no toolbar/dock overlap or horizontal page overflow"
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -7,7 +7,8 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    # Full software-WebGL galleries need headroom on variable hosted runners.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6

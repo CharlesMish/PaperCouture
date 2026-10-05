@@ -22,6 +22,7 @@ export class PaperPicker {
   private name = document.createElement('p');
   private rotate = document.createElement('button');
   private position = document.createElement('button');
+  private capability = document.createElement('small');
 
   constructor(parent: HTMLElement, papers: PaperDesign[], h: PickerHandlers) {
     this.root.className = 'papers';
@@ -63,6 +64,11 @@ export class PaperPicker {
     this.position.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3M15 7l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Position print</span>';
     this.position.title = 'Position print';
     this.position.setAttribute('aria-label', 'Position print');
+    this.capability.id = 'print-capability';
+    this.capability.className = 'print-capability';
+    this.capability.setAttribute('aria-live', 'polite');
+    this.position.setAttribute('aria-describedby', this.capability.id);
+    this.position.append(this.capability);
     this.position.addEventListener('click', h.onPosition);
     this.name.className = 'paper-name';
     this.name.setAttribute('aria-live', 'polite');
@@ -82,7 +88,9 @@ export class PaperPicker {
     this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, paper turned ${deg}°` : ''}`;
     this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
     this.position.classList.toggle('print-shifted', shifted);
-    this.position.title = shifted ? 'Position print · shifted' : 'Position print';
+    const capability = current.placement?.kind === 'slide' ? 'Movable' : current.placement?.kind === 'snap' ? 'Set shifts' : 'Fixed';
+    if (this.capability.textContent !== capability) this.capability.textContent = capability;
+    this.position.title = `Position print · ${capability.toLowerCase()}${shifted ? ' · shifted' : ''}`;
   }
 
   /** Screen space the picker covers: { top, left } in CSS px. */

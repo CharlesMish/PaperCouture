@@ -38,7 +38,7 @@ await p.getByLabel('Fold study',{exact:true}).selectOption('apron');await settle
 for(const viewport of [{width:390,height:844},{width:844,height:390}]){
  console.log('Checking viewport:',viewport);
  await p.setViewportSize(viewport);await p.goto(base+'?item=clutch&paper=pinstripe-lining');await settle();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),viewport.width);
- const handle=p.getByRole('button',{name:'Fold small flap 1',exact:true});await handle.waitFor();const hb=await handle.boundingBox();assert(hb.width>=44&&hb.height>=44);
+ const handle=p.getByRole('button',{name:'Fold this step (handle 1)',exact:true});await handle.waitFor();const hb=await handle.boundingBox();assert(hb.width>=44&&hb.height>=44);
  const direction=await handle.locator('span').evaluate(e=>Number(e.style.transform.match(/rotate\((.+)rad\)/)[1]));
  const gesture=async distance=>{await p.mouse.move(hb.x+hb.width/2,hb.y+hb.height/2);await p.mouse.down();await p.mouse.move(hb.x+hb.width/2+Math.cos(direction)*distance,hb.y+hb.height/2+Math.sin(direction)*distance,{steps:5});await p.mouse.up();await settle()};
  await gesture(15);assert.equal(await step(),0);await gesture(120);assert.equal(await step(),1);await button('Start over');await handle.click();await settle();assert.equal(await step(),1);await finish();await button('Display');await shot('clutch-display-'+viewport.width);
