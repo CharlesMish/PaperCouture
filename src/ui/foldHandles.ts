@@ -27,8 +27,8 @@ export class FoldHandles {
         const button = document.createElement('button');
         button.className = 'fold-handle';
         button.type = 'button';
-        button.setAttribute('aria-label', `Fold small flap ${i + 1}`);
-        button.title = 'Drag toward the arrow, or tap to fold';
+        button.setAttribute('aria-label', `Fold this step (handle ${i + 1})`);
+        button.title = 'Drag toward the arrow, or tap to complete this fold step';
         const arrow = document.createElement('span'); arrow.textContent = '→'; arrow.setAttribute('aria-hidden', 'true');
         button.append(arrow);
         button.onpointerdown = e => this.onDown(e, t.piece);

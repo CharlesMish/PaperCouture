@@ -1,3 +1,11 @@
+# Paper Couture — playtest clarity draft, 2026-10-05
+
+`usability/print-status-20261005` starts at published merge `bbb466ae` (exact tree of
+published candidate `ce3431b5`). Position print shows Fixed/Movable/Set shifts;
+the accessory action names its independently remembered paper; arrow handles name
+the shared current fold step. Controller, drawings, defaults and production remain
+unchanged. See [playtest findings and evidence](docs/usability/NOTES.md).
+
 # Paper Couture — garment choices and pleated skirt
 
 Built from played source `305f8ef` (the merged owner-feedback pass). The current source line is
@@ -123,4 +131,3 @@ A real phone, mobile Safari, touch orbit or pinch, or the feel of dragging a fol
 ## Remaining
 
 The fold is still an authored rigid-facet sequence, not a cloth simulation. Wide frame and Seed dashes do not give the finished dress much to look at. The phone picker hides the last swatches until the row is scrolled. Drag-to-fold was not exercised in this pass.
-

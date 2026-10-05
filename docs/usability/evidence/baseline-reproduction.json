@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "hemGrips": [
+    "Fold small flap 1",
+    "Fold small flap 2"
+  ],
+  "hemHandleCompletesOneOperation": true,
+  "finalCornerCompleted": true,
+  "accessorySeparatePaper": "tidal-bands",
+  "garmentRestored": "arc-study",
+  "errors": []
+}

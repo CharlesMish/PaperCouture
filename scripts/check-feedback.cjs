@@ -62,7 +62,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.setViewportSize({width,height});
       await p.goto(root + `?step=4&shape=${shape}&paper=plum-scatter`);
       await p.waitForFunction(() => window.paperCouture);
-      await p.getByRole('button', {name:'Fold small flap 1', exact:true}).waitFor();
+      await p.getByRole('button', {name:'Fold this step (handle 1)', exact:true}).waitFor();
     };
     const grip = async (index=0) => p.locator('.fold-handle').nth(index).evaluate(b => {
       const r=b.getBoundingClientRect(), t=new DOMMatrix(getComputedStyle(b.firstElementChild).transform);
@@ -81,7 +81,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       const short=await grip(1);await p.mouse.move(short.x,short.y);await p.mouse.down();
       await p.mouse.move(short.x+short.vx*9,short.y+short.vy*9);await p.mouse.up();
       await p.waitForFunction(() => paperCouture.controller.step===4 && !paperCouture.controller.moving);
-      await p.getByRole('button',{name:'Fold small flap 2',exact:true}).focus();await p.keyboard.press('Enter');
+      await p.getByRole('button',{name:'Fold this step (handle 2)',exact:true}).focus();await p.keyboard.press('Enter');
       await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving);
       console.log(`${shape}: mouse drag, short-drag rollback, keyboard passed`);
     }
