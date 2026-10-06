@@ -1,0 +1,73 @@
+{
+  "baselineSHA": "574b2b10cc2894586f2ee3f8c9496035365e6408",
+  "checks": [
+    "Every prior PR24 paper face, visible/hidden metadata, order and supported offset raster remains exact.",
+    "Actual texture matrices sample matching seed contours on both faces at every quarter-turn; unsupported offsets leave both faces pixel-identical.",
+    "Plum seed actual folded front/back on jacket/skirt/clutch/boat-neck at four turns; matched cameras compare existing Seed dashes and Oat linen.",
+    "Real folds/Back, honest fixed-placement UI, small clutch and mixed printed outfit, old blossom offset, immutable capture/remove/Undo/reload, 1800×2100 PNG and 390/320 portrait controls pass."
+  ],
+  "errors": [],
+  "captures": 56,
+  "parity": {
+    "papers": 26,
+    "faces": 52,
+    "positionedFaces": 96
+  },
+  "registration": {
+    "samples": [
+      {
+        "turn": 0,
+        "unmatched": 0,
+        "printedSamples": 62705,
+        "reverseSamples": 62687
+      },
+      {
+        "turn": 1,
+        "unmatched": 0,
+        "printedSamples": 62705,
+        "reverseSamples": 62687
+      },
+      {
+        "turn": 2,
+        "unmatched": 0,
+        "printedSamples": 62705,
+        "reverseSamples": 62687
+      },
+      {
+        "turn": 3,
+        "unmatched": 0,
+        "printedSamples": 62705,
+        "reverseSamples": 62687
+      }
+    ],
+    "offsetIdentical": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "exportPixels": [
+    1800,
+    2100
+  ],
+  "passed": true,
+  "motifs": {
+    "paper": "plum-seed",
+    "seeds": 196,
+    "plumSeeds": 145,
+    "sageSeeds": 51,
+    "minimumMaterialMargin": 0.003840223872675158,
+    "fixedPlacement": true
+  },
+  "node24": {
+    "typecheck": "passed",
+    "existingNpmTest": "passed",
+    "build": "passed"
+  },
+  "scope": "Paper only: old geometry, board and sizes unchanged; full gallery and raw external inputs retained outside repository."
+}
