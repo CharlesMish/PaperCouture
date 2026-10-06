@@ -19,6 +19,8 @@ One uniform capture transform scales all posed facets, seams, attached squares a
 
 No automatic migration or resize occurs. Existing version-one matrices, geometry, paper recipes, titles and positions load unchanged; opening the board does not rewrite saved bytes. An earlier capture says its starting square was not recorded, rather than retroactively claiming the user chose 20 cm. New optional `paperSize` metadata describes the already-baked snapshot; restoring it never applies scale again. The old version-one parser tolerates the additive item field. Remove/Undo and reload retain the original snapshot. Failed saves retain the earlier durable record and show the existing retry/PNG warning.
 
+To replace an earlier oversized capture, fold the design again and pin a new capture with the suggested square, then remove the earlier piece when satisfied. Removing it remains undoable. The size selector does not silently resize old saved work.
+
 The reviewed PR23 board extent, camera, export dimensions and four-piece cap are unchanged by this sizing patch. Capacity is a separate integration decision.
 
 ## Checks
@@ -27,4 +29,15 @@ Node 24: `npm run typecheck`, `npm test`, `npm run build`, and `node --import ts
 
 The unchanged `scripts/check-board-browser.cjs` passes against this candidate: independent captures, exact PNG scene, layer occlusion/picking, repeated removal/Undo/reload, 390/320 portrait and landscape touch drag/cancellation, storage failure/retry and cross-tab protection. Browser emulation does not establish real iPhone/Safari feel or physical-paper foldability.
 
-`scripts/check-sizing-browser.cjs` adds same-square/suggested mixed comparisons at desktop/390/320, actual size-selection and capture controls, published-save compatibility, a custom 6.4 cm square, quota/reload/Undo, and standalone-versus-attached accessory parity. Fixed comparison positions are diagnostic placement; actual movement controls are tested separately. Focused browser results are collected after the run finishes.
+`scripts/check-sizing-browser.cjs` passes same-square/suggested mixed comparisons at desktop/390/320, actual size-selection and capture controls, published-save compatibility, a custom 6.4 cm square, quota/reload/Undo, and standalone-versus-attached accessory parity. Fixed comparison positions are diagnostic placement; actual movement controls are tested separately. The suggested clutch measures 0.520000003 × 0.408000002 across all three viewports; the apron is 1.400000000 × 1.189999992. There are no page errors. The unchanged existing board browser checks also pass.
+
+- [Focused sizing results](browser-results.json)
+- [Existing board regression results](board-regression-results.json)
+- [Common starting-square comparison](evidence/same-square-desktop.png)
+- [Suggested sizes, desktop](evidence/suggested-desktop.png)
+- [Suggested sizes, 390 portrait](evidence/suggested-390.png)
+- [Suggested sizes, 320 portrait](evidence/suggested-320.png)
+
+These screenshots record the four-piece sizing patch before the separate capacity integration. The test changed the **next** square selector back to 20 cm after capture to prove that kept pieces do not resize; the pinned clutch's readout remains 8 cm. Future captures now restore the selector before taking review screenshots. At 320, the controls scroll below the full board; shortening the introductory hint to one line is recommended for integration so the complete 44 px starting-square selector is visible immediately. The recorded 390 selector is fully visible.
+
+Full-resolution 1800 × 2100 composites remain in the task's `output/sizing-browser/` folder; both desktop comparisons, the 320 suggested board and accessory parity export are byte-identical to the rendered scene with the selection outline excluded.

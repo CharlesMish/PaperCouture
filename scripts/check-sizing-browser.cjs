@@ -35,6 +35,7 @@ const key = 'paper-couture.pinboard.v1'; fs.mkdirSync(out, {recursive:true});
     await page.evaluate(({x,y})=>{const b=paperCouture.pinboard;b.mutate(()=>{const i=b.state.items.at(-1);i.x=x;i.y=y;b.position();b.constrain(i.id)})},{x,y});
    }
    const before=await state();await page.getByLabel('Starting square size').selectOption('20');assert.deepEqual(await state(),before,'Changing a future capture choice must not resize kept pieces');
+   await page.getByLabel('Starting square size').selectOption(String(before.items.at(-1).paperSize.sideCm));
    const measured=await bounds();result.measurements.push({width,version,items:measured});
    for(const m of measured){const[l,r,b,t]=m.bounds;assert(l>=-1.72001&&r<=1.72001&&b>=-2.02001&&t<=2.02001)}
    assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),width);
