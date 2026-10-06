@@ -1,3 +1,5 @@
+import type { StartingPaperSize } from '../fold/paperSize';
+
 /** Version one stores posed vertices, never a recipe that can refold a kept piece. */
 export const BOARD_KEY = 'paper-couture.pinboard.v1';
 export const MAX_PIECES = 4;
@@ -14,7 +16,7 @@ export interface FrozenPiece {
   materials: Surface[];
   parts: { geometry: number; material: number; matrix: number[]; kind: 'mesh' | 'lines' }[];
 }
-export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number }
+export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number; paperSize?: StartingPaperSize }
 export interface BoardState { version: 1; background: Background; selected: string | null; items: BoardItem[] }
 export const emptyBoard = (): BoardState => ({ version: 1, background: 'Linen', selected: null, items: [] });
 export function copyBoard(s: BoardState): BoardState {
@@ -38,6 +40,14 @@ export function parseBoard(raw: string, paperIds: readonly string[]): BoardState
     if (!record(item) || !text(item.id, 80) || ids.has(item.id) || !text(item.title, 180)
       || !numeric(item.x, 4) || !numeric(item.y, 4) || !numeric(item.tilt, 12) || !record(item.snapshot)) throw new Error('Invalid piece');
     ids.add(item.id);
+    // Descriptive only: the scale is already baked into snapshot matrices. Never
+    // infer this field for legacy records or apply it again when restoring.
+    if (item.paperSize !== undefined) {
+      const size = item.paperSize;
+      const side = (v: unknown) => numeric(v, 30) && Number(v) > 0;
+      if (!record(size) || !side(size.sideCm) || (size.companionCm !== undefined
+        && (!Array.isArray(size.companionCm) || size.companionCm.length > 3 || !size.companionCm.every(side)))) throw new Error('Invalid paper size');
+    }
     const p = item.snapshot;
     if (!Array.isArray(p.geometries) || !p.geometries.length || p.geometries.length > 16
       || !Array.isArray(p.materials) || !p.materials.length || p.materials.length > 16

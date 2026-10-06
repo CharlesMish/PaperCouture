@@ -4,8 +4,9 @@ import { rotationCheckPaper } from '../papers/rotationCheck';
 import { BACKGROUNDS, Background, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES } from '../board/model';
 import { capture, restore } from '../board/snapshot';
 import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_EXPORT_WIDTH, BOARD_EXPORT_HEIGHT } from '../board/layout';
+import { describePaperSize, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
 
-export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number }
+export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number; paperSize?: PaperSizeSource }
 
 export class Pinboard {
   readonly dialog = document.createElement('dialog');
@@ -24,6 +25,10 @@ export class Pinboard {
   private tilt = document.createElement('input');
   private background = document.createElement('select');
   private source = document.createElement('select');
+  private size = document.createElement('select');
+  private sizeNote = document.createElement('p');
+  private chosenSizes = new Map<string, number>();
+  private savedSize = document.createElement('p');
   private pieces = document.createElement('select');
   private status = document.createElement('p');
   private storageStatus = document.createElement('p');
@@ -55,8 +60,16 @@ export class Pinboard {
     left.append(this.canvas, caption);
     const tools = document.createElement('div'); tools.className = 'board-tools';
     const hint = document.createElement('p');
-    hint.textContent = 'Pin a finished piece, return to folding, then pin another. Each capture keeps its folds and paper. Up to four pieces.';
+    hint.textContent = 'Pin finished pieces with their folds and paper. Up to four pieces.';
     const sourceLabel = this.label('Capture', this.source, 'Piece to pin');
+    const sizeLabel = this.label('Starting paper', this.size, 'Starting square size');
+    this.sizeNote.className = 'editor-readout';
+    this.source.onchange = () => { this.refreshSize(); this.refresh(); };
+    this.size.onchange = () => {
+      const source = this.captureSize(); if (source) this.chosenSizes.set(source.key, Number(this.size.value));
+      this.refreshSize();
+    };
+    this.savedSize.className = 'editor-readout';
     this.add = this.button('Pin current piece', () => this.pin()); this.add.classList.add('btn-primary');
     const selectionLabel = this.label('Selected', this.pieces, 'Selected board piece');
     this.pieces.onchange = () => { this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
@@ -95,7 +108,7 @@ export class Pinboard {
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
     this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
     this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
-    tools.append(hint, sourceLabel, this.add, workshop, selectionLabel, bg, angle, nudges, edits, this.undo, this.download, back, note, this.storageStatus, this.retry, this.status);
+    tools.append(hint, sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, note, this.storageStatus, this.retry, this.status);
     const body = document.createElement('div'); body.className = 'board-body'; body.append(left, tools);
     this.dialog.append(this.title, body); parent.append(this.dialog);
     this.selection.visible = false; this.scene.add(this.selection);
@@ -144,6 +157,20 @@ export class Pinboard {
   }
   private selectedButton(label: string, action: () => void) { const b = this.button(label, action); this.selectedTools.push(b); return b; }
   private selected() { return this.state.items.find(i => i.id === this.state.selected); }
+  private captureSize(): PaperSizeSource | undefined {
+    const source = this.handlers.sources()[Number(this.source.value)];
+    if (!source || this.source.value === '') return;
+    return source.paperSize ?? { key: source.title, referenceCm: REFERENCE_SQUARE_CM, recommendedCm: REFERENCE_SQUARE_CM };
+  }
+  private refreshSize() {
+    const source = this.captureSize(); this.size.replaceChildren(); this.size.disabled = !source;
+    if (!source) { this.sizeNote.textContent = 'Finish a piece to choose its starting square.'; return; }
+    const choices = squareChoices(source), chosen = this.chosenSizes.get(source.key);
+    const selected = chosen !== undefined && choices.includes(chosen) ? chosen : source.recommendedCm;
+    for (const side of choices) this.size.add(new Option(`${side} cm square${side === source.recommendedCm ? ' · suggested' : ''}`, String(side)));
+    this.size.value = String(selected);
+    this.sizeNote.textContent = `${source.companionCm?.length ? `New capture: ${describePaperSize(startingPaperSize(source, selected))}. ` : ''}Workshop is a close-up; this square size applies to the next capture. Printed features stay aligned. Pinned pieces keep their size.`;
+  }
   private checkpoint(before: BoardState) { this.history.push(before); if (this.history.length > 20) this.history.shift(); }
   private mutate(action: () => void) {
     if (this.exporting) return;
@@ -178,10 +205,13 @@ export class Pinboard {
     const source = this.handlers.sources()[Number(this.source.value)];
     if (!source || this.state.items.length >= MAX_PIECES) return;
     try {
-      const snapshot = capture(source.objects, source.angle);
+      const sizing = this.captureSize()!, side = Number(this.size.value);
+      if (!squareChoices(sizing).includes(side)) throw new Error('Choose a starting square');
+      const snapshot = capture(source.objects, source.angle, side / sizing.referenceCm);
+      const paperSize = startingPaperSize(sizing, side);
       this.mutate(() => {
         const id = crypto.randomUUID(), offset = this.state.items.length * .16;
-        this.state.items.push({ id, title: source.title, snapshot, x: offset, y: -offset, tilt: 0 }); this.state.selected = id;
+        this.state.items.push({ id, title: source.title, snapshot, paperSize, x: offset, y: -offset, tilt: 0 }); this.state.selected = id;
       });
       this.constrain(this.state.selected!); this.persist(); this.refresh(); this.render();
       this.status.textContent = 'Piece pinned. Return to folding to make another; this capture will stay as it is.';
@@ -193,6 +223,7 @@ export class Pinboard {
     this.source.replaceChildren();
     this.handlers.sources().forEach((s, i) => this.source.add(new Option(s.title, String(i))));
     if (!this.source.length) this.source.add(new Option('Finish a piece to pin it', ''));
+    this.refreshSize();
     this.status.textContent = ''; this.refresh(); this.dialog.showModal();
     this.title.focus({ preventScroll: true }); this.dialog.scrollTop = 0; this.render();
   }
@@ -202,6 +233,8 @@ export class Pinboard {
     for (const [i, item] of this.state.items.entries()) this.pieces.add(new Option(`${i+1}. ${item.title}`, item.id));
     if (!this.state.items.length) this.pieces.add(new Option('No pinned pieces yet', ''));
     this.pieces.value = this.state.selected ?? '';
+    const saved = this.selected();
+    this.savedSize.textContent = saved ? saved.paperSize ? `Pinned with ${describePaperSize(saved.paperSize)}.` : 'Earlier capture: kept at its saved size; starting square was not recorded.' : '';
     this.pieces.disabled = !this.state.items.length; this.tilt.disabled = !this.selected();
     this.tilt.value = String(this.selected()?.tilt ?? 0); this.background.value = this.state.background;
     this.selectedTools.forEach(b => b.disabled = !this.selected());

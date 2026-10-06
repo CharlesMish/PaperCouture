@@ -25,7 +25,8 @@ import { WorkshopPanel } from './ui/workshopPanel';
 import { DisplayPanel } from './ui/displayPanel';
 import { PaperPicker } from './ui/paperPicker';
 import { PrintPositionPanel } from './ui/printPositionPanel';
-import { Pinboard } from './ui/pinboard';
+import { BoardSource, Pinboard } from './ui/pinboard';
+import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
 
 const params = new URLSearchParams(location.search);
@@ -241,14 +242,24 @@ const pinboard = new Pinboard(app, {
   sources: () => {
     if (!controller.finished || controller.moving) return [];
     draw();
+    const accessory = findAccessory(accessoryId);
+    const accessorySquares = accessory.pieces.map(p => REFERENCE_SQUARE_CM * p.scale * attachmentSize(garmentId));
+    if (accessoryId === 'bow' && centreAttached) accessorySquares.push(accessorySquares[0] * .85);
     if (accessoryMode) {
       // A completed single-square accessory (or the separate centre) can stand alone.
       // A two-wing bow is offered as an assembly after Attach returns to the garment.
       if (accessoryId === 'bow' && !editingCentre) return [];
-      return [{ title: `${construction.name} · ${paper.name}`, objects: [sheet.group, studySeams], angle: 0 }];
+      const suggested = accessorySquares[0] * (editingCentre ? .85 : 1) * recommendedSquareCm(garmentId) / REFERENCE_SQUARE_CM;
+      return [{ title: `${construction.name} · ${paper.name}`, objects: [sheet.group, studySeams], angle: editingCentre ? 0 : accessory.pieces[0].angle,
+        paperSize: { key: `accessory:${accessoryId}:${editingCentre ? 'centre' : garmentId}`, referenceCm: REFERENCE_SQUARE_CM, recommendedCm: Math.round(suggested * 100) / 100 } }];
     }
-    const sources = [{ title: `${construction.name} · ${garmentPaper.name}`, objects: [sheet.group, lapelEdges.lines, accessoryRoot], angle: garmentDisplayAngle(garmentId) }];
-    if (accessoryRoot.visible) sources.push({ title: `${findAccessory(accessoryId).name} only · ${pinPaper.name}`, objects: [accessoryRoot], angle: 0 });
+    const sources: BoardSource[] = [{ title: `${construction.name} · ${garmentPaper.name}`, objects: [sheet.group, lapelEdges.lines, accessoryRoot], angle: garmentDisplayAngle(garmentId),
+      paperSize: { key: `garment:${garmentId}`, referenceCm: REFERENCE_SQUARE_CM, recommendedCm: recommendedSquareCm(garmentId),
+        ...(accessoryRoot.visible ? { companionCm: accessorySquares } : {}) } }];
+    if (accessoryRoot.visible) sources.push({ title: `${accessory.name} only · ${pinPaper.name}`, objects: [accessoryRoot], angle: 0,
+      paperSize: { key: `attached:${accessoryId}:${garmentId}`, referenceCm: accessorySquares[0],
+        recommendedCm: Math.round(accessorySquares[0] * recommendedSquareCm(garmentId) / REFERENCE_SQUARE_CM * 100) / 100,
+        companionCm: accessorySquares.slice(1) } });
     return sources;
   },
 });
