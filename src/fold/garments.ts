@@ -7,8 +7,9 @@ import { DEFAULT_OPTIONS, GarmentOptions } from './garmentOptions';
 import { buildApron, buildClutch } from './experimental';
 import { oneShoulder } from './oneShoulder';
 import { buildPointedTabard } from './pointedTabard';
+import { buildBoatNeckTop, buildCrossWrapTop, buildFoldedHat } from './outfitCollection';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -19,6 +20,9 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'apron', name: 'Bib apron', experiment: 'One square · apron silhouette without ties' },
   { id: 'tunic', name: 'One-shoulder tunic', experiment: 'One square · asymmetric silhouette, no cut neckline' },
   { id: 'tabard', name: 'Pointed tabard', experiment: 'One square · pointed silhouette, no neck opening or ties' },
+  { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
+  { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
+  { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
 export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : 0; }
@@ -28,6 +32,9 @@ export function garmentIdFrom(value: string | null): GarmentId {
 export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOptions = DEFAULT_OPTIONS) {
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
+    case 'boat-top': return buildBoatNeckTop();
+    case 'wrap-top': return buildCrossWrapTop();
+    case 'hat': return buildFoldedHat();
     case 'apron': return buildApron();
     case 'clutch': return buildClutch();
     case 'tunic': return oneShoulder();
