@@ -60,7 +60,7 @@ export class Pinboard {
     left.append(this.canvas, caption);
     const tools = document.createElement('div'); tools.className = 'board-tools';
     const hint = document.createElement('p');
-    hint.textContent = 'Pin finished pieces with their folds and paper. Up to four pieces.';
+    hint.textContent = 'Up to five finished pieces.';
     const sourceLabel = this.label('Capture', this.source, 'Piece to pin');
     const sizeLabel = this.label('Starting paper', this.size, 'Starting square size');
     this.sizeNote.className = 'editor-readout';
@@ -240,7 +240,8 @@ export class Pinboard {
     this.selectedTools.forEach(b => b.disabled = !this.selected());
     this.undo.disabled = !this.history.length; this.download.disabled = !this.state.items.length;
     this.add.disabled = this.state.items.length >= MAX_PIECES || !this.source.length || this.source.value === '';
-    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · four pieces' : 'Pin current piece';
+    this.size.disabled = !this.source.length || this.source.value === '';
+    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · five pieces' : 'Pin current piece';
     this.storageStatus.textContent = this.saveWarning || 'Board saved on this device.';
     this.retry.hidden = !this.unsaved;
     if (this.unsaved && this.dialog.open) this.storageStatus.scrollIntoView({ block: 'nearest' });

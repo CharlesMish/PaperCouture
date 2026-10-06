@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "scope": "Synthetic five-piece board in cap-five scratch build; Chromium touch emulation, not physical Safari",
+  "results": [
+    {
+      "width": 390,
+      "height": 844,
+      "pieces": 5,
+      "cancelRestores": true,
+      "dragAndUndo": true,
+      "emptyTouchNoMove": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "pieces": 5,
+      "cancelRestores": true,
+      "dragAndUndo": true,
+      "emptyTouchNoMove": true
+    }
+  ]
+}

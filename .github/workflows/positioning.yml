@@ -1,7 +1,7 @@
 name: Print positioning and pinboard checks
 on:
   pull_request:
-    branches: [experiment/integrated-studies-20261004]
+    branches: [experiment/integrated-studies-20261004, codex/pinboard-composition-space]
 permissions:
   contents: read
 jobs:

@@ -10,14 +10,16 @@
     "preview": "vite preview",
     "check": "node --import tsx scripts/check.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
-    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board",
+    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds",
     "check:collection": "node --import tsx scripts/check-collection.ts",
     "build:experiment": "tsc --noEmit -p experiments/fold-study && vite build --config vite.experiment.config.ts",
     "test:experiment": "node --import tsx scripts/check-fold-study.ts",
     "check:integrated": "node --import tsx scripts/check-integrated.ts",
     "check:positioning": "node --import tsx scripts/check-positioning.ts",
     "check:curation": "node --import tsx scripts/check-design-curation.ts",
-    "check:board": "node --import tsx scripts/check-board.ts"
+    "check:board": "node --import tsx scripts/check-board.ts",
+    "check:sizing": "node --import tsx scripts/check-sizing.ts",
+    "check:outfit-folds": "node --import tsx scripts/check-outfit-folds.ts"
   },
   "dependencies": {
     "three": "0.170.0"

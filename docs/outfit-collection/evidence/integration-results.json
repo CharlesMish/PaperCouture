@@ -1,0 +1,1103 @@
+{
+  "base": "http://127.0.0.1:5201",
+  "before": "http://127.0.0.1:5291",
+  "baselineHead": "feb9cc80f5ca0da7ef2e49619665458c2f923c5a",
+  "physicalPhoneTested": false,
+  "checks": [
+    "Published four-piece board loads without rewriting storage, retains exact snapshots/positions/papers, and survives remove/Undo/reload; optional PR23 comparison is pixel-identical.",
+    "A fifth, explicitly sized new capture saves and reloads beside four untouched legacy captures.",
+    "New clutch is under40% of skirt width and apron narrower than skirt; actual four-piece board fits desktop/390/320 without shrinking the board camera.",
+    "Boat-neck top, Cross-wrap top and Folded hat: actual Fold/Back/Display controls, front/back renders, explicit experimental labels and starting-square sizes; shifted Ginkgo recipe and exact posed vertices/UVs captured.",
+    "Five real independent captures compose a top/skirt/jacket/hat/clutch outfit.390/320/landscape selection, small-clutch touch cancel/commit/Undo, repeated bounds moves, layer/removeUndo/reload and exact PNG pass; GPU counts stay stable.",
+    "Cross-wrap top substitutes into the same outfit while the other four frozen captures remain exact."
+  ],
+  "measurements": [
+    {
+      "name": "corrected-existing-designs",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "pieces": [
+        {
+          "title": "Box jacket · Corner bloom",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.5579590511322021,
+            0.11795905113220218,
+            0.38999999225139603,
+            1.5300000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            290.8852643643816,
+            197.8671901898148
+          ]
+        },
+        {
+          "title": "Wrap skirt · Plum scatter",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.4599999928474428,
+            0.1799999928474426,
+            -1.435000020265579,
+            -0.1649999797344207
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            284.6510391837607,
+            220.43099661823362
+          ]
+        },
+        {
+          "title": "Bib apron · Running stitch",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            0.2599999999999999,
+            1.6599999999999997,
+            -0.2749999958276748,
+            0.9149999958276749
+          ],
+          "size": [
+            1.4,
+            1.1899999916553496
+          ],
+          "pixels": [
+            242.99479166666666,
+            206.54557146830481
+          ]
+        },
+        {
+          "title": "Envelope clutch · Seed dashes",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.8599999985491515,
+            1.3800000014508482,
+            -1.564000001186989,
+            -1.155999998813011
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397804
+          ],
+          "pixels": [
+            90.25520883697416,
+            70.81562541204593
+          ]
+        }
+      ],
+      "saveCharacters": 73123,
+      "memory": {
+        "geometries": 6,
+        "textures": 10
+      }
+    },
+    {
+      "name": "corrected-portrait",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "pieces": [
+        {
+          "title": "Box jacket · Corner bloom",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.5579590511322021,
+            0.11795905113220218,
+            0.38999999225139603,
+            1.5300000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            290.8852643643816,
+            197.8671901898148
+          ]
+        },
+        {
+          "title": "Wrap skirt · Plum scatter",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.4599999928474428,
+            0.1799999928474426,
+            -1.435000020265579,
+            -0.1649999797344207
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            284.6510391837607,
+            220.43099661823362
+          ]
+        },
+        {
+          "title": "Bib apron · Running stitch",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            0.2599999999999999,
+            1.6599999999999997,
+            -0.2749999958276748,
+            0.9149999958276749
+          ],
+          "size": [
+            1.4,
+            1.1899999916553496
+          ],
+          "pixels": [
+            242.99479166666666,
+            206.54557146830481
+          ]
+        },
+        {
+          "title": "Envelope clutch · Seed dashes",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.8599999985491515,
+            1.3800000014508482,
+            -1.564000001186989,
+            -1.155999998813011
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397804
+          ],
+          "pixels": [
+            90.25520883697416,
+            70.81562541204593
+          ]
+        }
+      ],
+      "saveCharacters": 73123,
+      "memory": {
+        "geometries": 6,
+        "textures": 10
+      }
+    },
+    {
+      "name": "corrected-portrait",
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        336,
+        392
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 350,
+      "pieces": [
+        {
+          "title": "Box jacket · Corner bloom",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.5579590511322021,
+            0.11795905113220218,
+            0.38999999225139603,
+            1.5300000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            156.41902287801108,
+            106.40000144640604
+          ]
+        },
+        {
+          "title": "Wrap skirt · Plum scatter",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.4599999928474428,
+            0.1799999928474426,
+            -1.435000020265579,
+            -0.1649999797344207
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            153.06666533152261,
+            118.53333711624146
+          ]
+        },
+        {
+          "title": "Bib apron · Running stitch",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            0.2599999999999999,
+            1.6599999999999997,
+            -0.2749999958276748,
+            0.9149999958276749
+          ],
+          "size": [
+            1.4,
+            1.1899999916553496
+          ],
+          "pixels": [
+            130.66666666666666,
+            111.06666588783263
+          ]
+        },
+        {
+          "title": "Envelope clutch · Seed dashes",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.8599999985491515,
+            1.3800000014508482,
+            -1.564000001186989,
+            -1.155999998813011
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397804
+          ],
+          "pixels": [
+            48.53333360415835,
+            38.08000022157128
+          ]
+        }
+      ],
+      "saveCharacters": 73123,
+      "memory": {
+        "geometries": 6,
+        "textures": 10
+      }
+    },
+    {
+      "name": "corrected-portrait",
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": [
+        266,
+        310.328125
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 156,
+      "pieces": [
+        {
+          "title": "Box jacket · Corner bloom",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.5579590511322021,
+            0.11795905113220218,
+            0.38999999225139603,
+            1.5300000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            123.83172644509209,
+            84.23192078790937
+          ]
+        },
+        {
+          "title": "Wrap skirt · Plum scatter",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.4599999928474428,
+            0.1799999928474426,
+            -1.435000020265579,
+            -0.1649999797344207
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            121.17777672078874,
+            93.83731698284724
+          ]
+        },
+        {
+          "title": "Bib apron · Running stitch",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            0.2599999999999999,
+            1.6599999999999997,
+            -0.2749999958276748,
+            0.9149999958276749
+          ],
+          "size": [
+            1.4,
+            1.1899999916553496
+          ],
+          "pixels": [
+            103.44444444444443,
+            87.92630146676673
+          ]
+        },
+        {
+          "title": "Envelope clutch · Seed dashes",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.8599999985491515,
+            1.3800000014508482,
+            -1.564000001186989,
+            -1.155999998813011
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397804
+          ],
+          "pixels": [
+            38.42222243662536,
+            30.14616088969337
+          ]
+        }
+      ],
+      "saveCharacters": 73123,
+      "memory": {
+        "geometries": 6,
+        "textures": 10
+      }
+    },
+    {
+      "name": "five-piece-outfit",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "pieces": [
+        {
+          "title": "Boat-neck top · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 16
+          },
+          "bounds": [
+            -1.3280000114440917,
+            0.04800001144409183,
+            0.2719999754428864,
+            1.0080000245571137
+          ],
+          "size": [
+            1.3760000228881837,
+            0.7360000491142273
+          ],
+          "pixels": [
+            238.82917063931623,
+            127.74584185797721
+          ]
+        },
+        {
+          "title": "Pleated skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.3600000286102296,
+            0.08000002861022948,
+            -1.4900000274181364,
+            -0.10999997258186334
+          ],
+          "size": [
+            1.440000057220459,
+            1.3800000548362732
+          ],
+          "pixels": [
+            249.93750993162394,
+            239.52344701780626
+          ]
+        },
+        {
+          "title": "Box jacket · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            0.042040948867797745,
+            1.717959051132202,
+            -0.09000000774860378,
+            1.0500000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            290.8852643643816,
+            197.8671901898148
+          ]
+        },
+        {
+          "title": "Folded hat · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.04,
+            -0.24,
+            1.279999993145466,
+            1.6000000068545344
+          ],
+          "size": [
+            0.8,
+            0.3200000137090684
+          ],
+          "pixels": [
+            138.85416666666666,
+            55.541669046118244
+          ]
+        },
+        {
+          "title": "Envelope clutch · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.6199999985491516,
+            1.1400000014508482,
+            -1.3240000011869888,
+            -0.9159999988130109
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397793
+          ],
+          "pixels": [
+            90.25520883697416,
+            70.8156254120459
+          ]
+        }
+      ],
+      "saveCharacters": 114585,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-viewport",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "pieces": [
+        {
+          "title": "Boat-neck top · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 16
+          },
+          "bounds": [
+            -1.3280000114440917,
+            0.04800001144409183,
+            0.2719999754428864,
+            1.0080000245571137
+          ],
+          "size": [
+            1.3760000228881837,
+            0.7360000491142273
+          ],
+          "pixels": [
+            238.82917063931623,
+            127.74584185797721
+          ]
+        },
+        {
+          "title": "Pleated skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.3600000286102296,
+            0.08000002861022948,
+            -1.4900000274181364,
+            -0.10999997258186334
+          ],
+          "size": [
+            1.440000057220459,
+            1.3800000548362732
+          ],
+          "pixels": [
+            249.93750993162394,
+            239.52344701780626
+          ]
+        },
+        {
+          "title": "Box jacket · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            0.042040948867797745,
+            1.717959051132202,
+            -0.09000000774860378,
+            1.0500000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            290.8852643643816,
+            197.8671901898148
+          ]
+        },
+        {
+          "title": "Folded hat · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.04,
+            -0.24,
+            1.279999993145466,
+            1.6000000068545344
+          ],
+          "size": [
+            0.8,
+            0.3200000137090684
+          ],
+          "pixels": [
+            138.85416666666666,
+            55.541669046118244
+          ]
+        },
+        {
+          "title": "Envelope clutch · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.6199999985491516,
+            1.1400000014508482,
+            -1.3240000011869888,
+            -0.9159999988130109
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397793
+          ],
+          "pixels": [
+            90.25520883697416,
+            70.8156254120459
+          ]
+        }
+      ],
+      "saveCharacters": 114585,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-viewport",
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        336,
+        392
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 350,
+      "pieces": [
+        {
+          "title": "Boat-neck top · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 16
+          },
+          "bounds": [
+            -1.3280000114440917,
+            0.04800001144409183,
+            0.2719999754428864,
+            1.0080000245571137
+          ],
+          "size": [
+            1.3760000228881837,
+            0.7360000491142273
+          ],
+          "pixels": [
+            128.42666880289713,
+            68.69333791732788
+          ]
+        },
+        {
+          "title": "Pleated skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.3600000286102296,
+            0.08000002861022948,
+            -1.4900000274181364,
+            -0.10999997258186334
+          ],
+          "size": [
+            1.440000057220459,
+            1.3800000548362732
+          ],
+          "pixels": [
+            134.40000534057617,
+            128.80000511805216
+          ]
+        },
+        {
+          "title": "Box jacket · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            0.042040948867797745,
+            1.717959051132202,
+            -0.09000000774860378,
+            1.0500000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            156.41902287801108,
+            106.40000144640604
+          ]
+        },
+        {
+          "title": "Folded hat · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.04,
+            -0.24,
+            1.279999993145466,
+            1.6000000068545344
+          ],
+          "size": [
+            0.8,
+            0.3200000137090684
+          ],
+          "pixels": [
+            74.66666666666667,
+            29.866667946179714
+          ]
+        },
+        {
+          "title": "Envelope clutch · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.6199999985491516,
+            1.1400000014508482,
+            -1.3240000011869888,
+            -0.9159999988130109
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397793
+          ],
+          "pixels": [
+            48.53333360415835,
+            38.080000221571275
+          ]
+        }
+      ],
+      "saveCharacters": 114585,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-viewport",
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": [
+        266,
+        310.328125
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 156,
+      "pieces": [
+        {
+          "title": "Boat-neck top · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 16
+          },
+          "bounds": [
+            -1.3280000114440917,
+            0.04800001144409183,
+            0.2719999754428864,
+            1.0080000245571137
+          ],
+          "size": [
+            1.3760000228881837,
+            0.7360000491142273
+          ],
+          "pixels": [
+            101.67111280229356,
+            54.381313152744305
+          ]
+        },
+        {
+          "title": "Pleated skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.3600000286102296,
+            0.08000002861022948,
+            -1.4900000274181364,
+            -0.10999997258186334
+          ],
+          "size": [
+            1.440000057220459,
+            1.3800000548362732
+          ],
+          "pixels": [
+            106.40000422795613,
+            101.96495940886615
+          ]
+        },
+        {
+          "title": "Box jacket · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            0.042040948867797745,
+            1.717959051132202,
+            -0.09000000774860378,
+            1.0500000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            123.83172644509209,
+            84.23192078790937
+          ]
+        },
+        {
+          "title": "Folded hat · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.04,
+            -0.24,
+            1.279999993145466,
+            1.6000000068545344
+          ],
+          "size": [
+            0.8,
+            0.3200000137090684
+          ],
+          "pixels": [
+            59.111111111111114,
+            23.64404863197845
+          ]
+        },
+        {
+          "title": "Envelope clutch · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.6199999985491516,
+            1.1400000014508482,
+            -1.3240000011869888,
+            -0.9159999988130109
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397793
+          ],
+          "pixels": [
+            38.42222243662536,
+            30.14616088969336
+          ]
+        }
+      ],
+      "saveCharacters": 114585,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-viewport",
+      "viewport": [
+        844,
+        390
+      ],
+      "canvas": [
+        201.421875,
+        234.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 307,
+      "pieces": [
+        {
+          "title": "Boat-neck top · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 16
+          },
+          "bounds": [
+            -1.3280000114440917,
+            0.04800001144409183,
+            0.2719999754428864,
+            1.0080000245571137
+          ],
+          "size": [
+            1.3760000228881837,
+            0.7360000491142273
+          ],
+          "pixels": [
+            76.98791794727246,
+            41.178217033589526
+          ]
+        },
+        {
+          "title": "Pleated skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.3600000286102296,
+            0.08000002861022948,
+            -1.4900000274181364,
+            -0.10999997258186334
+          ],
+          "size": [
+            1.440000057220459,
+            1.3800000548362732
+          ],
+          "pixels": [
+            80.56875320151448,
+            77.20915485373033
+          ]
+        },
+        {
+          "title": "Box jacket · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            0.042040948867797745,
+            1.717959051132202,
+            -0.09000000774860378,
+            1.0500000077486038
+          ],
+          "size": [
+            1.6759181022644043,
+            1.1400000154972076
+          ],
+          "pixels": [
+            93.76849069570501,
+            63.78147408133373
+          ]
+        },
+        {
+          "title": "Folded hat · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.04,
+            -0.24,
+            1.279999993145466,
+            1.6000000068545344
+          ],
+          "size": [
+            0.8,
+            0.3200000137090684
+          ],
+          "pixels": [
+            44.76041666666667,
+            17.903572195575443
+          ]
+        },
+        {
+          "title": "Envelope clutch · Ginkgo pairs",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.6199999985491516,
+            1.1400000014508482,
+            -1.3240000011869888,
+            -0.9159999988130109
+          ],
+          "size": [
+            0.5200000029016967,
+            0.40800000237397793
+          ],
+          "pixels": [
+            29.09427099568477,
+            22.827053704249455
+          ]
+        }
+      ],
+      "saveCharacters": 114585,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    }
+  ],
+  "errors": [],
+  "memory": [
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    }
+  ],
+  "passed": true
+}

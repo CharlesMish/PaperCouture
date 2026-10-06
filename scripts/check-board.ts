@@ -9,6 +9,10 @@ const sample: BoardState = { ...emptyBoard(), selected: 'a', items: [{ id: 'a', 
   parts: [{ geometry: 0, material: 0, kind: 'mesh', matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1] }],
 } }] };
 assert.deepEqual(parseBoard(JSON.stringify(sample), paperIds), sample);
+const full: BoardState = { ...sample, items: Array.from({ length: MAX_PIECES }, (_, n) => ({ ...sample.items[0], id: `piece-${n}` })), selected: 'piece-0' };
+assert.equal(MAX_PIECES, 5);
+assert.deepEqual(parseBoard(JSON.stringify(full), paperIds), full);
+assert.throws(() => parseBoard(JSON.stringify({ ...full, items: [...full.items, { ...sample.items[0], id: 'one-too-many' }] }), paperIds), /Unsupported board/);
 const undo = copyBoard(sample); sample.items[0].x = .5;
 assert.equal(undo.items[0].x, 0); assert.equal(undo.items[0].snapshot, sample.items[0].snapshot);
 for (const corrupt of [

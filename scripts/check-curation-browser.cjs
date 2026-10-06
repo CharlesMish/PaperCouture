@@ -29,7 +29,7 @@ fs.mkdirSync(out, {recursive:true});
     const {PAPERS}=await import('/src/papers/index.ts'),{paperCanvas}=await import('/src/render/textures.ts');
     const {GARMENTS,buildGarment}=await import('/src/fold/garments.ts');const {ACCESSORIES}=await import('/src/fold/accessories.ts');
     const hashes={};for(const paper of PAPERS)for(const side of ['front','back']){const c=paperCanvas(paper,side,0);hashes[paper.id+'/'+side]=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',c.getContext('2d').getImageData(0,0,c.width,c.height).data))).map(v=>v.toString(16).padStart(2,'0')).join('')}
-    return {hashes,garments:Object.fromEntries(GARMENTS.map(g=>[g.id,buildGarment(g.id).ops])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:a.build().ops,pieces:a.pieces,positions:a.positions}]))};
+    return {hashes,visiblePapers:PAPERS.filter(p=>!p.hidden).map(p=>p.name),garments:Object.fromEntries(GARMENTS.map(g=>[g.id,buildGarment(g.id).ops])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:a.build().ops,pieces:a.pieces,positions:a.positions}]))};
   });await p.close();return r};
   const old=await signature(baseline),current=await signature(dev);
   for(const [key,value]of Object.entries(old.hashes))assert.equal(current.hashes[key],value,key+' raster changed');
@@ -40,7 +40,8 @@ fs.mkdirSync(out, {recursive:true});
   await load('');assert.deepEqual(await state(),{design:'dress',step:0,paper:'stripe-disc',turn:0,position:{x:0,y:0},attached:false,accessory:'pin',options:await page.evaluate(()=>paperCouture.options)});
   await page.evaluate(()=>localStorage.setItem('__curation_keep','sentinel'));
   const names=await page.getByRole('radio').evaluateAll(xs=>xs.map(x=>x.getAttribute('aria-label')));
-  assert.equal(names.length,21);assert.equal(new Set(names).size,21);
+  const visibleNames=current.visiblePapers;
+  assert.deepEqual(names,visibleNames);assert.equal(new Set(names).size,visibleNames.length);
   assert.deepEqual(await page.locator('.paper-group-label').allTextContents(),['Curated','Experiments']);
   assert.deepEqual(names.slice(0,4),['Stripe and disc','Running stitch','Pinstripe and lining','Plum scatter']);
   await shot('curated-scroll-desktop');

@@ -81,12 +81,12 @@ const key = 'paper-couture.pinboard.v1';
   result.checks.push('Composite PNG is byte-identical to the visible 1800×2100 scene without selection outline. Real overlap occlusion/picking/layer reversal; portrait and landscape touch empty-space, drag, cancel, Undo, no page overflow.');
   // Fresh completed source, add limit, repeat/remove/Undo and GPU lifetime.
   await btn('Return to folding').click();await load('design=clutch&paper=seed-dashes&step=99&view=display');await open();
-  await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,4);assert(await btn('Board full · four pieces').isDisabled());
+  await btn('Pin current piece').click();await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,5);assert(await btn('Board full · five pieces').isDisabled());
   const memory=[];for(let i=0;i<4;i++){await btn('Remove selected').click();await btn('Undo').click();memory.push(await page.evaluate(()=>({...paperCouture.pinboard.renderer.info.memory})));await btn('Return to piece').click();await open()}
   assert.deepEqual(memory.slice(1),Array(3).fill(memory[1]));result.memory=memory;
   const bytes=await page.evaluate(()=>localStorage.getItem('paper-couture.pinboard.v1').length);result.saveCharacters=bytes;assert(bytes<2000000);
-  await page.reload();await settle();await open();assert.equal((await board()).items.length,4);
-  result.checks.push('Four-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all four reload.');
+  await page.reload();await settle();await open();assert.equal((await board()).items.length,5);
+  result.checks.push('Five-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all five reload.');
   // Failure and retry leave the previous durable save untouched.
   const durable=await page.evaluate(k=>localStorage.getItem(k),key);
   await page.evaluate(()=>{window.originalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='paper-couture.pinboard.v1')throw new DOMException('Quota exceeded','QuotaExceededError');return window.originalSet.call(this,k,v)}});

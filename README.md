@@ -85,8 +85,17 @@ browser verification used a separate audit harness, not these Python scripts.
 
 Corner bloom and Plum scatter support bounded artwork sliding; Seed dashes has
 verified half-cell positions. Fold any current piece, enter Display and use
-Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to four independently arranged pieces. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
+Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to five independently arranged pieces. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
 [behavior, limits and checks](docs/print-position-pinboard/NOTES.md).
+
+## Outfit proportions and collection draft
+
+The pinboard offers an explicit starting-square size for each new capture. Suggested sizes
+make the clutch and apron fit beside garments; earlier captures keep their exact saved size.
+Boat-neck top, Cross-wrap top and Folded hat are new experimental intact-square silhouettes.
+Oat linen and Slate grain add quiet companions; Ginkgo pairs is a positionable paper study.
+See [sizes, comparisons, five-piece limits and verification](docs/outfit-collection/NOTES.md)
+and the [portable brainstorming brief](docs/outfit-papers/COMMISSION-BRIEF.md).
 
 ## Design and curation draft
 

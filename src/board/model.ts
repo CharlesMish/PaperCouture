@@ -2,7 +2,7 @@ import type { StartingPaperSize } from '../fold/paperSize';
 
 /** Version one stores posed vertices, never a recipe that can refold a kept piece. */
 export const BOARD_KEY = 'paper-couture.pinboard.v1';
-export const MAX_PIECES = 4;
+export const MAX_PIECES = 5;
 export const MAX_SAVE_LENGTH = 2_000_000;
 export const BACKGROUNDS = { Linen: '#d3c8b5', Rose: '#c4a09f', Slate: '#59646a' };
 export type Background = keyof typeof BACKGROUNDS;
