@@ -11,6 +11,7 @@ const recommended: Readonly<Record<string, number>> = {
   'boat-top': 16,
   'wrap-top': 18,
   hat: 8,
+  'framed-brooch': 6,
 };
 export function recommendedSquareCm(designId: string): number {
   return recommended[designId] ?? REFERENCE_SQUARE_CM;

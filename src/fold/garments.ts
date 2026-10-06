@@ -9,8 +9,9 @@ import { oneShoulder } from './oneShoulder';
 import { buildPointedTabard } from './pointedTabard';
 import { buildBoatNeckTop, buildCrossWrapTop, buildFoldedHat } from './outfitCollection';
 import { buildCollaredCapelet, buildAnkleBoot } from './companionFolds';
+import { buildFramedBrooch } from './framedBrooch';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -27,6 +28,7 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'capelet', name: 'Collared capelet', experiment: 'One square · flat shoulder layer, no neck opening or fastening' },
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
+  { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
 export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : 0; }
@@ -39,6 +41,7 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
     case 'capelet': return buildCollaredCapelet();
     case 'boot-left': return buildAnkleBoot('left');
     case 'boot-right': return buildAnkleBoot('right');
+    case 'framed-brooch': return buildFramedBrooch();
     case 'boat-top': return buildBoatNeckTop();
     case 'wrap-top': return buildCrossWrapTop();
     case 'hat': return buildFoldedHat();
