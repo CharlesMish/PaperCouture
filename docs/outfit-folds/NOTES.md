@@ -28,4 +28,15 @@ The suggestions use the collection's 20 cm reference square. They scale an entir
 
 `check-outfit-folds-browser.cjs` renders real app Front/Angle/Back views. Evidence uses the existing Pinstripe and lining paper so both sides are distinct and facet orientation is visible. Additional quiet-paper, print-offset and progression review is recorded alongside it. Browser emulation is not a physical-phone or Safari feel test. Integrated mixed-outfit, sizes, board movement, Undo/reload/export and portrait checks belong to the coordinated collection candidate, because this helper does not own board or size controls.
 
+`check-outfit-folds-progress.cjs` also passed all 22 real forward operations, a Back/forward round trip on every design, one rendered 50% pose for every operation, Running stitch Front/Back, positioned Corner bloom Front/Back, four actual pattern turns returning to the original state, and reload preserving the finished step and offset. No page errors. The first harness run used an incorrect exact accessible name for the existing rotation button; correcting the selector resolved that harness failure without an app change. Both browser scripts accept `PLAYWRIGHT_MODULE`, `CHROMIUM_EXECUTABLE_PATH`, `BASE_URL`, and `CAPTURE_DIR` rather than requiring a particular local browser path.
+
+- [Front, angle and back comparison, including rejected coat](evidence/contact-sheet.jpg)
+- [Quiet paper and positioned blossom comparison](evidence/quiet-paper-and-position.jpg)
+- [Boat-neck progression](evidence/boat-top-progression.jpg), [cross-wrap progression](evidence/wrap-top-progression.jpg), [hat progression](evidence/hat-progression.jpg)
+- [Browser result](evidence/progression-results.json), [geometry checks](fold-checks.txt), [existing test suite](test-log.txt)
+
+The quiet-paper review leaves clear broad printed areas on all three designs. Moving Corner bloom can align the blossom with the lower body or hat brim; it cannot make material buried by a real fold reappear on the front. Some of the flower remains clipped by a folded edge in these test positions. That is an honest material visibility constraint, not a reason to change fold geometry or texture coordinates. The folded hat front and doubled brim both show the printed side; its back visibly retains the crown corner flaps.
+
+Final facet counts are modest: 13 for Boat-neck top, 10 for Cross-wrap top and 11 for Folded hat (22, 20 and 22 flat triangles, before the renderer adds paper thickness). These counts inform the collection performance review; they do not alone establish safe board capacity. Typecheck, the existing complete npm test suite, the new geometry check, and the production build all passed with Node 24.
+
 The registry adds IDs without changing any old IDs, constructors, defaults, captures, or stored data. New snapshots can represent these new designs without reinterpreting old snapshots. The existing four-piece PR23 board and preview remain outside this isolated branch.

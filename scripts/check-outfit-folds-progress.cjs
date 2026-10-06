@@ -1,10 +1,10 @@
 // Real app fold progression and print-position evidence. Isolated browser storage only.
-const {chromium}=require('playwright');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=process.env.BASE_URL||'http://127.0.0.1:5202';
 const out=process.env.CAPTURE_DIR||'docs/outfit-folds/evidence/progression';
 (async()=>{
- const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH||'/Users/cmish/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell',args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
  const result={base,designs:[],errors:[],physicalPaperTested:false,physicalPhoneTested:false};
  try{
  fs.mkdirSync(out,{recursive:true});
@@ -27,7 +27,7 @@ const out=process.env.CAPTURE_DIR||'docs/outfit-folds/evidence/progression';
   await page.getByRole('radio',{name:'Corner bloom',exact:true}).click();await button('Position print').click();await button('Right').click();await button('Up').click();await button('Done').click();
   const before=await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns}));
   assert.notDeepEqual(before.position,{x:0,y:0});
-  for(let q=0;q<4;q++)await button('Turn paper').click();
+  for(let q=0;q<4;q++)await page.getByRole('button',{name:/^Turn paper \(now /}).click();
   assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);
   for(const view of ['Front','Back']){await button(view).click();await settle();await shot(`${id}-bloom-positioned-${view.toLowerCase()}`)}
   await page.reload();await settle();assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);
