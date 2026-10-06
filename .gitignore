@@ -19,3 +19,5 @@ dist-experiment/
 docs/design-curation/evidence/*.png
 docs/design-curation/evidence/*-contact.jpg
 docs/design-curation/evidence/failure.png
+
+.board-qa/

@@ -1,136 +1,251 @@
 import * as THREE from 'three';
+import { PAPERS } from '../papers';
+import { rotationCheckPaper } from '../papers/rotationCheck';
+import { BACKGROUNDS, Background, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES } from '../board/model';
+import { capture, restore } from '../board/snapshot';
 
 const WIDTH = 3.6, HEIGHT = 2.7, MARGIN = .08;
-const BACKGROUNDS = { Linen: '#d3c8b5', Rose: '#c4a09f', Slate: '#59646a' };
-type Background = keyof typeof BACKGROUNDS;
-
-/** Own the snapshot's GPU resources. Never dispose or re-pose the live garment. */
-function snapshot(objects: THREE.Object3D[]): THREE.Group {
-  const root = new THREE.Group();
-  const geometries = new Map<THREE.BufferGeometry, THREE.BufferGeometry>();
-  const materials = new Map<THREE.Material, THREE.Material>();
-  const textures = new Map<THREE.Texture, THREE.Texture>();
-  const copyMaterial = (source: THREE.Material) => {
-    let m = materials.get(source);
-    if (!m) {
-      m = source.clone(); materials.set(source, m);
-      if ('map' in m && m.map instanceof THREE.Texture) {
-        const t = m.map;
-        if (!textures.has(t)) { const copy = t.clone(); copy.needsUpdate = true; textures.set(t, copy); }
-        m.map = textures.get(t)!;
-      }
-    }
-    return m;
-  };
-  const copy = (source: THREE.Object3D): THREE.Object3D => {
-    const o = source.clone(false);
-    if (o instanceof THREE.Mesh || o instanceof THREE.Line) {
-      const g = o.geometry;
-      if (!geometries.has(g)) geometries.set(g, g.clone());
-      o.geometry = geometries.get(g)!;
-      o.material = Array.isArray(o.material) ? o.material.map(copyMaterial) : copyMaterial(o.material);
-    }
-    for (const child of source.children) if (child.visible) o.add(copy(child));
-    return o;
-  };
-  for (const o of objects) if (o.visible) root.add(copy(o));
-  root.userData.dispose = () => {
-    geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
-  };
-  return root;
-}
+export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number }
 
 export class Pinboard {
   readonly dialog = document.createElement('dialog');
   readonly canvas = document.createElement('canvas');
   readonly arrangement = new THREE.Group();
+  readonly launcher = document.createElement('button');
   private scene = new THREE.Scene();
   private camera = new THREE.OrthographicCamera(-WIDTH/2, WIDTH/2, HEIGHT/2, -HEIGHT/2, .1, 20);
   private renderer?: THREE.WebGLRenderer;
-  private piece?: THREE.Group;
   private backing?: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
+  private state: BoardState = emptyBoard();
+  private store = new BoardStore(() => localStorage, [...PAPERS.map(p => p.id), rotationCheckPaper.id]);
+  private groups = new Map<string, THREE.Group>();
+  private history: BoardState[] = [];
+  private title = document.createElement('h2');
   private tilt = document.createElement('input');
   private background = document.createElement('select');
-  private title = document.createElement('h2');
+  private source = document.createElement('select');
+  private pieces = document.createElement('select');
   private status = document.createElement('p');
-  private download = document.createElement('button');
-  private closeButton: HTMLButtonElement;
+  private storageStatus = document.createElement('p');
+  private saveWarning = '';
+  private unsaved = false;
   private exporting = false;
-  private drag?: { id: number; x: number; y: number; start: THREE.Vector3 };
-  private filename = 'paper-couture-pinboard.png';
+  private add: HTMLButtonElement;
+  private download: HTMLButtonElement;
+  private undo: HTMLButtonElement;
+  private retry: HTMLButtonElement;
+  private selectedTools: HTMLButtonElement[] = [];
+  private drag?: { id: number; x: number; y: number; item: string; before: BoardState; moved: boolean };
+  private tiltBefore?: BoardState;
+  private selection = new THREE.Box3Helper(new THREE.Box3(), '#5c4737');
 
-  constructor(parent: HTMLElement) {
+  constructor(parent: HTMLElement, private handlers: { sources(): BoardSource[]; workshop(): void }) {
+    try { this.state = this.store.load(); }
+    catch { this.saveWarning = 'Saved board could not be read. Its data is untouched. New changes may last only in this tab.'; }
     this.dialog.className = 'editor-dialog pinboard-dialog';
-    this.title.id = 'pinboard-title'; this.title.tabIndex = -1; this.dialog.setAttribute('aria-labelledby', this.title.id);
+    this.title.id = 'pinboard-title'; this.title.tabIndex = -1; this.title.textContent = 'Your pinboard';
+    this.dialog.setAttribute('aria-labelledby', this.title.id);
+    this.launcher.className = 'studio-button'; this.launcher.onclick = () => this.open();
     this.canvas.className = 'pinboard-canvas'; this.canvas.tabIndex = 0;
-    this.canvas.setAttribute('aria-label', 'Pinboard front view. Drag the folded piece or use the move buttons.');
-    const left = document.createElement('div'); left.className = 'board-preview'; left.append(this.canvas);
+    this.canvas.setAttribute('aria-label', 'Pinboard front view. Select and drag paper. Empty space does not pan. Arrow keys move the selected piece.');
+    const left = document.createElement('div'); left.className = 'board-preview';
+    const caption = document.createElement('p'); caption.className = 'editor-readout';
+    caption.textContent = 'Select paper to move it. The outline marks your selection and stays out of the PNG.';
+    left.append(this.canvas, caption);
     const tools = document.createElement('div'); tools.className = 'board-tools';
-    const hint = document.createElement('p'); hint.textContent = 'Your current folded piece, from the front, with any attached accessory. Drag to arrange it. The workshop keeps your folds.';
-    const bg = document.createElement('label'); bg.textContent = 'Background';
-    this.background.setAttribute('aria-label', 'Pinboard background');
+    const hint = document.createElement('p');
+    hint.textContent = 'Pin a finished piece, return to folding, then pin another. Each capture keeps its folds and paper. Up to four pieces.';
+    const sourceLabel = this.label('Capture', this.source, 'Piece to pin');
+    this.add = this.button('Pin current piece', () => this.pin()); this.add.classList.add('btn-primary');
+    const selectionLabel = this.label('Selected', this.pieces, 'Selected board piece');
+    this.pieces.onchange = () => { this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
+    const bg = this.label('Background', this.background, 'Pinboard background');
     for (const name of Object.keys(BACKGROUNDS)) this.background.add(new Option(name, name));
-    bg.append(this.background);
-    this.background.addEventListener('change', () => { this.setBackground(); this.render(); });
-    const angle = document.createElement('label'); angle.textContent = 'Tilt';
-    this.tilt.type = 'range'; this.tilt.min = '-12'; this.tilt.max = '12'; this.tilt.step = '1'; this.tilt.value = '0';
-    this.tilt.setAttribute('aria-label', 'Pinboard tilt'); angle.append(this.tilt);
-    this.tilt.addEventListener('input', () => { this.arrangement.rotation.z = -Number(this.tilt.value) * Math.PI / 180; this.constrain(); this.render(); });
+    this.background.onchange = () => this.mutate(() => { this.state.background = this.background.value as Background; this.setBackground(); });
+    const angle = this.label('Tilt', this.tilt, 'Pinboard tilt');
+    this.tilt.type = 'range'; this.tilt.min = '-12'; this.tilt.max = '12'; this.tilt.step = '1';
+    this.tilt.oninput = () => {
+      const item = this.selected(); if (!item || this.exporting) return;
+      this.tiltBefore ??= copyBoard(this.state); item.tilt = Number(this.tilt.value);
+      this.position(); this.constrain(item.id); this.render();
+    };
+    this.tilt.onchange = () => this.finishTilt();
     const nudges = document.createElement('div'); nudges.className = 'editor-actions';
-    for (const [label, x, y] of [['Move left', -1, 0], ['Move right', 1, 0], ['Move up', 0, 1], ['Move down', 0, -1]] as const)
-      nudges.append(this.button(label, () => this.nudge(x, y)));
-    const reset = this.button('Reset arrangement', () => this.reset());
-    this.download.className = 'btn btn-primary'; this.download.textContent = 'Save PNG';
-    this.download.addEventListener('click', () => { void this.exportPNG(); });
-    this.closeButton = this.button('Return to piece', () => this.dialog.close());
+    for (const [name, x, y] of [['Move left', -1, 0], ['Move right', 1, 0], ['Move up', 0, 1], ['Move down', 0, -1]] as const)
+      nudges.append(this.selectedButton(name, () => this.nudge(x, y)));
+    const edits = document.createElement('div'); edits.className = 'editor-actions';
+    edits.append(this.selectedButton('Bring forward', () => this.layer(1)), this.selectedButton('Send backward', () => this.layer(-1)),
+      this.selectedButton('Reset selected', () => this.mutate(() => { const i = this.selected(); if (i) { i.x = i.y = i.tilt = 0; this.position(); this.constrain(i.id); } })),
+      this.selectedButton('Remove selected', () => this.mutate(() => {
+        const index = this.state.items.findIndex(i => i.id === this.state.selected);
+        this.state.items.splice(index, 1); this.state.selected = this.state.items.at(-1)?.id ?? null;
+        this.status.textContent = 'Piece removed. Undo restores it, including its position.';
+      })));
+    this.undo = this.button('Undo', () => {
+      this.finishDrag(false); this.finishTilt(); const previous = this.history.pop(); if (!previous) return;
+      this.state = previous; this.reconcile(); this.setBackground(); this.persist(); this.refresh(); this.render();
+      this.status.textContent = 'Last board change undone.';
+    });
+    this.download = this.button('Save PNG', () => { void this.exportPNG(); }); this.download.classList.add('btn-primary');
+    const back = this.button('Return to piece', () => this.dialog.close());
+    const workshop = this.button('Return to folding', () => { this.dialog.close(); this.handlers.workshop(); });
     const note = document.createElement('p'); note.className = 'editor-readout';
-    note.textContent = 'PNG · 1600 × 1200 · includes the selected background; no transparency. Arrangement lasts until you close the pinboard.';
+    note.textContent = 'PNG · 1600 × 1200 · selected background. Board saves in this browser on this device. Undo keeps the last 20 changes in this tab.';
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
-    tools.append(hint, bg, angle, nudges, reset, this.download, this.closeButton, note, this.status);
+    this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
+    this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
+    tools.append(hint, sourceLabel, this.add, workshop, selectionLabel, bg, angle, nudges, edits, this.undo, this.download, back, note, this.storageStatus, this.retry, this.status);
     const body = document.createElement('div'); body.className = 'board-body'; body.append(left, tools);
     this.dialog.append(this.title, body); parent.append(this.dialog);
+    this.selection.visible = false; this.scene.add(this.selection);
     this.dialog.addEventListener('cancel', e => { if (this.exporting) e.preventDefault(); });
-    this.dialog.addEventListener('close', () => {
-      this.finishDrag(); this.piece?.userData.dispose(); this.piece?.removeFromParent(); this.piece = undefined;
-      this.renderer?.renderLists.dispose();
-    });
+    this.dialog.addEventListener('close', () => { this.finishDrag(false); this.finishTilt(); });
+    window.addEventListener('beforeunload', e => { if (this.unsaved) e.preventDefault(); });
     new ResizeObserver(() => { if (this.dialog.open && !this.exporting) this.render(); }).observe(this.canvas);
     this.canvas.addEventListener('pointerdown', e => {
-      if (this.exporting || this.drag || (e.pointerType === 'mouse' && e.button !== 0)) return;
-      this.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, start: this.arrangement.position.clone() };
-      this.canvas.setPointerCapture(e.pointerId); e.preventDefault();
+      if (this.exporting || this.drag || !e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      this.finishTilt();
+      const r = this.canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
+      ray.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1, 1-(e.clientY-r.top)/r.height*2), this.camera);
+      this.arrangement.updateMatrixWorld(true);
+      const hit = ray.intersectObjects([...this.groups.values()], true).find(h => h.object instanceof THREE.Mesh);
+      if (!hit) return;
+      let group = hit.object; while (group.parent !== this.arrangement && group.parent) group = group.parent;
+      const id = group.userData.boardId as string; this.state.selected = id;
+      this.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, item: id, before: copyBoard(this.state), moved: false };
+      this.canvas.setPointerCapture(e.pointerId); this.canvas.focus({ preventScroll: true }); e.preventDefault();
+      this.refresh(); this.render();
     });
     this.canvas.addEventListener('pointermove', e => {
       const d = this.drag; if (!d || e.pointerId !== d.id) return;
-      const r = this.canvas.getBoundingClientRect();
-      this.arrangement.position.set(d.start.x + (e.clientX - d.x) / r.width * WIDTH,
-        d.start.y - (e.clientY - d.y) / r.height * HEIGHT, 0);
-      this.constrain(); this.render();
+      if (Math.hypot(e.clientX-d.x, e.clientY-d.y) < 6 && !d.moved) return;
+      d.moved = true;
+      const r = this.canvas.getBoundingClientRect(), before = d.before.items.find(i => i.id === d.item)!, item = this.selected()!;
+      item.x = before.x + (e.clientX-d.x)/r.width*WIDTH; item.y = before.y - (e.clientY-d.y)/r.height*HEIGHT;
+      this.position(); this.constrain(item.id); this.render();
     });
-    this.canvas.addEventListener('pointerup', () => this.finishDrag());
-    this.canvas.addEventListener('pointercancel', () => {
-      if (this.drag) this.arrangement.position.copy(this.drag.start);
-      this.finishDrag(); this.render();
-    });
+    this.canvas.addEventListener('pointerup', e => { if (e.pointerId === this.drag?.id) this.finishDrag(true); });
+    this.canvas.addEventListener('pointercancel', e => { if (e.pointerId === this.drag?.id) this.finishDrag(false); });
+    this.canvas.addEventListener('lostpointercapture', () => this.finishDrag(false));
     this.canvas.addEventListener('keydown', e => {
       const d: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
       if (d[e.key]) { e.preventDefault(); this.nudge(...d[e.key]); }
     });
+    this.refresh();
   }
 
+  private label(text: string, control: HTMLElement, name: string) {
+    const label = document.createElement('label'); label.textContent = text; control.setAttribute('aria-label', name); label.append(control); return label;
+  }
   private button(label: string, action: () => void) {
     const b = document.createElement('button'); b.className = 'btn btn-quiet'; b.textContent = label;
-    b.addEventListener('click', action); return b;
+    b.onclick = () => { if (!this.exporting) action(); }; return b;
   }
-  private finishDrag() {
-    if (this.drag && this.canvas.hasPointerCapture(this.drag.id)) this.canvas.releasePointerCapture(this.drag.id);
-    this.drag = undefined;
+  private selectedButton(label: string, action: () => void) { const b = this.button(label, action); this.selectedTools.push(b); return b; }
+  private selected() { return this.state.items.find(i => i.id === this.state.selected); }
+  private checkpoint(before: BoardState) { this.history.push(before); if (this.history.length > 20) this.history.shift(); }
+  private mutate(action: () => void) {
+    if (this.exporting) return;
+    this.finishDrag(false); this.finishTilt(); this.checkpoint(copyBoard(this.state)); action();
+    this.reconcile(); this.persist(); this.refresh(); this.render();
+  }
+  private persist() {
+    try { this.store.save(this.state); this.unsaved = false; this.saveWarning = ''; }
+    catch (e) { this.unsaved = true; this.saveWarning = `Board changes are only in this tab. ${e instanceof Error ? e.message : 'Storage is unavailable.'} Keep this tab open; retry saving or save a PNG.`; }
+  }
+  private finishTilt() {
+    if (!this.tiltBefore) return;
+    this.checkpoint(this.tiltBefore); this.tiltBefore = undefined; this.persist(); this.refresh();
+  }
+  private finishDrag(commit: boolean) {
+    const d = this.drag; if (!d) return; this.drag = undefined;
+    if (this.canvas.hasPointerCapture(d.id)) this.canvas.releasePointerCapture(d.id);
+    if (d.moved && commit) { this.checkpoint(d.before); this.persist(); }
+    else if (d.moved) this.state = d.before;
+    this.position(); this.refresh(); this.render();
   }
   private nudge(x: number, y: number) {
-    if (this.exporting) return;
-    this.arrangement.position.x += x * .08; this.arrangement.position.y += y * .08;
-    this.constrain(); this.render();
+    if (!this.selected()) return;
+    this.mutate(() => { const i = this.selected()!; i.x += x*.08; i.y += y*.08; this.position(); this.constrain(i.id); });
   }
+  private layer(delta: number) {
+    const index = this.state.items.findIndex(i => i.id === this.state.selected), next = index + delta;
+    if (index < 0 || next < 0 || next >= this.state.items.length) return;
+    this.mutate(() => { const [item] = this.state.items.splice(index, 1); this.state.items.splice(next, 0, item); });
+  }
+  private pin() {
+    const source = this.handlers.sources()[Number(this.source.value)];
+    if (!source || this.state.items.length >= MAX_PIECES) return;
+    try {
+      const snapshot = capture(source.objects, source.angle);
+      this.mutate(() => {
+        const id = crypto.randomUUID(), offset = this.state.items.length * .16;
+        this.state.items.push({ id, title: source.title, snapshot, x: offset, y: -offset, tilt: 0 }); this.state.selected = id;
+      });
+      this.constrain(this.state.selected!); this.persist(); this.refresh(); this.render();
+      this.status.textContent = 'Piece pinned. Return to folding to make another; this capture will stay as it is.';
+    } catch { this.status.textContent = 'This piece could not be pinned. Your existing board is unchanged.'; }
+  }
+  open(): void {
+    if (this.dialog.open) return;
+    this.init(); this.reconcile(); this.setBackground();
+    this.source.replaceChildren();
+    this.handlers.sources().forEach((s, i) => this.source.add(new Option(s.title, String(i))));
+    if (!this.source.length) this.source.add(new Option('Finish a piece to pin it', ''));
+    this.status.textContent = ''; this.refresh(); this.dialog.showModal();
+    this.title.focus({ preventScroll: true }); this.dialog.scrollTop = 0; this.render();
+  }
+  private refresh() {
+    this.launcher.textContent = `View board (${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
+    this.pieces.replaceChildren();
+    for (const [i, item] of this.state.items.entries()) this.pieces.add(new Option(`${i+1}. ${item.title}`, item.id));
+    if (!this.state.items.length) this.pieces.add(new Option('No pinned pieces yet', ''));
+    this.pieces.value = this.state.selected ?? '';
+    this.pieces.disabled = !this.state.items.length; this.tilt.disabled = !this.selected();
+    this.tilt.value = String(this.selected()?.tilt ?? 0); this.background.value = this.state.background;
+    this.selectedTools.forEach(b => b.disabled = !this.selected());
+    this.undo.disabled = !this.history.length; this.download.disabled = !this.state.items.length;
+    this.add.disabled = this.state.items.length >= MAX_PIECES || !this.source.length || this.source.value === '';
+    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · four pieces' : 'Pin current piece';
+    this.storageStatus.textContent = this.saveWarning || 'Board saved on this device.';
+    this.retry.hidden = !this.unsaved;
+    if (this.unsaved && this.dialog.open) this.storageStatus.scrollIntoView({ block: 'nearest' });
+  }
+  private reconcile() {
+    for (const [id, group] of this.groups) if (!this.state.items.some(i => i.id === id)) {
+      group.userData.dispose(); group.removeFromParent(); this.groups.delete(id);
+    }
+    for (const item of this.state.items) if (!this.groups.has(item.id)) {
+      const group = restore(item.snapshot); group.userData.boardId = item.id; this.groups.set(item.id, group); this.arrangement.add(group);
+    }
+    this.position(); this.renderer?.renderLists.dispose();
+  }
+  private position() {
+    let top = -.10;
+    for (const item of this.state.items) {
+      const g = this.groups.get(item.id); if (!g) continue;
+      g.position.set(item.x, item.y, 0); g.rotation.z = -item.tilt * Math.PI / 180; g.updateMatrixWorld(true);
+      const box = new THREE.Box3().setFromObject(g, true);
+      // Whole pieces occupy disjoint depth intervals, including protruding accessories.
+      g.position.z = top - box.min.z; top += box.max.z - box.min.z + .025;
+      g.updateMatrixWorld(true);
+    }
+  }
+  private constrain(id: string) {
+    const item = this.state.items.find(i => i.id === id), group = this.groups.get(id); if (!item || !group) return;
+    group.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(group, true);
+    const clamp = (lo: number, hi: number, extent: number) => hi-lo > 2*(extent-MARGIN) ? -(lo+hi)/2 : Math.max(-extent+MARGIN-lo, Math.min(extent-MARGIN-hi, 0));
+    item.x += clamp(b.min.x, b.max.x, WIDTH/2); item.y += clamp(b.min.y, b.max.y, HEIGHT/2); this.position();
+  }
+  private render() {
+    if (!this.renderer || !this.dialog.open || this.exporting) return;
+    const group = this.state.selected && this.groups.get(this.state.selected);
+    this.selection.visible = !!group;
+    if (group) { this.selection.box.setFromObject(group, true); this.selection.updateMatrixWorld(true); }
+    const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));
+    this.renderer.setSize(w, Math.round(w*3/4), false); this.renderer.render(this.scene, this.camera);
+  }
+
   private init() {
     if (this.renderer) return;
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, preserveDrawingBuffer: true });
@@ -160,50 +275,16 @@ export class Pinboard {
     this.backing.material.map?.dispose(); this.backing.material.map = texture; this.backing.material.needsUpdate = true;
   }
 
-  open(objects: THREE.Object3D[], angle: number, title: string, id: string): void {
-    if (this.dialog.open) return;
-    this.init();
-    this.piece = snapshot(objects); this.piece.rotation.z = angle;
-    // Compute from the live posed vertices, never from a saved sample outfit.
-    this.piece.updateMatrixWorld(true);
-    const box = new THREE.Box3().setFromObject(this.piece, true), center = box.getCenter(new THREE.Vector3());
-    this.piece.position.sub(center); this.arrangement.add(this.piece);
-    this.title.textContent = `Pinboard · ${title}`; this.filename = `paper-couture-${id}-pinboard.png`;
-    this.status.textContent = ''; this.dialog.showModal();
-    this.title.focus({ preventScroll: true }); this.dialog.scrollTop = 0;
-    this.reset();
-  }
-  private reset() {
-    this.arrangement.position.set(0, 0, 0); this.arrangement.rotation.z = 0; this.tilt.value = '0';
-    this.constrain(); this.render();
-  }
-  private constrain() {
-    if (!this.piece) return;
-    this.arrangement.updateMatrixWorld(true);
-    const b = new THREE.Box3().setFromObject(this.arrangement, true);
-    const clampAxis = (lo: number, hi: number, extent: number) => {
-      if (hi - lo > 2 * (extent - MARGIN)) return -(lo + hi) / 2;
-      return Math.max(-extent + MARGIN - lo, Math.min(extent - MARGIN - hi, 0));
-    };
-    this.arrangement.position.x += clampAxis(b.min.x, b.max.x, WIDTH/2);
-    this.arrangement.position.y += clampAxis(b.min.y, b.max.y, HEIGHT/2);
-  }
-  private render() {
-    if (!this.renderer || !this.dialog.open || this.exporting) return;
-    const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));
-    this.renderer.setSize(w, Math.round(w * 3 / 4), false);
-    this.renderer.render(this.scene, this.camera);
-  }
   private async exportPNG() {
     if (!this.renderer || this.exporting) return;
-    this.finishDrag(); this.exporting = true;
+    this.finishDrag(true); this.finishTilt(); this.selection.visible = false; this.exporting = true;
     this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = true);
     this.status.textContent = 'Preparing PNG…';
     try {
       this.renderer.setSize(1600, 1200, false); this.renderer.render(this.scene, this.camera);
       const blob = await new Promise<Blob>((resolve, reject) => this.canvas.toBlob(b => b ? resolve(b) : reject(new Error('PNG unavailable')), 'image/png'));
       const url = URL.createObjectURL(blob), link = document.createElement('a');
-      link.href = url; link.download = this.filename; link.hidden = true;
+      link.href = url; link.download = 'paper-couture-pinboard.png'; link.hidden = true;
       this.dialog.append(link); link.click(); link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 10000);
       this.status.textContent = 'PNG ready. Your browser handles the download.';
@@ -212,7 +293,7 @@ export class Pinboard {
     } finally {
       this.exporting = false;
       this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = false);
-      this.render();
+      this.refresh(); this.render();
     }
   }
 }

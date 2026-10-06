@@ -91,6 +91,9 @@ export function makePaperTextures(design: PaperDesign, quarterTurns: number, max
   const back = setup(new THREE.CanvasTexture(paperCanvas(design, 'back', quarterTurns, position)));
   applySheetOrientation(front, 'front', quarterTurns);
   applySheetOrientation(back, 'back', quarterTurns);
+  // A retained board uses these bounded settings to restore the same procedural ink.
+  for (const [side, texture] of [['front', front], ['back', back]] as const)
+    texture.userData.paperRecipe = { id: design.id, turns: quarterTurns, position: normalizePosition(design, position), side };
   return {
     front,
     back,

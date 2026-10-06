@@ -87,7 +87,7 @@ fs.mkdirSync(out, {recursive:true});
   await button('Back').click();await settle();await shot('jacket-sash-back');
   await page.getByLabel('Garment design').selectOption('tabard');await settle();assert.match(await page.locator('.studio-note').innerText(),/kept aside/);
   await page.getByLabel('Garment design').selectOption('jacket');await settle();if(await button('Display').isVisible())await button('Display').click();await settle();assert((await state()).attached);assert.equal(await page.getByLabel('Accessory type').inputValue(),'sash');
-  await button('Pinboard').click();await shot('pinboard-sash');
+  await button('Pinboard').click();await button('Pin current piece').click();await shot('pinboard-sash');
   const downloadPromise=page.waitForEvent('download');await button('Save PNG').click();const download=await downloadPromise;await download.saveAs(path.join(out,'pinboard-sash-export.png'));
   await button('Return to piece').click();await button('Edit accessory').click();await settle();await button('Position print').click();
   assert.match(await page.locator('.print-dialog').innerText(),/Arc study/);await button('Done').click();await button('Back to garment').click();await settle();
