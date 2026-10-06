@@ -3,8 +3,8 @@ import { PAPERS } from '../papers';
 import { rotationCheckPaper } from '../papers/rotationCheck';
 import { BACKGROUNDS, Background, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES } from '../board/model';
 import { capture, restore } from '../board/snapshot';
+import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_EXPORT_WIDTH, BOARD_EXPORT_HEIGHT } from '../board/layout';
 
-const WIDTH = 3.6, HEIGHT = 2.7, MARGIN = .08;
 export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number }
 
 export class Pinboard {
@@ -43,6 +43,7 @@ export class Pinboard {
     try { this.state = this.store.load(); }
     catch { this.saveWarning = 'Saved board could not be read. Its data is untouched. New changes may last only in this tab.'; }
     this.dialog.className = 'editor-dialog pinboard-dialog';
+    this.dialog.style.setProperty('--board-aspect', String(WIDTH / HEIGHT));
     this.title.id = 'pinboard-title'; this.title.tabIndex = -1; this.title.textContent = 'Your pinboard';
     this.dialog.setAttribute('aria-labelledby', this.title.id);
     this.launcher.className = 'studio-button'; this.launcher.onclick = () => this.open();
@@ -90,7 +91,7 @@ export class Pinboard {
     const back = this.button('Return to piece', () => this.dialog.close());
     const workshop = this.button('Return to folding', () => { this.dialog.close(); this.handlers.workshop(); });
     const note = document.createElement('p'); note.className = 'editor-readout';
-    note.textContent = 'PNG · 1600 × 1200 · selected background. Board saves in this browser on this device. Undo keeps the last 20 changes in this tab.';
+    note.textContent = `PNG · ${BOARD_EXPORT_WIDTH} × ${BOARD_EXPORT_HEIGHT} · selected background. Board saves in this browser on this device. Undo keeps the last 20 changes in this tab.`;
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
     this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
     this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
@@ -243,7 +244,7 @@ export class Pinboard {
     this.selection.visible = !!group;
     if (group) { this.selection.box.setFromObject(group, true); this.selection.updateMatrixWorld(true); }
     const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));
-    this.renderer.setSize(w, Math.round(w*3/4), false); this.renderer.render(this.scene, this.camera);
+    this.renderer.setSize(w, Math.round(w*HEIGHT/WIDTH), false); this.renderer.render(this.scene, this.camera);
   }
 
   private init() {
@@ -271,7 +272,7 @@ export class Pinboard {
       ctx.fillStyle = '#29231d0c'; ctx.fillRect(i, 0, 1, 256);
     }
     const texture = new THREE.CanvasTexture(c); texture.colorSpace = THREE.SRGBColorSpace;
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(4, 3);
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(4, 4*HEIGHT/WIDTH);
     this.backing.material.map?.dispose(); this.backing.material.map = texture; this.backing.material.needsUpdate = true;
   }
 
@@ -281,7 +282,7 @@ export class Pinboard {
     this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = true);
     this.status.textContent = 'Preparing PNG…';
     try {
-      this.renderer.setSize(1600, 1200, false); this.renderer.render(this.scene, this.camera);
+      this.renderer.setSize(BOARD_EXPORT_WIDTH, BOARD_EXPORT_HEIGHT, false); this.renderer.render(this.scene, this.camera);
       const blob = await new Promise<Blob>((resolve, reject) => this.canvas.toBlob(b => b ? resolve(b) : reject(new Error('PNG unavailable')), 'image/png'));
       const url = URL.createObjectURL(blob), link = document.createElement('a');
       link.href = url; link.download = 'paper-couture-pinboard.png'; link.hidden = true;

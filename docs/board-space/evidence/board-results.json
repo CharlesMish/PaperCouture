@@ -1,0 +1,50 @@
+{
+  "base": "http://127.0.0.1:5197",
+  "checks": [
+    "Buttons: top folds → explicit pin → return → new paper/turn → bottom folds → pin → style → return/reset → reload. Exact posed vertices/UVs and prior capture unchanged; unrelated storage and URL workshop step preserved.",
+    "Composite PNG is byte-identical to the visible 1800×2100 scene without selection outline. Real overlap occlusion/picking/layer reversal; portrait and landscape touch empty-space, drag, cancel, Undo, no page overflow.",
+    "Four-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all four reload.",
+    "Quota failure retains prior save and flags unsaved outside the board; Retry recovers. A second tab cannot silently overwrite newer board work."
+  ],
+  "errors": [],
+  "occlusion": {
+    "both": [
+      206,
+      191,
+      168,
+      255
+    ],
+    "frontOnly": [
+      206,
+      191,
+      168,
+      255
+    ],
+    "backOnly": [
+      200,
+      167,
+      162,
+      255
+    ]
+  },
+  "memory": [
+    {
+      "geometries": 6,
+      "textures": 10
+    },
+    {
+      "geometries": 6,
+      "textures": 10
+    },
+    {
+      "geometries": 6,
+      "textures": 10
+    },
+    {
+      "geometries": 6,
+      "textures": 10
+    }
+  ],
+  "saveCharacters": 87506,
+  "passed": true
+}
