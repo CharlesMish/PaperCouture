@@ -23,6 +23,15 @@ rounded outline read too much like hearts and was refined into fan leaves before
 the retained evidence. It stays experimental because a sparse design is inherently
 placement dependent. There is no universally best turn or offset.
 
+Observed examples: the jacket at 0° retains three leaf clusters; 90° crops the
+lower/right leaves. Pleats create deliberate partial leaves at their sides.
+The clutch at 0° buries most front-facing leaves, while 90° reveals pairs on the
+top/bottom bands. Its plain Oat or Slate versions are quieter and more reliable.
+The [front/back comparison](comparison.jpg) and [shift comparison](placement.jpg)
+show those real renders, including weak default placements rather than only the
+best views. Display cameras fit each garment separately; these sheets compare
+papers and are not evidence of relative garment size.
+
 The original first four curated papers remain first. Existing visible and hidden
 papers retain their exact art, IDs, names, curation status and availability.
 Oat/Slate follow the first four; Ginkgo sits with the existing experiments. Changing
@@ -53,6 +62,19 @@ fixed placements. The gallery covers Box jacket, Pleated skirt, Bib apron and
 Envelope clutch at all four turns, with front/back and shifted Ginkgo examples.
 Real Fold/Back, retained paper offsets, independent captures, moves, remove/Undo,
 reload, composite PNG and 390/320 portrait controls are exercised separately.
+
+The retained validation is recorded in [evidence/validation.json](evidence/validation.json).
+Typecheck, the full existing `npm test` suite and the refined-art build pass.
+All 68 folded gallery captures completed with no page exceptions. The initial
+combined run then stopped at a test-only signed-zero comparison (`-0` in memory
+versus JSON's `0`). The harness now compares the persisted representation; the
+interaction phase was rerun and passed, including an actual 1800×2100 PNG.
+No application or storage code was changed to address that harness failure.
+
+`FLOW_ONLY=1` reruns just the interaction portion after an unchanged paper gallery.
+`scripts/check-outfit-papers-gallery.cjs` packages the actual captures into the
+two JPEG sheets; it does not redraw the paper art. Full original PNGs and the
+initial failure receipt remain in the local `output/outfit-papers-final` evidence.
 
 This paper-only branch retains PR23 garment sizes. Its mixed-board evidence is a
 paper/capture regression, **not approval of the known oversized clutch**. The

@@ -40,6 +40,24 @@ const papers = [ ['oat-linen', 'Oat linen · curated'], ['slate-grain', 'Slate g
       }
     }, data);
     await page.screenshot({ path: path.join(out, 'comparison.jpg'), fullPage: true, type: 'jpeg', quality: 90 });
-    console.log('Saved actual-render contact sheet: ' + path.join(out, 'comparison.jpg'));
+    const placement = ['front', 'back'].flatMap(side => [
+      { label: side + ' · original placement', image: uri('jacket-ginkgo-pairs-0-' + side) },
+      { label: side + ' · right 12.5%, down 6.25%', image: uri('jacket-ginkgo-pairs-0-shift-' + side) },
+    ]);
+    await page.evaluate(async data => {
+      document.querySelector('h1').textContent = 'Ginkgo: positioning trades one visible cluster for another';
+      document.querySelector('p').textContent = 'Same finished jacket, camera and paper turn. Ink shifts on both faces; folds and stationary grain stay fixed. Finite artwork can leave sheet edges, and folds can hide motifs.';
+      const grid = document.querySelector('main'); grid.replaceChildren(); grid.style.gridTemplateColumns = 'repeat(2,1fr)';
+      for (const entry of data) {
+        const cell = document.createElement('section'); cell.className = 'cell';
+        const label = document.createElement('div'); label.className = 'label'; label.textContent = entry.label; cell.append(label);
+        const img = new Image(); img.src = entry.image; await img.decode();
+        const canvas = document.createElement('canvas'); canvas.width = 620; canvas.height = 455;
+        canvas.getContext('2d').drawImage(img, 300, 140, 620, 455, 0, 0, 620, 455);
+        cell.append(canvas); grid.append(cell);
+      }
+    }, placement);
+    await page.screenshot({ path: path.join(out, 'placement.jpg'), fullPage: true, type: 'jpeg', quality: 90 });
+    console.log('Saved actual-render comparison and placement sheets in ' + out);
   } finally { await browser.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });
