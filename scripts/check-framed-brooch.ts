@@ -9,8 +9,11 @@ import { interiorPiercing } from './experiment-collision';
 
 const inside = (poly: Vec2[], p: Vec2) => poly.every((a, i) => { const b = poly[(i + 1) % poly.length]; return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) >= -1e-10; });
 const distance = (a: number[], b: number[]) => Math.hypot(...a.map((x, i) => x - b[i]));
-assert.equal(recommendedSquareCm('framed-brooch'), 6);
-const construction = buildFramedBrooch(), timeline = buildTimeline(construction.ops);
+assert.equal(recommendedSquareCm('framed-brooch'), 4.5);
+for (const shape of ['square', 'rectangle'] as const) {
+const x = shape === 'rectangle' ? .8 : .75, y = shape === 'rectangle' ? .65 : .75;
+const width = 2*x, height = 2*y, printedWidth = 4*x-2, printedHeight = 4*y-2;
+const construction = buildFramedBrooch(shape), timeline = buildTimeline(construction.ops);
 assert.equal(construction.ops.length, 4);
 assert(construction.ops.every(op => op.kind === 'fold' && op.folds.every(f => f.sense === 'valley' && !f.only)));
 let gap = 0, lowest = Infinity, piercings = 0;
@@ -40,16 +43,18 @@ assert(gap <= 8 * LAYER_GAP); assert(lowest >= -1e-9); assert.equal(piercings, 0
 const final = timeline.states.at(-1)!;
 const hit = (x: number, y: number) => final.facets.filter(f => { const p = modelPoly(f); return inside(signedArea(p) < 0 ? p.reverse() : p, { x, y }); }).sort((a, b) => b.rank - a.rank)[0];
 assert(hit(0, 0) && !isFlipped(hit(0, 0)), 'The central printed material must remain exposed');
-for (const [x, y] of [[0, .625], [0, -.625], [-.625, 0], [.625, 0]]) assert(isFlipped(hit(x, y)), 'Each of four borders must show the true reverse');
+for (const [px, py] of [[0, (3*y-1)/2], [0, -(3*y-1)/2], [-(3*x-1)/2, 0], [(3*x-1)/2, 0]]) assert(isFlipped(hit(px, py)), 'Each of four borders must show the true reverse');
 assert.equal(final.facets.filter(f => f.tags.length === 0).length, 1);
 const panel = final.facets.find(f => f.tags.length === 0)!;
-assert(Math.abs(signedArea(panel.poly) - 2.25) < 1e-10, 'The centre is retained continuous material, not a fabricated opening');
+assert(Math.abs(signedArea(panel.poly) - width*height) < 1e-10, 'The centre is retained continuous material, not a fabricated opening');
 let printed = 0, covered = 0;
-for (let y = -.75; y < .75; y += .01) for (let x = -.75; x < .75; x += .01) { const h = hit(x + .005, y + .005); assert(h); covered++; if (!isFlipped(h)) printed++; }
-assert(Math.abs(printed / covered - 4 / 9) < .01, 'Visible printed centre is one square unit of the2.25-unit footprint');
+for (let py = -y; py < y-1e-6; py += .01) for (let px = -x; px < x-1e-6; px += .01) { const h = hit(px + .005, py + .005); assert(h); covered++; if (!isFlipped(h)) printed++; }
+assert(Math.abs(printed / covered - printedWidth*printedHeight/(width*height)) < .01, 'Real visible centre agrees with its rectangular material footprint');
 const controller = new FoldController(construction.ops.length, () => 1);
 for (let i = 0; i < 4; i++) { controller.next(); controller.update(2); assert.equal(controller.step, i + 1); }
 for (let i = 4; i > 0; i--) { controller.prev(); controller.update(2); assert.equal(controller.step, i - 1); }
 controller.next(); controller.update(.35); const pose = controller.pose(); controller.prev(); assert.deepEqual(controller.pose(), pose); controller.update(2); assert.equal(controller.step, 0);
 controller.next(); controller.update(.35); controller.reset(); assert.equal(controller.step, 0); assert(!controller.moving);
-console.log(JSON.stringify({ passed: true, construction: construction.name, steps: 4, facets: final.facets.length, retainedMaterialArea: 4, footprint: [1.5, 1.5], suggestedSquareCm: 6, boardFootprint: [.45, .45], visiblePrintedPanel: [1, 1], boardPrintedPanel: [.3, .3], printedFraction: printed / covered, samplesPerOperation: 81, worstHingeGap: gap, minimumZ: lowest, strictTrianglePiercings: piercings, checks: ['real engine retained square and rigid edges', 'endpoint continuity and sampled hinge/floor/collision checks', 'true reverse on four borders, printed continuous centre', 'controller forward/back/mid-step reversal/reset'], limitations: ['not physical paper', 'not continuous collision certification'] }, null, 2));
+console.log(JSON.stringify({ passed: true, construction: construction.name, shape, steps: 4, facets: final.facets.length, retainedMaterialArea: 4, footprint: [width, height], suggestedSquareCm: 4.5, boardFootprint: [width*.225, height*.225], visiblePrintedPanel: [printedWidth, printedHeight], boardPrintedPanel: [printedWidth*.225, printedHeight*.225], printedFraction: printed / covered, samplesPerOperation: 81, worstHingeGap: gap, minimumZ: lowest, strictTrianglePiercings: piercings, checks: ['real engine retained square and rigid edges', 'endpoint continuity and sampled hinge/floor/collision checks', 'true reverse on four borders, printed continuous centre', 'controller forward/back/mid-step reversal/reset'], limitations: ['not physical paper', 'not continuous collision certification'] }, null, 2));
+
+}

@@ -1,0 +1,89 @@
+
+> paper-couture@0.1.0 check:companions
+> node --import tsx scripts/check-companion-folds.ts && node --import tsx scripts/check-framed-brooch.ts && node --import tsx scripts/check-plum-seed.ts
+
+{"id":"capelet","steps":8,"facets":14,"width":1.4030656934306571,"height":1,"retainedArea":3.9999999999999996,"maxHingeGap":0.03850000000000027,"largestHingeAt":{"op":"capelet-front","fraction":0.3625},"hingeLimit":0.044,"minHeight":0.0015,"reverseFraction":0.3371095090971507,"strictTrianglePiercings":0,"samplesPerOperation":81,"materialEndpointAndFaceSamples":0}
+{"id":"boot-left","steps":6,"facets":12,"width":1.4499999999999997,"height":1.2166666666666668,"retainedArea":4,"maxHingeGap":0.044,"largestHingeAt":{"op":"boot-front","fraction":1},"hingeLimit":0.044,"minHeight":0.0015,"reverseFraction":0,"strictTrianglePiercings":0,"samplesPerOperation":81,"materialEndpointAndFaceSamples":1600}
+{"id":"boot-right","steps":6,"facets":12,"width":1.4499999999999997,"height":1.2166666666666668,"retainedArea":4,"maxHingeGap":0.04399999999999999,"largestHingeAt":{"op":"boot-front","fraction":1},"hingeLimit":0.044,"minHeight":0.0015,"reverseFraction":0,"strictTrianglePiercings":0,"samplesPerOperation":81,"materialEndpointAndFaceSamples":1600}
+These checks do not certify physical foldability or continuous collision-free motion.
+{
+  "passed": true,
+  "construction": "Framed brooch · square",
+  "shape": "square",
+  "steps": 4,
+  "facets": 9,
+  "retainedMaterialArea": 4,
+  "footprint": [
+    1.5,
+    1.5
+  ],
+  "suggestedSquareCm": 4.5,
+  "boardFootprint": [
+    0.3375,
+    0.3375
+  ],
+  "visiblePrintedPanel": [
+    1,
+    1
+  ],
+  "boardPrintedPanel": [
+    0.225,
+    0.225
+  ],
+  "printedFraction": 0.4444444444444444,
+  "samplesPerOperation": 81,
+  "worstHingeGap": 0.0165,
+  "minimumZ": 0.0015,
+  "strictTrianglePiercings": 0,
+  "checks": [
+    "real engine retained square and rigid edges",
+    "endpoint continuity and sampled hinge/floor/collision checks",
+    "true reverse on four borders, printed continuous centre",
+    "controller forward/back/mid-step reversal/reset"
+  ],
+  "limitations": [
+    "not physical paper",
+    "not continuous collision certification"
+  ]
+}
+{
+  "passed": true,
+  "construction": "Framed brooch · rectangle",
+  "shape": "rectangle",
+  "steps": 4,
+  "facets": 9,
+  "retainedMaterialArea": 4,
+  "footprint": [
+    1.6,
+    1.3
+  ],
+  "suggestedSquareCm": 4.5,
+  "boardFootprint": [
+    0.36000000000000004,
+    0.29250000000000004
+  ],
+  "visiblePrintedPanel": [
+    1.2000000000000002,
+    0.6000000000000001
+  ],
+  "boardPrintedPanel": [
+    0.2700000000000001,
+    0.13500000000000004
+  ],
+  "printedFraction": 0.34615384615384615,
+  "samplesPerOperation": 81,
+  "worstHingeGap": 0.0165,
+  "minimumZ": 0.0015,
+  "strictTrianglePiercings": 0,
+  "checks": [
+    "real engine retained square and rigid edges",
+    "endpoint continuity and sampled hinge/floor/collision checks",
+    "true reverse on four borders, printed continuous centre",
+    "controller forward/back/mid-step reversal/reset"
+  ],
+  "limitations": [
+    "not physical paper",
+    "not continuous collision certification"
+  ]
+}
+{"paper":"plum-seed","seeds":196,"plumSeeds":145,"sageSeeds":51,"minimumMaterialMargin":0.003840223872675158,"fixedPlacement":true}

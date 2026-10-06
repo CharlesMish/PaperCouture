@@ -106,9 +106,10 @@ old paper available. See [comparison, limits and play steps](docs/design-curatio
 
 ## Companion design draft
 
-Collared capelet, two ankle-boot directions and Framed brooch are new experimental
+Open-front capelet, two ankle-boot directions and Framed brooch are new experimental
 intact-square designs. Fold and pin each boot separately; a pair uses two board
-slots. Suggested starting squares are 14 cm for the capelet, 8 cm per boot and
-6 cm for the brooch. Plum seed adds a fixed two-sided oat/plum/sage print.
+slots. Suggested starting squares are 18 cm for the capelet, 8 cm per boot and
+4.5 cm for the brooch, with Square and Rectangle fold choices. Plum seed adds a fixed two-sided oat/plum/sage print.
 Existing positioned blossom papers work on all four new designs. See the
-[review, sizes, saved-board compatibility and checks](docs/companion-studies/NOTES.md).
+[original review](docs/companion-studies/NOTES.md) and the
+[local capelet/brooch refinement](docs/capelet-brooch/NOTES.md).

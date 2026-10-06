@@ -1,3 +1,15 @@
+# Paper Couture — local capelet/brooch follow-up
+
+Local-only branch from reviewed PR25 `21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f`.
+New capelet folds have two real front panels over lining; the name is Open-front
+capelet and new captures suggest 18 cm. Framed brooch keeps its square folds,
+adds an authored Rectangle choice, and suggests 4.5 cm. Existing captures are
+unchanged. See [comparison, checks and limits](docs/capelet-brooch/NOTES.md) and
+the [forwardable design brief](docs/capelet-brooch/Paper-Couture-external-design-brief.txt).
+No push, PR publication, merge or deployment is authorized for this follow-up.
+
+The historical PR25 handoff below records the frozen reviewed predecessor.
+
 # Paper Couture — companion design studies
 
 Separate draft based on frozen PR24 `574b2b10cc2894586f2ee3f8c9496035365e6408`.

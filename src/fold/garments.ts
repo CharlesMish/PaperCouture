@@ -8,7 +8,7 @@ import { buildApron, buildClutch } from './experimental';
 import { oneShoulder } from './oneShoulder';
 import { buildPointedTabard } from './pointedTabard';
 import { buildBoatNeckTop, buildCrossWrapTop, buildFoldedHat } from './outfitCollection';
-import { buildCollaredCapelet, buildAnkleBoot } from './companionFolds';
+import { buildOpenFrontCapelet, buildAnkleBoot } from './companionFolds';
 import { buildFramedBrooch } from './framedBrooch';
 
 export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch';
@@ -25,7 +25,7 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
   { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
   { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
-  { id: 'capelet', name: 'Collared capelet', experiment: 'One square · flat shoulder layer, no neck opening or fastening' },
+  { id: 'capelet', name: 'Open-front capelet', experiment: 'One square · separate front panels over continuous lining, no through-opening or fastening' },
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
@@ -38,10 +38,10 @@ export function garmentIdFrom(value: string | null): GarmentId {
 export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOptions = DEFAULT_OPTIONS) {
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
-    case 'capelet': return buildCollaredCapelet();
+    case 'capelet': return buildOpenFrontCapelet();
     case 'boot-left': return buildAnkleBoot('left');
     case 'boot-right': return buildAnkleBoot('right');
-    case 'framed-brooch': return buildFramedBrooch();
+    case 'framed-brooch': return buildFramedBrooch(options.broochShape);
     case 'boat-top': return buildBoatNeckTop();
     case 'wrap-top': return buildCrossWrapTop();
     case 'hat': return buildFoldedHat();

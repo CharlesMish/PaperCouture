@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { COMPANION_CONSTRUCTIONS } from '../src/fold/companionFolds';
+import { buildFramedBrooch } from '../src/fold/framedBrooch';
 import { finalState, landings, canvasPoint, materialPoint } from './paperLanding';
 const out = process.argv[2] || 'docs/companion-folds/visibility';
 mkdirSync(out, {recursive:true});
@@ -14,7 +15,7 @@ const columns = [
   {face:'reverse', view:'back', label:'Reverse seen from Back'},
 ] as const;
 const reports=[];
-for(const [id,build] of Object.entries(COMPANION_CONSTRUCTIONS)){
+for(const [id,build] of Object.entries({...COMPANION_CONSTRUCTIONS, 'brooch-square': () => buildFramedBrooch('square'), 'brooch-rectangle': () => buildFramedBrooch('rectangle')})){
  const L=landings(finalState(build()),N); assert.equal(L.length,N*N);
  const rows: {quarterTurns:number; shares:number[]}[]=[];const svg=[`<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="1290" viewBox="0 0 1150 1290"><rect width="1150" height="1290" fill="#f7f4ee"/><g font-family="sans-serif" fill="#1e3232"><text x="30" y="28" font-size="20">${id}: actual-engine visible paper in source-canvas coordinates</text><text x="30" y="49" font-size="13">Teal is visible material; pale is hidden. Source canvas: left→right, top→bottom. No blossom radius assumed.</text><text x="30" y="68" font-size="13">Normal projection only. Back canvas mirrors material x once. Raised edges can differ in the tilted Display presets.</text>`];
  for(let q=0;q<4;q++){

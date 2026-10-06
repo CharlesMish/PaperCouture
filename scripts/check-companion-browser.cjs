@@ -12,7 +12,7 @@ const fixturePath = process.env.LEGACY_FIXTURE || path.join(__dirname, '../docs/
 const fixture = fs.readFileSync(fixturePath, 'utf8');
 const requiredIds = (process.env.NEW_DESIGN_IDS || 'capelet,boot-left,boot-right,framed-brooch').split(',').filter(Boolean);
 const paperId = process.env.NEW_PAPER_ID || 'plum-seed', paperName = process.env.NEW_PAPER_NAME || 'Plum seed';
-const capeletCm = Number(process.env.CAPELET_CM || 14);
+const capeletCm = Number(process.env.CAPELET_CM || 18);
 const production = process.env.REQUIRE_PRODUCTION !== '0';
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 fs.mkdirSync(out, { recursive: true });
@@ -52,7 +52,7 @@ async function bundle(url) {
     page.on('response', r => { if (r.status() >= 400 && ['document', 'script', 'stylesheet'].includes(r.request().resourceType())) report.failedResources.push({ url: r.url(), status: r.status() }); });
     page.on('request', r => { if (/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname)) report.sourceRequests.push(r.url()); });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { const r = await page.goto(url + '?' + query); assert(r.ok()); await settle(); };
     const open = () => page.getByRole('button', { name: /^View board/ }).click();
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
@@ -134,7 +134,7 @@ async function bundle(url) {
       const ids = await a.page.getByLabel('Garment design').locator('option').evaluateAll(xs => xs.map(x => x.value));
       for (const id of requiredIds) assert(ids.includes(id), `New design registered: ${id}`);
       accentId = process.env.ACCENT_ID || 'framed-brooch'; assert(ids.includes(accentId), `Composition accent registered: ${accentId}`);
-      accentCm = Number(process.env.ACCENT_CM || (accentId === 'framed-brooch' ? 6 : 8)); report.accent = { id: accentId, cm: accentCm };
+      accentCm = Number(process.env.ACCENT_CM || (accentId === 'framed-brooch' ? 4.5 : 8)); report.accent = { id: accentId, cm: accentCm };
       assert.equal(await a.page.getByRole('radio', { name: paperName, exact: true }).count(), 1);
     });
     report.checks.push('Frozen PR24 five-piece fixture loads byte-exact without initial write, renders identical PNG, and survives remove/Undo/reload without reinterpretation.');
