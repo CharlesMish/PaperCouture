@@ -11,11 +11,13 @@ fs.mkdirSync(out, { recursive: true });
   const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROMIUM_EXECUTABLE_PATH,
     args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
   const context = await browser.newContext({ viewport: { width: 1100, height: 800 }, hasTouch: true, reducedMotion: 'reduce', acceptDownloads: true });
-  const page = await context.newPage(); page.setDefaultTimeout(45000);
+  context.setDefaultTimeout(45000);
+  context.setDefaultNavigationTimeout(90000);
+  const page = await context.newPage();
   const result = { base, baseline: baseline || null, baselineSHA: 'feb9cc80f5ca0da7ef2e49619665458c2f923c5a', phase: process.env.FLOW_ONLY ? 'interaction' : 'complete', errors: [], checks: [], captures: 0 };
   page.on('pageerror', e => result.errors.push(String(e)));
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
-  const load = async query => { await page.goto(base + '/?' + query); await settle(); };
+  const load = async query => { const response = await page.goto(base + '/?' + query); assert(response.ok()); await settle(); };
   const button = name => page.getByRole('button', { name, exact: true });
   const shot = async name => { await page.screenshot({ path: path.join(out, name + '.png') }); result.captures++; };
   // Compare the persisted representation: JSON intentionally normalizes -0 to 0.
@@ -35,12 +37,17 @@ fs.mkdirSync(out, { recursive: true });
     const current = await hashPapers(page);
     assert.equal(new Set(current.registry.map(p => p.id)).size, current.registry.length);
     if (baseline) {
-      const oldPage = await context.newPage(); await oldPage.goto(baseline); await oldPage.waitForFunction(() => window.paperCouture);
-      const old = await hashPapers(oldPage); await oldPage.close();
+      // Compare sequentially: two continuously rendering SwiftShader pages can
+      // starve a cold Vite baseline on CI. Keep the same exact raster assertions.
+      const response = await page.goto(baseline); assert(response.ok());
+      await page.waitForFunction(() => window.paperCouture, null, { timeout: 90000 });
+      const old = await hashPapers(page);
       for (const [key, hash] of Object.entries(old.hashes)) assert.equal(current.hashes[key], hash, key + ' changed');
       for (const prior of old.registry) assert.deepEqual(current.registry.find(p => p.id === prior.id), prior);
       result.oldRasterCount = Object.keys(old.hashes).length;
       result.checks.push('All PR23 paper rasters, IDs, names, hidden flags and curation remain exact.');
+      console.log('Compared ' + result.oldRasterCount + ' unchanged PR23 paper rasters.');
+      await load('');
     }
     fs.writeFileSync(path.join(out, 'raster-hashes.json'), JSON.stringify(current, null, 2));
 
