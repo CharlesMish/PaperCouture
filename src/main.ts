@@ -236,7 +236,22 @@ const displayCam = new DisplayCamera(stage, canvas);
 const positionPanel = new PrintPositionPanel(app, p => {
   printPosition = normalizePosition(paper, p); applyPaper();
 });
-const pinboard = new Pinboard(app);
+const pinboard = new Pinboard(app, {
+  workshop: () => { if (!view.inWorkshop) leaveDisplay(); },
+  sources: () => {
+    if (!controller.finished || controller.moving) return [];
+    draw();
+    if (accessoryMode) {
+      // A completed single-square accessory (or the separate centre) can stand alone.
+      // A two-wing bow is offered as an assembly after Attach returns to the garment.
+      if (accessoryId === 'bow' && !editingCentre) return [];
+      return [{ title: `${construction.name} · ${paper.name}`, objects: [sheet.group, studySeams], angle: 0 }];
+    }
+    const sources = [{ title: `${construction.name} · ${garmentPaper.name}`, objects: [sheet.group, lapelEdges.lines, accessoryRoot], angle: garmentDisplayAngle(garmentId) }];
+    if (accessoryRoot.visible) sources.push({ title: `${findAccessory(accessoryId).name} only · ${pinPaper.name}`, objects: [accessoryRoot], angle: 0 });
+    return sources;
+  },
+});
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
     if (id !== paper.id) printPosition = { ...ORIGINAL };
@@ -267,9 +282,7 @@ const displayPanel = new DisplayPanel(app, {
   onReturn: () => leaveDisplay(),
   onPinboard: () => {
     if (!controller.finished || accessoryMode || !view.inDisplay) return;
-    draw();
-    pinboard.open([sheet.group, lapelEdges.lines, accessoryRoot], garmentDisplayAngle(garmentId),
-      `${construction.name} · ${paper.name}`, garmentId);
+    pinboard.open();
   },
 });
 
@@ -311,6 +324,7 @@ const studio = new StudioControls(app, {
   onCentre: editCentre,
   onCentreToggle: () => { centreAttached = !centreAttached; refreshWorkshopPanel(); layout(); },
 });
+studio.root.append(pinboard.launcher);
 let unsubscribeController = controller.onChange(refreshWorkshopPanel);
 displayCam.onChange(refreshDisplayPanel);
 refreshWorkshopPanel();

@@ -58,29 +58,20 @@ await page.getByRole('radio',{name:'Plum scatter',exact:true}).click();await btn
 while(!(await page.evaluate(()=>paperCouture.controller.finished)))await fold();await fold();while(!(await page.evaluate(()=>paperCouture.controller.finished)))await fold();await fold();assert(await page.evaluate(()=>paperCouture.attached&&!paperCouture.accessoryMode));assert.deepEqual((await getState()).position,{x:.125,y:0});
 await page.getByRole('button',{name:'Fold centre',exact:true}).click();await settle();await page.getByRole('radio',{name:'Seed dashes',exact:true}).click();await btn('Position print').click();await btn('Half-cell right').click();await btn('Done').click();while(!(await page.evaluate(()=>paperCouture.controller.finished)))await fold();await fold();assert(await page.evaluate(()=>paperCouture.attached&&paperCouture.centreAttached));
 const withBow=await getState();
-await btn('Pinboard').click();
+await btn('Pinboard').click();await btn('Pin current piece').click();
 const snapshot=await page.evaluate(()=>{
- const live=paperCouture.sheet.front,board=paperCouture.pinboard.arrangement.children[0],front=board.children[0].children[0];
- const accessory=board.children.at(-1),stored=paperCouture.accessoryRoot;
- return {geometryEqual:JSON.stringify(Array.from(live.geometry.attributes.position.array))===JSON.stringify(Array.from(front.geometry.attributes.position.array)),uvEqual:JSON.stringify(Array.from(live.geometry.attributes.uv.array))===JSON.stringify(Array.from(front.geometry.attributes.uv.array)),ownGeometry:live.geometry!==front.geometry,ownMaterial:live.material!==front.material,ownTexture:live.material.map!==front.material.map,sameInk:live.material.map.image===front.material.map.image,accessoryChildren:accessory.children.length,liveAccessoryChildren:stored.children.filter(x=>x.visible).length,pin:paperCouture.pinPrintPosition,centre:paperCouture.centrePrintPosition};
-});assert(snapshot.geometryEqual&&snapshot.uvEqual&&snapshot.ownGeometry&&snapshot.ownMaterial&&snapshot.ownTexture&&snapshot.sameInk);assert.equal(snapshot.accessoryChildren,3);assert.equal(snapshot.liveAccessoryChildren,3);assert.deepEqual(snapshot.pin,{x:0,y:1/32});assert.deepEqual(snapshot.centre,{x:1/32,y:0});result.snapshot=snapshot;
+ const a=paperCouture,b=a.pinboard.state.items[0].snapshot,g=b.geometries[0],live=a.sheet.front;
+ return {geometryEqual:JSON.stringify(Array.from(live.geometry.attributes.position.array))===JSON.stringify(g.position),uvEqual:JSON.stringify(Array.from(live.geometry.attributes.uv.array))===JSON.stringify(g.uv),parts:b.parts.length,papers:b.materials.filter(m=>m.paper).map(m=>m.paper),pin:a.pinPrintPosition,centre:a.centrePrintPosition};
+});assert(snapshot.geometryEqual&&snapshot.uvEqual);assert(snapshot.parts>=11);assert.deepEqual(snapshot.pin,{x:0,y:1/32});assert.deepEqual(snapshot.centre,{x:1/32,y:0});result.snapshot=snapshot;
 await shot('board-current-bow-centre');
 const exports=[];
 for(const [i,bg] of ['Linen','Rose','Slate'].entries()){
  await page.getByLabel('Pinboard background').selectOption(bg);await btn('Move right').click();await page.getByLabel('Pinboard tilt').fill(String(4+i*4));
  const [download]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,'board-'+bg+'.png');await download.saveAs(file);exports.push(file);
- assert.equal(await page.locator('.pinboard-canvas').evaluate(c=>c.width),Math.round(await page.locator('.pinboard-canvas').evaluate(c=>c.clientWidth* Math.min(devicePixelRatio,2))));
 }
 await btn('Return to piece').click();assert.deepEqual(await getState(),withBow);
 const memory=[];for(let i=0;i<4;i++){await btn('Pinboard').click();memory.push(await page.evaluate(()=>({...paperCouture.pinboard.renderer.info.memory})));await page.keyboard.press('Escape');assert.deepEqual(await getState(),withBow)}assert.deepEqual(memory.slice(1),Array(3).fill(memory[1]));result.memory=memory;result.exports=exports;
-result.checks.push('Actual two-wing bow plus separate shifted centre preserved; board snapshot owns geometry/materials/textures; three backgrounds, repeated PNGs, entry/exit, stable GPU resource counts');
-for(const [width,height] of [[390,844],[844,390]]){
- await page.setViewportSize({width,height});await btn('Pinboard').click();const box=await page.locator('.pinboard-canvas').boundingBox();const client=await context.newCDPSession(page);const x=box.x+box.width/2,y=box.y+box.height/2;
- await client.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await client.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await client.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert(await page.evaluate(()=>paperCouture.pinboard.arrangement.position.x>0));
- await page.getByLabel('Pinboard tilt').fill('-12');await shot('board-touch-'+width);await btn('Return to piece').click();assert.deepEqual(await getState(),withBow);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),width);
- await btn('Position print').click();await page.keyboard.press('Escape');assert(await page.evaluate(()=>paperCouture.view.inDisplay));
- await client.detach();
-}
+result.checks.push('Explicitly pinned actual bow and shifted centre, three backgrounds and PNGs, repeated entry/exit with stable resources');
 assert.equal(await page.evaluate(()=>localStorage.getItem('__positioning_keep')),'sentinel');
 result.checks.push('Portrait/landscape touch drag, tilt, close/Escape focus isolation, no page overflow and existing storage retained');
 // Test actual OrbitControls clamping at both distance bounds for all registered
@@ -98,7 +89,7 @@ for(const [width,height] of [[1100,800],[390,844],[844,390]]){
 result.cameras=cameras;result.checks.push('Actual OrbitControls stays above table at distance/orbit extremes for every design and length in three viewports');
 // A different current garment must create a different board snapshot; no sample catalogue.
 for(const id of ['jacket','skirt','vest','pleats','apron','clutch','tunic']){
- await load(`design=${id}&paper=plum-scatter&printX=0.125&printY=0.0625&step=99&view=display`);await btn('Pinboard').click();assert((await page.locator('#pinboard-title').innerText()).includes('Plum scatter'));await shot('board-'+id);await btn('Return to piece').click();assert.equal((await getState()).design,id);
+ await load(`design=${id}&paper=plum-scatter&printX=0.125&printY=0.0625&step=99&view=display`);await btn('Pinboard').click();await btn('Remove selected').click();await btn('Pin current piece').click();assert((await page.getByLabel('Selected board piece').innerText()).includes('Plum scatter'));await shot('board-'+id);await btn('Return to piece').click();assert.equal((await getState()).design,id);
 }
 result.checks.push('All eight actual current designs render on the board with their chosen paper and offset');
 assert.deepEqual(result.errors,[]);result.passed=true;

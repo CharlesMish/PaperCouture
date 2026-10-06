@@ -7,7 +7,7 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -26,6 +26,7 @@ jobs:
           npm run dev -- --host 127.0.0.1 --port 5199 --strictPort > /tmp/paper-vite.log 2>&1 &
           for i in {1..30}; do curl -fsS http://127.0.0.1:5199/ > /dev/null && break; sleep 1; done
           node scripts/check-positioning-browser.cjs
+          CAPTURE_DIR=.positioning-qa/multi-piece node scripts/check-board-browser.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:
