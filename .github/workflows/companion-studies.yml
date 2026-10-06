@@ -1,0 +1,71 @@
+name: Companion design studies
+on:
+  pull_request:
+    branches: [codex/outfit-proportions-collection]
+permissions:
+  contents: read
+jobs:
+  browser:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [companion-composition, companion-folds, companion-paper]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+        if: matrix.suite == 'companion-composition'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - uses: actions/checkout@v6
+        if: matrix.suite != 'companion-folds'
+        with:
+          ref: 574b2b10cc2894586f2ee3f8c9496035365e6408
+          path: .companion-baseline
+      - run: npm ci --prefix .companion-baseline
+        if: matrix.suite != 'companion-folds'
+      - run: npm run build --prefix .companion-baseline
+        if: matrix.suite == 'companion-composition'
+      - name: Verify the retained designs and frozen boards
+        env:
+          BASE_URL: http://127.0.0.1:5301
+          DEV_URL: http://127.0.0.1:5301
+          BASELINE_URL: http://127.0.0.1:5391
+          CAPTURE_DIR: .companion-qa
+          SUITE: ${{ matrix.suite }}
+        run: |
+          if [ "$SUITE" = companion-composition ]; then
+            npm run preview -- --host 127.0.0.1 --port 5301 --strictPort > /tmp/companion-preview.log 2>&1 &
+            npm run preview --prefix .companion-baseline -- --host 127.0.0.1 --port 5391 --strictPort > /tmp/companion-baseline.log 2>&1 &
+          else
+            npm run dev -- --host 127.0.0.1 --port 5301 --strictPort > /tmp/companion-vite.log 2>&1 &
+            if [ "$SUITE" = companion-paper ]; then
+              npm run dev --prefix .companion-baseline -- --host 127.0.0.1 --port 5391 --strictPort > /tmp/companion-baseline.log 2>&1 &
+            fi
+          fi
+          for i in {1..30}; do curl -fsS http://127.0.0.1:5301/ > /dev/null && break; sleep 1; done
+          if [ "$SUITE" != companion-folds ]; then
+            for i in {1..30}; do curl -fsS http://127.0.0.1:5391/ > /dev/null && break; sleep 1; done
+          fi
+          case "$SUITE" in
+            companion-composition) node scripts/check-companion-browser.cjs ;;
+            companion-folds)
+              node --import tsx scripts/check-companion-visibility.ts .companion-qa/visibility
+              CAPTURE_DIR=.companion-qa/folds node scripts/check-companion-folds-browser.cjs
+              CAPTURE_DIR=.companion-qa/brooch node scripts/check-framed-brooch-browser.cjs
+              ;;
+            companion-paper) node scripts/check-companion-papers.cjs ;;
+          esac
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: ${{ matrix.suite }}-evidence
+          path: .companion-qa/
+          include-hidden-files: true

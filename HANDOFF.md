@@ -1,3 +1,18 @@
+# Paper Couture — companion design studies
+
+Separate draft based on frozen PR24 `574b2b10cc2894586f2ee3f8c9496035365e6408`.
+The supplied message, archive and all six reference images were reviewed before
+selection. Collared capelet, two independently folded ankle-boot directions and
+Framed brooch are retained as experiments, with explicit 14/8/8/6 cm starting
+squares. Plum seed is one new fixed companion paper. The brooch adapts the
+window-mat proposal to four real reverse-facing borders around intact paper.
+
+The engine, existing folds/papers, five-piece board, camera, snapshot schema,
+accessory machinery and published products are unchanged. New shapes captured
+with known papers can be read by PR24; Plum seed requires this draft's reader.
+An older reader preserves an unsupported saved board and blocks overwriting it.
+See [the evidence and validation record](docs/companion-studies/NOTES.md).
+
 # Paper Couture — garment choices and pleated skirt
 
 Built from played source `305f8ef` (the merged owner-feedback pass). The current source line is

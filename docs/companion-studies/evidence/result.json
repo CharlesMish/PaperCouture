@@ -1,0 +1,1104 @@
+{
+  "base": "http://127.0.0.1:4301/",
+  "baseline": "http://127.0.0.1:4291/",
+  "baselineHead": "574b2b10cc2894586f2ee3f8c9496035365e6408",
+  "checkedAt": "2026-10-06T07:22:06.547Z",
+  "fixtureSha256": "cd749f732ea80fd05fac4e33add833df3da6ae751265739dc2b61ca7c81f8b71",
+  "physicalPhoneTested": false,
+  "renderer": "Chromium software WebGL / SwiftShader",
+  "checks": [
+    "Frozen PR24 five-piece fixture loads byte-exact without initial write, renders identical PNG, and survives remove/Undo/reload without reinterpretation.",
+    "Every new design uses actual Fold/Back/refold/Front/Back controls and shifted/turned old blossom paper; capture preserves vertices, UVs, both-face recipes and size. PR24 reloads and renders those new shapes exactly.",
+    "Completed jacket sash survives an unsupported new-design round trip with exact paper/turn/offset, attachment, vertices and local matrices; experiments expose no accessory controls.",
+    "Five actual captures compose capelet/skirt/two independent boots/accent; desktop/390/320 full-board camera, measurable readable extents, 44px size choice, selection and exact scene PNG. Small-accent touch cancel/commit/Undo and empty-space behavior pass.",
+    "Sixth pin is blocked; all five pieces survive repeated all-edge movement at both tilt limits, layer/removeUndo, stable GPU counts, exact reload and injected quota/retry without losing the durable board.",
+    "Second real five-piece composition layers capelet over Cross-wrap top plus skirt and two boots. Actual bounds verify shoulder overlap, at least40% vertical overlap and over0.3 board units of exposed top; desktop/390/320 readable pixels, before/after PNG, remove/Undo and exact reload pass.",
+    "PR24 rejects the new paper ID atomically; original five-piece bytes survive pin/move/retry/reload attempts and the UI explains that the existing board has not been replaced. No migration is invented."
+  ],
+  "folds": [
+    {
+      "id": "capelet",
+      "count": 6,
+      "backAndRefold": true,
+      "cm": 14,
+      "recipe": {
+        "id": "corner-bloom",
+        "turns": 1,
+        "position": {
+          "x": 0.03125,
+          "y": 0.03125
+        },
+        "step": 0
+      }
+    },
+    {
+      "id": "boot-left",
+      "count": 6,
+      "backAndRefold": true,
+      "cm": 8,
+      "recipe": {
+        "id": "plum-scatter",
+        "turns": 1,
+        "position": {
+          "x": 0.03125,
+          "y": 0.03125
+        },
+        "step": 0
+      }
+    },
+    {
+      "id": "boot-right",
+      "count": 6,
+      "backAndRefold": true,
+      "cm": 8,
+      "recipe": {
+        "id": "corner-bloom",
+        "turns": 1,
+        "position": {
+          "x": 0.03125,
+          "y": 0.03125
+        },
+        "step": 0
+      }
+    },
+    {
+      "id": "framed-brooch",
+      "count": 4,
+      "backAndRefold": true,
+      "cm": 6,
+      "recipe": {
+        "id": "plum-scatter",
+        "turns": 1,
+        "position": {
+          "x": 0.03125,
+          "y": 0.03125
+        },
+        "step": 0
+      }
+    }
+  ],
+  "measurements": [
+    {
+      "name": "five-piece-companions",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "0011e482-47c0-469b-b445-f0abc16443e2",
+          "title": "Collared capelet · Plum seed",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -1.02,
+            0.37999999999999995,
+            0.7699999999999999,
+            1.4699999999999998
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            242.99479166666666,
+            121.4973958333333
+          ]
+        },
+        {
+          "id": "4840c4e4-2dbe-42ef-b449-960340dfed71",
+          "title": "Wrap skirt · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.1399999928474427,
+            0.4999999928474426,
+            -0.8750000202655792,
+            0.39500002026557923
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            284.6510391837607,
+            220.43099661823362
+          ]
+        },
+        {
+          "id": "59d438e1-9aee-4d00-8ae2-b3d7557d2a9e",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.0100000035762786,
+            -0.4299999964237213,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525573,
+            0.48666667342185965
+          ],
+          "pixels": [
+            100.6692720747863,
+            84.46961922803892
+          ]
+        },
+        {
+          "id": "31244ab6-21e5-42ea-b2d7-0e72b06472cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.21000000357627868,
+            0.3700000035762787,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525574,
+            0.48666667342185965
+          ],
+          "pixels": [
+            100.66927207478632,
+            84.46961922803892
+          ]
+        },
+        {
+          "id": "2c25401f-dbba-4ff3-a49b-0c2eb5585086",
+          "title": "Framed brooch · Corner bloom",
+          "paperSize": {
+            "sideCm": 6
+          },
+          "bounds": [
+            0.8149999999999998,
+            1.2649999999999997,
+            0.495,
+            0.945
+          ],
+          "size": [
+            0.44999999999999984,
+            0.44999999999999996
+          ],
+          "pixels": [
+            78.10546874999997,
+            78.10546874999999
+          ]
+        }
+      ],
+      "saveCharacters": 92372,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-companions",
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        336,
+        392
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 350,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "0011e482-47c0-469b-b445-f0abc16443e2",
+          "title": "Collared capelet · Plum seed",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -1.02,
+            0.37999999999999995,
+            0.7699999999999999,
+            1.4699999999999998
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            130.66666666666666,
+            65.33333333333331
+          ]
+        },
+        {
+          "id": "4840c4e4-2dbe-42ef-b449-960340dfed71",
+          "title": "Wrap skirt · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.1399999928474427,
+            0.4999999928474426,
+            -0.8750000202655792,
+            0.39500002026557923
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            153.06666533152261,
+            118.53333711624146
+          ]
+        },
+        {
+          "id": "59d438e1-9aee-4d00-8ae2-b3d7557d2a9e",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.0100000035762786,
+            -0.4299999964237213,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525573,
+            0.48666667342185965
+          ],
+          "pixels": [
+            54.13333400090535,
+            45.422222852706895
+          ]
+        },
+        {
+          "id": "31244ab6-21e5-42ea-b2d7-0e72b06472cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.21000000357627868,
+            0.3700000035762787,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525574,
+            0.48666667342185965
+          ],
+          "pixels": [
+            54.13333400090536,
+            45.422222852706895
+          ]
+        },
+        {
+          "id": "2c25401f-dbba-4ff3-a49b-0c2eb5585086",
+          "title": "Framed brooch · Corner bloom",
+          "paperSize": {
+            "sideCm": 6
+          },
+          "bounds": [
+            0.8149999999999998,
+            1.2649999999999997,
+            0.495,
+            0.945
+          ],
+          "size": [
+            0.44999999999999984,
+            0.44999999999999996
+          ],
+          "pixels": [
+            41.999999999999986,
+            41.99999999999999
+          ]
+        }
+      ],
+      "saveCharacters": 92372,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "five-piece-companions",
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": [
+        266,
+        310.328125
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 155.671875,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "0011e482-47c0-469b-b445-f0abc16443e2",
+          "title": "Collared capelet · Plum seed",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -1.02,
+            0.37999999999999995,
+            0.7699999999999999,
+            1.4699999999999998
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            103.44444444444443,
+            51.72135416666666
+          ]
+        },
+        {
+          "id": "4840c4e4-2dbe-42ef-b449-960340dfed71",
+          "title": "Wrap skirt · Oat linen",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -1.1399999928474427,
+            0.4999999928474426,
+            -0.8750000202655792,
+            0.39500002026557923
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            121.17777672078874,
+            93.83731698284724
+          ]
+        },
+        {
+          "id": "59d438e1-9aee-4d00-8ae2-b3d7557d2a9e",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -1.0100000035762786,
+            -0.4299999964237213,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525573,
+            0.48666667342185965
+          ],
+          "pixels": [
+            42.855556084050065,
+            35.95865625309358
+          ]
+        },
+        {
+          "id": "31244ab6-21e5-42ea-b2d7-0e72b06472cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.21000000357627868,
+            0.3700000035762787,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525574,
+            0.48666667342185965
+          ],
+          "pixels": [
+            42.85555608405007,
+            35.95865625309358
+          ]
+        },
+        {
+          "id": "2c25401f-dbba-4ff3-a49b-0c2eb5585086",
+          "title": "Framed brooch · Corner bloom",
+          "paperSize": {
+            "sideCm": 6
+          },
+          "bounds": [
+            0.8149999999999998,
+            1.2649999999999997,
+            0.495,
+            0.945
+          ],
+          "size": [
+            0.44999999999999984,
+            0.44999999999999996
+          ],
+          "pixels": [
+            33.249999999999986,
+            33.24944196428571
+          ]
+        }
+      ],
+      "saveCharacters": 92372,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "capelet-over-wrap-top",
+      "overlapWidth": 1.0236161470413208,
+      "overlapHeight": 0.635086773633957,
+      "topHeightBelowCape": 0.5750867736339568,
+      "exposedHeightPixels": 99.8164933924563,
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 782,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "808e61da-2254-4a8d-a89c-96b9647a90a2",
+          "title": "Cross-wrap top · Plum seed",
+          "paperSize": {
+            "sideCm": 18
+          },
+          "bounds": [
+            -0.5118080735206604,
+            0.5118080735206604,
+            0.11491322636604304,
+            1.3250867736339569
+          ],
+          "size": [
+            1.0236161470413208,
+            1.2101735472679138
+          ],
+          "pixels": [
+            177.66670885495842,
+            210.04704928491265
+          ]
+        },
+        {
+          "id": "d9875ad4-79da-44f2-864b-0950b13ce350",
+          "title": "Wrap skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -0.8199999928474426,
+            0.8199999928474426,
+            -1.1950000202655793,
+            0.07500002026557917
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            284.6510391837607,
+            220.43099661823362
+          ]
+        },
+        {
+          "id": "d935b880-d27c-41e8-ae8f-8a67713eca35",
+          "title": "Collared capelet · Oat linen",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -0.7,
+            0.7,
+            0.6899999999999998,
+            1.3899999999999997
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            242.99479166666666,
+            121.4973958333333
+          ]
+        },
+        {
+          "id": "de5b8c6d-324c-4ba5-8309-0cda3d2b7d79",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.6900000035762788,
+            -0.10999999642372132,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            100.66927207478633,
+            84.46961922803892
+          ]
+        },
+        {
+          "id": "8693cf38-65b8-4837-877a-bf3656e9f6cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.10999999642372132,
+            0.6900000035762788,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            100.66927207478633,
+            84.46961922803892
+          ]
+        }
+      ],
+      "saveCharacters": 102100,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "capelet-over-wrap-top",
+      "overlapWidth": 1.0236161470413208,
+      "overlapHeight": 0.635086773633957,
+      "topHeightBelowCape": 0.5750867736339568,
+      "exposedHeightPixels": 53.6747655391693,
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        336,
+        392
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 350,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "808e61da-2254-4a8d-a89c-96b9647a90a2",
+          "title": "Cross-wrap top · Plum seed",
+          "paperSize": {
+            "sideCm": 18
+          },
+          "bounds": [
+            -0.5118080735206604,
+            0.5118080735206604,
+            0.11491322636604304,
+            1.3250867736339569
+          ],
+          "size": [
+            1.0236161470413208,
+            1.2101735472679138
+          ],
+          "pixels": [
+            95.53750705718994,
+            112.94953107833862
+          ]
+        },
+        {
+          "id": "d9875ad4-79da-44f2-864b-0950b13ce350",
+          "title": "Wrap skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -0.8199999928474426,
+            0.8199999928474426,
+            -1.1950000202655793,
+            0.07500002026557917
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            153.06666533152261,
+            118.53333711624146
+          ]
+        },
+        {
+          "id": "d935b880-d27c-41e8-ae8f-8a67713eca35",
+          "title": "Collared capelet · Oat linen",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -0.7,
+            0.7,
+            0.6899999999999998,
+            1.3899999999999997
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            130.66666666666666,
+            65.33333333333331
+          ]
+        },
+        {
+          "id": "de5b8c6d-324c-4ba5-8309-0cda3d2b7d79",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.6900000035762788,
+            -0.10999999642372132,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            54.133334000905364,
+            45.422222852706895
+          ]
+        },
+        {
+          "id": "8693cf38-65b8-4837-877a-bf3656e9f6cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.10999999642372132,
+            0.6900000035762788,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            54.133334000905364,
+            45.422222852706895
+          ]
+        }
+      ],
+      "saveCharacters": 102100,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    },
+    {
+      "name": "capelet-over-wrap-top",
+      "overlapWidth": 1.0236161470413208,
+      "overlapHeight": 0.635086773633957,
+      "topHeightBelowCape": 0.5750867736339568,
+      "exposedHeightPixels": 42.49180956526791,
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": [
+        266,
+        310.328125
+      ],
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "contained": true,
+      "overflow": false,
+      "toolHeight": 155.671875,
+      "sizeControl": {
+        "height": 44,
+        "initiallyVisible": true
+      },
+      "pieces": [
+        {
+          "id": "808e61da-2254-4a8d-a89c-96b9647a90a2",
+          "title": "Cross-wrap top · Plum seed",
+          "paperSize": {
+            "sideCm": 18
+          },
+          "bounds": [
+            -0.5118080735206604,
+            0.5118080735206604,
+            0.11491322636604304,
+            1.3250867736339569
+          ],
+          "size": [
+            1.0236161470413208,
+            1.2101735472679138
+          ],
+          "pixels": [
+            75.6338597536087,
+            89.41687805910728
+          ]
+        },
+        {
+          "id": "d9875ad4-79da-44f2-864b-0950b13ce350",
+          "title": "Wrap skirt · Slate grain",
+          "paperSize": {
+            "sideCm": 20
+          },
+          "bounds": [
+            -0.8199999928474426,
+            0.8199999928474426,
+            -1.1950000202655793,
+            0.07500002026557917
+          ],
+          "size": [
+            1.6399999856948853,
+            1.2700000405311584
+          ],
+          "pixels": [
+            121.17777672078874,
+            93.83731698284724
+          ]
+        },
+        {
+          "id": "d935b880-d27c-41e8-ae8f-8a67713eca35",
+          "title": "Collared capelet · Oat linen",
+          "paperSize": {
+            "sideCm": 14
+          },
+          "bounds": [
+            -0.7,
+            0.7,
+            0.6899999999999998,
+            1.3899999999999997
+          ],
+          "size": [
+            1.4,
+            0.6999999999999998
+          ],
+          "pixels": [
+            103.44444444444443,
+            51.72135416666666
+          ]
+        },
+        {
+          "id": "de5b8c6d-324c-4ba5-8309-0cda3d2b7d79",
+          "title": "Ankle boot, toe left · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            -0.6900000035762788,
+            -0.10999999642372132,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            42.85555608405008,
+            35.95865625309358
+          ]
+        },
+        {
+          "id": "8693cf38-65b8-4837-877a-bf3656e9f6cd",
+          "title": "Ankle boot, toe right · Slate grain",
+          "paperSize": {
+            "sideCm": 8
+          },
+          "bounds": [
+            0.10999999642372132,
+            0.6900000035762788,
+            -1.76333333671093,
+            -1.2766666632890704
+          ],
+          "size": [
+            0.5800000071525575,
+            0.48666667342185965
+          ],
+          "pixels": [
+            42.85555608405008,
+            35.95865625309358
+          ]
+        }
+      ],
+      "saveCharacters": 102100,
+      "memory": {
+        "geometries": 7,
+        "textures": 12
+      }
+    }
+  ],
+  "exports": [
+    {
+      "file": "pr24-legacy.png",
+      "bytes": 3793906,
+      "sha256": "0639c3cdc531b9aab3882fc701ba1320e91fc00c9e48ea26017e7b26f55a6fb9",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "candidate-legacy.png",
+      "bytes": 3793906,
+      "sha256": "0639c3cdc531b9aab3882fc701ba1320e91fc00c9e48ea26017e7b26f55a6fb9",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "new-shapes-old-papers.png",
+      "bytes": 2722969,
+      "sha256": "f7013750efe1b391dc696f8afd56b8937a2e4c29224011e0cf2d3a59809913c7",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "pr24-new-shapes-old-papers.png",
+      "bytes": 2722969,
+      "sha256": "f7013750efe1b391dc696f8afd56b8937a2e4c29224011e0cf2d3a59809913c7",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "composite-1280.png",
+      "bytes": 3325232,
+      "sha256": "ad889be4213e7087c2539c42cb5cecc84a58d2ac8f0e80f7b3d6bf444c2c6e05",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "composite-390.png",
+      "bytes": 3325232,
+      "sha256": "ad889be4213e7087c2539c42cb5cecc84a58d2ac8f0e80f7b3d6bf444c2c6e05",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "composite-320.png",
+      "bytes": 3325232,
+      "sha256": "ad889be4213e7087c2539c42cb5cecc84a58d2ac8f0e80f7b3d6bf444c2c6e05",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "five-piece-reloaded.png",
+      "bytes": 3325232,
+      "sha256": "ad889be4213e7087c2539c42cb5cecc84a58d2ac8f0e80f7b3d6bf444c2c6e05",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "layered-composite-1280.png",
+      "bytes": 3408805,
+      "sha256": "7aa73ba907c6abe2ab4c159ec81ebaad517b0288c23f6691cd38bdcf67f74533",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "layered-composite-390.png",
+      "bytes": 3408805,
+      "sha256": "7aa73ba907c6abe2ab4c159ec81ebaad517b0288c23f6691cd38bdcf67f74533",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "layered-composite-320.png",
+      "bytes": 3408805,
+      "sha256": "7aa73ba907c6abe2ab4c159ec81ebaad517b0288c23f6691cd38bdcf67f74533",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "layered-before-capelet.png",
+      "bytes": 3345411,
+      "sha256": "f9d6602ad5ed209667742d32c3b335330cc1535aafc6389d24875b1a872de843",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    },
+    {
+      "file": "layered-reloaded.png",
+      "bytes": 3408805,
+      "sha256": "7aa73ba907c6abe2ab4c159ec81ebaad517b0288c23f6691cd38bdcf67f74533",
+      "dimensions": [
+        1800,
+        2100
+      ],
+      "matchesScene": true
+    }
+  ],
+  "errors": [],
+  "failedResources": [],
+  "sourceRequests": [],
+  "candidateBundle": {
+    "htmlSha256": "d0ff06f0f8530d0855ab7ba02aa99e7ca7b621d2d849315bcf4a79501af88e16",
+    "compiled": true,
+    "assets": [
+      {
+        "path": "/assets/index-Cb6mI6qu.js",
+        "bytes": 663651,
+        "sha256": "fe5b42493ab64c8bbe373c5be36dea4b32446017e38bf28785895fdc0e321c13"
+      },
+      {
+        "path": "/assets/index-BzK8gymu.css",
+        "bytes": 12177,
+        "sha256": "f0c9677c76d196dba19eeddee840c4325215145d283fc4448b39fa3432b33c17"
+      }
+    ]
+  },
+  "baselineBundle": {
+    "htmlSha256": "e57274d3702b06d4549f8fd7c4a30cb5aad98a44596b119841d63898c1a62b2c",
+    "compiled": true,
+    "assets": [
+      {
+        "path": "/assets/index-W0mc1vCW.js",
+        "bytes": 658514,
+        "sha256": "163ad5af69df819b640b40c64b1d69327e1094f75b6ce50010af3e9e12b4aaae"
+      },
+      {
+        "path": "/assets/index-BzK8gymu.css",
+        "bytes": 12177,
+        "sha256": "f0c9677c76d196dba19eeddee840c4325215145d283fc4448b39fa3432b33c17"
+      }
+    ]
+  },
+  "accent": {
+    "id": "framed-brooch",
+    "cm": 6
+  },
+  "memory": [
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    },
+    {
+      "geometries": 7,
+      "textures": 12
+    }
+  ],
+  "passed": true
+}
