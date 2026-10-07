@@ -1,3 +1,14 @@
+# Paper Couture — combined wardrobe preview publication
+
+Charlie authorized a separate draft source PR and cmish.dev branch preview on
+October 7, 2026. This publication branch continues reviewed candidate
+`9808074a26b7ebb14c22810c321fdc9a233c9e3f`; garment/application code is unchanged.
+CI now runs the existing regressions and focused capelet/brooch, shirt, necktie
+and combined-outfit browser checks on the exact PR head. The source PR stacks
+on PR25, which remains unmerged. No production merge or deployment is authorized.
+The local-only restrictions in the historical entries below describe that
+completed review phase and are superseded solely for this preview publication.
+
 # Paper Couture — external packet review (local only)
 
 Candidate on top of preserved capelet/brooch `31ce3ab6ece7de536fdf16f40c5830d9d068dcae`.

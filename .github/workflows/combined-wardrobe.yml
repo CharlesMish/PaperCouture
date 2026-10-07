@@ -1,0 +1,60 @@
+name: Combined wardrobe preview checks
+on:
+  pull_request:
+    branches: [codex/companion-design-studies]
+permissions:
+  contents: read
+jobs:
+  browser:
+    name: wardrobe-${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [capelet-brooch, camp-shirt, necktie, outfits]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - run: mkdir -p .wardrobe-qa && REVIEW_REPORT=.wardrobe-qa/independent-geometry.json node --import tsx scripts/check-external-geometry.ts
+        if: matrix.suite == 'outfits'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - uses: actions/checkout@v6
+        with:
+          ref: 21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f
+          path: .wardrobe-baseline
+      - run: npm ci --prefix .wardrobe-baseline && npm run build --prefix .wardrobe-baseline
+      - name: Check the compiled candidate against frozen PR25
+        env:
+          BASE_URL: http://127.0.0.1:5401
+          BASELINE_URL: http://127.0.0.1:5491
+          CAPTURE_DIR: .wardrobe-qa
+          SKIP_PARKED_STUDIES: '1'
+          SUITE: ${{ matrix.suite }}
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 5401 --strictPort > /tmp/wardrobe-preview.log 2>&1 &
+          npm run preview --prefix .wardrobe-baseline -- --host 127.0.0.1 --port 5491 --strictPort > /tmp/wardrobe-baseline.log 2>&1 &
+          for port in 5401 5491; do
+            for i in {1..30}; do curl -fsS http://127.0.0.1:$port/ > /dev/null && break; sleep 1; done
+            curl -fsS http://127.0.0.1:$port/ > /dev/null
+          done
+          case "$SUITE" in
+            capelet-brooch) node scripts/check-capelet-brooch-browser.cjs ;;
+            camp-shirt) node scripts/check-camp-shirt-browser.cjs ;;
+            necktie) node scripts/check-necktie-browser.cjs ;;
+            outfits) node scripts/check-external-outfits.cjs ;;
+          esac
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: wardrobe-${{ matrix.suite }}-evidence
+          path: .wardrobe-qa/
+          include-hidden-files: true

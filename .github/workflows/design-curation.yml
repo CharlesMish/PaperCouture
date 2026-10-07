@@ -1,7 +1,7 @@
 name: Design curation checks
 on:
   pull_request:
-    branches: [experiment/integrated-studies-20261004, codex/pinboard-composition-space, codex/outfit-proportions-collection]
+    branches: [experiment/integrated-studies-20261004, codex/pinboard-composition-space, codex/outfit-proportions-collection, codex/companion-design-studies]
 permissions:
   contents: read
 jobs:
@@ -10,6 +10,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v6
         with:
           node-version: '24'

@@ -39,7 +39,7 @@ fs.mkdirSync(out,{recursive:true});
    {name:'camp-shirt',id:'camp-shirt',cm:18,h:1.089},
    {name:'camp-necktie',id:'camp-shirt',cm:18,h:1.089,tie:true},
    {name:'wrap-necktie',id:'wrap-top',cm:18,h:1.2101735015772872,tie:true},
-  ];
+  ].filter(c=>!(process.env.SKIP_PARKED_STUDIES==='1'&&c.study));
   for(const c of cases){
    const a=await open(c.study?studies:base);const neck=.055+c.h;
    const pieces=[['skirt','slate-grain',20,-.16,-.57],[c.id,'oat-linen',c.cm,-.16,.055+c.h/2]];
