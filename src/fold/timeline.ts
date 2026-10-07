@@ -21,6 +21,7 @@ import {
 } from './engine';
 import { Affine2, Vec2, applyAffine, centroid, det, lineConvexRange, signedArea, v2 } from './geometry';
 import { CollapsePlan, applyCollapse, bodyPoses, collapseAngles, mul34, planCollapse } from './collapse';
+import { separateLayers } from './layerSeparation';
 
 /** Vertical spacing between stacked layers, in model units (sheet = 2 units). */
 export const LAYER_GAP = 0.0055;
@@ -74,6 +75,8 @@ export interface OpAnim {
   maxPreZ: number;
   /** collapse ops only */
   collapse?: CollapsePlan;
+  /** Rendering-depth correction for a collapse and its later folds only. */
+  layeredCollapse?: boolean;
 }
 
 export interface Timeline {
@@ -91,6 +94,7 @@ export function buildTimeline(ops: Op[]): Timeline {
   let state = unfoldedSquare();
   const states: SheetState[] = [state];
   const anims: OpAnim[] = [];
+  let layeredCollapse = false;
 
   ops.forEach((op, index) => {
     const pre = state;
@@ -169,6 +173,7 @@ export function buildTimeline(ops: Op[]): Timeline {
         cur = res.state;
       });
     } else if (op.kind === 'collapse') {
+      layeredCollapse = true;
       const spec = op.collapse;
       collapse = planCollapse(spec);
       const res = applyCollapse(pre, spec);
@@ -247,7 +252,7 @@ export function buildTimeline(ops: Op[]): Timeline {
     }
     const maxPreZ = Math.max(...pieces.map((p) => p.preZ));
 
-    anims.push({ index, op, pieces, hinges, raw, lines, creaseSegments, arrows, liftRadius, maxPreZ, collapse });
+    anims.push({ index, op, pieces, hinges, raw, lines, creaseSegments, arrows, liftRadius, maxPreZ, collapse, layeredCollapse });
     states.push(post);
     state = post;
   });
@@ -301,7 +306,7 @@ export const frameLift = (anim: OpAnim): number => lastLift.get(anim) ?? 0;
  * Pose every piece of op `anim` at progress t in [0, 1].
  * `stagger` lets grouped folds run one after another instead of together.
  */
-export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
+function rawFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
   const n = anim.pieces.length;
   const M = out && out.length === n * 12 ? out : new Float64Array(n * 12);
   const e = easeInOut(t);
@@ -322,15 +327,23 @@ export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
   }
 
   if (op.kind === 'collapse') {
-    // every body moves rigidly; layer heights blend from before to after, and the
-    // whole model rises just enough that no paper dips into the table
+    // Separate a rotating stack along its own normal, not the world's z axis.
+    // Vertical offsets become coplanar at 90 degrees and then invert its layers.
     const poses = bodyPoses(anim.collapse!, collapseAngles(op.collapse, e));
     let minZ = Infinity;
     for (const p of anim.pieces) {
       const o = p.index * 12;
       flat(p.preT, 0, M, o);
       if (p.body > 0) mul34(poses[p.body], M.subarray(o, o + 12), M.subarray(o, o + 12));
-      M[o + 11] += p.preZ + (p.postZ - p.preZ) * e;
+      if (e === 0 || e === 1) M[o + 11] += p.preZ + (p.postZ - p.preZ) * e;
+      else {
+        const R = poses[p.body];
+        const sign = det(anim.collapse!.final[p.body]) < 0 ? -1 : 1;
+        const z = p.preZ * (1 - e) + sign * p.postZ * e;
+        M[o + 3] += R[2] * z;
+        M[o + 7] += R[6] * z;
+        M[o + 11] += R[10] * z;
+      }
       for (const m of p.poly) minZ = Math.min(minZ, M[o + 8] * m.x + M[o + 9] * m.y + M[o + 11]);
     }
     const lift = Math.max(0, BASE_Z - minZ);
@@ -358,6 +371,35 @@ export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
     }
     M[o + 11] += lift;
   }
+  return M;
+}
+
+const idealAnims = new WeakMap<OpAnim, OpAnim>();
+const separatedFrames = new WeakMap<OpAnim, { t: number; M: Mat34; lift: number }>();
+/** Preserve the authored resting poses; only resolve their artificial depth in motion. */
+export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
+  // Pending peeks and a held scrub are rendered repeatedly at one pose. Keep a
+  // private copy so callers can reuse/mutate their output buffer safely.
+  const cached = separatedFrames.get(anim);
+  if (cached?.t === t) {
+    const M = out?.length === cached.M.length ? out : new Float64Array(cached.M.length);
+    M.set(cached.M); lastLift.set(anim, cached.lift); return M;
+  }
+  const M = rawFrame(anim, t, out);
+  if (!anim.layeredCollapse || anim.op.kind === 'turn' || t <= 0 || t >= 1) return M;
+  let ideal = idealAnims.get(anim);
+  if (!ideal) {
+    ideal = { ...anim, maxPreZ: 0, pieces: anim.pieces.map(p => ({ ...p, preZ: 0, postZ: 0 })) };
+    idealAnims.set(anim, ideal);
+  }
+  separateLayers(anim.pieces, rawFrame(ideal, t), M, t);
+  let low = Infinity;
+  for (const p of anim.pieces) for (const m of p.poly)
+    low = Math.min(low, M[p.index * 12 + 8] * m.x + M[p.index * 12 + 9] * m.y + M[p.index * 12 + 11]);
+  const lift = Math.max(0, BASE_Z - low);
+  for (const p of anim.pieces) M[p.index * 12 + 11] += lift;
+  lastLift.set(anim, frameLift(anim) + lift);
+  separatedFrames.set(anim, { t, M: M.slice(), lift: frameLift(anim) });
   return M;
 }
 

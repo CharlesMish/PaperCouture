@@ -1,0 +1,52 @@
+name: Fit-and-flare corrections
+on:
+  pull_request:
+    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+        env:
+          FIT_FLARE_REPORT: .fit-flare-qa/geometry.json
+      - uses: actions/checkout@v6
+        with:
+          ref: 21109e70e9e3a8ecf5da6a5a0a532aacceb6b4f4
+          path: .fit-flare-baseline
+      - run: npm ci --prefix .fit-flare-baseline && npm run build --prefix .fit-flare-baseline
+      - run: node --import tsx scripts/check-published-geometry.ts
+        env:
+          PRESERVATION_REPORT: .fit-flare-qa/published-geometry.json
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Inspect motion, print placement, board captures and failure recovery
+        env:
+          BASE_URL: http://127.0.0.1:5501
+          BASELINE_URL: http://127.0.0.1:5591
+          CAPTURE_DIR: .fit-flare-qa
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 5501 --strictPort > /tmp/fit-flare-preview.log 2>&1 &
+          npm run preview --prefix .fit-flare-baseline -- --host 127.0.0.1 --port 5591 --strictPort > /tmp/fit-flare-baseline.log 2>&1 &
+          for port in 5501 5591; do
+            for i in {1..30}; do curl -fsS http://127.0.0.1:$port/ > /dev/null && break; sleep 1; done
+            curl -fsS http://127.0.0.1:$port/ > /dev/null
+          done
+          node scripts/check-fit-flare-browser.cjs
+          node scripts/check-fit-flare-storage.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: fit-flare-correction-evidence
+          path: .fit-flare-qa/
+          include-hidden-files: true

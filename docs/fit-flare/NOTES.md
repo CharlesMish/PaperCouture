@@ -1,5 +1,9 @@
 # Fit-and-flare dress
 
+The notes below describe Claude's original PR28 submission. The current local
+motion/hinge/CI correction and independent-review instructions are in
+[CORRECTIONS.md](CORRECTIONS.md); its resting design and paper fit are unchanged.
+
 Choose **Fit-and-flare dress** under Design (Experiments), or open `?design=fit-flare`. It is an experiment like the other one-square designs: no attachment positions yet, and the suggested starting square is the default 20 cm. Nothing about the existing designs changed.
 
 `steps.png` is every workshop step on the diagnostic grid, then the three display presets. `motion.png` is the waist step in motion. `papers.png` is the curated papers and Sunray pleats, front and back. Regenerate with `DESIGN=fit-flare python3 scripts/capture_dress.py` against a running preview. The crease pattern for folding it from a real square is `../crease-patterns/fit-flare.svg`; `../paper-studies/sheet-map-fit-flare.png` shows which parts of the square reach the front and back.

@@ -1,3 +1,12 @@
+# Paper Couture — local PR28 corrections for independent review
+
+Charlie authorized corrections to PR28's visible layer intersections, absolute
+hinge guard and missing CI coverage. This branch preserves Claude's geometry,
+Sunray artwork and all resting captures. Read
+[docs/fit-flare/CORRECTIONS.md](docs/fit-flare/CORRECTIONS.md) for implementation,
+tests, exact lineage and reviewer focus. No push, PR update, merge or deployment
+is authorized yet; publication scope must be resolved separately.
+
 # Paper Couture — fit-and-flare dress and Sunray pleats (Claude, 2026-10-07)
 
 On top of the combined wardrobe preview `21109e7`, at Charlie's request in a Claude chat.

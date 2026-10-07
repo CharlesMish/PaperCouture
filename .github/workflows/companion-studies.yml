@@ -1,7 +1,7 @@
 name: Companion design studies
 on:
   pull_request:
-    branches: [codex/outfit-proportions-collection, codex/companion-design-studies]
+    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare, codex/outfit-proportions-collection, codex/companion-design-studies]
 permissions:
   contents: read
 jobs:
