@@ -12,8 +12,9 @@ import { buildOpenFrontCapelet, buildAnkleBoot } from './companionFolds';
 import { buildFramedBrooch } from './framedBrooch';
 import { buildNecktie } from './necktie';
 import { buildCampShirt } from './campShirt';
+import { buildFitFlare } from './fitFlare';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -27,6 +28,7 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
   { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
   { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
+  { id: 'fit-flare', name: 'Fit-and-flare dress', experiment: 'One square · nipped waist from a pleat and hidden gussets folded in one rigid move; sleeveless, no armholes or neck opening' },
   { id: 'camp-shirt', name: 'Camp-collar shirt', experiment: 'One square · folded collar and cuffs on a flat shirt, no neck opening or locking tuck' },
   { id: 'necktie', name: 'Folded necktie', experiment: 'Small intact square · flat tie with a folded knot pleat; no neck loop and nothing is tied' },
   { id: 'capelet', name: 'Open-front capelet', experiment: 'One square · separate front panels over continuous lining, no through-opening or fastening' },
@@ -43,6 +45,7 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
     case 'camp-shirt': return buildCampShirt();
+    case 'fit-flare': return buildFitFlare();
     case 'necktie': return buildNecktie();
     case 'capelet': return buildOpenFrontCapelet();
     case 'boot-left': return buildAnkleBoot('left');

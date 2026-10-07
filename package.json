@@ -9,6 +9,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "check": "node --import tsx scripts/check.ts",
+    "sheet-map": "node --import tsx scripts/sheet_map.ts",
+    "crease-pattern": "node --import tsx scripts/crease_pattern.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
     "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt",
     "check:collection": "node --import tsx scripts/check-collection.ts",

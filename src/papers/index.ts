@@ -16,6 +16,7 @@ import { reverseGarden } from './reverseGarden';
 import { seedDashes } from './seedDashes';
 import { starlitLining } from './starlitLining';
 import { stripeDisc } from './stripeDisc';
+import { sunrayPleats } from './sunrayPleats';
 import { tidalBands } from './tidalBands';
 import { wideFrame } from './wideFrame';
 import { wovenChecks } from './wovenChecks';
@@ -59,6 +60,7 @@ export const PAPERS: PaperDesign[] = [
   starlitLining,
   openStems,
   fallingChevrons,
+  sunrayPleats,
   cutPaperMosaic,
   wideFrame,
   compassLining,

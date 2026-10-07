@@ -9,7 +9,7 @@ import { buildGarment, garmentIdFrom, attachmentAnchors, attachmentSize, garment
 import { buildPin } from './fold/pin';
 import { ACCESSORIES, accessoryAnchors, findAccessory } from './fold/accessories';
 import { StudioControls, GarmentId, PinPosition, AccessoryId } from './ui/studioControls';
-import { buildTimeline, evaluateFrame, Mat34, OpAnim, LAYER_GAP, posePoint } from './fold/timeline';
+import { buildTimeline, evaluateFrame, frameLift, Mat34, OpAnim, LAYER_GAP, posePoint } from './fold/timeline';
 import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
 import { DisplayCamera } from './app/displayCamera';
@@ -227,7 +227,8 @@ function applyPaper() {
 
 // ---- state
 let controller = new FoldController(ops.length, (i) => {
-  const base = ops[i].op.kind === 'turn' ? 1.5 : 1.15;
+  const kind = ops[i].op.kind;
+  const base = kind === 'turn' ? 1.5 : kind === 'collapse' ? 2.6 : 1.15;
   return reducedMotion ? base * 0.6 : base;
 });
 const view = new ViewSwitch(reducedMotion ? 0.6 : 1.1);
@@ -366,7 +367,7 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   cancelDrag();
   unsubscribeController();
   construction = next; timeline = nextTimeline; ops = timeline.ops; lastOp = ops[ops.length - 1];
-  controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : 1.15) * (reducedMotion ? 0.6 : 1));
+  controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : ops[i].op.kind === 'collapse' ? 2.6 : 1.15) * (reducedMotion ? 0.6 : 1));
   unsubscribeController = controller.onChange(refreshWorkshopPanel);
   frame = undefined;
   finished = measureFinished(); frameSubject();
@@ -519,6 +520,7 @@ const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piec
 // ---- pose evaluation
 const PEEK_FOLD = 8; // degrees the pending flap lifts while waiting
 const PEEK_TURN = 4;
+const PEEK_COLLAPSE = 0; // the tint shows what moves; a peek would lift the paper over the guides
 const tForAngle = (deg: number) => Math.acos(1 - 2 * (deg / 180)) / Math.PI;
 let frame: Mat34 | undefined;
 const movingPieces = (a: OpAnim) => new Set(a.pieces.filter((p) => p.spec >= 0).map((p) => p.index));
@@ -556,15 +558,17 @@ function draw() {
   const anim = ops[pose.op];
   sheet.setAnim(anim);
   const workshop = view.inWorkshop;
-  const t = pose.pending && workshop ? tForAngle(anim.op.kind === 'turn' ? PEEK_TURN : PEEK_FOLD) : pose.t;
+  const t = pose.pending && workshop ? tForAngle(anim.op.kind === 'turn' ? PEEK_TURN : anim.op.kind === 'collapse' ? PEEK_COLLAPSE : PEEK_FOLD) : pose.t;
   frame = evaluateFrame(anim, t, frame);
   sheet.pose(frame);
   const lapels = new Set(timeline.states[pose.op + 1].facets.filter(f => f.tags.some(t => t.startsWith('vest-lapel-'))).map(f => f.id));
   lapelEdges.update(anim, frame, lapels, garmentId === 'vest' && !accessoryMode && lapels.size > 0);
   const preview = workshop && (pose.pending || controller.isScrubbing);
-  sheet.setTint(preview && anim.op.kind === 'fold' ? movingPieces(anim) : new Set(), 0.55);
-  if (preview) guides.show(anim, anim.maxPreZ + LAYER_GAP);
-  else guides.hide();
+  sheet.setTint(preview && anim.op.kind !== 'turn' ? movingPieces(anim) : new Set(), 0.55);
+  if (preview) {
+    guides.show(anim, anim.maxPreZ + LAYER_GAP);
+    guides.group.position.z = frameLift(anim); // stay with paper that rises off the table
+  } else guides.hide();
   updateFoldHandles(anim, frame, preview);
   stage.render();
 }

@@ -20,6 +20,7 @@ import {
   unfoldedSquare,
 } from './engine';
 import { Affine2, Vec2, applyAffine, centroid, det, lineConvexRange, signedArea, v2 } from './geometry';
+import { CollapsePlan, applyCollapse, bodyPoses, collapseAngles, mul34, planCollapse } from './collapse';
 
 /** Vertical spacing between stacked layers, in model units (sheet = 2 units). */
 export const LAYER_GAP = 0.0055;
@@ -34,8 +35,11 @@ export interface Piece {
   preZ: number;
   postT: Affine2;
   postZ: number;
-  /** fold spec index that moves this piece; -1 = static. Turn ops: 0 for every piece. */
+  /** fold spec index that moves this piece; -1 = static. Turn ops: 0 for every piece.
+   *  Collapse ops: the arrow group of the piece's body. */
   spec: number;
+  /** Collapse ops: index of the rigid body carrying this piece; -1 otherwise. */
+  body: number;
 }
 
 export interface Hinge {
@@ -68,6 +72,8 @@ export interface OpAnim {
   /** radius used to lift the model during turn-overs / mountain folds */
   liftRadius: number;
   maxPreZ: number;
+  /** collapse ops only */
+  collapse?: CollapsePlan;
 }
 
 export interface Timeline {
@@ -95,6 +101,8 @@ export function buildTimeline(ops: Op[]): Timeline {
     let cur = pre;
     let ancestor = new Map(pre.facets.map((f) => [f.id, f.id]));
     let movedBy = new Map<number, number>();
+    let bodyOf = new Map<number, number>();
+    let collapse: CollapsePlan | undefined;
     const lines: Line[] = [];
     const creaseSegments: [Vec2, Vec2][] = [];
     const arrows: { from: Vec2; to: Vec2 }[] = [];
@@ -160,6 +168,32 @@ export function buildTimeline(ops: Op[]): Timeline {
         movedBy = nextMoved;
         cur = res.state;
       });
+    } else if (op.kind === 'collapse') {
+      const spec = op.collapse;
+      collapse = planCollapse(spec);
+      const res = applyCollapse(pre, spec);
+      cur = res.state;
+      bodyOf = res.bodyOf;
+      ancestor = new Map(cur.facets.map((f) => [f.id, res.parent.get(f.id)!]));
+      for (const f of cur.facets) {
+        const b = res.bodyOf.get(f.id)!;
+        if (res.moved.has(f.id)) movedBy.set(f.id, spec.groups[collapse.bodies[b]] ?? 0);
+      }
+      for (const c of spec.creases) if (c.rate > 0) creaseSegments.push([c.a, c.b]);
+      // one arrow per group: where its paper sits before and after
+      const groups = Math.max(-1, ...movedBy.values()) + 1;
+      for (let g = 0; g < groups; g++) {
+        let ax = 0, ay = 0, bx = 0, by = 0, aw = 0;
+        for (const f of cur.facets) {
+          if (movedBy.get(f.id) !== g) continue;
+          const src = preById.get(res.parent.get(f.id)!)!;
+          const w = Math.abs(signedArea(f.poly));
+          const c0 = centroid(f.poly.map((m) => applyAffine(src.T, m)));
+          const c1 = centroid(modelPoly(f));
+          ax += c0.x * w; ay += c0.y * w; bx += c1.x * w; by += c1.y * w; aw += w;
+        }
+        arrows.push(aw > 0 ? { from: v2(ax / aw, ay / aw), to: v2(bx / aw, by / aw) } : { from: v2(0, 0), to: v2(0, 0) });
+      }
     } else {
       cur = applyTurn(pre);
       for (const f of cur.facets) movedBy.set(f.id, 0);
@@ -178,6 +212,7 @@ export function buildTimeline(ops: Op[]): Timeline {
         postT: f.T,
         postZ: zOf(postLevels.get(f.id)!),
         spec: movedBy.get(f.id) ?? -1,
+        body: bodyOf.get(f.id) ?? -1,
       };
     });
 
@@ -189,6 +224,7 @@ export function buildTimeline(ops: Op[]): Timeline {
         const B = pieces[h.b.id];
         const never =
           A.spec === B.spec &&
+          A.body === B.body &&
           affEq(A.preT, B.preT) &&
           Math.abs(A.preZ - B.preZ) < 1e-9 &&
           Math.abs(A.postZ - B.postZ) < 1e-9;
@@ -204,14 +240,14 @@ export function buildTimeline(ops: Op[]): Timeline {
       for (const m of p.poly) {
         const q = applyAffine(p.preT, m);
         if (op.kind === 'turn') liftRadius = Math.max(liftRadius, Math.abs(q.x));
-        else if (op.folds[p.spec].sense === 'mountain') {
+        else if (op.kind === 'fold' && op.folds[p.spec].sense === 'mountain') {
           liftRadius = Math.max(liftRadius, sideOf(lines[p.spec], q));
         }
       }
     }
     const maxPreZ = Math.max(...pieces.map((p) => p.preZ));
 
-    anims.push({ index, op, pieces, hinges, raw, lines, creaseSegments, arrows, liftRadius, maxPreZ });
+    anims.push({ index, op, pieces, hinges, raw, lines, creaseSegments, arrows, liftRadius, maxPreZ, collapse });
     states.push(post);
     state = post;
   });
@@ -256,6 +292,11 @@ function rotateAbout(out: Mat34, o: number, w: [number, number, number], c: [num
   }
 }
 
+const lastLift = new WeakMap<OpAnim, number>();
+
+/** How far the last evaluateFrame of this op raised the whole model off the table. */
+export const frameLift = (anim: OpAnim): number => lastLift.get(anim) ?? 0;
+
 /**
  * Pose every piece of op `anim` at progress t in [0, 1].
  * `stagger` lets grouped folds run one after another instead of together.
@@ -280,15 +321,34 @@ export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
     return M;
   }
 
+  if (op.kind === 'collapse') {
+    // every body moves rigidly; layer heights blend from before to after, and the
+    // whole model rises just enough that no paper dips into the table
+    const poses = bodyPoses(anim.collapse!, collapseAngles(op.collapse, e));
+    let minZ = Infinity;
+    for (const p of anim.pieces) {
+      const o = p.index * 12;
+      flat(p.preT, 0, M, o);
+      if (p.body > 0) mul34(poses[p.body], M.subarray(o, o + 12), M.subarray(o, o + 12));
+      M[o + 11] += p.preZ + (p.postZ - p.preZ) * e;
+      for (const m of p.poly) minZ = Math.min(minZ, M[o + 8] * m.x + M[o + 9] * m.y + M[o + 11]);
+    }
+    const lift = Math.max(0, BASE_Z - minZ);
+    if (lift > 0) for (const p of anim.pieces) M[p.index * 12 + 11] += lift;
+    lastLift.set(anim, lift);
+    return M;
+  }
+
   let lift = 0;
   if (anim.liftRadius > 0) lift = (anim.liftRadius + 0.04) * Math.sin(th);
+  lastLift.set(anim, lift);
   for (const p of anim.pieces) {
     const o = p.index * 12;
     if (p.spec < 0) {
       flat(p.preT, p.preZ + (p.postZ - p.preZ) * e, M, o);
     } else {
       const line = anim.lines[p.spec];
-      const sense = op.folds[p.spec].sense;
+      const sense = (op as Extract<Op, { kind: 'fold' }>).folds[p.spec].sense;
       const n = line.nMove;
       const sign = sense === 'valley' ? 1 : -1;
       const w: [number, number, number] = [sign * n.y, -sign * n.x, 0];

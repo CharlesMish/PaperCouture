@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 730" font-family="system-ui, sans-serif">
+  <rect width="100%" height="100%" fill="#faf7f0"/>
+  <rect x="40" y="40" width="600" height="600" fill="#fff" stroke="#2e2a25" stroke-width="2"/>
+  <line x1="510.60" y1="118.31" x2="580.29" y2="40.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="520.00" y1="40.00" x2="510.60" y2="118.31" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="640.00" y1="455.18" x2="475.00" y2="415.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="475.00" y1="415.00" x2="448.00" y2="640.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="510.60" y1="118.31" x2="475.00" y2="415.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="99.71" y1="40.00" x2="169.40" y2="118.31" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="169.40" y1="118.31" x2="160.00" y2="40.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="205.00" y1="415.00" x2="40.00" y2="455.18" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="232.00" y1="640.00" x2="205.00" y2="415.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="205.00" y1="415.00" x2="169.40" y2="118.31" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="169.40" y1="118.31" x2="211.00" y2="40.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="469.00" y1="40.00" x2="510.60" y2="118.31" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="475.00" y1="415.00" x2="205.00" y2="415.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <text x="40" y="670" font-size="16" fill="#2e2a25">Cross-wrap top: printed side up, top of the dress at the top.</text>
+  <text x="40" y="690" font-size="14" fill="#2e2a25"><tspan fill="#2f5f9e">- - - valley</tspan>   <tspan fill="#b23a2b">-·-·- mountain</tspan>   (as seen from this side)</text>
+</svg>

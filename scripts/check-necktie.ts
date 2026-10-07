@@ -37,7 +37,7 @@ assert.deepEqual(JSON.stringify(buildGarment('necktie').ops), JSON.stringify(c.o
 
 // ---- operations: valley folds and explicit turns; one selective, accessible tuck
 assert.deepEqual(c.ops.map(op => op.id), ['tie-reverse', 'tie-kite-left', 'tie-kite-right', 'tie-narrow-left', 'tie-narrow-right', 'tie-front', 'tie-knot', 'tie-knot-tuck']);
-assert(c.ops.every(op => op.kind === 'turn' || op.folds.every(f => f.sense === 'valley')));
+assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))));
 const selective = c.ops.flatMap(op => op.kind === 'fold' ? op.folds.filter(f => f.only) : []);
 assert.deepEqual(selective.map(f => [f.name, f.only]), [['tie-knot-tuck', 'tie-knot']]);
 assert(c.ops.every(op => op.title && op.hint && op.hint.length > 40), 'every step has a named title and a useful instruction');
@@ -168,7 +168,7 @@ const alignment = [0, 1, 2, 3].map(q => {
 
 const report = {
   construction: c.name, sourceSquare: '[-1, 1]^2, one intact square', steps: c.ops.length,
-  creases: c.ops.map(op => op.kind === 'turn' ? { id: op.id, kind: 'turn over (x -> -x)' } : { id: op.id, folds: op.folds.map(f => ({ a: [+f.a.x.toFixed(5), +f.a.y.toFixed(5)], b: [+f.b.x.toFixed(5), +f.b.y.toFixed(5)], moving: [+f.moving.x.toFixed(5), +f.moving.y.toFixed(5)], sense: f.sense, ...(f.only ? { only: f.only } : {}) })) }),
+  creases: c.ops.map(op => op.kind !== 'fold' ? { id: op.id, kind: op.kind === 'turn' ? 'turn over (x -> -x)' : op.kind } : { id: op.id, folds: op.folds.map(f => ({ a: [+f.a.x.toFixed(5), +f.a.y.toFixed(5)], b: [+f.b.x.toFixed(5), +f.b.y.toFixed(5)], moving: [+f.moving.x.toFixed(5), +f.moving.y.toFixed(5)], sense: f.sense, ...(f.only ? { only: f.only } : {}) })) }),
   finalFacets: final.facets.length, retainedArea: 4, connected: true,
   uprightModel: { width: +width.toFixed(4), height: +height.toFixed(4), knotCrease: NECKTIE_KNOT.crease, knotDepth: NECKTIE_KNOT.depth },
   suggestedSquareCm: sideCm, board: { width: +(width * scale).toFixed(4), height: +(height * scale).toFixed(4) },
