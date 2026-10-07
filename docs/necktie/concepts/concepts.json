@@ -1,0 +1,19 @@
+{
+  "necktie": {
+    "name": "Folded necktie",
+    "errors": [],
+    "worstHingeGap": 0.0385,
+    "limit": 0.044,
+    "minimumZ": 0.0015,
+    "piercings": 0
+  },
+  "culottes": {
+    "name": "Culottes study",
+    "errors": [],
+    "worstHingeGap": 0.0385,
+    "limit": 0.044,
+    "minimumZ": 0.0015,
+    "piercings": 0
+  },
+  "note": "Culottes pass at this proportion only; a cuff fold reached 0.0605 > 0.044 and was not adopted."
+}

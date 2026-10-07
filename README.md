@@ -113,3 +113,11 @@ slots. Suggested starting squares are 18 cm for the capelet, 8 cm per boot and
 Existing positioned blossom papers work on all four new designs. See the
 [original review](docs/companion-studies/NOTES.md) and the
 [local capelet/brooch refinement](docs/capelet-brooch/NOTES.md).
+
+## Local external-design review
+
+Camp-collar shirt and Folded necktie are experimental additions to the refined
+capelet/brooch candidate. The shirt has folded collar and cuffs; the small tie
+has a real knot pleat and uses an intact square. See the
+[review and evidence](docs/external-review/NOTES.md) for provenance, parked
+outerwear studies, paper positioning and test limitations.

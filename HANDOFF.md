@@ -1,3 +1,13 @@
+# Paper Couture — external packet review (local only)
+
+Candidate on top of preserved capelet/brooch `31ce3ab6ece7de536fdf16f40c5830d9d068dcae`.
+Adds the unchanged Camp-collar shirt from `989b556e8bb1d53c2cfd2ac93ac224a1fb1e03ba`
+and the submitted Folded necktie from patch `c7518964ae7d3b89370450a5724c068b6b846b04`.
+Both remain Experimental; suggested starting squares are 18 cm and 7 cm.
+The notch crop and reconstructed bolero are review studies only and are not in Design.
+See [the verdict, provenance, comparisons and checks](docs/external-review/NOTES.md).
+No push, merge, PR publication or deployment is authorized for this review.
+
 # Paper Couture — local capelet/brooch follow-up
 
 Local-only branch from reviewed PR25 `21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f`.

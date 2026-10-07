@@ -1,0 +1,2 @@
+{"steps":5,"facets":8,"width":2,"height":1.58,"retainedArea":4,"maxHingeGap":0.0165,"largestHingeAt":{"op":"notch-shoulder-left","fraction":1},"hingeLimit":0.044,"minHeight":0.0015,"reverseFraction":0.6030640668523677,"notchPrintSamples":136,"strictTrianglePiercings":0,"samplesPerOperation":81}
+These checks do not certify physical foldability or continuous collision-free motion.

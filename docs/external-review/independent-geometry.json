@@ -1,0 +1,317 @@
+[
+  {
+    "id": "necktie",
+    "provenance": "actual source",
+    "steps": 8,
+    "facets": 21,
+    "area": 4,
+    "model": [
+      0.9385325410792819,
+      2.114213562373095
+    ],
+    "cm": 7,
+    "board": [
+      0.32848638937774866,
+      0.7399747468305833
+    ],
+    "samplesPerOp": 161,
+    "maxHingeGap": 0.0385,
+    "hingeLimit": 0.044,
+    "minZ": 0.0015,
+    "stretch": 1.7763568394002505e-15,
+    "continuity": 1.2008898127460164e-15,
+    "piercings": 0,
+    "visible48": {
+      "frontPrint": 711,
+      "frontReverse": 0,
+      "backPrint": 524,
+      "backReverse": 179
+    },
+    "bloom": [
+      {
+        "turn": 0,
+        "originalCentreFront": "print",
+        "originalMaterial": {
+          "x": -0.4,
+          "y": -0.32000000000000006
+        }
+      },
+      {
+        "turn": 1,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.32000000000000006,
+          "y": 0.3999999999999999
+        }
+      },
+      {
+        "turn": 2,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.3999999999999999,
+          "y": 0.32000000000000006
+        }
+      },
+      {
+        "turn": 3,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.32000000000000006,
+          "y": -0.4
+        }
+      }
+    ]
+  },
+  {
+    "id": "notch-crop",
+    "provenance": "actual source",
+    "steps": 5,
+    "facets": 8,
+    "area": 4,
+    "model": [
+      2,
+      1.58
+    ],
+    "cm": 18,
+    "board": [
+      1.8,
+      1.4220000000000002
+    ],
+    "samplesPerOp": 161,
+    "maxHingeGap": 0.0165,
+    "hingeLimit": 0.044,
+    "minZ": 0.0015,
+    "stretch": 4.440892098500626e-16,
+    "continuity": 2.4840489097206637e-16,
+    "piercings": 0,
+    "visible48": {
+      "frontPrint": 570,
+      "frontReverse": 866,
+      "backPrint": 0,
+      "backReverse": 1414
+    },
+    "bloom": [
+      {
+        "turn": 0,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.4,
+          "y": -0.32000000000000006
+        }
+      },
+      {
+        "turn": 1,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.32000000000000006,
+          "y": 0.3999999999999999
+        }
+      },
+      {
+        "turn": 2,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.3999999999999999,
+          "y": 0.32000000000000006
+        }
+      },
+      {
+        "turn": 3,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.32000000000000006,
+          "y": -0.4
+        }
+      }
+    ]
+  },
+  {
+    "id": "bolero-study",
+    "provenance": "reconstructed from supplied notes, not supplied source",
+    "steps": 6,
+    "facets": 7,
+    "area": 4,
+    "model": [
+      1.5066666666666668,
+      1.1800000000000002
+    ],
+    "cm": 16,
+    "board": [
+      1.2053333333333334,
+      0.9440000000000002
+    ],
+    "samplesPerOp": 161,
+    "maxHingeGap": 0.033000000000000085,
+    "hingeLimit": 0.044,
+    "minZ": 0.0015,
+    "stretch": 1.3322676295501878e-15,
+    "continuity": 4.538614817478647e-16,
+    "piercings": 0,
+    "visible48": {
+      "frontPrint": 702,
+      "frontReverse": 36,
+      "backPrint": 526,
+      "backReverse": 224
+    },
+    "bloom": [
+      {
+        "turn": 0,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.4,
+          "y": -0.32000000000000006
+        }
+      },
+      {
+        "turn": 1,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.32000000000000006,
+          "y": 0.3999999999999999
+        }
+      },
+      {
+        "turn": 2,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.3999999999999999,
+          "y": 0.32000000000000006
+        }
+      },
+      {
+        "turn": 3,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.32000000000000006,
+          "y": -0.4
+        }
+      }
+    ]
+  },
+  {
+    "id": "capelet",
+    "provenance": "actual source",
+    "steps": 8,
+    "facets": 14,
+    "area": 4,
+    "model": [
+      1.4030656934306571,
+      1
+    ],
+    "cm": 18,
+    "board": [
+      1.2627591240875913,
+      0.9
+    ],
+    "samplesPerOp": 161,
+    "maxHingeGap": 0.03850000000000027,
+    "hingeLimit": 0.044,
+    "minZ": 0.0015,
+    "stretch": 1.3322676295501878e-15,
+    "continuity": 4.585456945549276e-16,
+    "piercings": 0,
+    "visible48": {
+      "frontPrint": 448,
+      "frontReverse": 228,
+      "backPrint": 310,
+      "backReverse": 354
+    },
+    "bloom": [
+      {
+        "turn": 0,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.4,
+          "y": -0.32000000000000006
+        }
+      },
+      {
+        "turn": 1,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.32000000000000006,
+          "y": 0.3999999999999999
+        }
+      },
+      {
+        "turn": 2,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.3999999999999999,
+          "y": 0.32000000000000006
+        }
+      },
+      {
+        "turn": 3,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.32000000000000006,
+          "y": -0.4
+        }
+      }
+    ]
+  },
+  {
+    "id": "camp-shirt",
+    "provenance": "actual source",
+    "steps": 14,
+    "facets": 24,
+    "area": 4,
+    "model": [
+      1.4437735849056605,
+      1.2100000000000002
+    ],
+    "cm": 18,
+    "board": [
+      1.2993962264150944,
+      1.0890000000000002
+    ],
+    "samplesPerOp": 161,
+    "maxHingeGap": 0.0385000000000002,
+    "hingeLimit": 0.044,
+    "minZ": 0.0014999999999999996,
+    "stretch": 9.992007221626409e-16,
+    "continuity": 5.661048867003677e-16,
+    "piercings": 0,
+    "visible48": {
+      "frontPrint": 556,
+      "frontReverse": 140,
+      "backPrint": 606,
+      "backReverse": 88
+    },
+    "bloom": [
+      {
+        "turn": 0,
+        "originalCentreFront": "print",
+        "originalMaterial": {
+          "x": -0.4,
+          "y": -0.32000000000000006
+        }
+      },
+      {
+        "turn": 1,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": -0.32000000000000006,
+          "y": 0.3999999999999999
+        }
+      },
+      {
+        "turn": 2,
+        "originalCentreFront": null,
+        "originalMaterial": {
+          "x": 0.3999999999999999,
+          "y": 0.32000000000000006
+        }
+      },
+      {
+        "turn": 3,
+        "originalCentreFront": "print",
+        "originalMaterial": {
+          "x": 0.32000000000000006,
+          "y": -0.4
+        }
+      }
+    ]
+  }
+]
