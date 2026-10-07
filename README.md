@@ -13,7 +13,7 @@ procedurally. The source is standard Three.js + TypeScript + Vite.
 
 For the first agent session, paste **CURSOR_START.md**. Read **HANDOFF.md** before editing.
 Claude stopped before its final handoff, but the exported application already has a complete
-six-step sequence, ten visible papers, fold/back/reset controls, and a display view.
+six-step sequence, eleven visible papers, fold/back/reset controls, and a display view.
 
 ## Checks and production preview
 
@@ -43,7 +43,8 @@ from display. A constrained drag-to-fold interaction also exists for owner evalu
 - `src/fold/timeline.ts`: animated rigid facet transforms and layer spacing.
 - `src/app/controller.ts`: forward, reverse, reset, and scrub state.
 - `src/render/`: paper meshes, materials, guides, scene and stand.
-- `src/papers/`: ten visible paper designs and a diagnostic grid.
+- `src/papers/`: eleven visible paper designs and a diagnostic grid. `dressMarks.ts`
+  records where the dress's creases fall, for papers drawn to the fold.
 - `src/app/displayCamera.ts`, `viewSwitch.ts`: display inspection and transitions.
 - `src/ui/` and `src/main.ts`: interface and application wiring.
 - `scripts/check.ts`: geometry and controller checks.
@@ -51,7 +52,8 @@ from display. A constrained drag-to-fold interaction also exists for owner evalu
 
 ## Optional diagnostic scripts
 
-`npm run check -- --dump` produces `docs/states.json`. `scripts/plot_states.py` uses
+`npm run check -- --dump` produces `docs/states.json`. `npm run sheet-map` writes
+`docs/paper-studies/sheet-map.png`, showing which parts of the square reach the dress. `scripts/plot_states.py` uses
 Python with matplotlib and numpy. `scripts/browser_check.py` and `scripts/screenshots.py`
 use Python Playwright (install its Chromium browser) and expect a running preview.
 They now use project-relative output paths. `BASE_URL` overrides the default preview URL;

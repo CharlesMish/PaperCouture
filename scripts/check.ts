@@ -13,6 +13,7 @@ import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
 import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
 import { FoldController } from '../src/app/controller';
+import { COLLAR_Y, SIDE_APEX_Y, SIDE_HALF_ANGLE } from '../src/papers/dressMarks';
 
 const errors: string[] = [];
 const construction = buildDress();
@@ -79,6 +80,25 @@ for (const op of tl.ops) {
 const gapLimit = 8 * LAYER_GAP;
 if (worstGap > gapLimit) errors.push(`mid-fold hinge gap ${worstGap.toFixed(4)} exceeds ${gapLimit}`);
 if (lowestZ < -1e-9) errors.push(`paper dips below the table (z = ${lowestZ.toFixed(4)})`);
+
+// 2b. Papers drawn to the fold (src/papers/dressMarks.ts) must match the dress.
+// Before the first turn-over the sheet is unmoved, so material = model here.
+{
+  const collar = construction.ops.find((o) => o.id === 'collar');
+  const sides = construction.ops.find((o) => o.id === 'sides');
+  if (collar?.kind !== 'fold' || sides?.kind !== 'fold') errors.push('dress marks: collar or sides step missing');
+  else {
+    if (Math.abs(collar.folds[0].a.y - COLLAR_Y) > 1e-9) errors.push('dress marks: COLLAR_Y does not match the collar fold');
+    for (const f of sides.folds) {
+      // sides are folded after one turn-over, which mirrors x; the apex is on x = 0
+      const d = { x: f.b.x - f.a.x, y: f.b.y - f.a.y };
+      const off = (0 - f.a.x) * d.y - (SIDE_APEX_Y - f.a.y) * d.x;
+      if (Math.abs(off / Math.hypot(d.x, d.y)) > 1e-9) errors.push(`dress marks: ${f.name} misses the side apex`);
+      const angle = Math.atan2(Math.abs(d.x), Math.abs(d.y));
+      if (Math.abs(angle - SIDE_HALF_ANGLE) > 1e-9) errors.push(`dress marks: ${f.name} slant differs from SIDE_HALF_ANGLE`);
+    }
+  }
+}
 
 // 3. Summary of the finished piece.
 const last = tl.states[tl.states.length - 1];

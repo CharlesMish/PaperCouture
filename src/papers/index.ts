@@ -8,6 +8,7 @@ import { ivoryBorder } from './ivoryBorder';
 import { openStems } from './openStems';
 import { seedDashes } from './seedDashes';
 import { stripeDisc } from './stripeDisc';
+import { sunrayPleats } from './sunrayPleats';
 import { wideFrame } from './wideFrame';
 import { PaperDesign } from './types';
 
@@ -28,6 +29,7 @@ export const PAPERS: PaperDesign[] = [
   fallingChevrons,
   seedDashes,
   inkReverse,
+  sunrayPleats,
   diagnosticPaper,
 ];
 

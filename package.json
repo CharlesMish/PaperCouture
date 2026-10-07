@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "check": "node --import tsx scripts/check.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
-    "test": "npm run check"
+    "test": "npm run check",
+    "sheet-map": "node --import tsx scripts/sheet_map.ts"
   },
   "dependencies": {
     "three": "0.170.0"

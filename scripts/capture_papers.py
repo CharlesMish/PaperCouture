@@ -6,6 +6,9 @@ is hidden only after layout, so the camera insets stay the same for every shot.
 
     BASE_URL=http://127.0.0.1:43123/ python3 scripts/capture_papers.py
 
+ONLY=sunray-pleats captures just the listed papers (comma-separated) and builds
+the sheets from the tiles already on disk for the rest.
+
 Requires Playwright Chromium and Pillow. Writes docs/paper-studies/.
 """
 
@@ -35,11 +38,13 @@ PAPERS = [
     ("falling-chevrons", "Falling chevrons"),
     ("seed-dashes", "Seed dashes"),
     ("ink-reverse", "Ink reverse"),
+    ("sunray-pleats", "Sunray pleats"),
 ]
 
 # Rotation changes where these land on the dress. Ink reverse's drawn back
 # does not rotate with the pattern, and seed dashes only swap dash direction.
-ROTATION_IDS = ["corner-bloom", "falling-chevrons", "wide-frame", "open-stems"]
+ROTATION_IDS = ["corner-bloom", "falling-chevrons", "wide-frame", "open-stems", "sunray-pleats"]
+ONLY = {p for p in os.environ.get("ONLY", "").split(",") if p}
 
 LAUNCH = [
     "--use-angle=swiftshader",
@@ -103,7 +108,9 @@ async def settle(page, display: bool, preset: str | None):
     await page.wait_for_timeout(120)
 
 
-def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: str):
+def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: str, sections: int = 1):
+    """Tiles flow left to right; with sections > 1 each equal share of the
+    items starts a fresh row (front, angle and back stay in their own rows)."""
     font = ImageFont.truetype(FONT, 22)
     head = ImageFont.truetype(FONT_BOLD, 28)
     label_h = 36
@@ -113,7 +120,9 @@ def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: st
     scale = 640 / sample.width
     tw, th = int(sample.width * scale), int(sample.height * scale)
     sample.close()
-    rows = (len(items) + cols - 1) // cols
+    per = len(items) // sections
+    rows_per = (per + cols - 1) // cols
+    rows = rows_per * sections
     head_h = 64
     sheet_w = pad + cols * (tw + pad)
     sheet_h = head_h + pad + rows * (th + label_h + pad)
@@ -122,7 +131,9 @@ def make_sheet(items: list[tuple[Path, str]], cols: int, dest: Path, heading: st
     draw.text((pad, 18), heading, fill="#2e2a25", font=head)
     for i, (path, label) in enumerate(items):
         im = Image.open(path).convert("RGB").resize((tw, th), Image.Resampling.LANCZOS)
-        r, c = divmod(i, cols)
+        sec, j = divmod(i, per)
+        r, c = divmod(j, cols)
+        r += sec * rows_per
         x = pad + c * (tw + pad)
         y = head_h + pad + r * (th + label_h + pad)
         sheet.paste(im, (x, y))
@@ -160,6 +171,8 @@ async def main():
             print(kind, paper, turn, cam["pos"])
 
         for pid, _name in PAPERS:
+            if ONLY and pid not in ONLY:
+                continue
             await grab(pid, 0, "flat", OUT / "flat" / f"{pid}.png")
             await grab(pid, 0, "front", OUT / "front" / f"{pid}.png")
             await grab(pid, 0, "angle", OUT / "angle" / f"{pid}.png")
@@ -167,10 +180,14 @@ async def main():
 
         names = dict(PAPERS)
         for pid in ROTATION_IDS:
+            if ONLY and pid not in ONLY:
+                continue
             for turn, deg in enumerate((0, 90, 180, 270)):
                 await grab(pid, turn, "rotation", OUT / "rotations" / f"{pid}-{deg}.png")
 
         for kind, shots in cams.items():
+            if not shots:
+                continue
             first = shots[0][2]
             bad = [s for s in shots if s[2] != first]
             print(f"camera {kind}: {len(shots)} shots, mismatches {len(bad)}")
@@ -187,7 +204,7 @@ async def main():
 
     make_sheet(
         [(OUT / "flat" / f"{pid}.png", label(pid, 0)) for pid, _ in PAPERS],
-        5,
+        6,
         OUT / "flat-grid.png",
         "Flat square, workshop, step 0",
     )
@@ -195,9 +212,10 @@ async def main():
         [(OUT / "front" / f"{pid}.png", f"{names[pid]} · front") for pid, _ in PAPERS]
         + [(OUT / "angle" / f"{pid}.png", f"{names[pid]} · angle") for pid, _ in PAPERS]
         + [(OUT / "back" / f"{pid}.png", f"{names[pid]} · back") for pid, _ in PAPERS],
-        5,
+        6,
         OUT / "folded-grid.png",
         "Finished dress — front preset, then angle, then back",
+        sections=3,
     )
     make_sheet(
         [
