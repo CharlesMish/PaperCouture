@@ -20,6 +20,7 @@ jobs:
       - run: npm run typecheck && npm test && npm run build
         env:
           FIT_FLARE_REPORT: .fit-flare-qa/geometry.json
+          FIT_FLARE_RENDER_REPORT: .fit-flare-qa/rendered.json
       - uses: actions/checkout@v6
         with:
           ref: 21109e70e9e3a8ecf5da6a5a0a532aacceb6b4f4

@@ -25,7 +25,7 @@
     "check:companions": "node --import tsx scripts/check-companion-folds.ts && node --import tsx scripts/check-framed-brooch.ts && node --import tsx scripts/check-plum-seed.ts",
     "check:necktie": "node --import tsx scripts/check-necktie.ts",
     "check:camp-shirt": "node --import tsx scripts/check-camp-shirt.ts",
-    "check:fit-flare": "node --import tsx scripts/check-fit-flare.ts"
+    "check:fit-flare": "node --import tsx scripts/check-fit-flare.ts && node --import tsx scripts/check-fit-flare-rendered.ts"
   },
   "dependencies": {
     "three": "0.170.0"

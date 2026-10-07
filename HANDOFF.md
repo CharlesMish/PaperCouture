@@ -1,7 +1,10 @@
-# Paper Couture — local PR28 corrections for independent review
+# Paper Couture — continuous PR28 correction for independent re-review
 
-Charlie authorized corrections to PR28's visible layer intersections, absolute
-hinge guard and missing CI coverage. This branch preserves Claude's geometry,
+Charlie authorized local corrections to PR28's visible layer intersections,
+absolute hinge guard and missing CI coverage. Independent review rejected
+d3c15f7's per-frame axis switching; this revision plans and smoothly blends
+separating directions and adds adaptive vertex-motion regressions. Synthetic
+hinge-strip intersections are measured separately and remain a stated limit. This branch preserves Claude's geometry,
 Sunray artwork and all resting captures. Read
 [docs/fit-flare/CORRECTIONS.md](docs/fit-flare/CORRECTIONS.md) for implementation,
 tests, exact lineage and reviewer focus. No push, PR update, merge or deployment

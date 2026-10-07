@@ -2,6 +2,9 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
+import { MeshStandardMaterial } from 'three';
+import { SheetView } from '../src/render/sheetView';
+import { auditContinuity } from './fit-flare-continuity';
 import { buildGarment } from '../src/fold/garments';
 import { checkState } from '../src/fold/engine';
 import { buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
@@ -27,7 +30,9 @@ for (const op of [buildTimeline(buildGarment('dress').ops).ops[0], tl.ops[4]]) {
 }
 
 const report: object[] = [];
+const view = new SheetView(new MeshStandardMaterial(), new MeshStandardMaterial());
 for (const op of tl.ops.slice(4)) {
+  view.setAnim(op);
   let maxGap = 0, maxStretch = 0, minZ = Infinity, piercings = 0, float32Piercings = 0, maxPoseStep = 0;
   let previous: Float64Array | undefined;
   const times = [...new Set([0, 1e-6, 1e-5, 1e-4, .001, ...Array.from({ length: 1001 }, (_, k) => k / 1000), .9999, .99999, .999999])].sort((a, b) => a - b);
@@ -49,7 +54,12 @@ for (const op of tl.ops.slice(4)) {
     const triangles = op.pieces.flatMap(p => p.poly.slice(1, -1).map((_, j) => ({ id: p.index,
       points: [p.poly[0], p.poly[j + 1], p.poly[j + 2]].map(m => posePoint(M, p.index * 12, m.x, m.y)),
     })));
-    const rounded = triangles.map(tri => tri.points.map(p => p.map(Math.fround) as [number, number, number]));
+    // Exercise the actual renderer: it rounds material coordinates before the
+    // transform and rounds the transformed positions again. Facets precede the
+    // synthetic hinge strips; strip crossings are audited separately.
+    view.pose(M);
+    const rendered = view.front.geometry.attributes.position.array;
+    const rounded = triangles.map((_, i) => [0, 3, 6].map(k => Array.from(rendered.slice(i * 9 + k, i * 9 + k + 3)) as [number, number, number]));
     for (let a = 0; a < triangles.length; a++) for (let b = a + 1; b < triangles.length; b++) if (triangles[a].id !== triangles[b].id) {
       if (interiorPiercing(triangles[a].points, triangles[b].points)) piercings++;
       if (interiorPiercing(rounded[a], rounded[b])) float32Piercings++;
@@ -70,8 +80,13 @@ for (const op of tl.ops.slice(4)) {
   const reused = new Float64Array(expected.length);
   assert.equal(evaluateFrame(op, .455, reused), reused);
   assert.deepEqual(reused, expected);
+  const continuity = auditContinuity(op, evaluateFrame);
+  // First-request order must not change the planned constraints.
+  const fresh = buildTimeline(buildGarment('fit-flare').ops).ops[op.index];
+  evaluateFrame(fresh, .99);
+  for (const t of [.000001, .2372104091644287, 1 / 3, .455, .999999]) assert.deepEqual(evaluateFrame(fresh, t), evaluateFrame(op, t));
   durations.sort((a, b) => a - b);
-  report.push({ id: op.op.id, samples: times.length, piercings, float32Piercings, maxGap, absoluteLimit: 12 * LAYER_GAP,
+  report.push({ id: op.op.id, continuity, samples: times.length, piercings, float32Piercings, maxGap, absoluteLimit: 12 * LAYER_GAP,
     maxStretch, minZ, maxPoseStep, evaluateFrameMedianMs: durations[Math.floor(durations.length / 2)], evaluateFrameP95Ms: durations[Math.floor(durations.length * .95)] });
 }
 const c = new FoldController(tl.ops.length, () => 1);
@@ -81,6 +96,6 @@ for (let repeat = 0; repeat < 3; repeat++) {
   for (let k = c.count; k > 0; k--) { c.prev(); c.update(1); assert.equal(c.step, k - 1); }
 }
 const result = { frozenSource: frozen.source, unchangedRestingPoses: true, constantGapMutationsRejected: true, operations: report,
-  limits: 'Discrete thin-panel tests, including Float32 rendering precision. Excludes coplanar contacts, tangencies, finite paper thickness and unsampled instants; not physical foldability certification.' };
+  limits: 'Sampled rigid-facet tests using Float64 poses and actual SheetView Float32 buffers; synthetic hinge strips excluded here and audited separately. Excludes coplanar contacts, tangencies, finite paper thickness and unsampled instants; not physical foldability certification.' };
 if (process.env.FIT_FLARE_REPORT) { mkdirSync(dirname(process.env.FIT_FLARE_REPORT), { recursive: true }); writeFileSync(process.env.FIT_FLARE_REPORT, JSON.stringify(result, null, 2)); }
 console.log(JSON.stringify(result, null, 2));

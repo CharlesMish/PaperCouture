@@ -1,58 +1,116 @@
-# PR28 correction candidate
+# PR28 correction candidate: continuous motion revision
 
-Local correction branch `codex/pr28-collapse-corrections`, based on Claude's
-unchanged PR28 head `c3145ed82cf4155cc9e35e7f4f3aef0cb291e3bc`. Its base is the
-published wardrobe source `21109e70e9e3a8ecf5da6a5a0a532aacceb6b4f4`.
-Charlie authorized local corrections and tests, with a separate independent
-review afterward. No push, PR update, merge or deployment has been performed.
+Local branch `codex/pr28-collapse-corrections`, based on Claude's unchanged PR28
+head `c3145ed82cf4155cc9e35e7f4f3aef0cb291e3bc`, whose published wardrobe base is
+`21109e70e9e3a8ecf5da6a5a0a532aacceb6b4f4`. This revision follows local candidate
+`d3c15f755842e55b07f71c29fbff5bd159a30df7` and addresses its independent review.
+No push, PR update, merge or deployment is authorized or performed.
 
-## What changes
+## Result and mechanism
 
-At 45.5% of the waist collapse, the old animation shows broken patches across
-the side panels. Its layer offsets remain vertical while the panels rotate:
-their separation vanishes when upright and their visible order reverses.
-Offsets now follow each body's normal. A small rendering-depth pass preserves
-separating sides of the already valid thin-paper mechanism near shared edges.
-It translates whole convex facets, leaves rotations and material polygons
-unchanged, and runs only for a collapse and subsequent non-turn motion.
-It has a fixed iteration cap and rejects a nonconvergent result. This is not
-a general physical-paper collision solver or a way to repair invalid folds.
+PR28's waist animation shows broken patches across its rotating side panels.
+Its vertical layer offsets lose separation as panels become upright and reverse
+visible order. Offsets now follow each body's normal. A bounded rendering-depth
+pass translates whole convex facets, preserving their rotations and material
+polygons. It runs only for collapse and subsequent non-turn motion.
 
-All authored resting states and operation endpoints remain byte-identical to
-PR28 (the fixture records hashes generated from that frozen checkout).
-The dress construction, Sunray artwork, paper-position logic, board model,
-capture format and earlier garments are unchanged. A private one-pose cache
-avoids repeating the separation calculation for a held scrub or pending peek.
-Its output buffer cannot mutate the cached result.
+The previous correction chose the greatest-clearance separating axis each frame.
+Two valid choices could exchange rank abruptly: the review found a 0.00491959
+model-unit vertex jump across a 1.90735e-9 progress interval. That selection is
+removed. The revision plans directions once, using a fixed time grid independent
+of the first requested pose, scrub order or playback direction:
 
-The hinge check once again imposes an absolute maximum: eight `LAYER_GAP`s
-(0.044) for earlier designs and the first four dress steps; twelve (0.066)
-for the new waist stack and subsequent shoulder fold. A large resting gap
-cannot bypass this check. Mutation regressions add a constant 0.5-unit tear
-to an earlier fold and to the new stack; both must fail.
+- Prefer one axis valid for the entire operation and compatible with both saved
+  layer stacks. Candidate axes are panel normals, in-plane boundary normals and
+  cross products of edges, with a fixed orientation from panel A toward B.
+- If one axis cannot preserve both endpoints, plan directions at 33 knots, each
+  valid through its neighboring intervals. A cubic smoothstep blends adjacent
+  directions. Positive combinations of A-to-B separating normals also separate
+  the ideal convex panels; normalization preserves that direction.
+- Apply exactly 256 passes of continuous half-space projections to the layer
+  translations. There is no per-frame winning-axis choice or early-exit count.
+  A 1e-6 sin(pi*t) clearance vanishes at rest. Invalid directions or a residual
+  above 1e-8 fail explicitly instead of returning an unchecked frame.
 
-All five existing wardrobe workflow filters now include both the published
-wardrobe base and Claude's PR28 branch. The added fit-and-flare workflow runs
-the new regressions against a frozen published checkout and uploads evidence.
-Every relevant candidate checkout uses the exact PR head. GitHub execution
-still requires authorization to publish the local correction branch.
+All authored resting states and endpoint matrices remain byte-identical to PR28.
+At the reviewer's exact waist witness the new maximum vertex displacement is
+8.36319e-9 model units. Endpoint probes down to 1e-10 progress have displacement
+below 1e-15. These are numerical regression results, not an analytic certificate
+for every time, finite-thickness paper or arbitrary future collapse geometry.
+Planning samples alone do not certify a continuous separating path.
 
-## Reproduce
+The dress construction, Sunray artwork, print positioning, board, captures and
+older garments are unchanged. A private held-pose cache retains output isolation.
+The absolute hinge guard remains 0.044 (eight layer gaps) for older/early folds
+and 0.066 (twelve) for the new waist stack and later fold. Constant 0.5-unit tears
+must fail both cases; a large resting gap cannot bypass this guard.
 
-Use Node 24 and the locked dependencies:
+## Validation
+
+- Full Node 24 typecheck, npm test and production build pass locally.
+- 1,007 poses per affected operation: zero strict facet intersections using both
+  Float64 material geometry and **actual SheetView buffers**, which round material
+  coordinates before transformation and round positions afterward. The earlier
+  approximation that only rounded final coordinates is replaced.
+- Maximum absolute hinge gap remains 0.066 within numerical tolerance. Maximum
+  facet-edge length error is below 7e-16; paper stays above the table.
+- Adaptive continuity regression: 4,001 uniform samples per operation, followed
+  by 20 bisections toward larger vertex movement around the 12 largest translation
+  second differences, all 33 blend knots and both reported interior witnesses.
+  The bound scales with interval width (32*dt + 1e-9), rather than permitting a
+  fixed-sized jump. Separate endpoint limits cover 1e-2 through 1e-10 progress.
+- The new adaptive regression rejects **both** waist and shoulder discontinuities
+  when run against frozen d3c15f7. Fresh timelines first sampled near the end produce
+  exactly the same poses as timelines first sampled near the start.
+- All frozen resting-state/endpoint hashes match PR28; all 45 earlier garment
+  variants have exact states and sampled poses versus published 21109e7.
+- Browser suites pass at desktop and 390/320 widths: actual interrupted/reversed
+  folds, reset, paper change during motion, front/back and print shifts, four
+  rotations, capture, repeated remove/Undo and move/Undo, touch cancellation,
+  reload and exact composite PNGs. Frozen legacy and combined-wardrobe captures
+  and PNGs are preserved. Quota failure/retry and older-reader protection pass.
+
+## Rendered connector audit and visible scope
+
+A second, independent normalized-plane/barycentric test checks actual SheetView
+buffers at 201 poses per operation. It excludes coplanar/tangent contact and
+crossings less than 1e-8 model units from a triangle plane. The original facet
+regression remains in place with its original thresholds.
+
+| Operation | Facet/facet crossings | Facet/strip crossings | Strip/strip crossings |
+| --- | ---: | ---: | ---: |
+| Waist | 0 | 5,963 | 8,782 |
+| Shoulders | 0 | 9,988 | 13,559 |
+
+Counts aggregate intersecting triangle pairs over sampled poses. They are not
+counts of distinct visible defects. The largest waist facet/strip crossing has
+0.0220141 model-unit depth at t=0.875; the largest strip/strip crossing is
+0.0164995 at t=0.855. Shoulder facet/strip crossings reach 0.0165 at the unchanged
+final pose. These artificial connectors already intersect in original PR28 and
+frozen endpoints; this correction does **not** make the entire render mesh free
+of intersections.
+
+Normal workshop screenshots and explicitly labeled no-strip diagnostics at
+waist t=0.69, 0.855 and 0.875 show narrow seam/connector differences. Inspection
+has not isolated another broad patch defect comparable to original PR28 at
+0.455. The diagnostic only hides strips for comparison; production rendering
+retains them. Future connector work needs its own visible acceptance case and
+must preserve the saved endpoint geometry.
+
+## Reproduce and review
 
 ```sh
 npm ci
 npm run typecheck
-FIT_FLARE_REPORT=.fit-flare-qa/geometry.json npm test
+FIT_FLARE_REPORT=.fit-flare-qa/geometry.json \
+  FIT_FLARE_RENDER_REPORT=.fit-flare-qa/rendered.json npm test
 npm run build
 BASELINE_DIR=/path/to/published-21109e7 \
   PRESERVATION_REPORT=.fit-flare-qa/published-geometry.json \
   node --import tsx scripts/check-published-geometry.ts
 ```
 
-Serve the compiled candidate and a compiled published `21109e7` checkout on
-separate local ports. With Playwright Chromium available:
+Serve compiled candidate and published baseline separately, then:
 
 ```sh
 export BASE_URL=http://127.0.0.1:4470
@@ -60,63 +118,26 @@ export BASELINE_URL=http://127.0.0.1:4472
 export CAPTURE_DIR=.fit-flare-qa
 node scripts/check-fit-flare-browser.cjs
 node scripts/check-fit-flare-storage.cjs
-SKIP_PARKED_STUDIES=1 node scripts/check-external-outfits.cjs
+SKIP_PARKED_STUDIES=1 CAPTURE_DIR=.wardrobe-qa node scripts/check-external-outfits.cjs
 ```
 
-`PLAYWRIGHT_MODULE` may point to an existing Playwright installation. The tests
-use disposable browser contexts. The storage test consumes the board fixture
-created by the preceding fit-and-flare browser test. Use separate capture
-directories for the combined-outfit suite when retaining both reports.
+`PLAYWRIGHT_MODULE` may point to an installed Playwright. Tests use disposable
+contexts, never personal browser storage. Storage tests consume the fixture
+from the preceding fit-and-flare browser test.
 
-## Local verification
+The six relevant workflows still target both wardrobe branches, with candidate
+checkouts pinned to the PR head. The fit-and-flare workflow now also uploads the
+separate rendered-surface audit. GitHub checks for this local revision are
+**unrun**; they require an authorized future push. No bypass is proposed.
 
-Node 24.16.0 typecheck, full `npm test` and production build pass. The final
-motion/cache regression also passes after the last test additions.
+Local reviewer evidence: `../output/pr28-continuity/`, including machine reports,
+normal/diagnostic screenshots, the rejected-candidate regression and exact
+witness comparison. `candidate-manifest.json` records the frozen head, patch
+hashes, build hashes and verification files. Earlier evidence is preserved.
 
-- Zero strict facet piercings in 1,007 sampled poses per affected operation,
-  both Float64 and Float32. Maximum absolute hinge gap is 0.066; maximum
-  edge-length error is below 7e-16; paper stays above the table.
-- All authored resting-state and endpoint hashes match PR28. All 45 earlier
-  garment option combinations have exact states and poses versus `21109e7`.
-- The actual browser suites pass: collapse reversal/reset and paper changes
-  during motion; shoulder refolding; floral positioning and quarter-turns;
-  desktop/390/320 capture, movement, remove/Undo, reload and exact PNGs; touch
-  cancellation and recovery; quota failure/retry and older-reader protection.
-- Both frozen legacy boards and four combined wardrobe compositions retain
-  exact saved captures and baseline/candidate composite PNGs.
-- All six relevant workflow files parse and target both intended base branches
-  with candidate checkouts pinned to the PR head. GitHub checks are unrun:
-  the branch remains local pending publication authorization.
-
-Reviewer evidence is retained alongside the checkout at
-`../output/pr28-corrections/`, including machine reports, test logs, separate
-before/after screenshots and exported boards. Median local frame-evaluation
-time is about 2.8 ms for the waist and 4.5 ms for shoulders; held/pending poses
-use the cache. These Mac timings are not a phone-performance certification.
-
-## Independent reviewer focus
-
-- Inspect the waist at progress 0.25, 0.455, 0.60 and 0.75, and shoulders at
-  0.34, including reversal and cancellation. The original frozen checkout
-  remains available for a direct before/after comparison.
-- Inspect `layerSeparation.ts`: ideal separating axes, rigid translations,
-  numerical margin, convergence cap and exact endpoint bypass. The maximum
-  sampled added contact correction in the development diagnostic was 0.00637
-  model units at the waist and 0.000391 at the shoulders (sheet width = 2).
-- The committed regression samples 1,007 positions per affected operation,
-  including near-endpoint probes, in both Float64 and renderer Float32
-  precision. Check the absolute hinge bounds, unchanged endpoints, deterministic
-  revisit behavior and output-cache isolation.
-- Compare all 45 published garment option combinations against `21109e7`.
-  Verify saved-board bytes, offsets, layer order, remove/Undo and exact PNGs.
-- Review the CI filter change before approving a proposed stacked correction
-  PR onto `wardrobe/sunray-and-fit-flare`; do not replace Claude's branch.
-
-## Limits
-
-The tests sample thin facets. They exclude coplanar contacts, tangencies,
-unsampled instants and finite physical paper thickness. The connective hinge
-strips are rendering surfaces, not a physical thickness model. Browser checks
-use Chromium/SwiftShader and emulated touch/phone viewports; no real-phone or
-physical-paper validation is claimed. Sunray's documented fit-and-flare waist
-and back-hem mismatch remains unchanged.
+Local cold planning took about 181 ms (waist) and 276 ms (shoulders); warmed
+frame evaluation was roughly 2-4 ms median. These Mac measurements are not a
+phone-performance certification. Browser checks use emulated touch and
+Chromium/SwiftShader. Physical phone and physical paper remain untested.
+Sunray's documented waist/back-hem mismatch and the existing slight selected
+swatch-ring clipping remain separate from this motion correction.

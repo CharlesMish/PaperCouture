@@ -21,7 +21,7 @@ import {
 } from './engine';
 import { Affine2, Vec2, applyAffine, centroid, det, lineConvexRange, signedArea, v2 } from './geometry';
 import { CollapsePlan, applyCollapse, bodyPoses, collapseAngles, mul34, planCollapse } from './collapse';
-import { separateLayers } from './layerSeparation';
+import { planLayerSeparation, separateLayers, type LayerSeparationPlan } from './layerSeparation';
 
 /** Vertical spacing between stacked layers, in model units (sheet = 2 units). */
 export const LAYER_GAP = 0.0055;
@@ -375,6 +375,7 @@ function rawFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
 }
 
 const idealAnims = new WeakMap<OpAnim, OpAnim>();
+const separationPlans = new WeakMap<OpAnim, LayerSeparationPlan>();
 const separatedFrames = new WeakMap<OpAnim, { t: number; M: Mat34; lift: number }>();
 /** Preserve the authored resting poses; only resolve their artificial depth in motion. */
 export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
@@ -392,7 +393,13 @@ export function evaluateFrame(anim: OpAnim, t: number, out?: Mat34): Mat34 {
     ideal = { ...anim, maxPreZ: 0, pieces: anim.pieces.map(p => ({ ...p, preZ: 0, postZ: 0 })) };
     idealAnims.set(anim, ideal);
   }
-  separateLayers(anim.pieces, rawFrame(ideal, t), M, t);
+  let plan = separationPlans.get(anim);
+  if (!plan) {
+    const source = { ...anim }; // Planning must not change this frame's guide lift.
+    plan = planLayerSeparation(anim.pieces, s => ({ ideal: rawFrame(ideal!, s), layered: rawFrame(source, s) }));
+    separationPlans.set(anim, plan);
+  }
+  separateLayers(plan, anim.pieces, rawFrame(ideal, t), M, t);
   let low = Infinity;
   for (const p of anim.pieces) for (const m of p.poly)
     low = Math.min(low, M[p.index * 12 + 8] * m.x + M[p.index * 12 + 9] * m.y + M[p.index * 12 + 11]);
