@@ -10,5 +10,7 @@ hollow dress or a dressed 3D person. Keep one garment until its feel has been re
 The existing geometry checks are useful but do not certify real physical foldability or every
 continuous collision. Do not replace the fold with a mesh morph or add unconstrained shape sliders.
 Do not rewrite the fold engine merely to tidy it. Report and fix concrete visible failures.
+Steps that fold several creases at once go through src/fold/collapse.ts and must stay rigid
+(npm run check verifies the crease loops and every finished crease pattern).
 Add paper patterns through src/papers; keep them separate from geometry. No backend or accounts.
 Record what you tested and distinguish browser checks from real-phone and physical-paper checks.

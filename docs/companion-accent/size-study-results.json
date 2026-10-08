@@ -1,0 +1,120 @@
+{
+  "base": "http://127.0.0.1:5304",
+  "checks": [
+    "Four actual fold buttons and all four Back buttons; refold and Front/Angle/Back views of the true4fold construction.",
+    "Actual front/back renders in Oat linen, Slate grain, Ginkgo pairs and Corner bloom at all4quarter-turns; centred bloom exposes more red ink and deliberatelybad offset hides it.",
+    "5and6cm standalone captures among existingjacket/skirt/clutch/hat; exactgeometry/UV/paper offset and priorcapture preservation; desktop390/320 nooverflow; move/removeUndo,reload,exact1800×2100PNG."
+  ],
+  "errors": [],
+  "physicalPhoneTested": false,
+  "flowerPixels": {
+    "unshifted": 7035,
+    "centred": 9627,
+    "hidden": 9
+  },
+  "boardMeasurements": [
+    {
+      "sideCm": 5,
+      "viewport": [
+        1100,
+        800
+      ],
+      "boardCanvas": [
+        552.84375,
+        644.984375
+      ],
+      "accentSize": [
+        0.375,
+        0.375
+      ],
+      "accentPixels": 57.587890625,
+      "overflow": false
+    },
+    {
+      "sideCm": 5,
+      "viewport": [
+        390,
+        844
+      ],
+      "boardCanvas": [
+        336,
+        392
+      ],
+      "accentSize": [
+        0.375,
+        0.375
+      ],
+      "accentPixels": 35,
+      "overflow": false
+    },
+    {
+      "sideCm": 5,
+      "viewport": [
+        320,
+        568
+      ],
+      "boardCanvas": [
+        266,
+        310.328125
+      ],
+      "accentSize": [
+        0.375,
+        0.375
+      ],
+      "accentPixels": 27.708333333333332,
+      "overflow": false
+    },
+    {
+      "sideCm": 6,
+      "viewport": [
+        1100,
+        800
+      ],
+      "boardCanvas": [
+        552.84375,
+        644.984375
+      ],
+      "accentSize": [
+        0.44999999999999996,
+        0.44999999999999996
+      ],
+      "accentPixels": 69.10546874999999,
+      "overflow": false
+    },
+    {
+      "sideCm": 6,
+      "viewport": [
+        390,
+        844
+      ],
+      "boardCanvas": [
+        336,
+        392
+      ],
+      "accentSize": [
+        0.44999999999999996,
+        0.44999999999999996
+      ],
+      "accentPixels": 41.99999999999999,
+      "overflow": false
+    },
+    {
+      "sideCm": 6,
+      "viewport": [
+        320,
+        568
+      ],
+      "boardCanvas": [
+        266,
+        310.328125
+      ],
+      "accentSize": [
+        0.44999999999999996,
+        0.44999999999999996
+      ],
+      "accentPixels": 33.24999999999999,
+      "overflow": false
+    }
+  ],
+  "passed": true
+}

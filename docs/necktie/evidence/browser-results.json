@@ -1,0 +1,461 @@
+{
+  "base": "http://127.0.0.1:4301/",
+  "baseline": "http://127.0.0.1:4201/",
+  "checkedAt": "2026-10-06T23:35:20.641Z",
+  "renderer": "Chromium software WebGL / SwiftShader",
+  "physicalPhoneTested": false,
+  "physicalPaperTested": false,
+  "checks": [
+    "Actual Fold controls for all eight steps with half-way scrub poses; Back x2/refold reproduces identical material; Start over and refold; Display Front/Angle/Back; reload restores design, step and paper. Oat linen neutral paper.",
+    "Corner bloom (existing positionable paper) at 0/90/180/270 degrees: original and engine-computed aligned offsets via the real Position print nudges (1/32 steps, inside the 0.3 slide limit); Front/Back renders; completed material unchanged.",
+    "Five real captures: Wrap skirt 20 cm, Cross-wrap top 18 cm, Folded necktie 7 cm (aligned Corner bloom), Folded hat 8 cm, Envelope clutch 8 cm. Desktop/390/320 board views without overflow; pieces inside margins; tie inside the top; exact composite PNG; remove/Undo, layer order/Undo, exact reload.",
+    "Frozen PR25 production build loads the saved board containing the necktie without rewriting it and renders a byte-identical PNG (the capture stores frozen geometry and known paper recipes, no design id)."
+  ],
+  "folds": [
+    {
+      "step": 1,
+      "title": "Put the print underneath"
+    },
+    {
+      "step": 2,
+      "title": "Fold the first edge to the diagonal"
+    },
+    {
+      "step": 3,
+      "title": "Fold the other edge to meet it"
+    },
+    {
+      "step": 4,
+      "title": "Narrow the first side again"
+    },
+    {
+      "step": 5,
+      "title": "Narrow the other side"
+    },
+    {
+      "step": 6,
+      "title": "Turn over to the printed blade"
+    },
+    {
+      "step": 7,
+      "title": "Fold the narrow end down"
+    },
+    {
+      "step": 8,
+      "title": "Tuck the point back up to finish the knot"
+    }
+  ],
+  "print": [
+    {
+      "degrees": 0,
+      "offset": {
+        "x": 0.1875,
+        "y": 0.15625
+      },
+      "nudges": {
+        "right": 6,
+        "up": 5
+      },
+      "engineUnshiftedFrontShare": 1,
+      "engineAlignedFrontShare": 1
+    },
+    {
+      "degrees": 90,
+      "offset": {
+        "x": 0.15625,
+        "y": -0.1875
+      },
+      "nudges": {
+        "right": 5,
+        "up": -6
+      },
+      "engineUnshiftedFrontShare": 0.007,
+      "engineAlignedFrontShare": 1
+    },
+    {
+      "degrees": 180,
+      "offset": {
+        "x": -0.1875,
+        "y": -0.15625
+      },
+      "nudges": {
+        "right": -6,
+        "up": -5
+      },
+      "engineUnshiftedFrontShare": 0.278,
+      "engineAlignedFrontShare": 1
+    },
+    {
+      "degrees": 270,
+      "offset": {
+        "x": -0.15625,
+        "y": 0.1875
+      },
+      "nudges": {
+        "right": -5,
+        "up": 6
+      },
+      "engineUnshiftedFrontShare": 0.049,
+      "engineAlignedFrontShare": 1
+    }
+  ],
+  "measurements": [
+    {
+      "name": "outfit-1280",
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": [
+        624.84375,
+        728.984375
+      ],
+      "contained": true,
+      "overflow": false,
+      "pieces": [
+        {
+          "title": "Wrap skirt · Slate grain",
+          "sideCm": 20,
+          "bounds": [
+            -0.82,
+            0.82,
+            -1.275,
+            -0.005
+          ],
+          "size": [
+            1.64,
+            1.27
+          ],
+          "pixels": [
+            284.7,
+            220.4
+          ]
+        },
+        {
+          "title": "Cross-wrap top · Oat linen",
+          "sideCm": 18,
+          "bounds": [
+            -0.5118,
+            0.5118,
+            0.0349,
+            1.2451
+          ],
+          "size": [
+            1.0236,
+            1.2102
+          ],
+          "pixels": [
+            177.7,
+            210
+          ]
+        },
+        {
+          "title": "Folded necktie · Corner bloom",
+          "sideCm": 7,
+          "bounds": [
+            -0.1642,
+            0.1642,
+            0.43,
+            1.17
+          ],
+          "size": [
+            0.3285,
+            0.74
+          ],
+          "pixels": [
+            57,
+            128.4
+          ]
+        },
+        {
+          "title": "Folded hat · Plum seed",
+          "sideCm": 8,
+          "bounds": [
+            -0.4,
+            0.4,
+            1.44,
+            1.76
+          ],
+          "size": [
+            0.8,
+            0.32
+          ],
+          "pixels": [
+            138.9,
+            55.5
+          ]
+        },
+        {
+          "title": "Envelope clutch · Slate grain",
+          "sideCm": 8,
+          "bounds": [
+            0.86,
+            1.38,
+            -0.924,
+            -0.516
+          ],
+          "size": [
+            0.52,
+            0.408
+          ],
+          "pixels": [
+            90.3,
+            70.8
+          ]
+        }
+      ],
+      "saveCharacters": 121619
+    },
+    {
+      "name": "outfit-390",
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": [
+        336,
+        392
+      ],
+      "contained": true,
+      "overflow": false,
+      "pieces": [
+        {
+          "title": "Wrap skirt · Slate grain",
+          "sideCm": 20,
+          "bounds": [
+            -0.82,
+            0.82,
+            -1.275,
+            -0.005
+          ],
+          "size": [
+            1.64,
+            1.27
+          ],
+          "pixels": [
+            153.1,
+            118.5
+          ]
+        },
+        {
+          "title": "Cross-wrap top · Oat linen",
+          "sideCm": 18,
+          "bounds": [
+            -0.5118,
+            0.5118,
+            0.0349,
+            1.2451
+          ],
+          "size": [
+            1.0236,
+            1.2102
+          ],
+          "pixels": [
+            95.5,
+            112.9
+          ]
+        },
+        {
+          "title": "Folded necktie · Corner bloom",
+          "sideCm": 7,
+          "bounds": [
+            -0.1642,
+            0.1642,
+            0.43,
+            1.17
+          ],
+          "size": [
+            0.3285,
+            0.74
+          ],
+          "pixels": [
+            30.7,
+            69.1
+          ]
+        },
+        {
+          "title": "Folded hat · Plum seed",
+          "sideCm": 8,
+          "bounds": [
+            -0.4,
+            0.4,
+            1.44,
+            1.76
+          ],
+          "size": [
+            0.8,
+            0.32
+          ],
+          "pixels": [
+            74.7,
+            29.9
+          ]
+        },
+        {
+          "title": "Envelope clutch · Slate grain",
+          "sideCm": 8,
+          "bounds": [
+            0.86,
+            1.38,
+            -0.924,
+            -0.516
+          ],
+          "size": [
+            0.52,
+            0.408
+          ],
+          "pixels": [
+            48.5,
+            38.1
+          ]
+        }
+      ],
+      "saveCharacters": 121619
+    },
+    {
+      "name": "outfit-320",
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": [
+        266,
+        310.328125
+      ],
+      "contained": true,
+      "overflow": false,
+      "pieces": [
+        {
+          "title": "Wrap skirt · Slate grain",
+          "sideCm": 20,
+          "bounds": [
+            -0.82,
+            0.82,
+            -1.275,
+            -0.005
+          ],
+          "size": [
+            1.64,
+            1.27
+          ],
+          "pixels": [
+            121.2,
+            93.8
+          ]
+        },
+        {
+          "title": "Cross-wrap top · Oat linen",
+          "sideCm": 18,
+          "bounds": [
+            -0.5118,
+            0.5118,
+            0.0349,
+            1.2451
+          ],
+          "size": [
+            1.0236,
+            1.2102
+          ],
+          "pixels": [
+            75.6,
+            89.4
+          ]
+        },
+        {
+          "title": "Folded necktie · Corner bloom",
+          "sideCm": 7,
+          "bounds": [
+            -0.1642,
+            0.1642,
+            0.43,
+            1.17
+          ],
+          "size": [
+            0.3285,
+            0.74
+          ],
+          "pixels": [
+            24.3,
+            54.7
+          ]
+        },
+        {
+          "title": "Folded hat · Plum seed",
+          "sideCm": 8,
+          "bounds": [
+            -0.4,
+            0.4,
+            1.44,
+            1.76
+          ],
+          "size": [
+            0.8,
+            0.32
+          ],
+          "pixels": [
+            59.1,
+            23.6
+          ]
+        },
+        {
+          "title": "Envelope clutch · Slate grain",
+          "sideCm": 8,
+          "bounds": [
+            0.86,
+            1.38,
+            -0.924,
+            -0.516
+          ],
+          "size": [
+            0.52,
+            0.408
+          ],
+          "pixels": [
+            38.4,
+            30.1
+          ]
+        }
+      ],
+      "saveCharacters": 121619
+    }
+  ],
+  "exports": [
+    {
+      "file": "outfit-composite-1280.png",
+      "bytes": 3375317,
+      "sha256": "448bb9a1f25a24c48c59fe3b07656a2b2e98e5f008e5e81caedd9493965cdd41"
+    },
+    {
+      "file": "outfit-composite-390.png",
+      "bytes": 3375317,
+      "sha256": "448bb9a1f25a24c48c59fe3b07656a2b2e98e5f008e5e81caedd9493965cdd41"
+    },
+    {
+      "file": "outfit-composite-320.png",
+      "bytes": 3375317,
+      "sha256": "448bb9a1f25a24c48c59fe3b07656a2b2e98e5f008e5e81caedd9493965cdd41"
+    },
+    {
+      "file": "outfit-without-tie.png",
+      "bytes": 3374019,
+      "sha256": "62b9af4ce963b8704513c998b5fd4a209a651cf613c6f28ac9517054f6f1f204"
+    },
+    {
+      "file": "outfit-tie-under-top.png",
+      "bytes": 3373896,
+      "sha256": "9ed60c4dc0f7918f435fa5d14dde0b2483aa421329eda78a06aaf74c773078b0"
+    },
+    {
+      "file": "outfit-reloaded.png",
+      "bytes": 3375317,
+      "sha256": "448bb9a1f25a24c48c59fe3b07656a2b2e98e5f008e5e81caedd9493965cdd41"
+    },
+    {
+      "file": "pr25-reads-outfit.png",
+      "bytes": 3375317,
+      "sha256": "448bb9a1f25a24c48c59fe3b07656a2b2e98e5f008e5e81caedd9493965cdd41"
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

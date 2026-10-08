@@ -38,7 +38,7 @@ for (let k = 0; k < tl.ops.length - 1; k++) {
 assert.deepEqual(errors, []);
 assert(worstGap <= 8 * LAYER_GAP, `hinge gap ${worstGap}`);
 assert(lowestZ >= -1e-9, `below table: ${lowestZ}`);
-assert(construction.ops.every(op => op.kind === 'turn' || op.folds.every(f => f.sense === 'valley')), 'a fold pushes away from the visible face');
+assert(construction.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))), 'a fold pushes away from the visible face');
 
 const final = tl.states[tl.states.length - 1];
 const visibleAt = (x: number, y: number) => final.facets.filter(f => {

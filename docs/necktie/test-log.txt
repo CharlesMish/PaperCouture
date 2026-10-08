@@ -1,0 +1,54 @@
+# 2026-10-06T23:42:35Z node v24.21.0 npm 10.9.4 source 21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f + design/necktie working tree
+$ npm ci
+
+Run `npm audit` for details.
+$ npm run typecheck
+> tsc --noEmit && tsc --noEmit -p scripts
+
+$ npm test
+> paper-couture@0.1.0 test
+> npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie
+> paper-couture@0.1.0 check
+> node --import tsx scripts/check.ts
+all checks passed
+> paper-couture@0.1.0 check:collection
+> node --import tsx scripts/check-collection.ts
+Skirt/vest variants: baseline parity, prefixes, true mirror mapping, face exposure, retained area, rigidity, endpoint continuity, sampled hinges, above-table motion, metadata all pass.
+Pleated skirt checks passed.
+folded centre checks passed
+Neckerchief (5 steps) and folded patch pocket (5 steps): geometry gates pass; reverse neckband / top band over a printed body; positions restricted to neckline / chest.
+Wrap skirt length: short/classic/long x wrap x band all pass the gates; heights short 1.02, classic 1.27, long 1.52; classic matches PR #10.
+Draft checks passed.
+Collection integration: 43 supported constructions, 172 decision transitions, evaluated shared prefixes, preference retention and malformed URL recovery pass.
+> paper-couture@0.1.0 check:integrated
+> node --import tsx scripts/check-integrated.ts
+These checks do not certify physical foldability or continuous collision-free motion.
+> paper-couture@0.1.0 check:positioning
+> node --import tsx scripts/check-positioning.ts
+Print positioning: bounded input, old URLs, exact snap positions, and two-sided registration at all four turns pass.
+> paper-couture@0.1.0 check:curation
+> node --import tsx scripts/check-design-curation.ts
+These checks do not certify physical foldability or continuous collision-free motion.
+> paper-couture@0.1.0 check:board
+> node --import tsx scripts/check-board.ts
+Board v1: round-trip, bounded validation, immutable Undo, missing legacy record, quota retry, unsupported-record preservation, unrelated storage, and cross-tab conflict pass.
+> paper-couture@0.1.0 check:sizing
+> node --import tsx scripts/check-sizing.ts
+  "passed": true,
+> paper-couture@0.1.0 check:outfit-folds
+> node --import tsx scripts/check-outfit-folds.ts
+These checks do not certify physical foldability or continuous collision-free motion.
+> paper-couture@0.1.0 check:companions
+> node --import tsx scripts/check-companion-folds.ts && node --import tsx scripts/check-framed-brooch.ts && node --import tsx scripts/check-plum-seed.ts
+These checks do not certify physical foldability or continuous collision-free motion.
+  "passed": true,
+> paper-couture@0.1.0 check:necktie
+> node --import tsx scripts/check-necktie.ts
+{"passed":true,"steps":8,"facets":21,"board":{"width":0.3285,"height":0.74},"worstHingeGap":0.0385,"at":"tie-knot-tuck at t=0.0000","piercings":0,"samplesPerOperation":81,"shares":{"printFront":0.3081597222222222,"printBack":0.22721354166666666,"reverseFront":0,"reverseBack":0.07801649305555555},"alignment":[{"deg":0,"unshifted":1,"offset":{"x":0.1875,"y":0.15625},"aligned":1},{"deg":90,"unshifted":0.007,"offset":{"x":0.15625,"y":-0.1875},"aligned":1},{"deg":180,"unshifted":0.278,"offset":{"x":-0.1875,"y":-0.15625},"aligned":1},{"deg":270,"unshifted":0.049,"offset":{"x":-0.15625,"y":0.1875},"aligned":1}]}
+These checks do not certify physical foldability or continuous collision-free motion.
+exit=0
+$ npm run build
+dist/index.html                   0.78 kB │ gzip:   0.49 kB
+dist/assets/index-BzK8gymu.css   12.18 kB │ gzip:   3.30 kB
+dist/assets/index-qYNL8xGB.js   665.84 kB │ gzip: 180.19 kB
+✓ built in 2.04s

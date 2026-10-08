@@ -19,7 +19,7 @@ const key = 'paper-couture.pinboard.v1';
  const open = () => page.getByRole('button',{name:/^View board/}).click();
  const shot = name => page.screenshot({path:path.join(out,name+'.png')});
  const nudge = async (name,n) => {for(let i=0;i<n;i++)await btn(name).click();};
- const exportPng = async name => { const [d]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);const bytes=fs.readFileSync(file);assert.equal(bytes.readUInt32BE(16),1600);assert.equal(bytes.readUInt32BE(20),1200);return file; };
+ const exportPng = async name => { const [d]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);const bytes=fs.readFileSync(file);assert.equal(bytes.readUInt32BE(16),1800);assert.equal(bytes.readUInt32BE(20),2100);return file; };
  try {
   await load('design=jacket&paper=corner-bloom&printX=0.125&printY=0.0625');
   await page.evaluate(()=>localStorage.setItem('__board_legacy_keep','untouched'));
@@ -43,7 +43,7 @@ const key = 'paper-couture.pinboard.v1';
   assert.equal(await page.evaluate(()=>localStorage.getItem('__board_legacy_keep')),'untouched');
   result.checks.push('Buttons: top folds → explicit pin → return → new paper/turn → bottom folds → pin → style → return/reset → reload. Exact posed vertices/UVs and prior capture unchanged; unrelated storage and URL workshop step preserved.');
   // Export is exactly the visible scene, excluding the selection outline.
-  const expected = await page.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1600,1200,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});
+  const expected = await page.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1800,2100,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});
   const exported=await exportPng('composite-reloaded');assert.deepEqual(fs.readFileSync(exported),Buffer.from(expected.split(',')[1],'base64'));
   const s=await board();await btn('Remove selected').click();assert.equal((await board()).items.length,1);await btn('Undo').click();assert.deepEqual(await board(),s);
   // Overlap the two pieces and check both depth separation and visible picking.
@@ -62,7 +62,7 @@ const key = 'paper-couture.pinboard.v1';
   // Restore styled positions with real controls for phone evidence.
   await page.getByLabel('Selected board piece').selectOption(top.id);await nudge('Move up',7);
   await page.getByLabel('Selected board piece').selectOption(styled.items[1].id);await nudge('Move down',7);
-  for(const [width,height] of [[390,844],[844,390]]) {
+  for(const [width,height] of [[390,844],[320,568],[844,390]]) {
     await page.setViewportSize({width,height});await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),width);
     const r=await page.locator('.pinboard-canvas').boundingBox(),cdp=await context.newCDPSession(page);
@@ -70,23 +70,31 @@ const key = 'paper-couture.pinboard.v1';
     // Empty board does not drag a previously selected item.
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x+8,y:r.y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:r.x+30,y:r.y+25}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.deepEqual(await board(),before);
     // Touch the top piece near its centre; cancel restores its position, tap only selects.
-    const x=r.x+r.width/2,y=r.y+r.height*(.5-.56/2.7);
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    const x=r.x+r.width/2,y=r.y+r.height*(.5-.56/4.2);
+    const durableBefore=await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length}));
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});
+    await page.waitForFunction(()=>paperCouture.pinboard.drag?.moved);
+    assert.notDeepEqual((await board()).items,before.items);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    // CDP may acknowledge input before the page processes pointercancel/pointerup.
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.deepEqual((await board()).items,before.items);
+    assert.deepEqual(await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length})),durableBefore);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.notDeepEqual((await board()).items,before.items);await btn('Undo').click();assert.deepEqual((await board()).items,before.items);
     await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);await shot('phone-'+width);await cdp.detach();
   }
   await page.setViewportSize({width:1280,height:900});
-  result.checks.push('Composite PNG is byte-identical to the visible 1600×1200 scene without selection outline. Real overlap occlusion/picking/layer reversal; portrait and landscape touch empty-space, drag, cancel, Undo, no page overflow.');
+  result.checks.push('Composite PNG is byte-identical to the visible 1800×2100 scene without selection outline. Real overlap occlusion/picking/layer reversal; portrait and landscape touch empty-space, drag, cancel, Undo, no page overflow.');
   // Fresh completed source, add limit, repeat/remove/Undo and GPU lifetime.
   await btn('Return to folding').click();await load('design=clutch&paper=seed-dashes&step=99&view=display');await open();
-  await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,4);assert(await btn('Board full · four pieces').isDisabled());
+  await btn('Pin current piece').click();await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,5);assert(await btn('Board full · five pieces').isDisabled());
   const memory=[];for(let i=0;i<4;i++){await btn('Remove selected').click();await btn('Undo').click();memory.push(await page.evaluate(()=>({...paperCouture.pinboard.renderer.info.memory})));await btn('Return to piece').click();await open()}
   assert.deepEqual(memory.slice(1),Array(3).fill(memory[1]));result.memory=memory;
   const bytes=await page.evaluate(()=>localStorage.getItem('paper-couture.pinboard.v1').length);result.saveCharacters=bytes;assert(bytes<2000000);
-  await page.reload();await settle();await open();assert.equal((await board()).items.length,4);
-  result.checks.push('Four-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all four reload.');
+  await page.reload();await settle();await open();assert.equal((await board()).items.length,5);
+  result.checks.push('Five-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all five reload.');
   // Failure and retry leave the previous durable save untouched.
   const durable=await page.evaluate(k=>localStorage.getItem(k),key);
   await page.evaluate(()=>{window.originalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='paper-couture.pinboard.v1')throw new DOMException('Quota exceeded','QuotaExceededError');return window.originalSet.call(this,k,v)}});

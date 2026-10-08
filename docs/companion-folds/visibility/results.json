@@ -1,0 +1,199 @@
+{
+  "method": "real engine final facets and ranks, flat normal projection",
+  "sourceCoordinates": "source-canvas x right/y down; reverse mirrors material x once",
+  "noAssumedMotifShape": true,
+  "reports": [
+    {
+      "id": "capelet",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.3294270833333333,
+            0.30078125,
+            0.08658854166666667,
+            0.130859375
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.3294270833333333,
+            0.30078125,
+            0.08658854166666667,
+            0.130859375
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.3294270833333333,
+            0.30078125,
+            0.08658854166666667,
+            0.130859375
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.3294270833333333,
+            0.30078125,
+            0.08658854166666667,
+            0.130859375
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boot-left",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boot-right",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}

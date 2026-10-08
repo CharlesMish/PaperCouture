@@ -4,9 +4,11 @@ import type { SilhouetteId, SleeveId } from './silhouettes';
 import type { CuffStyle, JacketLength } from './jacket';
 import type { SkirtLength, WrapDirection, WaistbandFinish } from './wrapSkirt';
 import type { VestLength } from './lapelVest';
+import type { BroochShape } from './framedBrooch';
 import type { PleatDepth } from './pleatedSkirt';
 
 export interface GarmentOptions {
+  broochShape: BroochShape;
   silhouette: SilhouetteId;
   sleeves: SleeveId;
   jacketLength: JacketLength;
@@ -18,7 +20,7 @@ export interface GarmentOptions {
   skirtLength: SkirtLength;
 }
 export const DEFAULT_OPTIONS: GarmentOptions = {
-  silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
+  broochShape: 'square', silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
   wrap: 'original', band: 'double', vestLength: 'short',
   pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic',
 };
@@ -32,6 +34,9 @@ export interface FoldDecision {
   choices: FoldChoice[];
 }
 const DECISIONS: Record<string, FoldDecision[]> = {
+  'framed-brooch': [{ id: 'broochShape', label: 'Frame shape', title: 'Choose the folded frame', before: 'frame-top', choices: [
+    { id: 'square', name: 'Square' }, { id: 'rectangle', name: 'Rectangle' },
+  ] }],
   dress: [
     { id: 'silhouette', label: 'Side folds', title: 'Choose the side folds', before: 'sides', choices: [
       { id: 'straight', name: 'Straight' }, { id: 'classic', name: 'Classic A-line' }, { id: 'flare', name: 'Wide flare' },
@@ -89,7 +94,7 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
   while (i < a.ops.length && i < b.ops.length && signature(a.ops[i]) === signature(b.ops[i])) i++;
   return i;
 }
-const keys: Record<DecisionId, string> = { silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength' };
+const keys: Record<DecisionId, string> = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength' };
 export function optionsToParams(options: GarmentOptions, params: URLSearchParams): void {
   for (const id of Object.keys(keys) as DecisionId[]) {
     if (options[id] === DEFAULT_OPTIONS[id]) params.delete(keys[id]);

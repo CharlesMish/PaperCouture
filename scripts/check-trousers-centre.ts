@@ -17,7 +17,7 @@ for (const [i, state] of timeline.states.entries()) assert.deepEqual(checkState(
 let worstGap = 0;
 let lowestZ = Infinity;
 for (const op of timeline.ops) {
-  assert(op.op.kind === 'turn' || op.op.folds.every(fold => fold.sense === 'valley'), 'centre uses visible upward folds');
+  assert(op.op.kind === 'turn' || (op.op.kind === 'fold' && op.op.folds.every(fold => fold.sense === 'valley')), 'centre uses visible upward folds');
   for (let sample = 0; sample <= 20; sample++) {
     const M = evaluateFrame(op, sample / 20);
     for (const hinge of op.hinges) for (const p of [hinge.m0, hinge.m1]) {
