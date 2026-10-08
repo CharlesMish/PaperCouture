@@ -1,0 +1,788 @@
+{
+  "baseline": "/Users/cmish/Documents/Codex/2026-10-07/task-7/baseline",
+  "variants": 46,
+  "checked": [
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "straight",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "straight",
+        "sleeves": "lifted",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "straight",
+        "sleeves": "dropped",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "lifted",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "dropped",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "flare",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "flare",
+        "sleeves": "lifted",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "dress",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "flare",
+        "sleeves": "dropped",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "jacket",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "jacket",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "turned",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "jacket",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "longer",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "jacket",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "longer",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "turned",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "single",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "skirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "opposite",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "vest",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "vest",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "longline",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "vest",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "pointed",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "pleats",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "shallow",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "pleats",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "pleats",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "deep",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "clutch",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "apron",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "tunic",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "tabard",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "boat-top",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "wrap-top",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "hat",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "fit-flare",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "camp-shirt",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "necktie",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "capelet",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "boot-left",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "boot-right",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "framed-brooch",
+      "options": {
+        "broochShape": "square",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    },
+    {
+      "id": "framed-brooch",
+      "options": {
+        "broochShape": "rectangle",
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      },
+      "statesIdentical": true,
+      "maxPoseDelta": 0
+    }
+  ]
+}

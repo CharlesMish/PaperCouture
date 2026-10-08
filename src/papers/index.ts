@@ -26,6 +26,7 @@ import { arcStudy } from './arcStudy';
 import { oatLinen } from './oatLinen';
 import { slateGrain } from './slateGrain';
 import { ginkgoPairs } from './ginkgoPairs';
+import { reedStudy, brokenTwill, copperFleck } from './reedSuite';
 import { plumSeed } from './plumSeed';
 
 export type { PaperDesign } from './types';
@@ -43,11 +44,14 @@ export const PAPERS: PaperDesign[] = [
   oatLinen,
   slateGrain,
   plumSeed,
+  brokenTwill,
+  copperFleck,
   borderPrint,
   botanical,
   indigoLattice,
   ivoryBorder,
   // More placement-dependent and bolder alternatives, in the same scroller.
+  reedStudy,
   arcStudy,
   ginkgoPairs,
   cornerBloom,
@@ -65,7 +69,7 @@ export const PAPERS: PaperDesign[] = [
   wideFrame,
   compassLining,
   diagnosticPaper,
-].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
+].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
 
 export const DEFAULT_PAPER_ID = 'stripe-disc';
 

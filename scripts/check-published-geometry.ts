@@ -11,7 +11,7 @@ const baseline = resolve(process.env.BASELINE_DIR || '.fit-flare-baseline');
 const old = await import(pathToFileURL(resolve(baseline, 'src/fold/garments.ts')).href);
 const oldTimeline = await import(pathToFileURL(resolve(baseline, 'src/fold/timeline.ts')).href);
 const checked: object[] = [];
-for (const g of GARMENTS.filter(g => g.id !== 'fit-flare')) {
+for (const g of old.GARMENTS as typeof GARMENTS) {
   let choices = [{ ...DEFAULT_OPTIONS }];
   for (const d of garmentDecisions(g.id)) choices = choices.flatMap(o => d.choices.map(c => ({ ...o, [d.id]: c.id })));
   for (const options of choices) {

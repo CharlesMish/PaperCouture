@@ -1,0 +1,13 @@
+{
+  "base": "http://127.0.0.1:5637",
+  "checks": [
+    "10 real forward folds, 10 Back operations, 10 repeated forward folds; each half-fold rendered and cancelled; Start over during motion; unfinished capture disabled.",
+    "Actual front/angle/back; Reed study before/after bounded sliding at all four turns on both faces; separate Reverse garden back at four turns; completed material identical; reload, Turntable and Display→Workshop Back/refold.",
+    "20cm coat with 18cm shirt, 20cm skirt and 8cm hat: actual pin controls; exact posed vertices/UVs; independent 16cm repeat capture; five-slot cap; remove/Undo, move/tilt/Undo, reload and reset preserve captures; 390/320/landscape layouts; PNG byte-identical to the visible 1800×2100 composite.",
+    "Published v1 fixture retains original durable bytes on read; new coat capture preserves old geometry/material/matrices; mixed board reloads and exports."
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false,
+  "passed": true
+}

@@ -1,3 +1,13 @@
+# Paper Couture - local Swing coat and Reed suite candidate
+
+Pinned to main `3fed818781aad112b52f00d9c87f2e65fa17900f`, containing the reviewed
+`a89f48c` candidate and `3372f86` geometry corrections. Adds one ten-step Swing
+coat and three procedural papers on `design/swing-coat-reed-suite`. See
+[selection, scale, checks and limits](docs/swing-coat/NOTES.md). Existing geometry
+and rendering code are unchanged. This task is local only: no push, PR, merge or
+deployment is authorized. The parent/publisher coordinates any later integration.
+Historical publication authorizations below do not apply to this new candidate.
+
 # Paper Couture — authorized main-site publication
 
 Charlie authorized pushing corrections, waiting for exact-head GitHub CI and

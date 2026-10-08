@@ -1,0 +1,43 @@
+name: Swing coat and reed paper suite
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Check the coat and its papers in the browser
+        env:
+          BASE_URL: http://127.0.0.1:5637
+          DEV_URL: http://127.0.0.1:5627
+          CAPTURE_DIR: .swing-coat-qa
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 5637 --strictPort > /tmp/coat-preview.log 2>&1 &
+          npm run dev -- --host 127.0.0.1 --port 5627 --strictPort > /tmp/coat-dev.log 2>&1 &
+          for port in 5627 5637; do
+            for i in {1..30}; do curl -fsS http://127.0.0.1:$port/ > /dev/null && break; sleep 1; done
+            curl -fsS http://127.0.0.1:$port/ > /dev/null
+          done
+          node scripts/check-swing-coat-browser.cjs
+          node scripts/check-swing-coat-phone.cjs
+          CAPTURE_DIR=.swing-coat-qa/papers node scripts/check-reed-suite-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: swing-coat-evidence
+          path: .swing-coat-qa/
+          include-hidden-files: true

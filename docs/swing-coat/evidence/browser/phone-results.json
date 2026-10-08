@@ -1,0 +1,18 @@
+[
+  {
+    "width": 390,
+    "forwardTaps": 10,
+    "back": true,
+    "positionPrint": true,
+    "noOverflow": true,
+    "errors": []
+  },
+  {
+    "width": 320,
+    "forwardTaps": 10,
+    "back": true,
+    "positionPrint": true,
+    "noOverflow": true,
+    "errors": []
+  }
+]
