@@ -63,3 +63,11 @@ save and Undo history. The board browser test now waits for the application's
 drag to finish after cancel/release, proves that the cancelled drag really moved,
 and checks that cancellation leaves the durable save and Undo history unchanged.
 No application event handler or restoration behavior changes.
+
+The subsequent companion-composition retry at `6226dfc1` exposed the same
+immediate-read race on the small brooch. The remaining five board-touch browser
+suites now use that reviewed completion check too, require actual movement, and
+preserve exact restoration plus saved-byte/Undo-depth assertions. This covers
+the companion, outfit, rectangle-brooch, external-outfit and fit-and-flare tests.
+An earlier companion reload timeout is retained in the CI evidence; the complete
+unchanged local suite passed, and no reload timeout or assertion was relaxed.

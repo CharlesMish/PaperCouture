@@ -225,9 +225,15 @@ async function bundle(url) {
           const cdp = await a.context.newCDPSession(a.page);
           const touch = (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
           try {
-            await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]); await touch('touchCancel', []);
+            const durableBefore = await a.page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length }));
+            await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]);
+            await a.page.waitForFunction(() => paperCouture.pinboard.drag?.moved);
+            assert.notDeepEqual((await a.state()).items, initial.items);
+            await touch('touchCancel', []); await a.page.waitForFunction(() => !paperCouture.pinboard.drag);
             assert.deepEqual((await a.state()).items, initial.items);
+            assert.deepEqual(await a.page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length })), durableBefore);
             await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]); await touch('touchEnd', []);
+            await a.page.waitForFunction(() => !paperCouture.pinboard.drag);
             assert.notDeepEqual((await a.state()).items, initial.items, 'Actual small accent paper must be touch-draggable'); await a.btn('Undo').click(); assert.deepEqual((await a.state()).items, initial.items);
             // Four pixels from the corner is outside the 0.08-world-unit paper margin.
             await touch('touchStart', [{ x: r.x + 4, y: r.y + 4 }]); await touch('touchMove', [{ x: r.x + 12, y: r.y + 12 }]); await touch('touchEnd', []);
