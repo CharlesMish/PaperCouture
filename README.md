@@ -49,6 +49,10 @@ See [garment study notes](docs/garment-studies/NOTES.md).
 Small flaps have 44px arrow handles: drag toward the arrow or tap to complete the
 pending fold. See [owner-feedback fixes](docs/feedback-pass/NOTES.md).
 
+The garment and accessory selectors each present one collection. Construction
+limits stay in the selected design note and in the design documentation; a
+shared selector does not establish physical foldability. Paper categories remain.
+
 ## Try it
 
 Choose a paper swatch and press Fold/Turn over for each step. Back reverses a step;

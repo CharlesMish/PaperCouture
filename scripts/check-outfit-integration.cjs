@@ -97,7 +97,7 @@ fs.mkdirSync(out, { recursive: true });
     for (const [id, paper] of [['boat-top', 'ginkgo-pairs'], ['wrap-top', 'slate-grain'], ['hat', 'oat-linen']]) {
       await btn('Return to folding').click(); await load(`design=${id}&paper=${paper}`);
       assert.equal(await page.getByLabel('Garment design').inputValue(), id);
-      assert.match(await page.locator('.studio-note').innerText(), /Experimental/);
+      assert.match(await page.locator('.studio-note').innerText(), /One square/);
       const count = await page.evaluate(() => paperCouture.timeline.ops.length);
       const fold = async () => { const step = await page.evaluate(() => paperCouture.controller.step); await page.locator('.dock:not(.display-dock) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); assert.equal(await page.evaluate(() => paperCouture.controller.step), step + 1); };
       while (!await page.evaluate(() => paperCouture.controller.finished)) await fold();

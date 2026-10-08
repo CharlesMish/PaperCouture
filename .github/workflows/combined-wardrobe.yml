@@ -1,7 +1,7 @@
 name: Combined wardrobe preview checks
 on:
   pull_request:
-    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare, codex/companion-design-studies]
+    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare, experiment/integrated-studies-20261004, codex/pinboard-composition-space, codex/outfit-proportions-collection, codex/companion-design-studies]
 permissions:
   contents: read
 jobs:

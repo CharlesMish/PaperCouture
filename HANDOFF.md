@@ -1,3 +1,12 @@
+# Paper Couture — authorized main-site publication
+
+Charlie authorized pushing corrections, waiting for exact-head GitHub CI and
+independent approval, then normal source merges and publication to the main
+cmish.dev site. This supersedes earlier local/preview-only restrictions for
+this combined Paper Couture update. See [the publication notes](docs/MAIN_PUBLICATION.md).
+The reviewed 3372f86 geometry is unchanged; garment and accessory selectors
+now show one list each, while specific construction limits remain visible.
+
 # Paper Couture — continuous PR28 correction for independent re-review
 
 Charlie authorized local corrections to PR28's visible layer intersections,

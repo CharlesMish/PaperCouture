@@ -14,6 +14,16 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
  const shot=async name=>{await frames();await p.screenshot({path:path.join(out,name+'.png')});report.visuals.push(name);};
  const png=async name=>{const[d]=await Promise.all([p.waitForEvent('download'),btn('Save PNG').click()]);const dest=path.join(out,name+'.png');await d.saveAs(dest);await p.waitForFunction(()=>!paperCouture.pinboard.exporting);return fs.readFileSync(dest)};
  try{
+  await load('design=fit-flare&paper=botanical&step=0');
+  const designs=p.getByLabel('Garment design'),accessories=p.getByLabel('Accessory type');
+  assert.equal(await designs.locator('optgroup').count(),0);assert.equal(await accessories.locator('optgroup').count(),0);
+  const ids=await designs.locator('option').evaluateAll(xs=>xs.map(x=>x.value));
+  assert.equal(ids.length,19);assert.equal(new Set(ids).size,19);
+  assert.deepEqual(await accessories.locator('option').evaluateAll(xs=>xs.map(x=>x.value)),['pin','bow','kerchief','pocket','tulip','sash']);
+  assert.match(await p.locator('.studio-note').innerText(),/no armholes or neck opening/);
+  assert(!/Experimental/.test(await p.locator('.studio-note').innerText()));
+  assert.deepEqual(await p.locator('.paper-group-label').allTextContents(),['Curated','Experiments']);
+  report.checks.push('One garment list and one accessory list retain every choice; specific construction limits remain visible; paper categories unchanged');
   // Native rendering, normal workshop camera, frozen only through supported scrub controller.
   for(const[op,t]of[[4,.25],[4,.455],[4,.60],[4,.75],[5,.34]]){
    await load('design=fit-flare&paper=botanical&step='+op);

@@ -146,8 +146,8 @@ async function bundle(url) {
       assert(ids.length <= 5, 'New-design test captures must respect the real five-piece cap');
       for (const [index, id] of ids.entries()) {
         await a.load(`design=${id}&paper=${index % 2 ? 'plum-scatter' : 'corner-bloom'}&step=0&view=workshop`);
-        assert.equal(await a.page.getByLabel('Garment design').inputValue(), id); assert.match(await a.page.locator('.studio-note').innerText(), /Experimental/);
-        const option = a.page.getByLabel('Garment design').locator(`option[value="${id}"]`); assert.match(await option.locator('..').getAttribute('label'), /Experiments/);
+        assert.equal(await a.page.getByLabel('Garment design').inputValue(), id); assert.match(await a.page.locator('.studio-note').innerText(), /(One square|Small intact square)/);
+        const option = a.page.getByLabel('Garment design').locator(`option[value="${id}"]`); assert.equal(await option.evaluate(e => e.parentElement.tagName), 'SELECT');
         const recipe = await a.positionPrint(), count = await a.page.evaluate(() => paperCouture.timeline.ops.length);
         const folds = await a.finish(); assert.equal(folds, count);
         await a.btn('Back').click(); if (await a.page.evaluate(() => paperCouture.controller.moving)) await a.btn('Back').click(); await a.settle();
