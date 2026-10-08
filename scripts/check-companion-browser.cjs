@@ -68,7 +68,9 @@ async function bundle(url) {
     const open = () => page.getByRole('button', { name: /^View board/ }).click();
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-    const nudge = (name, count) => btn(name).evaluate((e, count) => { for (let n = 0; n < count; n++) e.click(); }, count);
+    // Exercise each move as a browser input action, allowing normal frame/input
+    // processing between presses instead of a synchronous burst of 40 renders.
+    const nudge = async (name, count) => { for (let n = 0; n < count; n++) await btn(name).click(); };
     const moveTo = async (x, y) => { await btn('Reset selected').click(); await nudge(x < 0 ? 'Move left' : 'Move right', Math.round(Math.abs(x) / .08)); await nudge(y < 0 ? 'Move down' : 'Move up', Math.round(Math.abs(y) / .08)); };
     const fold = async () => {
       const previous = await page.evaluate(() => paperCouture.controller.step);
