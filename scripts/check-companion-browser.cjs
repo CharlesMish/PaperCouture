@@ -2,6 +2,7 @@
 // Fresh, sequential browser contexts only; never a user's profile or storage.
 // Uses the running app's diagnostic objects and real controls, with no source imports.
 // BASE_URL / BASELINE_URL must serve compiled builds unless REQUIRE_PRODUCTION=0.
+process.env.DEBUG = [process.env.DEBUG, 'pw:browser'].filter(Boolean).join(',');
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = (process.env.BASE_URL || 'http://127.0.0.1:4301').replace(/\/$/, '') + '/';
@@ -43,11 +44,21 @@ async function bundle(url) {
   // and makes candidate/baseline pixel comparisons use the same browser serially.
   async function visit(url, seed, work) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce', hasTouch: true, acceptDownloads: true });
+    await context.tracing.start({ screenshots: false, snapshots: false, sources: false });
+    let traceStopped = false;
+    const pendingRequests = new Map(), lifecycle = [], consoleMessages = [], failedRequests = [], responses = [], completedRequests = [];
     context.setDefaultNavigationTimeout(90000);
     if (seed !== undefined) await context.addInitScript(({ key, seed }) => {
       if (localStorage.getItem(key) === null) localStorage.setItem(key, seed);
     }, { key, seed });
     const page = currentPage = await context.newPage(); page.setDefaultTimeout(60000); page.setDefaultNavigationTimeout(90000);
+    page.on('request', r => pendingRequests.set(r, { url: r.url(), type: r.resourceType(), started: Date.now() }));
+    page.on('requestfinished', r => { completedRequests.push({ url: r.url(), type: r.resourceType(), timing: r.timing(), time: Date.now() }); pendingRequests.delete(r); });
+    page.on('response', r => responses.push({ url: r.url(), status: r.status(), type: r.request().resourceType(), timing: r.request().timing(), time: Date.now() }));
+    page.on('requestfailed', r => { failedRequests.push({ url: r.url(), error: r.failure() }); pendingRequests.delete(r); });
+    page.on('console', m => { if (['warning', 'error'].includes(m.type())) { consoleMessages.push({ type: m.type(), text: m.text().slice(0, 2000) }); if (consoleMessages.length > 50) consoleMessages.shift(); } });
+    for (const event of ['domcontentloaded', 'load', 'crash']) page.on(event, () => lifecycle.push({ event, url: page.url(), time: Date.now() }));
+    page.on('framenavigated', f => { if (f === page.mainFrame()) lifecycle.push({ event: 'navigated', url: f.url(), time: Date.now() }); });
     page.on('pageerror', e => report.errors.push({ base: url, error: String(e) }));
     page.on('response', r => { if (r.status() >= 400 && ['document', 'script', 'stylesheet'].includes(r.request().resourceType())) report.failedResources.push({ url: r.url(), status: r.status() }); });
     page.on('request', r => { if (/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname)) report.sourceRequests.push(r.url()); });
@@ -57,7 +68,9 @@ async function bundle(url) {
     const open = () => page.getByRole('button', { name: /^View board/ }).click();
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-    const nudge = (name, count) => btn(name).evaluate((e, count) => { for (let n = 0; n < count; n++) e.click(); }, count);
+    // Exercise each move as a browser input action, allowing normal frame/input
+    // processing between presses instead of a synchronous burst of 40 renders.
+    const nudge = async (name, count) => { for (let n = 0; n < count; n++) await btn(name).click(); };
     const moveTo = async (x, y) => { await btn('Reset selected').click(); await nudge(x < 0 ? 'Move left' : 'Move right', Math.round(Math.abs(x) / .08)); await nudge(y < 0 ? 'Move down' : 'Move up', Math.round(Math.abs(y) / .08)); };
     const fold = async () => {
       const previous = await page.evaluate(() => paperCouture.controller.step);
@@ -108,8 +121,12 @@ async function bundle(url) {
         saveCharacters: localStorage.getItem('paper-couture.pinboard.v1')?.length, memory: { ...b.renderer.info.memory } };
     });
     try { return await work({ page, context, btn, settle, load, open, state, raw, nudge, moveTo, fold, finish, display, positionPrint, capture, shot, exportPNG, metrics }); }
-    catch (error) { await page.screenshot({ path: path.join(out, 'failure.png') }).catch(() => {}); throw error; }
-    finally { await context.close(); currentPage = undefined; }
+    catch (error) {
+      report.navigationDiagnostics = { url: page.url(), pendingRequests: [...pendingRequests.values()].map(r => ({ ...r, elapsedMs: Date.now() - r.started })), failedRequests, consoleMessages, lifecycle, responses, completedRequests };
+      await context.tracing.stop({ path: path.join(out, 'failure-trace.zip') }).catch(e => { report.traceFailure = String(e); }); traceStopped = true;
+      await page.screenshot({ path: path.join(out, 'failure.png') }).catch(() => {}); throw error;
+    }
+    finally { if (!traceStopped) await context.tracing.stop().catch(e => { report.traceFailure = String(e); }); await context.close(); currentPage = undefined; }
   }
   const assertBoard = m => {
     assert(!m.overflow); assert(m.contained); assert(m.toolHeight >= 144);
@@ -146,8 +163,8 @@ async function bundle(url) {
       assert(ids.length <= 5, 'New-design test captures must respect the real five-piece cap');
       for (const [index, id] of ids.entries()) {
         await a.load(`design=${id}&paper=${index % 2 ? 'plum-scatter' : 'corner-bloom'}&step=0&view=workshop`);
-        assert.equal(await a.page.getByLabel('Garment design').inputValue(), id); assert.match(await a.page.locator('.studio-note').innerText(), /Experimental/);
-        const option = a.page.getByLabel('Garment design').locator(`option[value="${id}"]`); assert.match(await option.locator('..').getAttribute('label'), /Experiments/);
+        assert.equal(await a.page.getByLabel('Garment design').inputValue(), id); assert.match(await a.page.locator('.studio-note').innerText(), /(One square|Small intact square)/);
+        const option = a.page.getByLabel('Garment design').locator(`option[value="${id}"]`); assert.equal(await option.evaluate(e => e.parentElement.tagName), 'SELECT');
         const recipe = await a.positionPrint(), count = await a.page.evaluate(() => paperCouture.timeline.ops.length);
         const folds = await a.finish(); assert.equal(folds, count);
         await a.btn('Back').click(); if (await a.page.evaluate(() => paperCouture.controller.moving)) await a.btn('Back').click(); await a.settle();
@@ -225,9 +242,15 @@ async function bundle(url) {
           const cdp = await a.context.newCDPSession(a.page);
           const touch = (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });
           try {
-            await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]); await touch('touchCancel', []);
+            const durableBefore = await a.page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length }));
+            await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]);
+            await a.page.waitForFunction(() => paperCouture.pinboard.drag?.moved);
+            assert.notDeepEqual((await a.state()).items, initial.items);
+            await touch('touchCancel', []); await a.page.waitForFunction(() => !paperCouture.pinboard.drag);
             assert.deepEqual((await a.state()).items, initial.items);
+            assert.deepEqual(await a.page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length })), durableBefore);
             await touch('touchStart', [{ x, y }]); await touch('touchMove', [{ x: x - 18, y: y - 12 }]); await touch('touchEnd', []);
+            await a.page.waitForFunction(() => !paperCouture.pinboard.drag);
             assert.notDeepEqual((await a.state()).items, initial.items, 'Actual small accent paper must be touch-draggable'); await a.btn('Undo').click(); assert.deepEqual((await a.state()).items, initial.items);
             // Four pixels from the corner is outside the 0.08-world-unit paper margin.
             await touch('touchStart', [{ x: r.x + 4, y: r.y + 4 }]); await touch('touchMove', [{ x: r.x + 12, y: r.y + 12 }]); await touch('touchEnd', []);
@@ -250,7 +273,19 @@ async function bundle(url) {
       }
       assert.deepEqual((await a.state()).items, full.items, 'Repeated clamped moves and tilt never alter frozen snapshots; explicit placement restores the composition');
       const retained = await a.state(); newPaperSave = await a.raw(); fs.writeFileSync(path.join(out, 'five-piece-companions.json'), newPaperSave);
-      await a.page.reload(); await a.settle(); await a.open(); assert.deepEqual(await a.state(), retained); assert.equal(await a.raw(), newPaperSave);
+      report.beforeReload = await a.page.evaluate(() => ({ url: location.href, readyState: document.readyState, unsaved: paperCouture.pinboard.unsaved,
+        durableMatchesState: localStorage.getItem('paper-couture.pinboard.v1') === JSON.stringify(paperCouture.pinboard.state),
+        boardMemory: { ...paperCouture.pinboard.renderer.info.memory }, time: Date.now() }));
+      const reloadProbe = setTimeout(() => { void (async () => {
+        const started = Date.now();
+        try {
+          const response = await fetch(report.beforeReload.url, { signal: AbortSignal.timeout(5000), headers: { 'Cache-Control': 'no-cache' } });
+          const html = await response.text();
+          report.reloadHTTPProbe = { status: response.status, elapsedMs: Date.now() - started, htmlSha256: sha(html), matchesCandidateHTML: sha(html) === report.candidateBundle.htmlSha256 };
+        } catch (error) { report.reloadHTTPProbe = { elapsedMs: Date.now() - started, error: String(error) }; }
+      })(); }, 15000);
+      try { await a.page.reload(); } finally { clearTimeout(reloadProbe); }
+      await a.settle(); await a.open(); assert.deepEqual(await a.state(), retained); assert.equal(await a.raw(), newPaperSave);
       await a.exportPNG('five-piece-reloaded');
       // One new-collection quota check uses only this disposable context's Storage
       // method. An old durable save stays intact and Retry writes the kept new state.

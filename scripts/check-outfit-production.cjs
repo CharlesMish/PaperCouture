@@ -67,7 +67,7 @@ async function bundle() {
       if (!index) {
         for (const id of ['boat-top', 'wrap-top', 'hat']) {
           const option = page.getByLabel('Garment design').locator(`option[value="${id}"]`);
-          assert.equal(await option.count(), 1); assert((await option.locator('..').getAttribute('label')).includes('Experiments'));
+          assert.equal(await option.count(), 1); assert.equal(await option.evaluate(e => e.parentElement.tagName), 'SELECT');
         }
         for (const name of ['Oat linen', 'Slate grain', 'Ginkgo pairs']) assert.equal(await page.getByRole('radio', { name, exact: true }).count(), 1);
       }

@@ -80,7 +80,7 @@ fs.mkdirSync(out, { recursive: true });
     await visit(base, undefined, { width: 900, height: 760 }, async a => {
       await a.load('design=necktie&paper=oat-linen&step=0');
       assert.equal(await a.page.getByLabel('Garment design').inputValue(), 'necktie');
-      assert.match(await a.page.locator('.studio-note').innerText(), /Experimental/);
+      assert.match(await a.page.locator('.studio-note').innerText(), /Small intact square.*no neck loop/);
       const titles = await a.page.evaluate(() => paperCouture.timeline.ops.map(o => o.op.title));
       assert.equal(titles.length, geometry.steps); await a.shot('neutral-step-0');
       for (let i = 0; i < titles.length; i++) {

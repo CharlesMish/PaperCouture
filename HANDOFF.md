@@ -1,3 +1,24 @@
+# Paper Couture — authorized main-site publication
+
+Charlie authorized pushing corrections, waiting for exact-head GitHub CI and
+independent approval, then normal source merges and publication to the main
+cmish.dev site. This supersedes earlier local/preview-only restrictions for
+this combined Paper Couture update. See [the publication notes](docs/MAIN_PUBLICATION.md).
+The reviewed 3372f86 geometry is unchanged; garment and accessory selectors
+now show one list each, while specific construction limits remain visible.
+
+# Paper Couture — continuous PR28 correction for independent re-review
+
+Charlie authorized local corrections to PR28's visible layer intersections,
+absolute hinge guard and missing CI coverage. Independent review rejected
+d3c15f7's per-frame axis switching; this revision plans and smoothly blends
+separating directions and adds adaptive vertex-motion regressions. Synthetic
+hinge-strip intersections are measured separately and remain a stated limit. This branch preserves Claude's geometry,
+Sunray artwork and all resting captures. Read
+[docs/fit-flare/CORRECTIONS.md](docs/fit-flare/CORRECTIONS.md) for implementation,
+tests, exact lineage and reviewer focus. No push, PR update, merge or deployment
+is authorized yet; publication scope must be resolved separately.
+
 # Paper Couture — fit-and-flare dress and Sunray pleats (Claude, 2026-10-07)
 
 On top of the combined wardrobe preview `21109e7`, at Charlie's request in a Claude chat.

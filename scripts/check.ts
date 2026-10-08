@@ -28,10 +28,11 @@ import { collapseAngles, loopResidual } from '../src/fold/collapse';
 import { creasePattern, vertexProblems } from './crease_pattern';
 import { COLLAR_Y, SIDE_APEX_Y, SIDE_HALF_ANGLE } from '../src/papers/dressMarks';
 import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
-import { buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
+import { buildTimeline, evaluateFrame, posePoint } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
 import { FoldController } from '../src/app/controller';
 import { checkTwoSidedRotation } from './rotationCheck';
+import { hingeProblems } from './hingeCheck';
 
 const errors: string[] = [];
 for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing(), buildWrapSkirt(), buildLapelVest(),
@@ -84,14 +85,14 @@ for (let k = 0; k + 1 < tl.ops.length; k++) {
 }
 
 // 2. Mid-animation: hinged pieces stay together, nothing goes under the table.
-// Layers are drawn LAYER_GAP apart, so a hinge between a low and a high layer is
-// already open by their height difference at rest; a tear is a hinge that opens
-// well beyond that while it swings. For stacks up to 8 layers deep this is the
-// old absolute limit.
+// Preserve an absolute gap bound: eight rendering gaps for earlier designs,
+// twelve for the collapse stack. Opening beyond rest is reported diagnostically;
+// a large resting tear cannot exempt a construction from the absolute check.
 let worstGap = 0;
 let worstExcess = 0;
 let lowestZ = Infinity;
 for (const op of tl.ops) {
+  errors.push(...hingeProblems(op));
   const frames = Array.from({ length: 21 }, (_, s) => evaluateFrame(op, s / 20));
   for (const h of op.hinges) {
     for (const m of [h.m0, h.m1]) {
@@ -113,10 +114,6 @@ for (const op of tl.ops) {
     }
     if (worst > 1e-9) errors.push(`${construction.name}: ${op.op.id} crease loops open by ${worst.toExponential(2)} (not rigid)`);
   }
-}
-const gapLimit = 8 * LAYER_GAP;
-if (worstGap > gapLimit && worstExcess > 2 * LAYER_GAP) {
-  errors.push(`${construction.name}: mid-fold hinge gap ${worstGap.toFixed(4)} (${worstExcess.toFixed(4)} beyond rest) exceeds ${gapLimit}`);
 }
 if (lowestZ < -1e-9) errors.push(`paper dips below the table (z = ${lowestZ.toFixed(4)})`);
 
