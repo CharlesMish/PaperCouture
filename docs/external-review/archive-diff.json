@@ -1,0 +1,14 @@
+{
+  "identical_to_PR25": 153,
+  "changed": [
+    "package.json",
+    "src/fold/paperSize.ts",
+    "src/fold/garments.ts"
+  ],
+  "new": [
+    ".source-revision",
+    "scripts/check-notch-crop.ts",
+    "src/fold/notchCrop.ts",
+    "docs/notch-collar-crop/NOTES.md"
+  ]
+}

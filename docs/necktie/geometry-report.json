@@ -1,0 +1,313 @@
+{
+  "construction": "Folded necktie",
+  "sourceSquare": "[-1, 1]^2, one intact square",
+  "steps": 8,
+  "creases": [
+    {
+      "id": "tie-reverse",
+      "kind": "turn over (x -> -x)"
+    },
+    {
+      "id": "tie-kite-left",
+      "folds": [
+        {
+          "a": [
+            -1,
+            1
+          ],
+          "b": [
+            -0.17157,
+            -1
+          ],
+          "moving": [
+            -0.85858,
+            -1.14142
+          ],
+          "sense": "valley"
+        }
+      ]
+    },
+    {
+      "id": "tie-kite-right",
+      "folds": [
+        {
+          "a": [
+            -1,
+            1
+          ],
+          "b": [
+            1,
+            0.17157
+          ],
+          "moving": [
+            1.14142,
+            0.85858
+          ],
+          "sense": "valley"
+        }
+      ]
+    },
+    {
+      "id": "tie-narrow-left",
+      "folds": [
+        {
+          "a": [
+            -1,
+            1
+          ],
+          "b": [
+            0.33636,
+            -1
+          ],
+          "moving": [
+            -0.28284,
+            -0.84853
+          ],
+          "sense": "valley"
+        }
+      ]
+    },
+    {
+      "id": "tie-narrow-right",
+      "folds": [
+        {
+          "a": [
+            -1,
+            1
+          ],
+          "b": [
+            1,
+            -0.33636
+          ],
+          "moving": [
+            0.84853,
+            0.28284
+          ],
+          "sense": "valley"
+        }
+      ]
+    },
+    {
+      "id": "tie-front",
+      "kind": "turn over (x -> -x)"
+    },
+    {
+      "id": "tie-knot",
+      "folds": [
+        {
+          "a": [
+            1.90919,
+            -0.91924
+          ],
+          "b": [
+            -0.91924,
+            1.90919
+          ],
+          "moving": [
+            1,
+            1
+          ],
+          "sense": "valley"
+        }
+      ]
+    },
+    {
+      "id": "tie-knot-tuck",
+      "folds": [
+        {
+          "a": [
+            1.64049,
+            -1.18794
+          ],
+          "b": [
+            -1.18794,
+            1.64049
+          ],
+          "moving": [
+            -0.48083,
+            -0.48083
+          ],
+          "sense": "valley",
+          "only": "tie-knot"
+        }
+      ]
+    }
+  ],
+  "finalFacets": 21,
+  "retainedArea": 4,
+  "connected": true,
+  "uprightModel": {
+    "width": 0.9385,
+    "height": 2.1142,
+    "knotCrease": 0.7,
+    "knotDepth": 0.38
+  },
+  "suggestedSquareCm": 7,
+  "board": {
+    "width": 0.3285,
+    "height": 0.74
+  },
+  "frontReverseFraction": 0,
+  "backReverseFraction": 0.254,
+  "samplesPerOperation": 81,
+  "worstHingeGap": 0.0385,
+  "worstHingeGapAt": "tie-knot-tuck at t=0.0000",
+  "hingeLimit": 0.044,
+  "minimumZ": 0.0015,
+  "strictTrianglePiercings": 0,
+  "perOperation": [
+    {
+      "id": "tie-reverse",
+      "hingeGap": 0,
+      "piercings": 0
+    },
+    {
+      "id": "tie-kite-left",
+      "hingeGap": 0.0055,
+      "piercings": 0
+    },
+    {
+      "id": "tie-kite-right",
+      "hingeGap": 0.0055,
+      "piercings": 0
+    },
+    {
+      "id": "tie-narrow-left",
+      "hingeGap": 0.0165,
+      "piercings": 0
+    },
+    {
+      "id": "tie-narrow-right",
+      "hingeGap": 0.0165,
+      "piercings": 0
+    },
+    {
+      "id": "tie-front",
+      "hingeGap": 0.0165,
+      "piercings": 0
+    },
+    {
+      "id": "tie-knot",
+      "hingeGap": 0.0385,
+      "piercings": 0
+    },
+    {
+      "id": "tie-knot-tuck",
+      "hingeGap": 0.0385,
+      "piercings": 0
+    }
+  ],
+  "visibility": {
+    "method": "real engine final facets and ranks, flat normal projection (scripts/paperLanding.ts)",
+    "materialSamples": 9216,
+    "shares": {
+      "printFront": 0.3081597222222222,
+      "printBack": 0.22721354166666666,
+      "reverseFront": 0,
+      "reverseBack": 0.07801649305555555
+    }
+  },
+  "cornerBloomAlignment": {
+    "target": [
+      0,
+      0
+    ],
+    "discRadius": 0.23,
+    "step": "1/32 of the sheet per nudge",
+    "alignment": [
+      {
+        "quarterTurns": 0,
+        "degrees": 0,
+        "unshiftedMaterial": [
+          -0.4,
+          -0.32
+        ],
+        "unshiftedFrontShare": 1,
+        "offset": {
+          "x": 0.1875,
+          "y": 0.15625
+        },
+        "nudges": {
+          "right": 6,
+          "up": 5
+        },
+        "alignedMaterial": [
+          -0.025,
+          -0.0075
+        ],
+        "alignedFrontShare": 1
+      },
+      {
+        "quarterTurns": 1,
+        "degrees": 90,
+        "unshiftedMaterial": [
+          -0.32,
+          0.4
+        ],
+        "unshiftedFrontShare": 0.007,
+        "offset": {
+          "x": 0.15625,
+          "y": -0.1875
+        },
+        "nudges": {
+          "right": 5,
+          "up": -6
+        },
+        "alignedMaterial": [
+          -0.0075,
+          0.025
+        ],
+        "alignedFrontShare": 1
+      },
+      {
+        "quarterTurns": 2,
+        "degrees": 180,
+        "unshiftedMaterial": [
+          0.4,
+          0.32
+        ],
+        "unshiftedFrontShare": 0.278,
+        "offset": {
+          "x": -0.1875,
+          "y": -0.15625
+        },
+        "nudges": {
+          "right": -6,
+          "up": -5
+        },
+        "alignedMaterial": [
+          0.025,
+          0.0075
+        ],
+        "alignedFrontShare": 1
+      },
+      {
+        "quarterTurns": 3,
+        "degrees": 270,
+        "unshiftedMaterial": [
+          0.32,
+          -0.4
+        ],
+        "unshiftedFrontShare": 0.049,
+        "offset": {
+          "x": -0.15625,
+          "y": 0.1875
+        },
+        "nudges": {
+          "right": -5,
+          "up": 6
+        },
+        "alignedMaterial": [
+          0.0075,
+          -0.025
+        ],
+        "alignedFrontShare": 1
+      }
+    ]
+  },
+  "limitations": [
+    "not physical paper",
+    "not continuous collision certification",
+    "flat normal projection, not the tilted Display camera"
+  ]
+}

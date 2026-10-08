@@ -1,0 +1,19 @@
+{
+  "errors": [],
+  "captures": [
+    "centre-front",
+    "centre-angle",
+    "centre-back",
+    "centre-midfold",
+    "bow-plain",
+    "bow-mosaic",
+    "bow-garden",
+    "trousers-parked",
+    "bow-rotation-0",
+    "bow-rotation-1",
+    "bow-rotation-2",
+    "bow-rotation-3"
+  ],
+  "kind": "isolated real facet render, not integrated app interaction",
+  "browser": "headless Chromium software WebGL"
+}

@@ -1,0 +1,821 @@
+{
+  "base": "http://127.0.0.1:5197",
+  "checks": [
+    "46 front/back default paper rasters exactly match the published base",
+    "Actual pixels: stationary grain, paired front/back motif at all four turns, Seed dashes full-period parity and half-period edge continuation",
+    "Real drag/nudges, fold/back/start-over, design and paper switches, reset, locked paper, snap selection and reload; UV/geometry unchanged",
+    "Rendered before/after/front/back captures for both floral papers at all four turns",
+    "Explicitly pinned actual bow and shifted centre, three backgrounds and PNGs, repeated entry/exit with stable resources",
+    "Portrait/landscape touch drag, tilt, close/Escape focus isolation, no page overflow and existing storage retained",
+    "Actual OrbitControls stays above table at distance/orbit extremes for every design and length in three viewports",
+    "All eight actual current designs render on the board with their chosen paper and offset"
+  ],
+  "errors": [],
+  "raster": {
+    "grainFixed": true,
+    "reverseFixed": true,
+    "registration": [
+      {
+        "q": 0,
+        "side": "front",
+        "red": true
+      },
+      {
+        "q": 0,
+        "side": "back",
+        "red": true
+      },
+      {
+        "q": 1,
+        "side": "front",
+        "red": true
+      },
+      {
+        "q": 1,
+        "side": "back",
+        "red": true
+      },
+      {
+        "q": 2,
+        "side": "front",
+        "red": true
+      },
+      {
+        "q": 2,
+        "side": "back",
+        "red": true
+      },
+      {
+        "q": 3,
+        "side": "front",
+        "red": true
+      },
+      {
+        "q": 3,
+        "side": "back",
+        "red": true
+      }
+    ],
+    "fullPeriod": true,
+    "halfDifferent": true,
+    "edgeInk": true
+  },
+  "snapshot": {
+    "geometryEqual": true,
+    "uvEqual": true,
+    "parts": 11,
+    "papers": [
+      {
+        "id": "corner-bloom",
+        "turns": 0,
+        "position": {
+          "x": 0.125,
+          "y": 0
+        },
+        "side": "front"
+      },
+      {
+        "id": "corner-bloom",
+        "turns": 0,
+        "position": {
+          "x": 0.125,
+          "y": 0
+        },
+        "side": "back"
+      },
+      {
+        "id": "plum-scatter",
+        "turns": 0,
+        "position": {
+          "x": 0,
+          "y": 0.03125
+        },
+        "side": "front"
+      },
+      {
+        "id": "plum-scatter",
+        "turns": 0,
+        "position": {
+          "x": 0,
+          "y": 0.03125
+        },
+        "side": "back"
+      },
+      {
+        "id": "seed-dashes",
+        "turns": 0,
+        "position": {
+          "x": 0.03125,
+          "y": 0
+        },
+        "side": "front"
+      },
+      {
+        "id": "seed-dashes",
+        "turns": 0,
+        "position": {
+          "x": 0.03125,
+          "y": 0
+        },
+        "side": "back"
+      }
+    ],
+    "pin": {
+      "x": 0,
+      "y": 0.03125
+    },
+    "centre": {
+      "x": 0.03125,
+      "y": 0
+    }
+  },
+  "memory": [
+    {
+      "geometries": 8,
+      "textures": 8
+    },
+    {
+      "geometries": 8,
+      "textures": 8
+    },
+    {
+      "geometries": 8,
+      "textures": 8
+    },
+    {
+      "geometries": 8,
+      "textures": 8
+    }
+  ],
+  "exports": [
+    "../output/positioning/board-Linen.png",
+    "../output/positioning/board-Rose.png",
+    "../output/positioning/board-Slate.png"
+  ],
+  "cameras": [
+    {
+      "id": "dress",
+      "width": 1100,
+      "lowest": 0.02500000000000091,
+      "maxPolar": 1.648012859336341,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 1100,
+      "lowest": 0.02499999999999969,
+      "maxPolar": 1.642891916595379,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 1100,
+      "lowest": 0.025000000000000355,
+      "maxPolar": 1.645559428669032,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "longer",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 1100,
+      "lowest": 0.025000000000000244,
+      "maxPolar": 1.6453989558501685,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 1100,
+      "lowest": 0.024999999999999467,
+      "maxPolar": 1.6479066552962178,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "longline",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 1100,
+      "lowest": 0.024999999999999467,
+      "maxPolar": 1.6479066552962178,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "pointed",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 1100,
+      "lowest": 0.02499999999999991,
+      "maxPolar": 1.6413880032188763,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 1100,
+      "lowest": 0.024999999999999245,
+      "maxPolar": 1.6442527998181389,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 1100,
+      "lowest": 0.0250000000000008,
+      "maxPolar": 1.6463073283515772,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      }
+    },
+    {
+      "id": "pleats",
+      "width": 1100,
+      "lowest": 0.024999999999999578,
+      "maxPolar": 1.645234539783038,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "apron",
+      "width": 1100,
+      "lowest": 0.025000000000000022,
+      "maxPolar": 1.655040396552861,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "clutch",
+      "width": 1100,
+      "lowest": 0.024999999999999578,
+      "maxPolar": 1.648365573454651,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "tunic",
+      "width": 1100,
+      "lowest": 0.024999999999999245,
+      "maxPolar": 1.6553518723265883,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "dress",
+      "width": 390,
+      "lowest": 0.025000000000001465,
+      "maxPolar": 1.6306710755826883,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 390,
+      "lowest": 0.02499999999999869,
+      "maxPolar": 1.614032229791113,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 390,
+      "lowest": 0.025000000000001243,
+      "maxPolar": 1.624688891496403,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "longer",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 390,
+      "lowest": 0.025000000000001132,
+      "maxPolar": 1.6286457475399834,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 390,
+      "lowest": 0.0249999999999988,
+      "maxPolar": 1.6305887887726653,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "longline",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 390,
+      "lowest": 0.0249999999999988,
+      "maxPolar": 1.6305887887726653,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "pointed",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 390,
+      "lowest": 0.025000000000001132,
+      "maxPolar": 1.6124967326150674,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 390,
+      "lowest": 0.025000000000000466,
+      "maxPolar": 1.619900567676457,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 390,
+      "lowest": 0.025000000000000466,
+      "maxPolar": 1.6239400996703564,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      }
+    },
+    {
+      "id": "pleats",
+      "width": 390,
+      "lowest": 0.025000000000000244,
+      "maxPolar": 1.6285183478705474,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "apron",
+      "width": 390,
+      "lowest": 0.025000000000001688,
+      "maxPolar": 1.6260015451116865,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "clutch",
+      "width": 390,
+      "lowest": 0.025000000000001132,
+      "maxPolar": 1.6189127699050878,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "tunic",
+      "width": 390,
+      "lowest": 0.024999999999999356,
+      "maxPolar": 1.6406126014437301,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "dress",
+      "width": 844,
+      "lowest": 0.025000000000001354,
+      "maxPolar": 1.619421468553879,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 844,
+      "lowest": 0.024999999999999245,
+      "maxPolar": 1.6162001811778832,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "jacket",
+      "width": 844,
+      "lowest": 0.025000000000001354,
+      "maxPolar": 1.617878251032192,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "longer",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 844,
+      "lowest": 0.025000000000000466,
+      "maxPolar": 1.6177773069661057,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 844,
+      "lowest": 0.0250000000000008,
+      "maxPolar": 1.61935466942099,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "longline",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "vest",
+      "width": 844,
+      "lowest": 0.0250000000000008,
+      "maxPolar": 1.61935466942099,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "pointed",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 844,
+      "lowest": 0.02500000000000102,
+      "maxPolar": 1.615254017645846,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "short"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 844,
+      "lowest": 0.025000000000001465,
+      "maxPolar": 1.617056306051657,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "skirt",
+      "width": 844,
+      "lowest": 0.024999999999999356,
+      "maxPolar": 1.618348701288832,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "long"
+      }
+    },
+    {
+      "id": "pleats",
+      "width": 844,
+      "lowest": 0.02499999999999969,
+      "maxPolar": 1.6176738816743113,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "apron",
+      "width": 844,
+      "lowest": 0.025000000000001354,
+      "maxPolar": 1.619073751760092,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "clutch",
+      "width": 844,
+      "lowest": 0.02500000000000102,
+      "maxPolar": 1.615254017645846,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    },
+    {
+      "id": "tunic",
+      "width": 844,
+      "lowest": 0.024999999999999356,
+      "maxPolar": 1.6192519624139936,
+      "options": {
+        "silhouette": "classic",
+        "sleeves": "classic",
+        "jacketLength": "cropped",
+        "wrap": "original",
+        "band": "double",
+        "vestLength": "short",
+        "pleatDepth": "classic",
+        "cuffs": "plain",
+        "skirtLength": "classic"
+      }
+    }
+  ],
+  "passed": true
+}

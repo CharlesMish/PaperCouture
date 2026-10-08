@@ -6,16 +6,44 @@
 //  - a fold that would lift paper trapped under other paper (applyFold throws)
 //  - a jump between the end of one fold and the start of the next
 //  - pieces coming apart mid-animation, or paper dipping into the table
+//  - collapse steps whose creases do not close (the step would not be rigid)
+//  - a finished crease pattern that breaks Maekawa or Kawasaki at any vertex
 
+import { dragVector } from '../src/ui/foldHandles';
 import { writeFileSync } from 'node:fs';
+import { attachmentAnchors } from '../src/fold/garments';
+import { buildWrapSkirt } from '../src/fold/wrapSkirt';
+import { buildLapelVest } from '../src/fold/lapelVest';
 import { buildDress } from '../src/fold/construction';
+import { buildJacket } from '../src/fold/jacket';
+import { buildBowWing } from '../src/fold/bow';
+import { buildSilhouette } from '../src/fold/silhouettes';
+import { buildPin } from '../src/fold/pin';
+import { buildSailorTop } from '../docs/geometry-collection/drafts/sailor/sailorTopStudy';
+import { buildNeckerchief } from '../src/fold/neckerchief';
+import { buildPocketSquare } from '../src/fold/pocketSquare';
+import { buildTulip } from '../src/fold/tulip';
+import { buildFitFlare } from '../src/fold/fitFlare';
+import { collapseAngles, loopResidual } from '../src/fold/collapse';
+import { creasePattern, vertexProblems } from './crease_pattern';
+import { COLLAR_Y, SIDE_APEX_Y, SIDE_HALF_ANGLE } from '../src/papers/dressMarks';
 import { checkState, isFlipped, modelPoly } from '../src/fold/engine';
-import { Mat34, buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
+import { buildTimeline, evaluateFrame, posePoint } from '../src/fold/timeline';
 import { Vec2, centroid, signedArea } from '../src/fold/geometry';
 import { FoldController } from '../src/app/controller';
+import { checkTwoSidedRotation } from './rotationCheck';
+import { hingeProblems } from './hingeCheck';
 
 const errors: string[] = [];
-const construction = buildDress();
+for (const construction of [buildDress(), buildSilhouette('straight'), buildSilhouette('flare'), buildJacket(), buildPin(), buildBowWing(), buildWrapSkirt(), buildLapelVest(),
+  // Drafts (docs/geometry-collection/drafts/NOTES.md)
+  buildJacket(undefined, 'turned'), buildSailorTop() /* parked study */, buildNeckerchief(), buildPocketSquare(),
+  // PR #13 exploration
+  buildTulip(), buildWrapSkirt({ length: 'short' }), buildWrapSkirt({ length: 'long' }),
+  // PR #14
+  buildLapelVest('pointed'),
+  // fit-and-flare: the waist is a collapse step (src/fold/collapse.ts)
+  buildFitFlare()]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
@@ -57,28 +85,40 @@ for (let k = 0; k + 1 < tl.ops.length; k++) {
 }
 
 // 2. Mid-animation: hinged pieces stay together, nothing goes under the table.
+// Preserve an absolute gap bound: eight rendering gaps for earlier designs,
+// twelve for the collapse stack. Opening beyond rest is reported diagnostically;
+// a large resting tear cannot exempt a construction from the absolute check.
 let worstGap = 0;
+let worstExcess = 0;
 let lowestZ = Infinity;
 for (const op of tl.ops) {
-  for (let s = 0; s <= 20; s++) {
-    const t = s / 20;
-    const M: Mat34 = evaluateFrame(op, t);
-    for (const h of op.hinges) {
-      for (const m of [h.m0, h.m1]) {
-        const g = dist3(posePoint(M, h.a * 12, m.x, m.y), posePoint(M, h.b * 12, m.x, m.y));
-        worstGap = Math.max(worstGap, g);
-      }
+  errors.push(...hingeProblems(op));
+  const frames = Array.from({ length: 21 }, (_, s) => evaluateFrame(op, s / 20));
+  for (const h of op.hinges) {
+    for (const m of [h.m0, h.m1]) {
+      const gaps = frames.map((M) => dist3(posePoint(M, h.a * 12, m.x, m.y), posePoint(M, h.b * 12, m.x, m.y)));
+      worstGap = Math.max(worstGap, ...gaps);
+      worstExcess = Math.max(worstExcess, Math.max(...gaps) - Math.max(gaps[0], gaps[gaps.length - 1]));
     }
+  }
+  for (const M of frames) {
     for (const p of op.pieces) {
       for (const m of p.poly) lowestZ = Math.min(lowestZ, posePoint(M, p.index * 12, m.x, m.y)[2]);
     }
   }
+  // collapse steps: every loop of creases must close at every stage
+  if (op.collapse) {
+    let worst = 0;
+    for (let s = 1; s < 40; s++) {
+      for (const r of loopResidual(op.collapse, collapseAngles(op.collapse.spec, s / 40))) worst = Math.max(worst, r.error);
+    }
+    if (worst > 1e-9) errors.push(`${construction.name}: ${op.op.id} crease loops open by ${worst.toExponential(2)} (not rigid)`);
+  }
 }
-// Layers are separated by LAYER_GAP for rendering, so a hinge may open by a few
-// gaps while it swings. Anything bigger is a real tear.
-const gapLimit = 8 * LAYER_GAP;
-if (worstGap > gapLimit) errors.push(`mid-fold hinge gap ${worstGap.toFixed(4)} exceeds ${gapLimit}`);
 if (lowestZ < -1e-9) errors.push(`paper dips below the table (z = ${lowestZ.toFixed(4)})`);
+
+// 2c. The finished crease pattern must be locally flat-foldable everywhere.
+vertexProblems(creasePattern(construction)).forEach((p) => errors.push(`${construction.name}: crease pattern ${p}`));
 
 // 3. Summary of the finished piece.
 const last = tl.states[tl.states.length - 1];
@@ -91,7 +131,7 @@ console.log(`construction: ${construction.name}, ${construction.ops.length} step
 tl.ops.forEach((o, i) => console.log(`  ${i + 1}. ${o.op.title}  (${o.pieces.length} pieces)`));
 console.log(`final facets: ${last.facets.length}, flipped: ${last.facets.filter(isFlipped).length}`);
 console.log(`final size: ${(Math.max(...xs) - Math.min(...xs)).toFixed(3)} wide x ${(Math.max(...ys) - Math.min(...ys)).toFixed(3)} tall (sheet = 2)`);
-console.log(`stack height: ${maxLayers.toFixed(4)}; worst mid-fold hinge gap: ${worstGap.toFixed(4)}; lowest z: ${lowestZ.toFixed(4)}`);
+console.log(`stack height: ${maxLayers.toFixed(4)}; worst mid-fold hinge gap: ${worstGap.toFixed(4)} (${worstExcess.toFixed(4)} beyond rest); lowest z: ${lowestZ.toFixed(4)}`);
 
 // 4. State machine: quick repeated input must never skip, corrupt or strand a step.
 {
@@ -148,9 +188,84 @@ if (process.argv.includes('--dump')) {
       area: signedArea(f.poly),
     })),
   );
-  writeFileSync('docs/states.json', JSON.stringify(dump));
+  writeFileSync(`docs/states-${construction.name.toLowerCase().replaceAll(' ', '-')}.json`, JSON.stringify(dump));
   console.log('wrote docs/states.json');
 }
+
+}
+
+// Silhouette switching is allowed at step 3 because the first two operations
+// are exactly shared. Verify material mappings at that decision boundary.
+{
+  const base = buildDress();
+  for (const id of ['straight', 'classic', 'flare'] as const) {
+    const variant = buildSilhouette(id);
+    if (JSON.stringify(base.ops.slice(0, 2)) !== JSON.stringify(variant.ops.slice(0, 2))) {
+      errors.push(`${id}: shape choice would alter an already completed fold`);
+    }
+  }
+  if (JSON.stringify(buildSilhouette('classic').ops) !== JSON.stringify(base.ops)) {
+    // The explanatory hint differs, but crease and motion definitions must not.
+    const folds = (c: typeof base) => c.ops.map(o => o.kind === 'fold' ? o.folds : o.kind);
+    if (JSON.stringify(folds(buildSilhouette('classic'))) !== JSON.stringify(folds(base))) errors.push('classic changed the original folds');
+  }
+}
+
+// Papers drawn to the fold (src/papers/dressMarks.ts) must match the classic
+// A-line. Before the first turn-over the sheet is unmoved, so material = model.
+{
+  const dress = buildDress();
+  const collar = dress.ops.find((o) => o.id === 'collar');
+  const sides = dress.ops.find((o) => o.id === 'sides');
+  if (collar?.kind !== 'fold' || sides?.kind !== 'fold') errors.push('dress marks: collar or sides step missing');
+  else {
+    if (Math.abs(collar.folds[0].a.y - COLLAR_Y) > 1e-9) errors.push('dress marks: COLLAR_Y does not match the collar fold');
+    for (const f of sides.folds) {
+      // sides are folded after one turn-over, which mirrors x; the apex is on x = 0
+      const d = { x: f.b.x - f.a.x, y: f.b.y - f.a.y };
+      const off = (0 - f.a.x) * d.y - (SIDE_APEX_Y - f.a.y) * d.x;
+      if (Math.abs(off / Math.hypot(d.x, d.y)) > 1e-9) errors.push(`dress marks: ${f.name} misses the side apex`);
+      const angle = Math.atan2(Math.abs(d.x), Math.abs(d.y));
+      if (Math.abs(angle - SIDE_HALF_ANGLE) > 1e-9) errors.push(`dress marks: ${f.name} slant differs from SIDE_HALF_ANGLE`);
+    }
+  }
+}
+
+// Attachments must be anchored on retained paper, including the asymmetric
+// skirt band and vest panels. A generic dress coordinate is not sufficient.
+{
+  const insidePolygon = (poly: Vec2[], p: Vec2) => {
+    let inside = false;
+    for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      const a = poly[i], b = poly[j];
+      if ((a.y > p.y) !== (b.y > p.y) && p.x < (b.x - a.x) * (p.y - a.y) / (b.y - a.y) + a.x) inside = !inside;
+    }
+    return inside;
+  };
+  for (const [id, construction] of [['skirt', buildWrapSkirt()], ['vest', buildLapelVest()]] as const) {
+    const states = buildTimeline(construction.ops).states;
+    const polys = states[states.length - 1].facets.map(modelPoly);
+    const ys = polys.flat().map(p => p.y);
+    const anchors = attachmentAnchors(id, Math.max(...ys), Math.min(...ys));
+    if (new Set(anchors.map(a => a.id)).size !== anchors.length) errors.push(`${id}: duplicate attachment ids`);
+    for (const anchor of anchors) {
+      if (!polys.some(poly => insidePolygon(poly, anchor))) errors.push(`${id}: ${anchor.label} is not on the folded paper`);
+    }
+  }
+}
+
+// Small folds must have a usable gesture distance without changing direction.
+for (const [x, y] of [[0, 0], [0.1, -0.2], [40, 0], [-200, 30]]) {
+  const v = dragVector(x, y), length = Math.hypot(v.vx, v.vy);
+  if (!Number.isFinite(length) || length < 72 - 1e-8) errors.push('drag vector has no stable minimum distance');
+  if (Math.hypot(x, y) > 1e-5 && (Math.abs(x * v.vy - y * v.vx) > 1e-7 || x * v.vx + y * v.vy <= 0)) errors.push('drag vector changed fold direction');
+  if (Math.hypot(x, y) >= 72 && (v.vx !== x || v.vy !== y)) errors.push('large fold gesture was changed');
+}
+for (const c of [buildWrapSkirt(), buildLapelVest()]) {
+  if (c.ops.some(op => op.kind === 'fold' && op.folds.some(f => f.sense !== 'valley'))) errors.push(`${c.name}: fold pushes away from the visible face`);
+}
+
+checkTwoSidedRotation(errors);
 
 if (errors.length) {
   console.error(`\n${errors.length} problem(s):`);
@@ -158,3 +273,4 @@ if (errors.length) {
   process.exit(1);
 }
 console.log('\nall checks passed');
+

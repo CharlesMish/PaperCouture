@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "construction": "Framed brooch",
+  "steps": 4,
+  "facets": 9,
+  "retainedMaterialArea": 4,
+  "footprint": [
+    1.5,
+    1.5
+  ],
+  "suggestedSquareCm": 6,
+  "boardFootprint": [
+    0.45,
+    0.45
+  ],
+  "visiblePrintedPanel": [
+    1,
+    1
+  ],
+  "boardPrintedPanel": [
+    0.3,
+    0.3
+  ],
+  "printedFraction": 0.4444444444444444,
+  "samplesPerOperation": 81,
+  "worstHingeGap": 0.0165,
+  "minimumZ": 0.0015,
+  "strictTrianglePiercings": 0,
+  "checks": [
+    "real engine retained square and rigid edges",
+    "endpoint continuity and sampled hinge/floor/collision checks",
+    "true reverse on four borders, printed continuous centre",
+    "controller forward/back/mid-step reversal/reset"
+  ],
+  "limitations": [
+    "not physical paper",
+    "not continuous collision certification"
+  ]
+}

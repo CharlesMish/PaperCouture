@@ -1,0 +1,13 @@
+
+> paper-couture@0.1.0 build
+> tsc --noEmit && vite build
+
+vite v6.0.7 building for production...
+transforming...
+✓ 87 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.78 kB │ gzip:   0.48 kB
+dist/assets/index-BzK8gymu.css   12.18 kB │ gzip:   3.30 kB
+dist/assets/index-K04dItdp.js   669.66 kB │ gzip: 181.25 kB
+✓ built in 509ms

@@ -1,0 +1,127 @@
+{
+  "passed": true,
+  "registrations": [
+    {
+      "q": 0,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 176610
+    },
+    {
+      "q": 0,
+      "offset": {
+        "x": 0.125,
+        "y": 0.0625
+      },
+      "mismatch": 4,
+      "unmatched": 0,
+      "inkPixels": 180352
+    },
+    {
+      "q": 0,
+      "offset": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 131136
+    },
+    {
+      "q": 1,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 176610
+    },
+    {
+      "q": 1,
+      "offset": {
+        "x": 0.125,
+        "y": 0.0625
+      },
+      "mismatch": 2,
+      "unmatched": 0,
+      "inkPixels": 163539
+    },
+    {
+      "q": 1,
+      "offset": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 117794
+    },
+    {
+      "q": 2,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 176610
+    },
+    {
+      "q": 2,
+      "offset": {
+        "x": 0.125,
+        "y": 0.0625
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 149487
+    },
+    {
+      "q": 2,
+      "offset": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 101328
+    },
+    {
+      "q": 3,
+      "offset": {
+        "x": 0,
+        "y": 0
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 176610
+    },
+    {
+      "q": 3,
+      "offset": {
+        "x": 0.125,
+        "y": 0.0625
+      },
+      "mismatch": 3,
+      "unmatched": 0,
+      "inkPixels": 153068
+    },
+    {
+      "q": 3,
+      "offset": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "mismatch": 4,
+      "unmatched": 0,
+      "inkPixels": 145067
+    }
+  ],
+  "stationaryPixels": 1457456,
+  "changedInk": 595089
+}

@@ -1,0 +1,286 @@
+{
+  "checks": [
+    {
+      "name": "two completed wings",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": false,
+        "complete": false,
+        "attached": true,
+        "visible": true,
+        "centreVisible": false,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "ink-reverse",
+        "centreTurn": 0,
+        "options": {
+          "silhouette": "classic",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "partial centre returned; wings retained",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": false,
+        "complete": false,
+        "attached": true,
+        "visible": true,
+        "centreVisible": false,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "classic",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "centre reset cancelled; wings retained",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": false,
+        "complete": false,
+        "attached": true,
+        "visible": true,
+        "centreVisible": false,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "classic",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "three-piece bow attached",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": true,
+        "complete": true,
+        "attached": true,
+        "visible": true,
+        "centreVisible": true,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "classic",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "changed garment fold restored complete assembly",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": true,
+        "complete": true,
+        "attached": true,
+        "visible": true,
+        "centreVisible": true,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "flare",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "unfolded centre returned; wings retained",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": false,
+        "complete": false,
+        "attached": true,
+        "visible": true,
+        "centreVisible": false,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "flare",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "centre controls reachable at 390×844",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": true,
+        "complete": true,
+        "attached": true,
+        "visible": true,
+        "centreVisible": true,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "flare",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    },
+    {
+      "name": "centre controls reachable at 844×390",
+      "state": {
+        "step": 6,
+        "total": 6,
+        "moving": false,
+        "mode": false,
+        "editing": false,
+        "centre": true,
+        "complete": true,
+        "attached": true,
+        "visible": true,
+        "centreVisible": true,
+        "wing": 1,
+        "paper": "tidal-bands",
+        "turn": 0,
+        "wingPaper": "cut-paper-mosaic",
+        "wingTurn": 2,
+        "centrePaper": "midnight-orchard",
+        "centreTurn": 1,
+        "options": {
+          "silhouette": "flare",
+          "sleeves": "classic",
+          "jacketLength": "cropped",
+          "wrap": "original",
+          "band": "double",
+          "vestLength": "short"
+        }
+      }
+    }
+  ],
+  "layouts": [
+    {
+      "width": 390,
+      "height": 844,
+      "studio": {
+        "x": 12,
+        "y": 100,
+        "width": 366,
+        "height": 233,
+        "bottom": 333
+      },
+      "dock": {
+        "x": 10,
+        "y": 676.6875,
+        "width": 370,
+        "height": 153.3125,
+        "bottom": 830
+      },
+      "overflow": false
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "studio": {
+        "x": 128,
+        "y": 50,
+        "width": 700,
+        "height": 44,
+        "bottom": 94
+      },
+      "dock": {
+        "x": 142,
+        "y": 291,
+        "width": 560,
+        "height": 91,
+        "bottom": 382
+      },
+      "overflow": false
+    }
+  ],
+  "errors": [],
+  "scope": "production build via real UI; headless Chromium touch-enabled emulation, not real phone or Safari"
+}

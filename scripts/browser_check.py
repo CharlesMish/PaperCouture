@@ -18,7 +18,7 @@ async def main():
         for s in [0,2,4]:
             await J(f"{P}.controller.jumpTo({s})"); await pg.get_by_role('button', name='Fold').or_(pg.get_by_role('button', name='Turn over')).click()
             await pg.wait_for_timeout(250)
-            await pg.get_by_role('radio', name='Indigo lattice').click(); await pg.get_by_role('button', name='Rotate pattern').click()
+            await pg.get_by_role('radio', name='Indigo lattice').click(); await pg.get_by_role('button', name='Turn paper').click()
             await J(wait)
             print(f'step {s}: after paper change mid-fold -> step', await J(f'{P}.controller.step'))
         await pg.get_by_role('radio', name='Stripe and disc').click()

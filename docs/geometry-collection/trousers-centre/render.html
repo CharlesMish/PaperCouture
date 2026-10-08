@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Bow centre geometry study</title>
+<style>html,body{margin:0;background:#d8d0c2;color:#302e29;font:16px system-ui}canvas{width:700px;height:600px;display:block}p{position:absolute;margin:18px;max-width:600px}</style>
+<p id="caption"></p><canvas></canvas>
+<script type="module">
+import * as THREE from '/node_modules/three/build/three.module.js';
+import { buildBowCentre } from '/src/fold/bowCentre.ts';
+import { buildBowWing } from '/src/fold/bow.ts';
+import { buildTimeline, evaluateFrame } from '/src/fold/timeline.ts';
+import { SheetView } from '/src/render/sheetView.ts';
+import { makePaperTextures } from '/src/render/textures.ts';
+import { findPaper } from '/src/papers/index.ts';
+
+const params = new URLSearchParams(location.search);
+const renderer = new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true});
+renderer.setSize(700,600);renderer.outputColorSpace=THREE.SRGBColorSpace;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#d8d0c2');
+scene.add(new THREE.HemisphereLight('#fff8eb','#716b65',2));
+const light=new THREE.DirectionalLight('#ffffff',2.5);light.position.set(-3,4,6);scene.add(light);
+const backlight=new THREE.DirectionalLight('#ffffff',2);backlight.position.set(3,4,-6);scene.add(backlight);
+const group = new THREE.Group();scene.add(group);
+const plain={id:'plain',name:'Two-sided plain paper',note:'Diagnostic colours',reverse:'#233d52',drawFront(c,s){c.fillStyle='#d9975b';c.fillRect(0,0,s,s)},drawBack(c,s){c.fillStyle='#233d52';c.fillRect(0,0,s,s)}};
+const paper=params.get('paper') ? findPaper(params.get('paper')) : plain;
+const quarter=Number(params.get('q')||0);
+const textures=makePaperTextures(paper,quarter,1);
+function addSheet(construction,which=-1,t=1){
+ const timeline=buildTimeline(construction.ops), op=timeline.ops.at(which);
+ const front=new THREE.MeshStandardMaterial({map:textures.front,roughness:.9});
+ const back=new THREE.MeshStandardMaterial({map:textures.back,roughness:.9});
+ const view=new SheetView(front,back);view.setAnim(op);view.pose(evaluateFrame(op,t));group.add(view.group);return view;
+}
+let mode=params.get('mode')||'centre';
+if(mode==='bow'){
+ const left=addSheet(buildBowWing()),right=addSheet(buildBowWing());
+ left.group.rotation.z=-Math.PI/4;left.group.position.x=-1.27;
+ right.group.rotation.z=3*Math.PI/4;right.group.position.set(1.27,0,.012);
+ const centre=addSheet(buildBowCentre());centre.group.scale.setScalar(.85);centre.group.position.z=.08;
+} else if(mode==='trousers') {
+ const data=await fetch('./trousers-states.json').then(r=>r.json());
+ // Render the engine's actual final material facets, including their face
+ // orientation and stack ranks. No idealized or drawn-on leg separation.
+ for(const facet of data.at(-1).facets){
+  const positions=[];for(let i=1;i+1<facet.poly.length;i++)for(const p of [facet.poly[0],facet.poly[i],facet.poly[i+1]])positions.push(facet.T.a*p.x+facet.T.b*p.y+facet.T.e,facet.T.c*p.x+facet.T.d*p.y+facet.T.f,facet.rank*.0055);
+  const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.computeVertexNormals();
+  const printed=facet.T.a*facet.T.d-facet.T.b*facet.T.c>0;
+  const mesh=new THREE.Mesh(geometry,new THREE.MeshStandardMaterial({color:printed?'#d9975b':'#233d52',side:THREE.DoubleSide,roughness:.9}));group.add(mesh);
+ }
+} else {addSheet(buildBowCentre(),Number(params.get('op')||-1),Number(params.get('t')||1));}
+const box=new THREE.Box3().setFromObject(group),size=box.getSize(new THREE.Vector3()),middle=box.getCenter(new THREE.Vector3());
+const zoom=mode==='bow'?1.38:1.6;
+const halfH=Math.max(size.y,size.x*600/700)*zoom/2;
+const camera=new THREE.OrthographicCamera(-halfH*700/600,halfH*700/600,halfH,-halfH,.1,100);
+const view=params.get('view')||'front';
+camera.position.copy(middle).add(view==='back'?new THREE.Vector3(0,0,-6):view==='angle'?new THREE.Vector3(2,1.5,6):new THREE.Vector3(0,0,6));
+camera.lookAt(middle);
+document.querySelector('#caption').textContent=`${mode==='bow'?'Three-piece assembly':mode==='trousers'?'Parked trousers repair — no leg separation':'Folded centre'} · ${paper.name} · ${view}${quarter?' · '+quarter*90+'°':''}`;
+renderer.render(scene,camera);window.studyReady=true;
+</script></html>

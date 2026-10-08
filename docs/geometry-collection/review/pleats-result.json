@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "bundle": "index-COQy-8CP.js",
+  "engine": "Headless Chromium; software WebGL; emulated portrait viewport",
+  "checks": [
+    "Pleated skirt selected through garment UI; seven steps forward, seven back, seven forward",
+    "Turn paper in Display retains final step and camera",
+    "Independent pin paper, three waistband positions, portrait Display, removal and Start over"
+  ],
+  "errors": []
+}

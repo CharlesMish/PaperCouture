@@ -1,35 +1,71 @@
+import { borderPrint } from './borderPrint';
 import { botanical } from './botanical';
+import { compassLining } from './compassLining';
 import { cornerBloom } from './cornerBloom';
+import { cutPaperMosaic } from './cutPaperMosaic';
 import { diagnosticPaper } from './diagnostic';
 import { fallingChevrons } from './fallingChevrons';
 import { indigoLattice } from './indigoLattice';
 import { inkReverse } from './inkReverse';
 import { ivoryBorder } from './ivoryBorder';
+import { midnightOrchard } from './midnightOrchard';
 import { openStems } from './openStems';
+import { pinstripeLining } from './pinstripeLining';
+import { plumScatter } from './plumScatter';
+import { reverseGarden } from './reverseGarden';
 import { seedDashes } from './seedDashes';
+import { starlitLining } from './starlitLining';
 import { stripeDisc } from './stripeDisc';
+import { sunrayPleats } from './sunrayPleats';
+import { tidalBands } from './tidalBands';
 import { wideFrame } from './wideFrame';
+import { wovenChecks } from './wovenChecks';
 import { PaperDesign } from './types';
+import { runningStitch } from './runningStitch';
+import { arcStudy } from './arcStudy';
+import { oatLinen } from './oatLinen';
+import { slateGrain } from './slateGrain';
+import { ginkgoPairs } from './ginkgoPairs';
+import { plumSeed } from './plumSeed';
 
 export type { PaperDesign } from './types';
 
 /**
- * Every paper, in swatch order. To add one: write a PaperDesign (see types.ts)
- * and list it here. Hidden papers are reachable with ?paper=<id>.
+ * One scroll: quiet/reliable pairings first, placement-dependent studies later.
+ * Curation is editorial guidance, not physical-paper certification. Every old
+ * visible paper remains selectable by its original id. Default stays unchanged.
  */
 export const PAPERS: PaperDesign[] = [
   stripeDisc,
-  ivoryBorder,
-  indigoLattice,
+  runningStitch,
+  pinstripeLining,
+  plumScatter,
+  oatLinen,
+  slateGrain,
+  plumSeed,
+  borderPrint,
   botanical,
-  wideFrame,
+  indigoLattice,
+  ivoryBorder,
+  // More placement-dependent and bolder alternatives, in the same scroller.
+  arcStudy,
+  ginkgoPairs,
   cornerBloom,
-  openStems,
-  fallingChevrons,
+  midnightOrchard,
+  tidalBands,
+  wovenChecks,
   seedDashes,
   inkReverse,
+  reverseGarden,
+  starlitLining,
+  openStems,
+  fallingChevrons,
+  sunrayPleats,
+  cutPaperMosaic,
+  wideFrame,
+  compassLining,
   diagnosticPaper,
-];
+].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
 
 export const DEFAULT_PAPER_ID = 'stripe-disc';
 

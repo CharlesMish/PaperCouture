@@ -1,0 +1,45 @@
+name: Design curation checks
+on:
+  pull_request:
+    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare, experiment/integrated-studies-20261004, codex/pinboard-composition-space, codex/outfit-proportions-collection, codex/companion-design-studies, main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - uses: actions/checkout@v6
+        with:
+          ref: f3f735cd68d784ca3850dafdefa8030124d3088f
+          path: .curation-baseline
+      - run: npm ci --prefix .curation-baseline
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Compare and render the study
+        env:
+          CAPTURE_DIR: .curation-qa
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 5183 --strictPort > /tmp/curation-dev.log 2>&1 &
+          npm run preview -- --host 127.0.0.1 --port 4183 --strictPort > /tmp/curation-preview.log 2>&1 &
+          npm run dev --prefix .curation-baseline -- --host 127.0.0.1 --port 5184 --strictPort > /tmp/curation-base.log 2>&1 &
+          for port in 5183 4183 5184; do
+            for i in {1..30}; do curl -fsS http://127.0.0.1:$port/ > /dev/null && break; sleep 1; done
+          done
+          node scripts/check-curation-ink.cjs
+          node scripts/check-curation-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: design-curation-rendered-checks
+          path: .curation-qa/
+          include-hidden-files: true

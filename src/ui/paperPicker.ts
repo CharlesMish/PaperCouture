@@ -6,6 +6,7 @@ import { PaperDesign } from '../papers/types';
 export interface PickerHandlers {
   onSelect(id: string): void;
   onRotate(): void;
+  onPosition(): void;
 }
 
 function thumbnail(p: PaperDesign): string {
@@ -20,19 +21,29 @@ export class PaperPicker {
   private buttons = new Map<string, { btn: HTMLButtonElement; img: HTMLImageElement }>();
   private name = document.createElement('p');
   private rotate = document.createElement('button');
+  private position = document.createElement('button');
+  private row = document.createElement('div');
 
   constructor(parent: HTMLElement, papers: PaperDesign[], h: PickerHandlers) {
     this.root.className = 'papers';
-    const row = document.createElement('div');
+    const row = this.row;
     row.className = 'swatches';
     row.setAttribute('role', 'radiogroup');
     row.setAttribute('aria-label', 'Paper');
+    let lastGroup: PaperDesign['curation'];
     for (const p of papers.filter((q) => !q.hidden)) {
+      if (p.curation && p.curation !== lastGroup) {
+        const marker = document.createElement('span');
+        marker.className = 'paper-group-label';
+        marker.textContent = p.curation === 'curated' ? 'Curated' : 'Experiments';
+        row.append(marker);
+        lastGroup = p.curation;
+      }
       const btn = document.createElement('button');
       btn.className = 'swatch';
       btn.setAttribute('role', 'radio');
       btn.setAttribute('aria-label', p.name);
-      btn.title = `${p.name}: ${p.note}`;
+      btn.title = `${p.curation === 'experimental' ? 'Experimental · ' : ''}${p.name}: ${p.note}`;
       btn.style.setProperty('--reverse', p.reverse);
       const img = document.createElement('img');
       img.src = thumbnail(p);
@@ -46,15 +57,21 @@ export class PaperPicker {
     }
     this.rotate.className = 'rotate';
     this.rotate.innerHTML =
-      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Rotate pattern</span>';
+      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn paper</span>';
+    this.rotate.title = 'Turn paper';
     this.rotate.addEventListener('click', h.onRotate);
+    this.position.className = 'rotate position-print';
+    this.position.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3M15 7l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Position print</span>';
+    this.position.title = 'Position print';
+    this.position.setAttribute('aria-label', 'Position print');
+    this.position.addEventListener('click', h.onPosition);
     this.name.className = 'paper-name';
     this.name.setAttribute('aria-live', 'polite');
-    this.root.append(row, this.name, this.rotate);
+    this.root.append(row, this.name, this.rotate, this.position);
     parent.append(this.root);
   }
 
-  render(current: PaperDesign, quarterTurns: number): void {
+  render(current: PaperDesign, quarterTurns: number, shifted = false): void {
     for (const [id, { btn, img }] of this.buttons) {
       const on = id === current.id;
       btn.setAttribute('aria-checked', String(on));
@@ -63,8 +80,28 @@ export class PaperPicker {
       img.style.transform = `rotate(${quarterTurns * 90}deg)`;
     }
     const deg = (quarterTurns % 4) * 90;
-    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, turned ${deg}°` : ''}`;
-    this.rotate.setAttribute('aria-label', `Rotate pattern (now ${deg}°)`);
+    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, paper turned ${deg}°` : ''}`;
+    this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
+    this.position.classList.toggle('print-shifted', shifted);
+    this.position.title = shifted ? 'Position print · shifted' : 'Position print';
+    // after the name: a longer name takes height from the list
+    const entry = this.buttons.get(current.id);
+    if (entry) this.reveal(entry.btn);
+  }
+
+  /**
+   * The swatch list scrolls once it outgrows the screen. Bring the chosen
+   * swatch into the list's view (only the list, never the page) whenever the
+   * paper or its rotation changes, including a paper chosen by link.
+   */
+  private reveal(btn: HTMLElement): void {
+    const r = this.row.getBoundingClientRect();
+    const q = btn.getBoundingClientRect();
+    const pad = 6; // room for the selected swatch's ring
+    if (q.top - pad < r.top) this.row.scrollTop -= r.top - q.top + pad;
+    else if (q.bottom + pad > r.bottom) this.row.scrollTop += q.bottom - r.bottom + pad;
+    if (q.left - pad < r.left) this.row.scrollLeft -= r.left - q.left + pad;
+    else if (q.right + pad > r.right) this.row.scrollLeft += q.right - r.right + pad;
   }
 
   /** Screen space the picker covers: { top, left } in CSS px. */

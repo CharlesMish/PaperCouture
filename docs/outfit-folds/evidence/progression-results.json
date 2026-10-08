@@ -1,0 +1,39 @@
+{
+  "base": "http://127.0.0.1:5202",
+  "designs": [
+    {
+      "id": "boat-top",
+      "steps": 7,
+      "halfFoldViews": 7,
+      "realFoldBack": true,
+      "quietFrontBack": true,
+      "positionedBloomFrontBack": true,
+      "fourTurns": true,
+      "reload": true
+    },
+    {
+      "id": "wrap-top",
+      "steps": 8,
+      "halfFoldViews": 8,
+      "realFoldBack": true,
+      "quietFrontBack": true,
+      "positionedBloomFrontBack": true,
+      "fourTurns": true,
+      "reload": true
+    },
+    {
+      "id": "hat",
+      "steps": 7,
+      "halfFoldViews": 7,
+      "realFoldBack": true,
+      "quietFrontBack": true,
+      "positionedBloomFrontBack": true,
+      "fourTurns": true,
+      "reload": true
+    }
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false,
+  "passed": true
+}

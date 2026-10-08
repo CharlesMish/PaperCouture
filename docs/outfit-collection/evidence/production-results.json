@@ -1,0 +1,239 @@
+{
+  "base": "http://127.0.0.1:4201/",
+  "checkedAt": "2026-10-06T04:59:21.014Z",
+  "productionBundle": {
+    "htmlSha256": "e57274d3702b06d4549f8fd7c4a30cb5aad98a44596b119841d63898c1a62b2c",
+    "assets": [
+      {
+        "path": "/assets/index-W0mc1vCW.js",
+        "bytes": 658514,
+        "sha256": "163ad5af69df819b640b40c64b1d69327e1094f75b6ce50010af3e9e12b4aaae",
+        "contentType": "text/javascript"
+      },
+      {
+        "path": "/assets/index-BzK8gymu.css",
+        "bytes": 12177,
+        "sha256": "f0c9677c76d196dba19eeddee840c4325215145d283fc4448b39fa3432b33c17",
+        "contentType": "text/css"
+      }
+    ]
+  },
+  "checks": [
+    "Served compiled JS/CSS; three new experimental design IDs and three new papers registered; Boat-neck top completed with seven actual fold controls.",
+    "Five actual Pin captures with16/20/18/8/8cm defaults; old captures survive every added piece; full button disables sixth; movement/layer/removeUndo and exact five-piece reload.",
+    "Desktop/390/320 no overflow, full44px starting-square control initially visible, correct board aspect; size changes leave pinned snapshots unchanged; each PNG is1800×2100 and byte-identical to rendered scene."
+  ],
+  "viewports": [
+    {
+      "viewport": [
+        1280,
+        900
+      ],
+      "canvas": {
+        "x": 182.578125,
+        "y": 82.765625,
+        "width": 624.84375,
+        "height": 728.984375,
+        "bottom": 811.75,
+        "right": 807.421875
+      },
+      "tools": {
+        "x": 874,
+        "y": 75,
+        "width": 270,
+        "height": 782,
+        "bottom": 857,
+        "right": 1144
+      },
+      "size": {
+        "x": 969.484375,
+        "y": 176.703125,
+        "width": 168.515625,
+        "height": 44,
+        "bottom": 220.703125,
+        "right": 1138
+      },
+      "overflow": false,
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "export": {
+        "file": "composite-1280.png",
+        "width": 1800,
+        "height": 2100,
+        "bytes": 3589690,
+        "sha256": "1dad5b5c6f4751c65c4e5d799a185a84301352cd69f0510e38ac02bd721584a9",
+        "matchesScene": true
+      }
+    },
+    {
+      "viewport": [
+        390,
+        844
+      ],
+      "canvas": {
+        "x": 27,
+        "y": 61,
+        "width": 336,
+        "height": 392,
+        "bottom": 453,
+        "right": 363
+      },
+      "tools": {
+        "x": 27,
+        "y": 465,
+        "width": 336,
+        "height": 350,
+        "bottom": 815,
+        "right": 363
+      },
+      "size": {
+        "x": 169,
+        "y": 562.703125,
+        "width": 188,
+        "height": 44,
+        "bottom": 606.703125,
+        "right": 357
+      },
+      "overflow": false,
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "export": {
+        "file": "composite-390.png",
+        "width": 1800,
+        "height": 2100,
+        "bytes": 3589690,
+        "sha256": "1dad5b5c6f4751c65c4e5d799a185a84301352cd69f0510e38ac02bd721584a9",
+        "matchesScene": true
+      }
+    },
+    {
+      "viewport": [
+        320,
+        568
+      ],
+      "canvas": {
+        "x": 27,
+        "y": 61,
+        "width": 266,
+        "height": 310.328125,
+        "bottom": 371.328125,
+        "right": 293
+      },
+      "tools": {
+        "x": 27,
+        "y": 383.328125,
+        "width": 266,
+        "height": 155.671875,
+        "bottom": 539,
+        "right": 293
+      },
+      "size": {
+        "x": 121.109375,
+        "y": 481.03125,
+        "width": 165.890625,
+        "height": 44,
+        "bottom": 525.03125,
+        "right": 287
+      },
+      "overflow": false,
+      "camera": [
+        -1.8,
+        1.8,
+        -2.1,
+        2.1
+      ],
+      "export": {
+        "file": "composite-320.png",
+        "width": 1800,
+        "height": 2100,
+        "bytes": 3589690,
+        "sha256": "1dad5b5c6f4751c65c4e5d799a185a84301352cd69f0510e38ac02bd721584a9",
+        "matchesScene": true
+      }
+    }
+  ],
+  "pageErrors": [],
+  "failedResources": [],
+  "physicalPhoneTested": false,
+  "actualButtonFolds": {
+    "design": "boat-top",
+    "steps": 7
+  },
+  "measurements": [
+    {
+      "title": "Boat-neck top · Oat linen",
+      "paperSize": {
+        "sideCm": 16
+      },
+      "bounds": [
+        -1.1680000114440918,
+        0.20800001144409186,
+        0.03199997544288638,
+        0.7680000245571137
+      ],
+      "depth": 0.02199999932199717
+    },
+    {
+      "title": "Wrap skirt · Slate grain",
+      "paperSize": {
+        "sideCm": 20
+      },
+      "bounds": [
+        -1.2999999928474426,
+        0.33999999284744264,
+        -1.5150000202655791,
+        -0.24499997973442078
+      ],
+      "depth": 0.054999999003484845
+    },
+    {
+      "title": "Cross-wrap top · Ginkgo pairs",
+      "paperSize": {
+        "sideCm": 18
+      },
+      "bounds": [
+        0.28819192647933967,
+        1.3118080735206603,
+        -0.3650867736339569,
+        0.8450867736339569
+      ],
+      "depth": 0.024749999237246814
+    },
+    {
+      "title": "Folded hat · Oat linen",
+      "paperSize": {
+        "sideCm": 8
+      },
+      "bounds": [
+        -0.88,
+        -0.07999999999999996,
+        1.1199999931454658,
+        1.4400000068545342
+      ],
+      "depth": 0.015399999637156728
+    },
+    {
+      "title": "Envelope clutch · Slate grain",
+      "paperSize": {
+        "sideCm": 8
+      },
+      "bounds": [
+        0.6199999985491517,
+        1.1400000014508485,
+        -1.084000001186989,
+        -0.6759999988130111
+      ],
+      "depth": 0.013199999649077657
+    }
+  ],
+  "saveCharacters": 101718,
+  "passed": true
+}

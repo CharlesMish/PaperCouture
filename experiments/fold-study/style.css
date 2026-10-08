@@ -1,0 +1,6 @@
+.study-controls { position:absolute; top:52px; left:128px; right:16px; width:fit-content; max-width:calc(100% - 144px); padding:8px 12px; border-radius:12px; background:var(--panel); font-size:.85rem; }
+.study-controls label {display:flex; align-items:center; gap:10px;}
+.study-controls select {font:inherit; min-height:40px; color:var(--ink); background:transparent; padding:4px 9px; border:1px solid var(--rule); border-radius:8px;}
+.study-note {margin:6px 0 0; font-size:.78rem; color:var(--ink-soft); max-width:440px;}
+@media(max-width:719px){.study-controls{top:100px;left:12px;right:12px;width:auto;max-width:none;padding:7px 9px}.study-note{font-size:.72rem}}
+@media(max-height:540px){.study-note{display:none}.study-controls{padding:4px 9px}.study-controls select{min-height:32px}}

@@ -1,0 +1,65 @@
+{
+  "name": "Pleated skirt",
+  "steps": 7,
+  "facets": 19,
+  "width": 1.4400000000000004,
+  "height": 1.3800000000000008,
+  "top": 0.7800000000000001,
+  "bottom": -0.6000000000000005,
+  "maxStack": 0.056499999999999995,
+  "worstGap": 0.027500000000000125,
+  "lowestZ": 0.0015,
+  "accessoryCoverage": [
+    {
+      "accessory": "pin",
+      "x": -0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "pin",
+      "x": 0,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "pin",
+      "x": 0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": -0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": 0,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": 0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    }
+  ],
+  "anchors": [
+    {
+      "x": -0.34,
+      "y": 0.635
+    },
+    {
+      "x": 0,
+      "y": 0.635
+    },
+    {
+      "x": 0.34,
+      "y": 0.635
+    }
+  ],
+  "disclaimer": "Geometry checks are not physical-paper or continuous-collision certification."
+}

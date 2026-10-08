@@ -7,6 +7,7 @@ export interface DisplayHandlers {
   onTurntable(): void;
   onReset(): void;
   onReturn(): void;
+  onPinboard(): void;
 }
 
 const button = (cls: string, text: string) => {
@@ -38,7 +39,11 @@ export class DisplayPanel {
     const ret = button('btn btn-quiet', 'Workshop');
     ret.setAttribute('aria-label', 'Return to the workshop');
     ret.addEventListener('click', h.onReturn);
-    head.append(caption, ret);
+    head.append(caption);
+    const pinboard = button('btn btn-quiet', 'Pinboard');
+    pinboard.addEventListener('click', h.onPinboard);
+    const actions = document.createElement('div'); actions.className = 'display-actions';
+    actions.append(pinboard, ret); head.append(actions);
 
     const tools = document.createElement('div');
     tools.className = 'display-tools';

@@ -1,0 +1,69 @@
+PAPER COUTURE — ONE STANDOUT FOLDED DESIGN
+A reusable brief for Claude or Grok · 6 October 2026
+
+Please develop ONE excellent garment or accessory for Paper Couture. We want a
+convincing folded-paper object with a distinctive silhouette that belongs in a
+small, coordinated wardrobe. Quality and coherence matter more than catalogue
+size. Start with two or three concise concept comparisons, choose one, and
+fully develop it. There is no minimum fold count: every fold should earn its
+place through shape, structure, or a visible paper detail.
+
+WORK FROM THE REAL PROJECT
+Repository: https://github.com/CharlesMish/PaperCouture
+Stable reviewed source: 21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f (PR25).
+Use an isolated branch from that exact revision. Read AGENTS.md, README.md and
+HANDOFF.md. Later local capelet/brooch experiments are separate; do not assume
+main matches the reviewed preview. Do not push, publish, merge or deploy.
+
+THE DESIGN
+Explain the garment/accessory role, the intended front, back and side silhouette,
+and what makes the design recognisable at outfit scale. A closure, opening,
+collar, lapel or cuff must come from actual folded material. Do not paint a false
+seam, invent a cut or hole, stretch a mesh, or substitute an attractive illustration
+for buildable geometry. A front opening onto continuous lining is acceptable if
+clearly described; it is not a through-hole or a wearable cavity.
+
+One intact square is the preferred starting point. If a separate square is
+essential, identify it explicitly and explain how the existing capture/attachment
+workflow would support it. Avoid new engine machinery. Give a starting paper size
+in centimetres, the resulting model/board dimensions, and show the piece beside
+an existing top, bottom, hat and small accessory. Workshop close-ups auto-fit the
+camera and cannot establish wardrobe scale. The current board has five slots;
+a larger wardrobe or mannequin is outside this commission.
+
+GEOMETRY AND PAPER
+Use src/fold/engine.ts, timeline.ts and existing authored constructions. The
+square spans [-1,1] in both material axes. A crease specifies two points, a
+moving-side point, sense, and (only when valid) an existing flap tag. Coordinates
+refer to the sheet at that step. Whole-stack valley folds and explicit turn-over
+steps suit this workshop; a selective fold must really be connected and accessible.
+Preserve all material, permanent UV coordinates, reversible motion and true
+front/back textures. Return concrete ordered creases with named steps and useful
+folding instructions, not just a final outline or an unconstrained shape slider.
+
+Charlie particularly values moving a print to align blossom features after
+folding. First prove the shape with existing neutral paper, then select an existing
+complementary print or propose one restrained paper. Use actual-engine visibility
+maps (scripts/paperLanding.ts) to explain which source areas appear on the front
+and back. Show unshifted and deliberately aligned print placements at all four
+quarter-turns. Keep paper generation separate from geometry; respect fixed versus
+positionable paper settings. Avoid instructional-arrow-like decorative motifs.
+
+EVIDENCE AND HANDOFF
+Provide the implementation/diff, a short rationale, exact source revision and
+reproducible commands. Run Node24 setup, typecheck, tests and production build.
+Add focused checks for retained area, connectivity, rigid facets, endpoint
+continuity, forward/back/reset and reversal. Keep the established layer/floor
+limits; sample motion for triangle piercing at least 81 times per operation.
+Record failures and limitations instead of relaxing the gates to pass a design.
+
+Show actual app renders: front, angle, back, revealing intermediate folds,
+print before/after alignment, and a complete outfit at desktop, 390px and 320px.
+Check clipping and composite PNG, saved-capture preservation, remove/Undo and
+reload. Mark new work Experimental until owner review. Automated engine/browser
+checks do not certify continuous collision-free motion, physical foldability or
+real-phone feel. Say whether anyone actually folded paper or used a physical
+phone; suggest a paper prototype where it would resolve an uncertainty.
+
+Return one developed candidate, its strongest comparison images, test results,
+and any unresolved compromises. Do not contact anyone or publish the result.
