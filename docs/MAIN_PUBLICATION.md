@@ -46,3 +46,12 @@ approval before merge or deployment. GitHub checks must be green for the exact
 heads; this document alone is not approval. Verify the public source marker,
 asset hashes and desktop/mobile-sized capture, reload and PNG behavior after
 main-site deployment. Browser emulation is not physical-phone validation.
+
+## Integration test compatibility
+
+The older PR24 companion-paper suite allowed only Plum seed beyond its frozen
+26-paper registry. PR28's Sunray addition is now explicitly recognized as the
+second allowed addition. All 52 old face rasters, 96 sampled positioned rasters,
+old metadata and old registry order remain exact; Sunray's name/visibility and
+experimental paper category are asserted separately. No raster or geometry
+threshold is relaxed.
