@@ -67,8 +67,11 @@ fs.mkdirSync(out,{recursive:true});
     await a.p.getByLabel('Selected board piece').selectOption((await a.board()).items[3].id);
     const point=await a.p.evaluate(()=>{const b=paperCouture.pinboard,r=b.canvas.getBoundingClientRect(),i=b.state.items[3];return{x:r.x+(i.x+1.8)*r.width/3.6,y:r.y+(2.1-i.y)*r.height/4.2}}),before=await a.board();const client=await a.context.newCDPSession(a.p);
     const send=(type,dx=0,dy=0)=>client.send('Input.dispatchTouchEvent',{type,touchPoints:['touchEnd','touchCancel'].includes(type)?[]:[{x:point.x+dx,y:point.y+dy,id:1}]});
-    await send('touchStart');await send('touchMove',18,8);await send('touchCancel');assert.deepEqual(await a.board(),before,'touch cancellation restores original board');
-    await send('touchStart');await send('touchMove',18,8);await send('touchEnd');assert.notDeepEqual((await a.board()).items,before.items,'real touch moves tie');await a.btn('Undo').click();assert.deepEqual(await a.board(),before);touch={viewport:[320,568],cancelRestores:true,commitAndUndo:true};
+    const durableBefore=await a.p.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length}));
+    await send('touchStart');await send('touchMove',18,8);await a.p.waitForFunction(()=>paperCouture.pinboard.drag?.moved);assert.notDeepEqual((await a.board()).items,before.items);
+    await send('touchCancel');await a.p.waitForFunction(()=>!paperCouture.pinboard.drag);assert.deepEqual(await a.board(),before,'touch cancellation restores original board');
+    assert.deepEqual(await a.p.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length})),durableBefore);
+    await send('touchStart');await send('touchMove',18,8);await send('touchEnd');await a.p.waitForFunction(()=>!paperCouture.pinboard.drag);assert.notDeepEqual((await a.board()).items,before.items,'real touch moves tie');await a.btn('Undo').click();assert.deepEqual(await a.board(),before);touch={viewport:[320,568],cancelRestores:true,commitAndUndo:true};
    }
    const selected=await a.board();await a.btn('Remove selected').click();await a.btn('Undo').click();assert.deepEqual(await a.board(),selected);
    const seed=await a.raw();fs.writeFileSync(path.join(out,c.name+'-board.json'),seed);await a.p.reload();await a.settle();await a.enter();assert.equal(await a.raw(),seed);assert.deepEqual(await a.board(),selected);assert.deepEqual(await a.png(c.name+'-reloaded'),bytes);await a.context.close();

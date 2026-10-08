@@ -57,7 +57,7 @@ function validate(c: Construction) {
       for (const m of p.poly) assert(dist(posePoint(MA, prior.index * 12, m.x, m.y), posePoint(MB, p.index * 12, m.x, m.y)) < 1e-9, `${c.name}: jump between steps ${k} and ${k + 1}`);
     }
   }
-  assert(c.ops.every(op => op.kind === 'turn' || op.folds.every(f => f.sense === 'valley')), `${c.name}: every fold should come up toward the viewer`);
+  assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))), `${c.name}: every fold should come up toward the viewer`);
   return { t, final: t.states[t.states.length - 1], worstGap };
 }
 /** Top facet at a model point as seen from the front, or the bottom one from behind. */

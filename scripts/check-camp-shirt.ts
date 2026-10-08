@@ -24,7 +24,7 @@ assert.deepEqual(buildGarment('camp-shirt'), c);
 assert.equal(recommendedSquareCm('camp-shirt'), 18);
 assert.deepEqual(attachmentAnchors('camp-shirt', 1, -.21), [], 'Do not invent attachment anchors');
 assert.equal(new Set(c.ops.map(op => op.id)).size, c.ops.length);
-assert(c.ops.every(op => op.kind === 'turn' || op.folds.every(f => f.sense === 'valley')));
+assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))));
 for (const [i, s] of tl.states.entries()) assert.deepEqual(checkState(s, `shirt:${i}`), []);
 let maxHingeGap = 0, maxEdgeLengthError = 0, minZ = Infinity;
 const perOperation = [];

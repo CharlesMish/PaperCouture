@@ -27,6 +27,7 @@ import {
   sub,
   v2,
 } from './geometry';
+import type { CollapseSpec } from './collapse';
 
 export interface Facet {
   id: number;
@@ -62,7 +63,9 @@ export interface FoldSpec {
 
 export type Op =
   | { kind: 'fold'; id: string; title: string; hint: string; folds: FoldSpec[] }
-  | { kind: 'turn'; id: string; title: string; hint: string };
+  | { kind: 'turn'; id: string; title: string; hint: string }
+  /** several creases at once (a swivel or shaped pleat); see collapse.ts */
+  | { kind: 'collapse'; id: string; title: string; hint: string; collapse: CollapseSpec };
 
 export class FoldError extends Error {}
 

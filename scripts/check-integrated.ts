@@ -16,7 +16,7 @@ for (const [id, build] of Object.entries(CANDIDATES)) {
   const c = build(), tl = buildTimeline(c.ops);
   for (const [i, s] of tl.states.entries()) assert.deepEqual(checkState(s, `${id}:${i}`), []);
   assert.equal(new Set(c.ops.map(op => op.id)).size, c.ops.length);
-  assert(c.ops.every(op => op.kind === 'turn' || op.folds.every(f => f.sense === 'valley')));
+  assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))));
   let gap = 0, lowest = Infinity, piercings = 0;
   for (const op of tl.ops) for (let i = 0; i <= 80; i++) {
     const M = evaluateFrame(op, i / 80);

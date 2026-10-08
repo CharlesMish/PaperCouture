@@ -36,6 +36,9 @@ The jacket and vest offer two body lengths. The wrap skirt offers either wrap di
 one-turn or narrow two-turn waistband. Use Revisit to return to a completed choice; paper, other
 preferences and finished accessories are kept while affected folds are redone.
 After folding both bow wings, optionally fold a third centre square with its own paper and rotation.
+The experimental Fit-and-flare dress folds its nipped waist in one rigid collapse step
+(`src/fold/collapse.ts`); see [its notes](docs/fit-flare/NOTES.md). `npm run crease-pattern` writes a
+printable crease pattern for every design to `docs/crease-patterns/`.
 See [collection notes](docs/geometry-collection/NOTES.md) and [styling notes](docs/astra-review/STYLING_CHOICES.md). See
 [the prototype notes](docs/astra-review/JACKET_AND_PIN.md) for behavior and checks.
 
@@ -45,6 +48,10 @@ See [garment study notes](docs/garment-studies/NOTES.md).
 
 Small flaps have 44px arrow handles: drag toward the arrow or tap to complete the
 pending fold. See [owner-feedback fixes](docs/feedback-pass/NOTES.md).
+
+The garment and accessory selectors each present one collection. Construction
+limits stay in the selected design note and in the design documentation; a
+shared selector does not establish physical foldability. Paper categories remain.
 
 ## Try it
 

@@ -1,3 +1,54 @@
+# Paper Couture — authorized main-site publication
+
+Charlie authorized pushing corrections, waiting for exact-head GitHub CI and
+independent approval, then normal source merges and publication to the main
+cmish.dev site. This supersedes earlier local/preview-only restrictions for
+this combined Paper Couture update. See [the publication notes](docs/MAIN_PUBLICATION.md).
+The reviewed 3372f86 geometry is unchanged; garment and accessory selectors
+now show one list each, while specific construction limits remain visible.
+
+# Paper Couture — continuous PR28 correction for independent re-review
+
+Charlie authorized local corrections to PR28's visible layer intersections,
+absolute hinge guard and missing CI coverage. Independent review rejected
+d3c15f7's per-frame axis switching; this revision plans and smoothly blends
+separating directions and adds adaptive vertex-motion regressions. Synthetic
+hinge-strip intersections are measured separately and remain a stated limit. This branch preserves Claude's geometry,
+Sunray artwork and all resting captures. Read
+[docs/fit-flare/CORRECTIONS.md](docs/fit-flare/CORRECTIONS.md) for implementation,
+tests, exact lineage and reviewer focus. No push, PR update, merge or deployment
+is authorized yet; publication scope must be resolved separately.
+
+# Paper Couture — fit-and-flare dress and Sunray pleats (Claude, 2026-10-07)
+
+On top of the combined wardrobe preview `21109e7`, at Charlie's request in a Claude chat.
+Two additions; nothing in the existing designs, papers or captures changes.
+
+- **Fit-and-flare dress** (`fit-flare`, Design → Experiments): sleeveless, banded neckline,
+  bodice narrowing to a nipped waist, flared skirt. The waist cannot be made with single-line
+  folds, so the engine gains one step kind, `collapse` (`src/fold/collapse.ts`): rigid bodies
+  joined by creases whose fold angles stay locked as around a flat-foldable four-crease vertex.
+  The waist is a pleat plus a hidden gusset each side; both corners satisfy Kawasaki and the
+  step moves as one rigid mechanism. `engine.ts` only gains the op type; `timeline.ts` builds
+  and animates collapse steps (simple folds and turns animate exactly as before). Notes,
+  captures and checks: [docs/fit-flare/NOTES.md](docs/fit-flare/NOTES.md).
+- **Sunray pleats** (experimental paper): pleats drawn as rays from the point where the Classic
+  A-line's side creases meet, so they follow the dress sides and the gold hem rule meets itself
+  across the back. `src/papers/dressMarks.ts` records those crease positions; `npm run check`
+  fails if they drift from `buildDress()`. Notes in [docs/paper-studies/NOTES.md](docs/paper-studies/NOTES.md).
+- `scripts/check.ts`: the hinge test measures opening beyond each hinge's resting height (the
+  waist corner is 12 layers deep); every existing design's numbers are unchanged and still pass
+  the old absolute limit. New: collapse crease loops must close at every stage, and every
+  checked construction's finished crease pattern must pass Maekawa and Kawasaki at every vertex.
+- `npm run crease-pattern` writes `docs/crease-patterns/<design>.svg` for every design (all 19
+  pass). `npm run sheet-map` writes the dress and fit-and-flare sheet maps.
+- Eleven scripts that asserted "every op is a valley fold or a turn" now say so for fold ops
+  explicitly (TypeScript needs it with a third op kind); their meaning is unchanged.
+- The paper picker scrolls the chosen swatch into view inside its list when the paper or its
+  rotation changes, including `?paper=` links.
+
+Not tested on a real phone or in physical paper. No merge or deployment.
+
 # Paper Couture — combined wardrobe preview publication
 
 Charlie authorized a separate draft source PR and cmish.dev branch preview on
