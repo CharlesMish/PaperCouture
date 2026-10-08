@@ -10,17 +10,19 @@ const fold = (id: string, title: string, hint: string, a: Point, b: Point, movin
 const turn = (id: string, title: string, hint: string): Op => ({ kind: 'turn', id, title, hint });
 const meta = (top: number) => ({ top, shoulderPoint: v2(0, top), sleeveCutDir: v2(1, 0) });
 
-/** The proposed flat shoulder layer, adapted to the workshop's turn-over and
- * valley workflow. Three folds worked from behind replace three mountains;
- * no layer selector, material cut, collar opening or fastening is introduced. */
-export function buildCollaredCapelet(): Construction {
-  return { name: 'Collared capelet', meta: meta(.7), ops: [
-    fold('capelet-collar', 'Fold down the collar band', 'Bring the upper edge onto the front. The reverse becomes the collar band; there is no neck opening.', [-1.5, .7], [1.5, .7], [0, 1]),
-    turn('capelet-back', 'Turn over to shape the capelet', 'Work the hem and both shoulder corners on the back, with the collar underneath.'),
-    fold('capelet-hem', 'Fold a short hem behind', 'Bring the lower part up onto this side. The full square remains inside the short shoulder layer.', [-1.5, -.3], [1.5, -.3], [0, -1]),
-    fold('capelet-shoulder-first', 'Slope the first shoulder', 'Fold this outer corner onto the back along the diagonal guide.', [.45, .7], [1, .15], [1, .7]),
-    fold('capelet-shoulder-second', 'Slope the other shoulder', 'Follow the matching diagonal to leave a broad lower panel.', [-.45, .7], [-1, .15], [-1, .7]),
-    turn('capelet-front', 'Reveal the collared capelet', 'A short, flat shoulder layer with a reverse collar. Lay it over a top on the board; it has no neck opening, tie or locking closure.'),
+/** Two printed front panels over continuous reverse-side lining. The slanted
+ * gate folds create real free edges; no slit, painted seam or neck hole is used.
+ * Hem and shoulders are worked on the back with whole-stack valley folds. */
+export function buildOpenFrontCapelet(): Construction {
+  return { name: 'Open-front capelet', meta: meta(1), ops: [
+    turn('capelet-lining', 'Put the lining face up', 'The reverse becomes the lining between the two printed front panels.'),
+    fold('capelet-panel-first', 'Fold the first front panel', 'Bring the outer edge inward along the sloping guide. Its free edge leaves more lining visible toward the hem.', [-.53, 1], [-.78, -1], [-1, 0]),
+    fold('capelet-panel-second', 'Fold the other front panel', 'Match the opposite panel. The space between these real paper edges reveals the continuous lining underneath.', [.53, 1], [.78, -1], [1, 0]),
+    turn('capelet-back', 'Turn over to shape the capelet', 'Keep the front panels underneath while shaping the hem and shoulders.'),
+    fold('capelet-hem', 'Fold the lower half behind', 'Bring the lower half up onto this side. All layers move together to make a short shoulder layer.', [-1.5, 0], [1.5, 0], [0, -1]),
+    fold('capelet-shoulder-first', 'Slope the first shoulder', 'Tuck the upper outer corner onto the back along the diagonal guide.', [-.63, .5], [-.35, 1], [-.53, 1]),
+    fold('capelet-shoulder-second', 'Slope the other shoulder', 'Match the opposite shoulder. The front panels remain separate over their lining.', [.63, .5], [.35, 1], [.53, 1]),
+    turn('capelet-front', 'Reveal the open-front capelet', 'Two printed panels open onto a continuous paper lining. Layer it over a top on the board; it has no through-opening or fastening.'),
   ] };
 }
 
@@ -43,7 +45,7 @@ export function buildAnkleBoot(direction: BootDirection = 'right'): Construction
 }
 
 export const COMPANION_CONSTRUCTIONS = {
-  capelet: buildCollaredCapelet,
+  capelet: buildOpenFrontCapelet,
   'boot-left': () => buildAnkleBoot('left'),
   'boot-right': () => buildAnkleBoot('right'),
 };

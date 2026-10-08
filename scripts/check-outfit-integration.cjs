@@ -97,7 +97,7 @@ fs.mkdirSync(out, { recursive: true });
     for (const [id, paper] of [['boat-top', 'ginkgo-pairs'], ['wrap-top', 'slate-grain'], ['hat', 'oat-linen']]) {
       await btn('Return to folding').click(); await load(`design=${id}&paper=${paper}`);
       assert.equal(await page.getByLabel('Garment design').inputValue(), id);
-      assert.match(await page.locator('.studio-note').innerText(), /Experimental/);
+      assert.match(await page.locator('.studio-note').innerText(), /One square/);
       const count = await page.evaluate(() => paperCouture.timeline.ops.length);
       const fold = async () => { const step = await page.evaluate(() => paperCouture.controller.step); await page.locator('.dock:not(.display-dock) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); assert.equal(await page.evaluate(() => paperCouture.controller.step), step + 1); };
       while (!await page.evaluate(() => paperCouture.controller.finished)) await fold();
@@ -144,13 +144,19 @@ fs.mkdirSync(out, { recursive: true });
         const r = await page.locator('.pinboard-canvas').boundingBox(), clutch = (await state()).items.at(-1);
         const x = r.x + r.width * (.5 + clutch.x / 3.6), y = r.y + r.height * (.5 - clutch.y / 4.2);
         const cdp = await context.newCDPSession(page), initial = await state();
+        const durableBefore = await page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length }));
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x - 18, y: y - 12 }] });
+        await page.waitForFunction(() => paperCouture.pinboard.drag?.moved);
+        assert.notDeepEqual((await state()).items, initial.items);
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchCancel', touchPoints: [] });
+        await page.waitForFunction(() => !paperCouture.pinboard.drag);
         assert.deepEqual((await state()).items, initial.items);
+        assert.deepEqual(await page.evaluate(() => ({ saved: localStorage.getItem('paper-couture.pinboard.v1'), history: paperCouture.pinboard.history.length })), durableBefore);
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x - 18, y: y - 12 }] });
         await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+        await page.waitForFunction(() => !paperCouture.pinboard.drag);
         assert.notDeepEqual((await state()).items, initial.items); await btn('Undo').click(); assert.deepEqual((await state()).items, initial.items);
         await cdp.detach();
       }

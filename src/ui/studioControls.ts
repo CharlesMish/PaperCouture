@@ -37,22 +37,12 @@ export class StudioControls {
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
-    for (const experimental of [false, true]) {
-      const group = document.createElement('optgroup');
-      group.label = experimental ? 'Experiments · one square' : 'Curated · collection';
-      for (const garment of GARMENTS.filter(g => !!g.experiment === experimental)) group.append(new Option(garment.name, garment.id));
-      this.design.append(group);
-    }
+    for (const garment of GARMENTS) this.design.append(new Option(garment.name, garment.id));
     this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
-    for (const experimental of [false, true]) {
-      const group = document.createElement('optgroup');
-      group.label = experimental ? 'Experiments · separate square' : 'Collection';
-      for (const a of ACCESSORIES.filter(a => !!a.experiment === experimental)) group.append(new Option(a.name, a.id));
-      this.accessory.append(group);
-    }
+    for (const accessory of ACCESSORIES) this.accessory.append(new Option(accessory.name, accessory.id));
     this.accessoryLabel.append(this.accessory);
     for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
@@ -121,9 +111,9 @@ export class StudioControls {
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
       : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
     const experiment = garmentExperiment(id);
-    if (experiment && !accessoryMode) this.note.textContent = `Experimental · ${experiment}${attached ? ' · accessory kept aside' : ''}`;
+    if (experiment && !accessoryMode) this.note.textContent = `${experiment}${attached ? ' · accessory kept aside' : ''}`;
     const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;
-    if (accessoryExperiment && (accessoryMode || attached && !experiment)) this.note.textContent = `Experimental · ${accessoryExperiment}`;
+    if (accessoryExperiment && (accessoryMode || attached && !experiment)) this.note.textContent = accessoryExperiment;
     this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode || !!accessoryExperiment && (accessoryMode || attached));
   }
   /** Edit reopens the attached piece with its progress; Fold starts a new square of another type. */

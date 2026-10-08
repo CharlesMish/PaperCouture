@@ -1,3 +1,87 @@
+# Paper Couture — authorized main-site publication
+
+Charlie authorized pushing corrections, waiting for exact-head GitHub CI and
+independent approval, then normal source merges and publication to the main
+cmish.dev site. This supersedes earlier local/preview-only restrictions for
+this combined Paper Couture update. See [the publication notes](docs/MAIN_PUBLICATION.md).
+The reviewed 3372f86 geometry is unchanged; garment and accessory selectors
+now show one list each, while specific construction limits remain visible.
+
+# Paper Couture — continuous PR28 correction for independent re-review
+
+Charlie authorized local corrections to PR28's visible layer intersections,
+absolute hinge guard and missing CI coverage. Independent review rejected
+d3c15f7's per-frame axis switching; this revision plans and smoothly blends
+separating directions and adds adaptive vertex-motion regressions. Synthetic
+hinge-strip intersections are measured separately and remain a stated limit. This branch preserves Claude's geometry,
+Sunray artwork and all resting captures. Read
+[docs/fit-flare/CORRECTIONS.md](docs/fit-flare/CORRECTIONS.md) for implementation,
+tests, exact lineage and reviewer focus. No push, PR update, merge or deployment
+is authorized yet; publication scope must be resolved separately.
+
+# Paper Couture — fit-and-flare dress and Sunray pleats (Claude, 2026-10-07)
+
+On top of the combined wardrobe preview `21109e7`, at Charlie's request in a Claude chat.
+Two additions; nothing in the existing designs, papers or captures changes.
+
+- **Fit-and-flare dress** (`fit-flare`, Design → Experiments): sleeveless, banded neckline,
+  bodice narrowing to a nipped waist, flared skirt. The waist cannot be made with single-line
+  folds, so the engine gains one step kind, `collapse` (`src/fold/collapse.ts`): rigid bodies
+  joined by creases whose fold angles stay locked as around a flat-foldable four-crease vertex.
+  The waist is a pleat plus a hidden gusset each side; both corners satisfy Kawasaki and the
+  step moves as one rigid mechanism. `engine.ts` only gains the op type; `timeline.ts` builds
+  and animates collapse steps (simple folds and turns animate exactly as before). Notes,
+  captures and checks: [docs/fit-flare/NOTES.md](docs/fit-flare/NOTES.md).
+- **Sunray pleats** (experimental paper): pleats drawn as rays from the point where the Classic
+  A-line's side creases meet, so they follow the dress sides and the gold hem rule meets itself
+  across the back. `src/papers/dressMarks.ts` records those crease positions; `npm run check`
+  fails if they drift from `buildDress()`. Notes in [docs/paper-studies/NOTES.md](docs/paper-studies/NOTES.md).
+- `scripts/check.ts`: the hinge test measures opening beyond each hinge's resting height (the
+  waist corner is 12 layers deep); every existing design's numbers are unchanged and still pass
+  the old absolute limit. New: collapse crease loops must close at every stage, and every
+  checked construction's finished crease pattern must pass Maekawa and Kawasaki at every vertex.
+- `npm run crease-pattern` writes `docs/crease-patterns/<design>.svg` for every design (all 19
+  pass). `npm run sheet-map` writes the dress and fit-and-flare sheet maps.
+- Eleven scripts that asserted "every op is a valley fold or a turn" now say so for fold ops
+  explicitly (TypeScript needs it with a third op kind); their meaning is unchanged.
+- The paper picker scrolls the chosen swatch into view inside its list when the paper or its
+  rotation changes, including `?paper=` links.
+
+Not tested on a real phone or in physical paper. No merge or deployment.
+
+# Paper Couture — combined wardrobe preview publication
+
+Charlie authorized a separate draft source PR and cmish.dev branch preview on
+October 7, 2026. This publication branch continues reviewed candidate
+`9808074a26b7ebb14c22810c321fdc9a233c9e3f`; garment/application code is unchanged.
+CI now runs the existing regressions and focused capelet/brooch, shirt, necktie
+and combined-outfit browser checks on the exact PR head. The source PR stacks
+on PR25, which remains unmerged. No production merge or deployment is authorized.
+The local-only restrictions in the historical entries below describe that
+completed review phase and are superseded solely for this preview publication.
+
+# Paper Couture — external packet review (local only)
+
+Candidate on top of preserved capelet/brooch `31ce3ab6ece7de536fdf16f40c5830d9d068dcae`.
+Adds the unchanged Camp-collar shirt from `989b556e8bb1d53c2cfd2ac93ac224a1fb1e03ba`
+and the submitted Folded necktie from patch `c7518964ae7d3b89370450a5724c068b6b846b04`.
+Both remain Experimental; suggested starting squares are 18 cm and 7 cm.
+The notch crop and reconstructed bolero are review studies only and are not in Design.
+See [the verdict, provenance, comparisons and checks](docs/external-review/NOTES.md).
+No push, merge, PR publication or deployment is authorized for this review.
+
+# Paper Couture — local capelet/brooch follow-up
+
+Local-only branch from reviewed PR25 `21e0fdbd67b8c9c0e2ff7c6b8fb2baf7a851657f`.
+New capelet folds have two real front panels over lining; the name is Open-front
+capelet and new captures suggest 18 cm. Framed brooch keeps its square folds,
+adds an authored Rectangle choice, and suggests 4.5 cm. Existing captures are
+unchanged. See [comparison, checks and limits](docs/capelet-brooch/NOTES.md) and
+the [forwardable design brief](docs/capelet-brooch/Paper-Couture-external-design-brief.txt).
+No push, PR publication, merge or deployment is authorized for this follow-up.
+
+The historical PR25 handoff below records the frozen reviewed predecessor.
+
 # Paper Couture — companion design studies
 
 Separate draft based on frozen PR24 `574b2b10cc2894586f2ee3f8c9496035365e6408`.

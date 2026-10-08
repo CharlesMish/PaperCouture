@@ -1,0 +1,119 @@
+{
+  "views": [
+    "notch-crop-front",
+    "notch-crop-angle",
+    "notch-crop-back",
+    "bolero-study-front",
+    "bolero-study-angle",
+    "bolero-study-back",
+    "capelet-front",
+    "capelet-angle",
+    "capelet-back",
+    "camp-shirt-front",
+    "camp-shirt-angle",
+    "camp-shirt-back",
+    "necktie-front",
+    "necktie-angle",
+    "necktie-back"
+  ],
+  "print": [
+    {
+      "id": "notch-crop",
+      "turn": 0,
+      "shift": 0,
+      "redPixels": 575
+    },
+    {
+      "id": "notch-crop",
+      "turn": 0,
+      "shift": -0.0625,
+      "redPixels": 0
+    },
+    {
+      "id": "notch-crop",
+      "turn": 1,
+      "shift": 0,
+      "redPixels": 1200
+    },
+    {
+      "id": "notch-crop",
+      "turn": 1,
+      "shift": -0.0625,
+      "redPixels": 2373
+    },
+    {
+      "id": "notch-crop",
+      "turn": 2,
+      "shift": 0,
+      "redPixels": 1367
+    },
+    {
+      "id": "notch-crop",
+      "turn": 2,
+      "shift": -0.0625,
+      "redPixels": 5515
+    },
+    {
+      "id": "notch-crop",
+      "turn": 3,
+      "shift": 0,
+      "redPixels": 0
+    },
+    {
+      "id": "notch-crop",
+      "turn": 3,
+      "shift": -0.0625,
+      "redPixels": 0
+    },
+    {
+      "id": "bolero-study",
+      "turn": 0,
+      "shift": 0,
+      "redPixels": 2482
+    },
+    {
+      "id": "bolero-study",
+      "turn": 0,
+      "shift": -0.0625,
+      "redPixels": 4976
+    },
+    {
+      "id": "bolero-study",
+      "turn": 1,
+      "shift": 0,
+      "redPixels": 4992
+    },
+    {
+      "id": "bolero-study",
+      "turn": 1,
+      "shift": -0.0625,
+      "redPixels": 8371
+    },
+    {
+      "id": "bolero-study",
+      "turn": 2,
+      "shift": 0,
+      "redPixels": 4176
+    },
+    {
+      "id": "bolero-study",
+      "turn": 2,
+      "shift": -0.0625,
+      "redPixels": 1233
+    },
+    {
+      "id": "bolero-study",
+      "turn": 3,
+      "shift": 0,
+      "redPixels": 1189
+    },
+    {
+      "id": "bolero-study",
+      "turn": 3,
+      "shift": -0.0625,
+      "redPixels": 0
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

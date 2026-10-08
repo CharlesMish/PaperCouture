@@ -9,7 +9,7 @@ const c = buildCrossFrontRobe();
 const tl = buildTimeline(c.ops);
 for (const [i, state] of tl.states.entries()) assert.deepEqual(checkState(state, `robe state ${i}`), []);
 assert.equal(new Set(c.ops.map(op => op.id)).size, c.ops.length);
-assert(c.ops.every(op => op.kind === 'turn' || op.folds.every(fold => fold.sense === 'valley')));
+assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(fold => fold.sense === 'valley'))));
 const inside = (poly: Vec2[], p: Vec2) => poly.every((a, i) => {
   const b = poly[(i + 1) % poly.length];
   return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x) >= -1e-10;
