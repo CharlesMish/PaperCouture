@@ -18,7 +18,8 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
   const designs=p.getByLabel('Garment design'),accessories=p.getByLabel('Accessory type');
   assert.equal(await designs.locator('optgroup').count(),0);assert.equal(await accessories.locator('optgroup').count(),0);
   const ids=await designs.locator('option').evaluateAll(xs=>xs.map(x=>x.value));
-  assert.equal(ids.length,19);assert.equal(new Set(ids).size,19);
+  assert.deepEqual(ids,['dress','jacket','skirt','vest','pleats','clutch','apron','tunic','tabard','boat-top','wrap-top','hat','swing-coat','fit-flare','camp-shirt','necktie','capelet','boot-left','boot-right','framed-brooch']);
+  assert.equal(new Set(ids).size,20);
   assert.deepEqual(await accessories.locator('option').evaluateAll(xs=>xs.map(x=>x.value)),['pin','bow','kerchief','pocket','tulip','sash']);
   assert.match(await p.locator('.studio-note').innerText(),/no armholes or neck opening/);
   assert(!/Experimental/.test(await p.locator('.studio-note').innerText()));
