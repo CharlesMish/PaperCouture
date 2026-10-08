@@ -33,7 +33,18 @@ The existing source stack is correction/publication -> PR28 -> PR26 -> PR25
 with ordinary merge commits, preserving all reviewed ancestry. Each changed
 PR head must have passing GitHub checks before the next merge. All six relevant
 workflows target every base in this stack; candidate checkouts use exact PR heads.
-Separate PR19/20/21 and the duplicate Sunray-only PR27 are not bundled.
+Separate PR19/20/21 are not bundled. PR27's runtime work is superseded by PR28,
+but its unique legacy capture-script/layout changes and contact sheets remain on
+its preserved branch; it is not a byte-identical duplicate.
+
+Charlie subsequently requested source-main consolidation too. After the stack
+reaches the integration branch, open a normal integration-to-`main` PR from that
+exact reviewed tree. All six active workflows also target `main`; require the
+full nonempty set of 14 successful source checks at the PR head, then merge
+normally and verify the resulting tree equals the accepted candidate. Source
+`main` currently ends at `05bba444be376664aeb8c1c35d0463f5cf59e26f`, an ancestor
+of the published integration. Preserve every branch. Branch inclusion alone
+is not a completed merge to main.
 
 Site PR39 is based directly on main `35a40a028e4a90d9a0c4af183074bbadeaecb4ed`
 and already contains the complete wardrobe import; it does not depend on
