@@ -47,12 +47,15 @@ fs.mkdirSync(out, { recursive: true });
     const response = await page.goto(baseline); assert(response.ok()); await ready(); const old = await signature();
     assert.equal(old.registry.length, 26); assert.equal(Object.keys(old.faces).length, 52);
     for (const group of ['faces', 'placements']) for (const [key, hash] of Object.entries(old[group])) assert.equal(current[group][key], hash, group + ': ' + key);
-    // PR28 adds Sunray after this suite's frozen PR24 baseline. Keep the
-    // complete old registry/order assertion, allowing only the two known additions.
-    const added = ['plum-seed', 'sunray-pleats'];
+    // Later reviewed collections add these five papers after frozen PR24.
+    // Keep every old raster, metadata and ordering assertion exact.
+    const added = ['broken-twill', 'copper-fleck', 'plum-seed', 'reed-study', 'sunray-pleats'];
     assert.deepEqual(current.registry.filter(p => !added.includes(p.id)), old.registry);
     assert.deepEqual(current.registry.filter(p => !old.registry.some(q => q.id === p.id)).map(p => p.id).sort(), added);
     assert.deepEqual(current.registry.find(p => p.id === 'sunray-pleats'), { id: 'sunray-pleats', name: 'Sunray pleats', hidden: false, curation: 'experimental' });
+    for (const [id, name, curation] of [['broken-twill', 'Broken twill', 'curated'], ['copper-fleck', 'Copper fleck', 'curated'], ['reed-study', 'Reed study', 'experimental']]) {
+      assert.deepEqual(current.registry.find(p => p.id === id), { id, name, hidden: false, curation });
+    }
     result.parity = { papers: old.registry.length, faces: Object.keys(old.faces).length, positionedFaces: Object.keys(old.placements).length };
     fs.writeFileSync(path.join(out, 'prior-paper-hashes.json'), JSON.stringify(old, null, 2));
     result.checks.push('Every prior PR24 paper face, visible/hidden metadata and order remains exact; sampled supported offset rasters match at all four turns.');

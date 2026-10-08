@@ -128,3 +128,10 @@ capelet/brooch candidate. The shirt has folded collar and cuffs; the small tie
 has a real knot pleat and uses an intact square. See the
 [review and evidence](docs/external-review/NOTES.md) for provenance, parked
 outerwear studies, paper positioning and test limitations.
+
+## Local overnight design candidate
+
+Swing coat adds a long open-front silhouette with folded facings and a broad
+shawl-like shoulder yoke. Reed study, Broken twill and Copper fleck form a small
+coordinated paper set. See [illustrated selection and checks](docs/swing-coat/NOTES.md).
+The coat remains an experimental flat silhouette with continuous lining.

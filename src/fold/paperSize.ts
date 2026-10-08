@@ -6,6 +6,7 @@ export const REFERENCE_SQUARE_CM = 20;
 /** A smaller square preserves the authored folds and placement of the print.
  * Extra folds would change both the silhouette and which ink remains visible. */
 const recommended: Readonly<Record<string, number>> = {
+  'swing-coat': 20,
   clutch: 8,
   apron: 14,
   'boat-top': 16,

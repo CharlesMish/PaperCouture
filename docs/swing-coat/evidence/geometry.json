@@ -1,0 +1,81 @@
+{
+  "design": "swing-coat",
+  "operations": 10,
+  "facets": 14,
+  "retainedMaterialArea": 4,
+  "width": 1.425486284289277,
+  "height": 1.7800000000000002,
+  "startingSquareCm": 20,
+  "finishedCm": {
+    "width": 14.25486284289277,
+    "height": 17.800000000000004
+  },
+  "maxHingeGap": 0.02750000000000019,
+  "hingeLimit": 0.044,
+  "maxEdgeLengthError": 1.1102230246251565e-15,
+  "minZ": 0.0014999999999999996,
+  "maxStack": 0.04,
+  "samplesPerOperation": 161,
+  "perOperation": [
+    {
+      "id": "coat-facing-left",
+      "maxHingeGap": 0.0055,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-facing-right",
+      "maxHingeGap": 0.0055,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-lining",
+      "maxHingeGap": 0.005500000000000313,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-panel-left",
+      "maxHingeGap": 0.005500000000000184,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-panel-right",
+      "maxHingeGap": 0.00550000000000028,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-sleeve-left",
+      "maxHingeGap": 0.016500000000000004,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-sleeve-right",
+      "maxHingeGap": 0.016500000000000004,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-back",
+      "maxHingeGap": 0.0165000000000003,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-hem",
+      "maxHingeGap": 0.027499999999999997,
+      "strictTrianglePiercings": 0
+    },
+    {
+      "id": "coat-front",
+      "maxHingeGap": 0.02750000000000019,
+      "strictTrianglePiercings": 0
+    }
+  ],
+  "visibleArea": {
+    "coat-panel-left": 0.6063000000001734,
+    "coat-facing-right": 0.07299999999999604,
+    "coat-facing-left": 0.07299999999999604,
+    "coat-panel-right": 0.6063000000001734,
+    "coat-hem": 0.004949999999999984,
+    "coat-sleeve-left": 0.1595749999999865,
+    "coat-sleeve-right": 0.1595749999999865
+  },
+  "limits": "Thin rigid facets only. Coplanar overlap is intentional layering; finite layer offsets separate some shared seams. No thickness, continuous collision or physical-paper certification."
+}

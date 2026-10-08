@@ -1,0 +1,141 @@
+{
+  "results": [
+    {
+      "paper": "reed-study",
+      "deterministic": true,
+      "distinctSides": true
+    },
+    {
+      "paper": "broken-twill",
+      "deterministic": true,
+      "distinctSides": true
+    },
+    {
+      "paper": "copper-fleck",
+      "deterministic": true,
+      "distinctSides": true
+    }
+  ],
+  "samples": [
+    {
+      "q": 0,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "inkSamples": 317,
+      "compared": 20736,
+      "mismatch": 82
+    },
+    {
+      "q": 0,
+      "position": {
+        "x": 0.125,
+        "y": -0.125
+      },
+      "inkSamples": 314,
+      "compared": 20736,
+      "mismatch": 93
+    },
+    {
+      "q": 0,
+      "position": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "inkSamples": 233,
+      "compared": 20736,
+      "mismatch": 52
+    },
+    {
+      "q": 1,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "inkSamples": 317,
+      "compared": 20736,
+      "mismatch": 79
+    },
+    {
+      "q": 1,
+      "position": {
+        "x": 0.125,
+        "y": -0.125
+      },
+      "inkSamples": 306,
+      "compared": 20736,
+      "mismatch": 92
+    },
+    {
+      "q": 1,
+      "position": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "inkSamples": 190,
+      "compared": 20736,
+      "mismatch": 60
+    },
+    {
+      "q": 2,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "inkSamples": 322,
+      "compared": 20736,
+      "mismatch": 85
+    },
+    {
+      "q": 2,
+      "position": {
+        "x": 0.125,
+        "y": -0.125
+      },
+      "inkSamples": 323,
+      "compared": 20736,
+      "mismatch": 82
+    },
+    {
+      "q": 2,
+      "position": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "inkSamples": 174,
+      "compared": 20736,
+      "mismatch": 45
+    },
+    {
+      "q": 3,
+      "position": {
+        "x": 0,
+        "y": 0
+      },
+      "inkSamples": 319,
+      "compared": 20736,
+      "mismatch": 81
+    },
+    {
+      "q": 3,
+      "position": {
+        "x": 0.125,
+        "y": -0.125
+      },
+      "inkSamples": 313,
+      "compared": 20736,
+      "mismatch": 78
+    },
+    {
+      "q": 3,
+      "position": {
+        "x": -0.25,
+        "y": 0.25
+      },
+      "inkSamples": 231,
+      "compared": 20736,
+      "mismatch": 29
+    }
+  ]
+}

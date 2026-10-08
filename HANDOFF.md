@@ -1,3 +1,23 @@
+# Paper Couture — authorized Swing coat publication
+
+Charlie approved publication of reviewed candidate `932b1e216f5752691cce398dc1dffab77bde84a1`
+on 2026-10-08. This supersedes the local-only scope below for this candidate.
+Source PR31 must pass exact-head CI and independent recheck before normal merge.
+The separate cmish.dev import preserves site main `2f2d9f0` (published PR41),
+using the existing pinned-source workflow and production build connection.
+The only source follow-up updates two legacy browser registry assertions for the
+one garment and three papers added here; runtime and geometry remain unchanged.
+
+# Paper Couture - local Swing coat and Reed suite candidate
+
+Pinned to main `3fed818781aad112b52f00d9c87f2e65fa17900f`, containing the reviewed
+`a89f48c` candidate and `3372f86` geometry corrections. Adds one ten-step Swing
+coat and three procedural papers on `design/swing-coat-reed-suite`. See
+[selection, scale, checks and limits](docs/swing-coat/NOTES.md). Existing geometry
+and rendering code are unchanged. This task is local only: no push, PR, merge or
+deployment is authorized. The parent/publisher coordinates any later integration.
+Historical publication authorizations below do not apply to this new candidate.
+
 # Paper Couture — authorized main-site publication
 
 Charlie authorized pushing corrections, waiting for exact-head GitHub CI and

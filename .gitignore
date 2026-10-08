@@ -25,3 +25,7 @@ docs/design-curation/evidence/failure.png
 docs/*/tiles/
 .fit-flare-qa/
 .fit-flare-baseline/
+
+.swing-coat-qa/
+docs/swing-coat/evidence/browser/*.png
+docs/swing-coat/evidence/papers/*.png
