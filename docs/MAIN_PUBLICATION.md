@@ -55,3 +55,11 @@ second allowed addition. All 52 old face rasters, 96 sampled positioned rasters,
 old metadata and old registry order remain exact; Sunray's name/visibility and
 experimental paper category are asserted separately. No raster or geometry
 threshold is relaxed.
+
+The positioning CI at `3b58a119` read a moved board immediately after CDP
+acknowledged touch cancellation; its subsequent failure screenshot showed the
+piece restored. Thirty-six local cancellation trials restored the exact item,
+save and Undo history. The board browser test now waits for the application's
+drag to finish after cancel/release, proves that the cancelled drag really moved,
+and checks that cancellation leaves the durable save and Undo history unchanged.
+No application event handler or restoration behavior changes.

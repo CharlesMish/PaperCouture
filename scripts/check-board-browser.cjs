@@ -71,9 +71,17 @@ const key = 'paper-couture.pinboard.v1';
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x+8,y:r.y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:r.x+30,y:r.y+25}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.deepEqual(await board(),before);
     // Touch the top piece near its centre; cancel restores its position, tap only selects.
     const x=r.x+r.width/2,y=r.y+r.height*(.5-.56/4.2);
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    const durableBefore=await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length}));
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});
+    await page.waitForFunction(()=>paperCouture.pinboard.drag?.moved);
+    assert.notDeepEqual((await board()).items,before.items);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    // CDP may acknowledge input before the page processes pointercancel/pointerup.
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.deepEqual((await board()).items,before.items);
+    assert.deepEqual(await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length})),durableBefore);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.notDeepEqual((await board()).items,before.items);await btn('Undo').click();assert.deepEqual((await board()).items,before.items);
     await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);await shot('phone-'+width);await cdp.detach();
   }
