@@ -71,9 +71,17 @@ const key = 'paper-couture.pinboard.v1';
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:r.x+8,y:r.y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:r.x+30,y:r.y+25}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.deepEqual(await board(),before);
     // Touch the top piece near its centre; cancel restores its position, tap only selects.
     const x=r.x+r.width/2,y=r.y+r.height*(.5-.56/4.2);
-    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    const durableBefore=await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length}));
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});
+    await page.waitForFunction(()=>paperCouture.pinboard.drag?.moved);
+    assert.notDeepEqual((await board()).items,before.items);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
+    // CDP may acknowledge input before the page processes pointercancel/pointerup.
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.deepEqual((await board()).items,before.items);
+    assert.deepEqual(await page.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length})),durableBefore);
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+22,y:y+8}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await page.waitForFunction(()=>!paperCouture.pinboard.drag);
     assert.notDeepEqual((await board()).items,before.items);await btn('Undo').click();assert.deepEqual((await board()).items,before.items);
     await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);await shot('phone-'+width);await cdp.detach();
   }
@@ -81,12 +89,12 @@ const key = 'paper-couture.pinboard.v1';
   result.checks.push('Composite PNG is byte-identical to the visible 1800×2100 scene without selection outline. Real overlap occlusion/picking/layer reversal; portrait and landscape touch empty-space, drag, cancel, Undo, no page overflow.');
   // Fresh completed source, add limit, repeat/remove/Undo and GPU lifetime.
   await btn('Return to folding').click();await load('design=clutch&paper=seed-dashes&step=99&view=display');await open();
-  await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,4);assert(await btn('Board full · four pieces').isDisabled());
+  await btn('Pin current piece').click();await btn('Pin current piece').click();await btn('Pin current piece').click();assert.equal((await board()).items.length,5);assert(await btn('Board full · five pieces').isDisabled());
   const memory=[];for(let i=0;i<4;i++){await btn('Remove selected').click();await btn('Undo').click();memory.push(await page.evaluate(()=>({...paperCouture.pinboard.renderer.info.memory})));await btn('Return to piece').click();await open()}
   assert.deepEqual(memory.slice(1),Array(3).fill(memory[1]));result.memory=memory;
   const bytes=await page.evaluate(()=>localStorage.getItem('paper-couture.pinboard.v1').length);result.saveCharacters=bytes;assert(bytes<2000000);
-  await page.reload();await settle();await open();assert.equal((await board()).items.length,4);
-  result.checks.push('Four-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all four reload.');
+  await page.reload();await settle();await open();assert.equal((await board()).items.length,5);
+  result.checks.push('Five-piece limit is explicit; repeated remove/Undo/open/close has stable GPU counts, and all five reload.');
   // Failure and retry leave the previous durable save untouched.
   const durable=await page.evaluate(k=>localStorage.getItem(k),key);
   await page.evaluate(()=>{window.originalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='paper-couture.pinboard.v1')throw new DOMException('Quota exceeded','QuotaExceededError');return window.originalSet.call(this,k,v)}});

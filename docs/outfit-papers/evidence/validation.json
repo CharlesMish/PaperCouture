@@ -1,0 +1,173 @@
+{
+  "sourceCommit": "4ac7bef8f6affec11edbb1c0f3f26d27e55b63e2",
+  "baselineCommit": "feb9cc80f5ca0da7ef2e49619665458c2f923c5a",
+  "gallery": {
+    "completed": true,
+    "oldRasterCount": 46,
+    "checks": [
+      "All PR23 paper rasters, IDs, names, hidden flags and curation remain exact.",
+      "Ginkgo paired contours register within one raster pixel at four turns and three bounded offsets; ground/grain stay fixed. Quiet papers explicitly keep fixed placement.",
+      "All three papers rendered on jacket/pleated skirt/apron/clutch at every quarter-turn, reverse views at zero; shifted Ginkgo front/back rendered at every turn."
+    ],
+    "ink": {
+      "registration": [
+        {
+          "turn": 0,
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 0,
+          "offset": {
+            "x": 0.125,
+            "y": -0.0625
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 0,
+          "offset": {
+            "x": -0.25,
+            "y": 0.25
+          },
+          "unmatched": 0,
+          "inkPixels": 25229
+        },
+        {
+          "turn": 1,
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 1,
+          "offset": {
+            "x": 0.125,
+            "y": -0.0625
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 1,
+          "offset": {
+            "x": -0.25,
+            "y": 0.25
+          },
+          "unmatched": 0,
+          "inkPixels": 24396
+        },
+        {
+          "turn": 2,
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 2,
+          "offset": {
+            "x": 0.125,
+            "y": -0.0625
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 2,
+          "offset": {
+            "x": -0.25,
+            "y": 0.25
+          },
+          "unmatched": 0,
+          "inkPixels": 24303
+        },
+        {
+          "turn": 3,
+          "offset": {
+            "x": 0,
+            "y": 0
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 3,
+          "offset": {
+            "x": 0.125,
+            "y": -0.0625
+          },
+          "unmatched": 0,
+          "inkPixels": 27253
+        },
+        {
+          "turn": 3,
+          "offset": {
+            "x": -0.25,
+            "y": 0.25
+          },
+          "unmatched": 0,
+          "inkPixels": 23341
+        }
+      ],
+      "stationary": 1991024,
+      "changed": 106128,
+      "clamped": {
+        "x": 0.25,
+        "y": -0.25
+      },
+      "quietOffsets": [
+        {
+          "x": 0,
+          "y": 0
+        },
+        {
+          "x": 0,
+          "y": 0
+        }
+      ]
+    },
+    "renderedScreenshots": 68,
+    "pageErrors": []
+  },
+  "initialCombinedRun": {
+    "completed": false,
+    "stoppedAfterGallery": "Node deepStrictEqual distinguished live -0 from JSON-restored 0 in captured geometry. Corrected only the test to compare persisted representations; no application/storage change.",
+    "rawReceipt": "output/outfit-papers-final/results.json"
+  },
+  "correctedInteractionRun": {
+    "base": "http://127.0.0.1:5203",
+    "baseline": null,
+    "baselineSHA": "feb9cc80f5ca0da7ef2e49619665458c2f923c5a",
+    "phase": "interaction",
+    "errors": [],
+    "checks": [
+      "Real Fold/Back retains positioned Ginkgo; three independent paper captures survive moves/remove/Undo/reload and PNG. Portrait 390/320 swatches/print controls reachable without overflow; existing captures stay exact after paper edits."
+    ],
+    "captures": 5,
+    "exportPixels": [
+      1800,
+      2100
+    ],
+    "passed": true
+  },
+  "node24": {
+    "typecheck": "passed",
+    "npmTest": "passed",
+    "finalBuild": "passed"
+  },
+  "limitations": [
+    "Paper-only branch retains PR23 sizes; mixed-board screenshots are regression evidence, not approval of the oversized clutch.",
+    "Chromium software WebGL and touch emulation; not physical paper or real iPhone/Safari."
+  ]
+}

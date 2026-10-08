@@ -1,0 +1,499 @@
+{
+  "scope": "Independent compiled snapshot of collection code; production UI capture controls and source objects, controller jump only skips already tested fold animation. Fresh synthetic profiles. Does not certify physical fold or phone feel.",
+  "sourceHead": "8a73e283d54be04246d94cf262a3b594ae30c475",
+  "cases": [
+    {
+      "design": "jacket",
+      "accessory": "pin",
+      "aloneSize": "3.2",
+      "attachedSize": "3.2",
+      "aloneExtent": [
+        0.32,
+        0.32,
+        0.001007999964058398
+      ],
+      "attachedExtent": [
+        0.32,
+        0.32,
+        0.001007999964058398
+      ],
+      "aloneMeta": {
+        "sideCm": 3.2
+      },
+      "attachedMeta": {
+        "sideCm": 3.2
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.56
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "jacket",
+      "accessory": "kerchief",
+      "aloneSize": "3.4",
+      "attachedSize": "3.4",
+      "aloneExtent": [
+        0.33999999999999997,
+        0.2720000040531158,
+        0.0037399998609907864
+      ],
+      "attachedExtent": [
+        0.33999999999999997,
+        0.2720000040531158,
+        0.0037399998609907864
+      ],
+      "aloneMeta": {
+        "sideCm": 3.4
+      },
+      "attachedMeta": {
+        "sideCm": 3.4
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.72
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "jacket",
+      "accessory": "pocket",
+      "aloneSize": "2.8",
+      "attachedSize": "2.8",
+      "aloneExtent": [
+        0.13999999999999999,
+        0.12599999874830245,
+        0.003849999881349514
+      ],
+      "attachedExtent": [
+        0.13999999999999996,
+        0.12599999874830248,
+        0.003849999881349514
+      ],
+      "aloneMeta": {
+        "sideCm": 2.8
+      },
+      "attachedMeta": {
+        "sideCm": 2.8
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.24
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "jacket",
+      "accessory": "tulip",
+      "aloneSize": "4",
+      "attachedSize": "4",
+      "aloneExtent": [
+        0.2300849902413617,
+        0.28284271247461906,
+        0.005659999931231147
+      ],
+      "attachedExtent": [
+        0.2300849902413617,
+        0.28284271247461906,
+        0.005659999931231147
+      ],
+      "aloneMeta": {
+        "sideCm": 4
+      },
+      "attachedMeta": {
+        "sideCm": 4
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          3.2
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "jacket",
+      "accessory": "sash",
+      "aloneSize": "3.2",
+      "attachedSize": "3.2",
+      "aloneExtent": [
+        0.32,
+        0.08320000171661378,
+        0.003519999869167803
+      ],
+      "attachedExtent": [
+        0.32,
+        0.08320000171661376,
+        0.003519999869167803
+      ],
+      "aloneMeta": {
+        "sideCm": 3.2
+      },
+      "attachedMeta": {
+        "sideCm": 3.2
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.56
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "jacket",
+      "accessory": "bow",
+      "aloneSize": "3.23",
+      "attachedSize": "3.8",
+      "aloneExtent": [
+        0.11628000462055206,
+        0.1615,
+        0.004570449944469146
+      ],
+      "attachedExtent": [
+        0.48260000000000003,
+        0.3493107691251174,
+        0.01972769994409755
+      ],
+      "aloneMeta": {
+        "sideCm": 3.23
+      },
+      "attachedMeta": {
+        "sideCm": 3.8,
+        "companionCm": [
+          3.8,
+          3.23
+        ]
+      },
+      "centreMatrices": [
+        [
+          0.1615,
+          0,
+          0,
+          0,
+          0,
+          0.1615,
+          0,
+          0,
+          0,
+          0,
+          0.1615,
+          0,
+          0,
+          0,
+          0.005051150025473907,
+          1
+        ],
+        [
+          0.1615,
+          0,
+          0,
+          0,
+          0,
+          0.1615,
+          0,
+          0,
+          0,
+          0,
+          0.1615,
+          0,
+          0,
+          0,
+          0.005051150025473907,
+          1
+        ]
+      ],
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          3.04,
+          3.04,
+          2.58
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "vest",
+      "accessory": "pin",
+      "aloneSize": "2.4",
+      "attachedSize": "2.4",
+      "aloneExtent": [
+        0.24,
+        0.24,
+        0.0007559999730437916
+      ],
+      "attachedExtent": [
+        0.23999999999999994,
+        0.23999999999999994,
+        0.0007559999730437916
+      ],
+      "aloneMeta": {
+        "sideCm": 2.4
+      },
+      "attachedMeta": {
+        "sideCm": 2.4
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          1.92
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "vest",
+      "accessory": "kerchief",
+      "aloneSize": "2.55",
+      "attachedSize": "2.55",
+      "aloneExtent": [
+        0.255,
+        0.2040000030398369,
+        0.0028049998957430933
+      ],
+      "attachedExtent": [
+        0.25499999999999995,
+        0.20400000303983684,
+        0.0028049998957430933
+      ],
+      "aloneMeta": {
+        "sideCm": 2.55
+      },
+      "attachedMeta": {
+        "sideCm": 2.55
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.04
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "vest",
+      "accessory": "pocket",
+      "aloneSize": "2.1",
+      "attachedSize": "2.1",
+      "aloneExtent": [
+        0.10500000000000001,
+        0.09449999906122686,
+        0.0028874999110121286
+      ],
+      "attachedExtent": [
+        0.10500000000000002,
+        0.09449999906122687,
+        0.0028874999110121286
+      ],
+      "aloneMeta": {
+        "sideCm": 2.1
+      },
+      "attachedMeta": {
+        "sideCm": 2.1
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          1.68
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "vest",
+      "accessory": "tulip",
+      "aloneSize": "3",
+      "attachedSize": "3",
+      "aloneExtent": [
+        0.17256374268102131,
+        0.21213203435596434,
+        0.004244999948423367
+      ],
+      "attachedExtent": [
+        0.17256374268102131,
+        0.21213203435596437,
+        0.004244999948423367
+      ],
+      "aloneMeta": {
+        "sideCm": 3
+      },
+      "attachedMeta": {
+        "sideCm": 3
+      },
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.4
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "design": "vest",
+      "accessory": "bow",
+      "aloneSize": "2.42",
+      "attachedSize": "2.85",
+      "aloneExtent": [
+        0.08712000346183776,
+        0.121,
+        0.0034242999583948414
+      ],
+      "attachedExtent": [
+        0.3619500000000001,
+        0.26198307684383815,
+        0.014795774958073174
+      ],
+      "aloneMeta": {
+        "sideCm": 2.42
+      },
+      "attachedMeta": {
+        "sideCm": 2.85,
+        "companionCm": [
+          2.85,
+          2.42
+        ]
+      },
+      "centreMatrices": [
+        [
+          0.12112500000000004,
+          0,
+          0,
+          0,
+          0,
+          0.12112500000000004,
+          0,
+          0,
+          0,
+          0,
+          0.12112500000000004,
+          0,
+          -1.3877787807814457e-17,
+          0,
+          0.0037883625191054322,
+          1
+        ],
+        [
+          0.12112500000000004,
+          0,
+          0,
+          0,
+          0,
+          0.12112500000000004,
+          0,
+          0,
+          0,
+          0,
+          0.12112500000000004,
+          0,
+          -1.3877787807814457e-17,
+          0,
+          0.0037883625191054322,
+          1
+        ]
+      ],
+      "assembledMeta": {
+        "sideCm": 16,
+        "companionCm": [
+          2.28,
+          2.28,
+          1.94
+        ]
+      },
+      "selectorRect": {
+        "x": 118.78125,
+        "y": 439.03125,
+        "width": 168.21875,
+        "height": 44
+      },
+      "reloadExact": true,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "errors": [],
+  "skipped": [
+    {
+      "design": "vest",
+      "accessory": "sash",
+      "reason": "Folded sash requires a centre waist anchor; vest deliberately has only side panels."
+    }
+  ],
+  "passed": true
+}

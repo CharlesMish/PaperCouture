@@ -1,0 +1,389 @@
+
+> paper-couture@0.1.0 test
+> npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board
+
+
+> paper-couture@0.1.0 check
+> node --import tsx scripts/check.ts
+
+construction: A-line dress, 6 steps
+  1. Fold the top edge down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides in along the guides  (6 pieces)
+  4. Fold the top corners out into sleeves  (10 pieces)
+  5. Fold the hem points up  (12 pieces)
+  6. Turn over to reveal the dress  (12 pieces)
+final facets: 12, flipped: 5
+final size: 1.707 wide x 1.800 tall (sheet = 2)
+stack height: 0.0290; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+construction: Straight dress, 6 steps
+  1. Fold the top edge down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides in along the guides  (6 pieces)
+  4. Fold the top corners out into sleeves  (10 pieces)
+  5. Fold the hem points up  (12 pieces)
+  6. Turn over to reveal the dress  (12 pieces)
+final facets: 12, flipped: 5
+final size: 1.707 wide x 1.800 tall (sheet = 2)
+stack height: 0.0290; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+construction: Wide flare dress, 6 steps
+  1. Fold the top edge down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides in along the guides  (6 pieces)
+  4. Fold the top corners out into sleeves  (10 pieces)
+  5. Fold the hem points up  (12 pieces)
+  6. Turn over to reveal the dress  (12 pieces)
+final facets: 12, flipped: 5
+final size: 1.960 wide x 1.800 tall (sheet = 2)
+stack height: 0.0290; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+construction: Box jacket, 6 steps
+  1. Fold the top edge down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides in along the guides  (6 pieces)
+  4. Open the broad sleeves  (10 pieces)
+  5. Shorten the body with a deep fold  (13 pieces)
+  6. Turn over to reveal the jacket  (13 pieces)
+final facets: 13, flipped: 6
+final size: 1.676 wide x 1.140 tall (sheet = 2)
+stack height: 0.0400; worst mid-fold hinge gap: 0.0330; lowest z: 0.0015
+construction: Diamond pin, 5 steps
+  1. Put the print underneath  (1 pieces)
+  2. Fold the upper-right corner in  (2 pieces)
+  3. Fold the upper-left corner in  (3 pieces)
+  4. Fold the lower-left corner in  (4 pieces)
+  5. Close the final corner  (5 pieces)
+final facets: 5, flipped: 1
+final size: 2.000 wide x 2.000 tall (sheet = 2)
+stack height: 0.0070; worst mid-fold hinge gap: 0.0055; lowest z: 0.0015
+construction: Two-piece bow · wing, 5 steps
+  1. Put the print underneath  (1 pieces)
+  2. Fold corner to corner  (2 pieces)
+  3. Tuck the first outer tip  (4 pieces)
+  4. Tuck the other outer tip  (6 pieces)
+  5. Reveal the wing  (6 pieces)
+final facets: 6, flipped: 3
+final size: 1.650 wide x 1.650 tall (sheet = 2)
+stack height: 0.0180; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+construction: Wrap skirt, 9 steps
+  1. Establish the skirt length  (2 pieces)
+  2. Turn over for the wrap panels  (2 pieces)
+  3. Bring the broad panel across  (4 pieces)
+  4. Overlap the second panel  (6 pieces)
+  5. Turn over to reach the hem points  (6 pieces)
+  6. Lift the small hem points up  (10 pieces)
+  7. Return to the patterned front  (10 pieces)
+  8. Start the narrow waistband  (13 pieces)
+  9. Turn the waistband once more  (16 pieces)
+final facets: 16, flipped: 8
+final size: 1.640 wide x 1.270 tall (sheet = 2)
+stack height: 0.0565; worst mid-fold hinge gap: 0.0385; lowest z: 0.0015
+construction: Lapel vest, 8 steps
+  1. Put the print underneath  (1 pieces)
+  2. Bring in the two front panels  (3 pieces)
+  3. Turn out the first lapel  (4 pieces)
+  4. Open the matching lapel  (5 pieces)
+  5. Turn over to finish the outline  (5 pieces)
+  6. Tuck the outer shoulder corners  (9 pieces)
+  7. Fold a short body  (12 pieces)
+  8. Reveal the lapels  (12 pieces)
+final facets: 12, flipped: 7
+final size: 1.100 wide x 1.400 tall (sheet = 2)
+stack height: 0.0235; worst mid-fold hinge gap: 0.0165; lowest z: 0.0015
+construction: Box jacket, turned sleeve corners, 7 steps
+  1. Fold the top edge down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides in along the guides  (6 pieces)
+  4. Open the broad sleeves  (10 pieces)
+  5. Shorten the body with a deep fold  (13 pieces)
+  6. Turn over to reveal the jacket  (13 pieces)
+  7. Turn back the sleeve corners  (15 pieces)
+final facets: 15, flipped: 6
+final size: 1.676 wide x 1.140 tall (sheet = 2)
+stack height: 0.0400; worst mid-fold hinge gap: 0.0330; lowest z: 0.0015
+construction: Sailor-collar top, 6 steps
+  1. Fold the top half down  (2 pieces)
+  2. Turn the paper over  (2 pieces)
+  3. Fold both sides to the centre  (6 pieces)
+  4. Fold the collar down the back  (12 pieces)
+  5. Lift the lower edge to set the length  (15 pieces)
+  6. Turn over to the front  (15 pieces)
+final facets: 15, flipped: 7
+final size: 1.000 wide x 0.850 tall (sheet = 2)
+stack height: 0.0400; worst mid-fold hinge gap: 0.0385; lowest z: 0.0015
+construction: Neckerchief, 5 steps
+  1. Fold down the neckband  (2 pieces)
+  2. Turn the square over  (2 pieces)
+  3. Fold the first side in  (4 pieces)
+  4. Fold the second side over it  (6 pieces)
+  5. Reveal the neckerchief  (6 pieces)
+final facets: 6, flipped: 3
+final size: 2.000 wide x 1.600 tall (sheet = 2)
+stack height: 0.0235; worst mid-fold hinge gap: 0.0220; lowest z: 0.0015
+construction: Folded patch pocket, 5 steps
+  1. Fold down the top edge  (2 pieces)
+  2. Turn the square over  (2 pieces)
+  3. Fold both sides to the middle  (6 pieces)
+  4. Fold the lower edge up  (9 pieces)
+  5. Reveal the patch pocket  (9 pieces)
+final facets: 9, flipped: 4
+final size: 1.000 wide x 0.900 tall (sheet = 2)
+stack height: 0.0290; worst mid-fold hinge gap: 0.0220; lowest z: 0.0015
+construction: Folded tulip, 4 steps
+  1. Turn the square over  (1 pieces)
+  2. Fold in half, corner to corner  (2 pieces)
+  3. Fold the first petal up  (4 pieces)
+  4. Fold the second petal up  (6 pieces)
+final facets: 6, flipped: 3
+final size: 1.320 wide x 1.320 tall (sheet = 2)
+stack height: 0.0290; worst mid-fold hinge gap: 0.0275; lowest z: 0.0015
+construction: Short wrap skirt, 9 steps
+  1. Establish the skirt length  (2 pieces)
+  2. Turn over for the wrap panels  (2 pieces)
+  3. Bring the broad panel across  (4 pieces)
+  4. Overlap the second panel  (6 pieces)
+  5. Turn over to reach the hem points  (6 pieces)
+  6. Lift the small hem points up  (10 pieces)
+  7. Return to the patterned front  (10 pieces)
+  8. Start the narrow waistband  (13 pieces)
+  9. Turn the waistband once more  (16 pieces)
+final facets: 16, flipped: 8
+final size: 1.488 wide x 1.020 tall (sheet = 2)
+stack height: 0.0565; worst mid-fold hinge gap: 0.0385; lowest z: 0.0015
+construction: Long wrap skirt, 9 steps
+  1. Establish the skirt length  (2 pieces)
+  2. Turn over for the wrap panels  (2 pieces)
+  3. Bring the broad panel across  (4 pieces)
+  4. Overlap the second panel  (6 pieces)
+  5. Turn over to reach the hem points  (6 pieces)
+  6. Lift the small hem points up  (10 pieces)
+  7. Return to the patterned front  (10 pieces)
+  8. Start the narrow waistband  (13 pieces)
+  9. Turn the waistband once more  (16 pieces)
+final facets: 16, flipped: 8
+final size: 1.792 wide x 1.520 tall (sheet = 2)
+stack height: 0.0565; worst mid-fold hinge gap: 0.0385; lowest z: 0.0015
+construction: Lapel vest, tapered hem, 9 steps
+  1. Put the print underneath  (1 pieces)
+  2. Bring in the two front panels  (3 pieces)
+  3. Turn out the first lapel  (4 pieces)
+  4. Open the matching lapel  (5 pieces)
+  5. Turn over to finish the outline  (5 pieces)
+  6. Tuck the outer shoulder corners  (9 pieces)
+  7. Finish the longline body  (12 pieces)
+  8. Taper the hem  (20 pieces)
+  9. Reveal the lapels  (20 pieces)
+final facets: 20, flipped: 11
+final size: 1.100 wide x 1.780 tall (sheet = 2)
+stack height: 0.0455; worst mid-fold hinge gap: 0.0385; lowest z: 0.0015
+
+all checks passed
+
+> paper-couture@0.1.0 check:collection
+> node --import tsx scripts/check-collection.ts
+
+Straight / Classic: 1.707 x 1.800, 12 facets; hinge 0.0165
+Straight / Lifted: 1.866 x 1.800, 12 facets; hinge 0.0165
+Straight / Dropped: 1.423 x 1.800, 12 facets; hinge 0.0165
+Classic A-line / Classic: 1.707 x 1.800, 12 facets; hinge 0.0165
+Classic A-line / Lifted: 1.866 x 1.800, 12 facets; hinge 0.0165
+Classic A-line / Dropped: 1.640 x 1.800, 12 facets; hinge 0.0165
+Wide flare / Classic: 1.960 x 1.800, 12 facets; hinge 0.0165
+Wide flare / Lifted: 1.960 x 1.800, 12 facets; hinge 0.0165
+Wide flare / Dropped: 1.960 x 1.800, 12 facets; hinge 0.0165
+Box jacket / Cropped: 1.676 x 1.140, 13 facets; hinge 0.0330
+Box jacket / Longer: 1.676 x 1.420, 13 facets; hinge 0.0220
+Passed 11 constructions, default parity, decision prefixes, retained material, rigidity, connectivity, endpoints and sampled motion.
+[
+  {
+    "id": "skirt-original-double",
+    "steps": 9,
+    "facets": 16,
+    "bounds": {
+      "left": -0.8200000000000001,
+      "right": 0.8200000000000001,
+      "top": 0.7200000000000001,
+      "bottom": -0.5500000000000005
+    },
+    "worstGap": 0.038499999999999986,
+    "lowestZ": 0.0015
+  },
+  {
+    "id": "skirt-original-single",
+    "steps": 8,
+    "facets": 13,
+    "bounds": {
+      "left": -0.8200000000000001,
+      "right": 0.8200000000000001,
+      "top": 0.78,
+      "bottom": -0.5500000000000005
+    },
+    "worstGap": 0.03400127117145421,
+    "lowestZ": 0.0015
+  },
+  {
+    "id": "skirt-opposite-double",
+    "steps": 9,
+    "facets": 16,
+    "bounds": {
+      "left": -0.8200000000000001,
+      "right": 0.8200000000000001,
+      "top": 0.7200000000000001,
+      "bottom": -0.5500000000000005
+    },
+    "worstGap": 0.038499999999999986,
+    "lowestZ": 0.0015
+  },
+  {
+    "id": "skirt-opposite-single",
+    "steps": 8,
+    "facets": 13,
+    "bounds": {
+      "left": -0.8200000000000001,
+      "right": 0.8200000000000001,
+      "top": 0.7800000000000001,
+      "bottom": -0.5500000000000005
+    },
+    "worstGap": 0.03400127117145421,
+    "lowestZ": 0.0015
+  },
+  {
+    "id": "vest-short",
+    "steps": 8,
+    "facets": 12,
+    "bounds": {
+      "left": -0.55,
+      "right": 0.55,
+      "top": 1,
+      "bottom": -0.40000000000000013
+    },
+    "worstGap": 0.01650000000000018,
+    "lowestZ": 0.0015
+  },
+  {
+    "id": "vest-longline",
+    "steps": 8,
+    "facets": 12,
+    "bounds": {
+      "left": -0.55,
+      "right": 0.55,
+      "top": 1,
+      "bottom": -0.78
+    },
+    "worstGap": 0.01650000000000018,
+    "lowestZ": 0.0015
+  }
+]
+Skirt/vest variants: baseline parity, prefixes, true mirror mapping, face exposure, retained area, rigidity, endpoint continuity, sampled hinges, above-table motion, metadata all pass.
+{
+  "name": "Pleated skirt",
+  "steps": 7,
+  "facets": 19,
+  "width": 1.4400000000000004,
+  "height": 1.3800000000000008,
+  "top": 0.7800000000000001,
+  "bottom": -0.6000000000000005,
+  "maxStack": 0.056499999999999995,
+  "worstGap": 0.027500000000000125,
+  "lowestZ": 0.0015,
+  "accessoryCoverage": [
+    {
+      "accessory": "pin",
+      "x": -0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "pin",
+      "x": 0,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "pin",
+      "x": 0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": -0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": 0,
+      "y": 0.635,
+      "uncoveredArea": 0
+    },
+    {
+      "accessory": "bow",
+      "x": 0.34,
+      "y": 0.635,
+      "uncoveredArea": 0
+    }
+  ],
+  "anchors": [
+    {
+      "x": -0.34,
+      "y": 0.635
+    },
+    {
+      "x": 0,
+      "y": 0.635
+    },
+    {
+      "x": 0.34,
+      "y": 0.635
+    }
+  ],
+  "disclaimer": "Geometry checks are not physical-paper or continuous-collision certification."
+}
+Pleated skirt checks passed.
+{
+  "name": "Bow · folded centre",
+  "steps": 5,
+  "facets": 9,
+  "width": 0.7200000000000001,
+  "height": 1,
+  "worstGap": 0.02750000000000011,
+  "lowestZ": 0.0015
+}
+folded centre checks passed
+Attachment footprint audit: 442 placements; 0 outside retained paper. Complete convex-polygon subtraction; not an anchor/vertex-only check.
+Sailor-collar top (parked study, not selectable): 6 steps, 15 facets, 1.00 x 0.85; hinge 0.0385; back collar reverse, front neckline strip reverse.
+Box jacket cuffs: plain = unchanged baseline (both lengths); turned adds one top-layer flap per sleeve that shows printed paper.
+Pleat depth: reverse share of the mid row shallow 0.00, classic 0.09, deep 0.27; classic matches the PR #10 fingerprint.
+Neckerchief (5 steps) and folded patch pocket (5 steps): geometry gates pass; reverse neckband / top band over a printed body; positions restricted to neckline / chest.
+Draft papers: Pinstripe and lining, Border print registered with drawn reverses; border band lands on the dress front near the hem; reverse wave rule shows on the collar.
+Starlit lining: reverse features land as designed at turn 0 dressTrim 0.87, jacketTrim 0.88, pleatsTrim 0.60, vestColumn 1.00, dressBackColumn 1.00, skirtMoon 1.00, dressBackMoon 0.91.
+Wrap skirt length: short/classic/long x wrap x band all pass the gates; heights short 1.02, classic 1.27, long 1.52; classic matches PR #10.
+Folded tulip: 4 steps (1 turn-over, 3 valley folds), 6 facets, 1.41 x 1.15 upright; hinge 0.0275; printed faces; waist positions on every collection garment.
+Vest tapered hem (pointed): 9 steps (longline + 1 valley fold), hinge 0.0385; points at |x| <= 0.10 on the hem, sides raised to -0.53; short/longline match PR #13.
+Draft checks passed.
+Collection integration: 38 supported constructions, 172 decision transitions, evaluated shared prefixes, preference retention and malformed URL recovery pass.
+
+> paper-couture@0.1.0 check:integrated
+> node --import tsx scripts/check-integrated.ts
+
+apron: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0055, strict triangle piercings 0
+clutch: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0275, strict triangle piercings 0
+tunic: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0385, strict triangle piercings 0
+These checks do not certify physical foldability or continuous collision-free motion.
+
+> paper-couture@0.1.0 check:positioning
+> node --import tsx scripts/check-positioning.ts
+
+Print positioning: bounded input, old URLs, exact snap positions, and two-sided registration at all four turns pass.
+
+> paper-couture@0.1.0 check:curation
+> node --import tsx scripts/check-design-curation.ts
+
+tabard: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0220, floor 0.0015, reverse 13.9%, strict triangle piercings 0
+sash: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0165, floor 0.0015, reverse 38.5%, strict triangle piercings 0
+These checks do not certify physical foldability or continuous collision-free motion.
+
+> paper-couture@0.1.0 check:board
+> node --import tsx scripts/check-board.ts
+
+Board v1: round-trip, bounded validation, immutable Undo, missing legacy record, quota retry, unsupported-record preservation, unrelated storage, and cross-tab conflict pass.

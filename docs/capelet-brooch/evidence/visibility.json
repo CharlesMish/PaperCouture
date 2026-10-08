@@ -1,0 +1,327 @@
+{
+  "method": "real engine final facets and ranks, flat normal projection",
+  "sourceCoordinates": "source-canvas x right/y down; reverse mirrors material x once",
+  "noAssumedMotifShape": true,
+  "reports": [
+    {
+      "id": "capelet",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.19270833333333334,
+            0.1362847222222222,
+            0.09830729166666667,
+            0.154296875
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.19270833333333334,
+            0.1362847222222222,
+            0.09830729166666667,
+            0.154296875
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.19270833333333334,
+            0.1362847222222222,
+            0.09830729166666667,
+            0.154296875
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.19270833333333334,
+            0.1362847222222222,
+            0.09830729166666667,
+            0.154296875
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boot-left",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "boot-right",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.2689887152777778,
+            0.2655164930555556,
+            0,
+            0
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brooch-square",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.25,
+            0,
+            0.3125,
+            0.5625
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.25,
+            0,
+            0.3125,
+            0.5625
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.25,
+            0,
+            0.3125,
+            0.5625
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.25,
+            0,
+            0.3125,
+            0.5625
+          ]
+        }
+      ]
+    },
+    {
+      "id": "brooch-rectangle",
+      "materialSamples": 9216,
+      "columns": [
+        {
+          "face": "print",
+          "view": "front",
+          "label": "Print seen from Front"
+        },
+        {
+          "face": "print",
+          "view": "back",
+          "label": "Print seen from Back"
+        },
+        {
+          "face": "reverse",
+          "view": "front",
+          "label": "Reverse seen from Front"
+        },
+        {
+          "face": "reverse",
+          "view": "back",
+          "label": "Reverse seen from Back"
+        }
+      ],
+      "rows": [
+        {
+          "quarterTurns": 0,
+          "shares": [
+            0.1762152777777778,
+            0,
+            0.3485243055555556,
+            0.5112847222222222
+          ]
+        },
+        {
+          "quarterTurns": 1,
+          "shares": [
+            0.1762152777777778,
+            0,
+            0.3485243055555556,
+            0.5112847222222222
+          ]
+        },
+        {
+          "quarterTurns": 2,
+          "shares": [
+            0.1762152777777778,
+            0,
+            0.3485243055555556,
+            0.5112847222222222
+          ]
+        },
+        {
+          "quarterTurns": 3,
+          "shares": [
+            0.1762152777777778,
+            0,
+            0.3485243055555556,
+            0.5112847222222222
+          ]
+        }
+      ]
+    }
+  ]
+}

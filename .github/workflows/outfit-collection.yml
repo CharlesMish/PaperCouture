@@ -1,0 +1,68 @@
+name: Outfit proportions and collection
+on:
+  pull_request:
+    branches: [codex/combined-wardrobe-preview, wardrobe/sunray-and-fit-flare, experiment/integrated-studies-20261004, codex/pinboard-composition-space, codex/outfit-proportions-collection, codex/companion-design-studies, main]
+permissions:
+  contents: read
+jobs:
+  browser:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [outfit-composition, sizing-and-folds, paper-collection]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        if: matrix.suite == 'outfit-composition'
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - uses: actions/checkout@v6
+        if: matrix.suite != 'sizing-and-folds'
+        with:
+          ref: feb9cc80f5ca0da7ef2e49619665458c2f923c5a
+          path: .outfit-baseline
+      - run: npm ci --prefix .outfit-baseline
+        if: matrix.suite != 'sizing-and-folds'
+      - name: Check real folds, captures and compositions
+        env:
+          BASE_URL: http://127.0.0.1:5201
+          DEV_URL: http://127.0.0.1:5201
+          BASELINE_URL: http://127.0.0.1:5291
+          CAPTURE_DIR: .outfit-qa
+          SUITE: ${{ matrix.suite }}
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 5201 --strictPort > /tmp/outfit-vite.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:5201/ > /dev/null && break; sleep 1; done
+          if [ "$SUITE" != sizing-and-folds ]; then
+            npm run dev --prefix .outfit-baseline -- --host 127.0.0.1 --port 5291 --strictPort > /tmp/outfit-baseline.log 2>&1 &
+            for i in {1..30}; do curl -fsS http://127.0.0.1:5291/ > /dev/null && break; sleep 1; done
+          fi
+          case "$SUITE" in
+            outfit-composition)
+              node scripts/check-outfit-integration.cjs
+              npm run preview -- --host 127.0.0.1 --port 4201 --strictPort > /tmp/outfit-preview.log 2>&1 &
+              for i in {1..30}; do curl -fsS http://127.0.0.1:4201/ > /dev/null && break; sleep 1; done
+              BASE_URL=http://127.0.0.1:4201 CAPTURE_DIR=.outfit-qa/production node scripts/check-outfit-production.cjs
+              ;;
+            sizing-and-folds)
+              CAPTURE_DIR=.outfit-qa/sizing node scripts/check-sizing-browser.cjs
+              CAPTURE_DIR=.outfit-qa/folds node scripts/check-outfit-folds-progress.cjs
+              ;;
+            paper-collection) node scripts/check-outfit-papers.cjs ;;
+          esac
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: ${{ matrix.suite }}-evidence
+          path: .outfit-qa/
+          include-hidden-files: true

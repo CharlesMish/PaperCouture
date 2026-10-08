@@ -1,0 +1,1374 @@
+[
+  {
+    "path": "pcwork/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/objects/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/refs/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/docs/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/info/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/board/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/docs/notch-collar-crop/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/app/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/",
+    "size": 0,
+    "compressed": 0,
+    "mode": "0o40755",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/description",
+    "size": 73,
+    "compressed": 64,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/HEAD",
+    "size": 47,
+    "compressed": 49,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/config",
+    "size": 111,
+    "compressed": 90,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-rebase.sample",
+    "size": 4898,
+    "compressed": 2004,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/prepare-commit-msg.sample",
+    "size": 1492,
+    "compressed": 742,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-receive.sample",
+    "size": 544,
+    "compressed": 332,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/commit-msg.sample",
+    "size": 896,
+    "compressed": 501,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-merge-commit.sample",
+    "size": 416,
+    "compressed": 254,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/push-to-checkout.sample",
+    "size": 2783,
+    "compressed": 1247,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-applypatch.sample",
+    "size": 424,
+    "compressed": 263,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-push.sample",
+    "size": 1374,
+    "compressed": 708,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/applypatch-msg.sample",
+    "size": 478,
+    "compressed": 277,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/sendemail-validate.sample",
+    "size": 2308,
+    "compressed": 973,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.source-revision",
+    "size": 41,
+    "compressed": 42,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/post-update.sample",
+    "size": 189,
+    "compressed": 137,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/info/exclude",
+    "size": 240,
+    "compressed": 174,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/HANDOFF.md",
+    "size": 10781,
+    "compressed": 4628,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/pre-commit.sample",
+    "size": 1643,
+    "compressed": 898,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/README.md",
+    "size": 6345,
+    "compressed": 2972,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/docs/notch-collar-crop/NOTES.md",
+    "size": 773,
+    "compressed": 498,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/constructions.ts",
+    "size": 2782,
+    "compressed": 1149,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/README.md",
+    "size": 3403,
+    "compressed": 1766,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/package-lock.json",
+    "size": 51782,
+    "compressed": 10469,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/package.json",
+    "size": 1901,
+    "compressed": 588,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/tsconfig.json",
+    "size": 104,
+    "compressed": 85,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/AGENTS.md",
+    "size": 1056,
+    "compressed": 618,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/browser_check.py",
+    "size": 3919,
+    "compressed": 1391,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/capture_papers.py",
+    "size": 15289,
+    "compressed": 4708,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/index.html",
+    "size": 682,
+    "compressed": 419,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/style.css",
+    "size": 790,
+    "compressed": 388,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/capture_rotation_check.py",
+    "size": 7118,
+    "compressed": 2885,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-attachments.ts",
+    "size": 5854,
+    "compressed": 2277,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-board-space-browser.cjs",
+    "size": 8358,
+    "compressed": 3407,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-board.ts",
+    "size": 3794,
+    "compressed": 1374,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-collection.ts",
+    "size": 8379,
+    "compressed": 2948,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-board-browser.cjs",
+    "size": 13296,
+    "compressed": 4229,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-companion-folds-browser.cjs",
+    "size": 4904,
+    "compressed": 1903,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-companion-browser.cjs",
+    "size": 31406,
+    "compressed": 9491,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-companion-folds.ts",
+    "size": 7546,
+    "compressed": 2976,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/fsmonitor-watchman.sample",
+    "size": 4726,
+    "compressed": 1817,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-companion-papers.cjs",
+    "size": 13288,
+    "compressed": 4594,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-companion-visibility.ts",
+    "size": 3447,
+    "compressed": 1750,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/main.ts",
+    "size": 13541,
+    "compressed": 4561,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/experiments/fold-study/index.html",
+    "size": 844,
+    "compressed": 467,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-collection-review.cjs",
+    "size": 12147,
+    "compressed": 3971,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-design-curation.ts",
+    "size": 4368,
+    "compressed": 1755,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-drafts.ts",
+    "size": 23139,
+    "compressed": 7706,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-feedback.cjs",
+    "size": 8751,
+    "compressed": 3022,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-dress-jacket.ts",
+    "size": 5578,
+    "compressed": 2155,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-centre-review.cjs",
+    "size": 9747,
+    "compressed": 3207,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-curation-browser.cjs",
+    "size": 13148,
+    "compressed": 4263,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-curation-ink.cjs",
+    "size": 3211,
+    "compressed": 1576,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-garments.cjs",
+    "size": 9542,
+    "compressed": 3070,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-fold-study-browser.cjs",
+    "size": 7141,
+    "compressed": 2565,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-framed-brooch.ts",
+    "size": 5431,
+    "compressed": 2116,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/.git/hooks/update.sample",
+    "size": 3650,
+    "compressed": 1175,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-drafts-review.cjs",
+    "size": 29583,
+    "compressed": 7563,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-folds.ts",
+    "size": 4499,
+    "compressed": 1868,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-folds-progress.cjs",
+    "size": 4027,
+    "compressed": 1498,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-notch-crop.ts",
+    "size": 4840,
+    "compressed": 1886,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-integrated.ts",
+    "size": 4594,
+    "compressed": 1837,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-fold-study.ts",
+    "size": 3772,
+    "compressed": 1590,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-papers-gallery.cjs",
+    "size": 5918,
+    "compressed": 2315,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-pleats-review.cjs",
+    "size": 6109,
+    "compressed": 2208,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-production.cjs",
+    "size": 12189,
+    "compressed": 4508,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-plum-seed.ts",
+    "size": 1666,
+    "compressed": 733,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-framed-brooch-browser.cjs",
+    "size": 8246,
+    "compressed": 3230,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-papers.cjs",
+    "size": 13301,
+    "compressed": 4433,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-robe.ts",
+    "size": 2813,
+    "compressed": 1213,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-integrated-browser.cjs",
+    "size": 8039,
+    "compressed": 2645,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-sizing.ts",
+    "size": 5433,
+    "compressed": 2236,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-styling.cjs",
+    "size": 8455,
+    "compressed": 2681,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-pleats.ts",
+    "size": 6269,
+    "compressed": 2421,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-integration.cjs",
+    "size": 17907,
+    "compressed": 5580,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-sizing-browser.cjs",
+    "size": 9688,
+    "compressed": 3679,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-positioning.ts",
+    "size": 2723,
+    "compressed": 1036,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-positioning-browser.cjs",
+    "size": 14721,
+    "compressed": 4896,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/experiment-collision.ts",
+    "size": 851,
+    "compressed": 494,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/package-curation.py",
+    "size": 16153,
+    "compressed": 6874,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/package-fold-study.py",
+    "size": 3351,
+    "compressed": 1743,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-skirt-vest.ts",
+    "size": 8613,
+    "compressed": 3169,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-outfit-folds-browser.cjs",
+    "size": 1489,
+    "compressed": 848,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check-trousers-centre.ts",
+    "size": 3024,
+    "compressed": 1251,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/package-outfit-review.cjs",
+    "size": 11182,
+    "compressed": 4824,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/plot_states.py",
+    "size": 3064,
+    "compressed": 1426,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/paperLanding.ts",
+    "size": 4165,
+    "compressed": 1796,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/rotationCheck.ts",
+    "size": 2471,
+    "compressed": 1061,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/tsconfig.json",
+    "size": 147,
+    "compressed": 111,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/paperRaster.ts",
+    "size": 1079,
+    "compressed": 590,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/check.ts",
+    "size": 10492,
+    "compressed": 3996,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/screenshots.py",
+    "size": 4132,
+    "compressed": 1341,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/app/controller.ts",
+    "size": 4277,
+    "compressed": 1437,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/app/viewSwitch.ts",
+    "size": 1420,
+    "compressed": 564,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/paperCoverage.ts",
+    "size": 16520,
+    "compressed": 6091,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/app/displayCamera.ts",
+    "size": 5321,
+    "compressed": 1873,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/board/model.ts",
+    "size": 6771,
+    "compressed": 2442,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/bow.ts",
+    "size": 1568,
+    "compressed": 703,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/construction.ts",
+    "size": 4244,
+    "compressed": 1626,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/bowCentre.ts",
+    "size": 1920,
+    "compressed": 765,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/companionFolds.ts",
+    "size": 3958,
+    "compressed": 1640,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/experimental.ts",
+    "size": 2727,
+    "compressed": 1164,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/accessories.ts",
+    "size": 2921,
+    "compressed": 1106,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/framedBrooch.ts",
+    "size": 1642,
+    "compressed": 780,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/engine.ts",
+    "size": 12528,
+    "compressed": 4175,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/foldedSash.ts",
+    "size": 1653,
+    "compressed": 733,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/board/snapshot.ts",
+    "size": 4911,
+    "compressed": 1776,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/garments.ts",
+    "size": 6771,
+    "compressed": 1971,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/geometry.ts",
+    "size": 6627,
+    "compressed": 2260,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/scripts/rotation_browser_check.py",
+    "size": 7056,
+    "compressed": 2361,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/notchCrop.ts",
+    "size": 1624,
+    "compressed": 748,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/jacket.ts",
+    "size": 5248,
+    "compressed": 2137,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/outfitCollection.ts",
+    "size": 4892,
+    "compressed": 1805,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/oneShoulder.ts",
+    "size": 1071,
+    "compressed": 594,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/pleatedSkirt.ts",
+    "size": 4977,
+    "compressed": 1713,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/neckerchief.ts",
+    "size": 2121,
+    "compressed": 853,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/lapelVest.ts",
+    "size": 4475,
+    "compressed": 1493,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/paperSize.ts",
+    "size": 2017,
+    "compressed": 922,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/pocketSquare.ts",
+    "size": 2389,
+    "compressed": 981,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/pointedTabard.ts",
+    "size": 1838,
+    "compressed": 832,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/garmentOptions.ts",
+    "size": 5566,
+    "compressed": 1827,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/silhouettes.ts",
+    "size": 1876,
+    "compressed": 819,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/board/layout.ts",
+    "size": 338,
+    "compressed": 207,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/timeline.ts",
+    "size": 10386,
+    "compressed": 3721,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/pin.ts",
+    "size": 1254,
+    "compressed": 592,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/tulip.ts",
+    "size": 3162,
+    "compressed": 1305,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/fold/wrapSkirt.ts",
+    "size": 5778,
+    "compressed": 1921,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/borderPrint.ts",
+    "size": 2795,
+    "compressed": 1145,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/arcStudy.ts",
+    "size": 1367,
+    "compressed": 714,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/compassLining.ts",
+    "size": 4000,
+    "compressed": 1680,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/fallingChevrons.ts",
+    "size": 1360,
+    "compressed": 625,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/diagnostic.ts",
+    "size": 1858,
+    "compressed": 896,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/botanical.ts",
+    "size": 2483,
+    "compressed": 1056,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/cutPaperMosaic.ts",
+    "size": 1445,
+    "compressed": 671,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/ginkgoPairs.ts",
+    "size": 2280,
+    "compressed": 997,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/index.ts",
+    "size": 2560,
+    "compressed": 929,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/indigoLattice.ts",
+    "size": 1686,
+    "compressed": 682,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/ivoryBorder.ts",
+    "size": 1266,
+    "compressed": 575,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/inkReverse.ts",
+    "size": 1451,
+    "compressed": 640,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/main.ts",
+    "size": 35343,
+    "compressed": 10263,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/pinstripeLining.ts",
+    "size": 3111,
+    "compressed": 1335,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/cornerBloom.ts",
+    "size": 2196,
+    "compressed": 919,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/midnightOrchard.ts",
+    "size": 7449,
+    "compressed": 2478,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/plumScatter.ts",
+    "size": 3611,
+    "compressed": 1284,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/plumSeed.ts",
+    "size": 2228,
+    "compressed": 1142,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/rotationCheck.ts",
+    "size": 3938,
+    "compressed": 1492,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/reverseGarden.ts",
+    "size": 7165,
+    "compressed": 2311,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/printPosition.ts",
+    "size": 2174,
+    "compressed": 948,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/oatLinen.ts",
+    "size": 1203,
+    "compressed": 640,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/starlitLining.ts",
+    "size": 3704,
+    "compressed": 1604,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/runningStitch.ts",
+    "size": 1081,
+    "compressed": 544,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/seedDashes.ts",
+    "size": 1574,
+    "compressed": 778,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/util.ts",
+    "size": 408,
+    "compressed": 262,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/wideFrame.ts",
+    "size": 1744,
+    "compressed": 717,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/types.ts",
+    "size": 1629,
+    "compressed": 735,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/tidalBands.ts",
+    "size": 1832,
+    "compressed": 873,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/openStems.ts",
+    "size": 2201,
+    "compressed": 979,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/slateGrain.ts",
+    "size": 917,
+    "compressed": 504,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/stage.ts",
+    "size": 6142,
+    "compressed": 2360,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/lapelEdges.ts",
+    "size": 2029,
+    "compressed": 909,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/styles.css",
+    "size": 15812,
+    "compressed": 4239,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/foldHandles.ts",
+    "size": 2189,
+    "compressed": 978,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/stand.ts",
+    "size": 1292,
+    "compressed": 618,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/paperPicker.ts",
+    "size": 4452,
+    "compressed": 1656,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/sheetOrientation.ts",
+    "size": 1429,
+    "compressed": 740,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/stripeDisc.ts",
+    "size": 1938,
+    "compressed": 845,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/guides.ts",
+    "size": 4167,
+    "compressed": 1691,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/textures.ts",
+    "size": 3903,
+    "compressed": 1543,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/printPositionPanel.ts",
+    "size": 5466,
+    "compressed": 1869,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/render/sheetView.ts",
+    "size": 6597,
+    "compressed": 2431,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/studioControls.ts",
+    "size": 9302,
+    "compressed": 2547,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/vite.experiment.config.ts",
+    "size": 316,
+    "compressed": 226,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/shapeChoices.ts",
+    "size": 3480,
+    "compressed": 1328,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/tsconfig.json",
+    "size": 446,
+    "compressed": 236,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/papers/wovenChecks.ts",
+    "size": 2563,
+    "compressed": 944,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/workshopPanel.ts",
+    "size": 2746,
+    "compressed": 1139,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/displayPanel.ts",
+    "size": 2968,
+    "compressed": 1021,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/vite.config.ts",
+    "size": 215,
+    "compressed": 164,
+    "mode": "0o100644",
+    "safe": true
+  },
+  {
+    "path": "pcwork/src/ui/pinboard.ts",
+    "size": 22917,
+    "compressed": 6777,
+    "mode": "0o100644",
+    "safe": true
+  }
+]

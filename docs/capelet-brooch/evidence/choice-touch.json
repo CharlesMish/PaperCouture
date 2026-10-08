@@ -1,0 +1,10 @@
+{
+  "physicalPhoneTested": false,
+  "passed": true,
+  "checks": [
+    "Rectangle option/turn/offset URL reload",
+    "320px actual small rectangle touch cancel, commit and Undo",
+    "Rectangle to Square Revisit resets affected folds and preserves paper recipe",
+    "Refold/reload leave all five existing captures intact"
+  ]
+}

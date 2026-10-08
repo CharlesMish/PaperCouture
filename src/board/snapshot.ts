@@ -5,8 +5,12 @@ import { findPaper } from '../papers';
 import { rotationCheckPaper } from '../papers/rotationCheck';
 
 /** Capture only visible posed paper and seams, excluding workshop guides/stand. */
-export function capture(objects: THREE.Object3D[], angle: number): FrozenPiece {
+export function capture(objects: THREE.Object3D[], angle: number, paperScale = 1): FrozenPiece {
+  if (!Number.isFinite(paperScale) || paperScale <= 0 || paperScale > 8) throw new Error('Invalid starting-paper scale');
   const root = new THREE.Group(); root.rotation.z = angle;
+  // One uniform scale includes every attached square and the layer spacing.
+  // Geometry attributes and material UV coordinates remain exact captures.
+  root.scale.setScalar(paperScale);
   const visibleCopy = (object: THREE.Object3D): THREE.Object3D => {
     const copy = object.clone(false);
     for (const child of object.children) if (child.visible) copy.add(visibleCopy(child));

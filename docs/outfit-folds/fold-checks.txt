@@ -1,0 +1,4 @@
+boat-top: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0220, floor 0.0015, reverse 35.1%, strict triangle piercings 0
+wrap-top: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0275, floor 0.0015, reverse 11.5%, strict triangle piercings 0
+hat: retained square, rigid facets, seams, endpoints, reverse exposure, controller reversal/reset; 81 samples/op; hinge 0.0275, floor 0.0015, reverse 0.0%, strict triangle piercings 0
+These checks do not certify physical foldability or continuous collision-free motion.
