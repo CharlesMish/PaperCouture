@@ -1,0 +1,66 @@
+{
+  "base": "http://127.0.0.1:5302",
+  "designs": [
+    {
+      "id": "capelet",
+      "steps": 6,
+      "realFoldBack": true,
+      "halfFoldViews": 6,
+      "extraAnkleToeQuarterViews": 0,
+      "quietFrontAngleBack": true,
+      "bloomBeforeAfterFrontBackTurns": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "shift": {
+        "x": 0.125,
+        "y": 0.125
+      },
+      "unchangedCompletedMaterial": true,
+      "reload": true
+    },
+    {
+      "id": "boot-left",
+      "steps": 6,
+      "realFoldBack": true,
+      "halfFoldViews": 6,
+      "extraAnkleToeQuarterViews": 4,
+      "quietFrontAngleBack": true,
+      "bloomBeforeAfterFrontBackTurns": [
+        0
+      ],
+      "shift": {
+        "x": 0.125,
+        "y": 0.125
+      },
+      "unchangedCompletedMaterial": true,
+      "reload": true
+    },
+    {
+      "id": "boot-right",
+      "steps": 6,
+      "realFoldBack": true,
+      "halfFoldViews": 6,
+      "extraAnkleToeQuarterViews": 4,
+      "quietFrontAngleBack": true,
+      "bloomBeforeAfterFrontBackTurns": [
+        0,
+        90,
+        180,
+        270
+      ],
+      "shift": {
+        "x": 0.125,
+        "y": 0.125
+      },
+      "unchangedCompletedMaterial": true,
+      "reload": true
+    }
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false,
+  "passed": true
+}

@@ -1,0 +1,44 @@
+{
+  "source": "c3145ed82cf4155cc9e35e7f4f3aef0cb291e3bc",
+  "states": [
+    "33ac53966e03cf27923a3ce13bd1d12e0e62a8c3731f8c0ec454da11d72fac91",
+    "468cf5da6fa3524cedf36ecc248724bf8219736bec4da414ec89c021272c033c",
+    "157b23650a4ace84f6aa4ab25462c1ceeaface1c35be6662b2accd1e6ceb66fc",
+    "32e6bf6e4d8f787803ba311b1d7a7e343accd5b36409b11cf7432a7d75b6907e",
+    "2139bdba0ef69cd427904944e061db86539beccd829aed867adb5b14d49bfce4",
+    "27f496ac6d408e1843f41c20a699c92a6cb24476bbda06a88ff96b9b2d4b129b",
+    "ab2fe5908bdacaa7e875d15516663eeec5df0cdad70fdec2fec2e91b133b83a6"
+  ],
+  "ops": [
+    {
+      "id": "collar",
+      "start": "6ad256bc4528898d0852e3a1f579e01440f5aa6739776984e93077af16d96d7e",
+      "end": "72ae15bccb32ed79c1fda5dfedd808ea4e68aa89b11a6adf98ded67d06530ffc"
+    },
+    {
+      "id": "turn-1",
+      "start": "08f3a540cefd4d86b87feab8319aed8d832ce6c2fee1fdaa7d99eb86a7a8f641",
+      "end": "d26455d5330d05274848944932a64f7b78713bf81d89b9eba17e408b07241cff"
+    },
+    {
+      "id": "edges",
+      "start": "58ac202f78512607ef44279daeb529878de62d7ca6e9226fe7bbb21961d3c8ed",
+      "end": "140b0e56a9338d07fc9ead7bea66cd35d87496931b320f65eea576da42240f97"
+    },
+    {
+      "id": "turn-2",
+      "start": "f09ed6491f95b49b633c4aa84ab0977c803fba5d3473c1116b7665f13fea1135",
+      "end": "f4a628a6a367f55aee8a87f2158fe495b4a52eaf14b0d51317c4c96592b131dc"
+    },
+    {
+      "id": "waist",
+      "start": "de826e0005893e7674f026b7d24b14e7401325e458aac6c344b089489ef0af79",
+      "end": "5424e99af5ac577882d12f749b6dc6acced469841e7c5e4d6fde913412e85c87"
+    },
+    {
+      "id": "shoulders",
+      "start": "6b152369b8ea92e2bba1dc20f06637a4b868ae2e3bf695a6c22399a8aab98c10",
+      "end": "6563c6f0c2fa29418ae466badc9853003edb71d872605340f7c349113b3620d1"
+    }
+  ]
+}

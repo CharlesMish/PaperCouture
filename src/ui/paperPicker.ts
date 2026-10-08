@@ -22,10 +22,11 @@ export class PaperPicker {
   private name = document.createElement('p');
   private rotate = document.createElement('button');
   private position = document.createElement('button');
+  private row = document.createElement('div');
 
   constructor(parent: HTMLElement, papers: PaperDesign[], h: PickerHandlers) {
     this.root.className = 'papers';
-    const row = document.createElement('div');
+    const row = this.row;
     row.className = 'swatches';
     row.setAttribute('role', 'radiogroup');
     row.setAttribute('aria-label', 'Paper');
@@ -83,6 +84,24 @@ export class PaperPicker {
     this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
     this.position.classList.toggle('print-shifted', shifted);
     this.position.title = shifted ? 'Position print · shifted' : 'Position print';
+    // after the name: a longer name takes height from the list
+    const entry = this.buttons.get(current.id);
+    if (entry) this.reveal(entry.btn);
+  }
+
+  /**
+   * The swatch list scrolls once it outgrows the screen. Bring the chosen
+   * swatch into the list's view (only the list, never the page) whenever the
+   * paper or its rotation changes, including a paper chosen by link.
+   */
+  private reveal(btn: HTMLElement): void {
+    const r = this.row.getBoundingClientRect();
+    const q = btn.getBoundingClientRect();
+    const pad = 6; // room for the selected swatch's ring
+    if (q.top - pad < r.top) this.row.scrollTop -= r.top - q.top + pad;
+    else if (q.bottom + pad > r.bottom) this.row.scrollTop += q.bottom - r.bottom + pad;
+    if (q.left - pad < r.left) this.row.scrollLeft -= r.left - q.left + pad;
+    else if (q.right + pad > r.right) this.row.scrollLeft += q.right - r.right + pad;
   }
 
   /** Screen space the picker covers: { top, left } in CSS px. */

@@ -1,0 +1,552 @@
+[
+  {
+    "id": "old",
+    "name": "Collared capelet",
+    "steps": 6,
+    "width": 2.0000000000000004,
+    "height": 1.0000000000000002,
+    "gap": 0.0275000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-0-false-0.53",
+    "name": "half0 gates0.53/0.69 collarfalse",
+    "steps": 3,
+    "width": 1.3800000000000001,
+    "height": 1.096723868954758,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-0-false-0.58",
+    "name": "half0 gates0.58/0.72 collarfalse",
+    "steps": 3,
+    "width": 1.4400000000000002,
+    "height": 1.0768928991761475,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-0-true-0.53",
+    "name": "half0 gates0.53/0.69 collartrue",
+    "steps": 4,
+    "width": 1.38,
+    "height": 0.8849867374005305,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-0-true-0.58",
+    "name": "half0 gates0.58/0.72 collartrue",
+    "steps": 4,
+    "width": 1.44,
+    "height": 0.8597722705961154,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-1-false-0.53",
+    "name": "half1 gates0.53/0.69 collarfalse",
+    "steps": 4,
+    "width": 1.3800000000000001,
+    "height": 1.096723868954758,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-1-false-0.58",
+    "name": "half1 gates0.58/0.72 collarfalse",
+    "steps": 4,
+    "width": 1.4400000000000002,
+    "height": 1.0768928991761475,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-1-true-0.53",
+    "name": "half1 gates0.53/0.69 collartrue",
+    "steps": 5,
+    "width": 1.38,
+    "height": 0.8849867374005305,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-1-true-0.58",
+    "name": "half1 gates0.58/0.72 collartrue",
+    "steps": 5,
+    "width": 1.44,
+    "height": 0.8597722705961154,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-2-false-0.53",
+    "name": "half2 gates0.53/0.69 collarfalse",
+    "steps": 4,
+    "width": 1.3800000000000001,
+    "height": 1.096723868954758,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-2-false-0.58",
+    "name": "half2 gates0.58/0.72 collarfalse",
+    "steps": 4,
+    "width": 1.4400000000000002,
+    "height": 1.0768928991761475,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-2-true-0.53",
+    "name": "half2 gates0.53/0.69 collartrue",
+    "steps": 5,
+    "width": 1.38,
+    "height": 0.8849867374005305,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "half-2-true-0.58",
+    "name": "half2 gates0.58/0.72 collartrue",
+    "steps": 5,
+    "width": 1.44,
+    "height": 0.8597722705961154,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "full-0.55--0.15",
+    "name": "full gates0.55/0.7 hem-0.15",
+    "steps": 8,
+    "width": 1.3666666666666667,
+    "height": 1.1500000000000001,
+    "gap": 0.03850000000000015,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "full-0.55--0.05",
+    "name": "full gates0.55/0.7 hem-0.05",
+    "steps": 8,
+    "width": 1.3400000000000005,
+    "height": 1.0500000000000003,
+    "gap": 0.03850000000000015,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "full-0.58--0.15",
+    "name": "full gates0.58/0.7 hem-0.15",
+    "steps": 8,
+    "width": 1.3781818181818184,
+    "height": 1.1500000000000001,
+    "gap": 0.0385000000000002,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "full-0.58--0.05",
+    "name": "full gates0.58/0.7 hem-0.05",
+    "steps": 8,
+    "width": 1.3563636363636369,
+    "height": 1.0500000000000003,
+    "gap": 0.0385000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.52-0.68-0",
+    "name": "open cape 0.52/0.68 hem0 collar0",
+    "steps": 8,
+    "width": 1.2775000000000003,
+    "height": 1.014587274815117,
+    "gap": 0.03850000000000024,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.52-0.68-0.78",
+    "name": "open cape 0.52/0.68 hem0 collar0.78",
+    "steps": 9,
+    "width": 1.2775000000000003,
+    "height": 0.7800000000000002,
+    "gap": 0.08249999999999999,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.52-0.78-0",
+    "name": "open cape 0.52/0.78 hem0 collar0",
+    "steps": 8,
+    "width": 1.3979710144927537,
+    "height": 1,
+    "gap": 0.03850000000000016,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.52-0.78-0.78",
+    "name": "open cape 0.52/0.78 hem0 collar0.78",
+    "steps": 9,
+    "width": 1.3979710144927537,
+    "height": 0.7800000000000002,
+    "gap": 0.077,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.58-0.68-0",
+    "name": "open cape 0.58/0.68 hem0 collar0",
+    "steps": 8,
+    "width": 1.3059016393442626,
+    "height": 1.0067923978118043,
+    "gap": 0.0385000000000002,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.58-0.68-0.78",
+    "name": "open cape 0.58/0.68 hem0 collar0.78",
+    "steps": 9,
+    "width": 1.3059016393442626,
+    "height": 0.7800000000000004,
+    "gap": 0.08249999999999999,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.58-0.78-0",
+    "name": "open cape 0.58/0.78 hem0 collar0",
+    "steps": 8,
+    "width": 1.4296969696969701,
+    "height": 1,
+    "gap": 0.03850000000000028,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "open-0.58-0.78-0.78",
+    "name": "open cape 0.58/0.78 hem0 collar0.78",
+    "steps": 9,
+    "width": 1.4296969696969701,
+    "height": 0.7800000000000002,
+    "gap": 0.077,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-false-0.53--0.1",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3192000000000002,
+    "height": 0.9000000000000002,
+    "gap": 0.06050000000000016,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-false-0.53-0",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.2808000000000002,
+    "height": 1.0000000000000002,
+    "gap": 0.07150000000000004,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-false-0.57--0.1",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3436363636363637,
+    "height": 0.9000000000000001,
+    "gap": 0.06050000000000017,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-false-0.57-0",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3119008264462813,
+    "height": 1.0000000000000002,
+    "gap": 0.07150000000000023,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-true-0.53--0.1",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3192000000000002,
+    "height": 0.9000000000000002,
+    "gap": 0.06050000000000017,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-true-0.53-0",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.2808000000000002,
+    "height": 1.0000000000000002,
+    "gap": 0.07150000000000015,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-true-0.57--0.1",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3436363636363637,
+    "height": 0.9000000000000001,
+    "gap": 0.06050000000000025,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "collarFirst-true-0.57-0",
+    "name": "collar before panels",
+    "steps": 9,
+    "width": 1.3119008264462813,
+    "height": 1.0000000000000002,
+    "gap": 0.0715000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.6-false-false",
+    "name": "short cape with back tucks",
+    "steps": 7,
+    "width": 1.56,
+    "height": 0.8000000000000002,
+    "gap": 0.03300000000000013,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.6-false-true",
+    "name": "short cape with back tucks",
+    "steps": 7,
+    "width": 1.56,
+    "height": 0.8541538461538465,
+    "gap": 0.0275000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.6-true-false",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4311171662125342,
+    "height": 0.8000000000000002,
+    "gap": 0.0715,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.6-true-true",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4311171662125342,
+    "height": 0.8000000000000004,
+    "gap": 0.060500000000000116,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.7-false-false",
+    "name": "short cape with back tucks",
+    "steps": 7,
+    "width": 1.56,
+    "height": 0.9000000000000002,
+    "gap": 0.0275000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.7-false-true",
+    "name": "short cape with back tucks",
+    "steps": 7,
+    "width": 1.56,
+    "height": 0.9000000000000004,
+    "gap": 0.0275000000000001,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.7-true-false",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4324137931034486,
+    "height": 0.9000000000000002,
+    "gap": 0.06050000000000017,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "short-0.7-true-true",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4324137931034486,
+    "height": 0.9000000000000004,
+    "gap": 0.06050000000000017,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-sthb",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.56,
+    "height": 0.8541538461538465,
+    "gap": 0.07150000000000019,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-shtb",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.56,
+    "height": 0.8000000000000002,
+    "gap": 0.06600000000000016,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-tsbh",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.56,
+    "height": 0.8541538461538465,
+    "gap": 0.049500000000000106,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-thbs",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4311171662125342,
+    "height": 0.8000000000000004,
+    "gap": 0.060500000000000116,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-hbst",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4311171662125342,
+    "height": 0.8000000000000002,
+    "gap": 0.08250000000000013,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "order-hbts",
+    "name": "short cape with back tucks",
+    "steps": 9,
+    "width": 1.4311171662125342,
+    "height": 0.8000000000000002,
+    "gap": 0.0715,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "wide-0.6-0.82",
+    "name": "open cape 0.6/0.82 hem0 collar0",
+    "steps": 8,
+    "width": 1.485671641791045,
+    "height": 1,
+    "gap": 0.03850000000000014,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "wide-0.6-0.9",
+    "name": "open cape 0.6/0.9 hem0 collar0",
+    "steps": 8,
+    "width": 1.567605633802817,
+    "height": 1,
+    "gap": 0.03850000000000015,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "wide-0.66-0.82",
+    "name": "open cape 0.66/0.82 hem0 collar0",
+    "steps": 8,
+    "width": 1.5225,
+    "height": 1,
+    "gap": 0.03850000000000019,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "wide-0.66-0.9",
+    "name": "open cape 0.66/0.9 hem0 collar0",
+    "steps": 8,
+    "width": 1.6058823529411768,
+    "height": 1.0000000000000002,
+    "gap": 0.03850000000000025,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "rectangle-brooch",
+    "name": "Rectangle brooch",
+    "steps": 7,
+    "width": 1.6,
+    "height": 1.2000000000000002,
+    "gap": 0.0385,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "candidate",
+    "name": "Open-front capelet",
+    "steps": 8,
+    "width": 1.4030656934306571,
+    "height": 1,
+    "gap": 0.03850000000000026,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "brooch-square",
+    "name": "Framed brooch · square",
+    "steps": 4,
+    "width": 1.5,
+    "height": 1.5,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  },
+  {
+    "id": "brooch-rectangle",
+    "name": "Framed brooch · rectangle",
+    "steps": 4,
+    "width": 1.6,
+    "height": 1.3000000000000003,
+    "gap": 0.0165,
+    "z": 0.0015,
+    "piercings": 0
+  }
+]

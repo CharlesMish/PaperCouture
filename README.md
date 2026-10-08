@@ -36,6 +36,9 @@ The jacket and vest offer two body lengths. The wrap skirt offers either wrap di
 one-turn or narrow two-turn waistband. Use Revisit to return to a completed choice; paper, other
 preferences and finished accessories are kept while affected folds are redone.
 After folding both bow wings, optionally fold a third centre square with its own paper and rotation.
+The experimental Fit-and-flare dress folds its nipped waist in one rigid collapse step
+(`src/fold/collapse.ts`); see [its notes](docs/fit-flare/NOTES.md). `npm run crease-pattern` writes a
+printable crease pattern for every design to `docs/crease-patterns/`.
 See [collection notes](docs/geometry-collection/NOTES.md) and [styling notes](docs/astra-review/STYLING_CHOICES.md). See
 [the prototype notes](docs/astra-review/JACKET_AND_PIN.md) for behavior and checks.
 
@@ -45,6 +48,10 @@ See [garment study notes](docs/garment-studies/NOTES.md).
 
 Small flaps have 44px arrow handles: drag toward the arrow or tap to complete the
 pending fold. See [owner-feedback fixes](docs/feedback-pass/NOTES.md).
+
+The garment and accessory selectors each present one collection. Construction
+limits stay in the selected design note and in the design documentation; a
+shared selector does not establish physical foldability. Paper categories remain.
 
 ## Try it
 
@@ -103,3 +110,21 @@ Running stitch and Arc study add two papers. Pointed tabard is an experimental
 one-square silhouette; Folded sash is a separate-square waist accent. The existing
 paper scroll now shows curated choices first and experiments later, keeping every
 old paper available. See [comparison, limits and play steps](docs/design-curation/NOTES.md).
+
+## Companion design draft
+
+Open-front capelet, two ankle-boot directions and Framed brooch are new experimental
+intact-square designs. Fold and pin each boot separately; a pair uses two board
+slots. Suggested starting squares are 18 cm for the capelet, 8 cm per boot and
+4.5 cm for the brooch, with Square and Rectangle fold choices. Plum seed adds a fixed two-sided oat/plum/sage print.
+Existing positioned blossom papers work on all four new designs. See the
+[original review](docs/companion-studies/NOTES.md) and the
+[local capelet/brooch refinement](docs/capelet-brooch/NOTES.md).
+
+## Local external-design review
+
+Camp-collar shirt and Folded necktie are experimental additions to the refined
+capelet/brooch candidate. The shirt has folded collar and cuffs; the small tie
+has a real knot pleat and uses an intact square. See the
+[review and evidence](docs/external-review/NOTES.md) for provenance, parked
+outerwear studies, paper positioning and test limitations.

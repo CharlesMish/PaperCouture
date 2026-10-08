@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 730" font-family="system-ui, sans-serif">
+  <rect width="100%" height="100%" fill="#faf7f0"/>
+  <rect x="40" y="40" width="600" height="600" fill="#fff" stroke="#2e2a25" stroke-width="2"/>
+  <line x1="64.00" y1="413.20" x2="40.00" y2="456.40" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="64.00" y1="640.00" x2="64.00" y2="413.20" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="40.00" y1="83.71" x2="64.00" y2="94.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="64.00" y1="94.00" x2="64.00" y2="40.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="64.00" y1="403.00" x2="40.00" y2="403.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="64.00" y1="413.20" x2="64.00" y2="403.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="64.00" y1="403.00" x2="64.00" y2="94.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="640.00" y1="456.40" x2="616.00" y2="413.20" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="616.00" y1="413.20" x2="616.00" y2="640.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="616.00" y1="94.00" x2="640.00" y2="83.71" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="616.00" y1="40.00" x2="616.00" y2="94.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="640.00" y1="403.00" x2="616.00" y2="403.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="616.00" y1="403.00" x2="616.00" y2="413.20" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="616.00" y1="94.00" x2="616.00" y2="403.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="616.00" y1="413.20" x2="490.00" y2="640.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="553.84" y1="67.36" x2="558.67" y2="40.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="490.00" y1="40.00" x2="553.84" y2="67.36" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="553.84" y1="67.36" x2="616.00" y2="94.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="490.00" y1="154.00" x2="553.84" y2="67.36" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="490.00" y1="40.00" x2="490.00" y2="154.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="616.00" y1="403.00" x2="490.00" y2="403.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="490.00" y1="403.00" x2="490.00" y2="640.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="490.00" y1="154.00" x2="490.00" y2="403.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="190.00" y1="640.00" x2="64.00" y2="413.20" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="121.33" y1="40.00" x2="126.16" y2="67.36" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="126.16" y1="67.36" x2="190.00" y2="40.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="64.00" y1="94.00" x2="126.16" y2="67.36" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="126.16" y1="67.36" x2="190.00" y2="154.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="190.00" y1="154.00" x2="190.00" y2="40.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="190.00" y1="403.00" x2="64.00" y2="403.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="190.00" y1="640.00" x2="190.00" y2="403.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="190.00" y1="403.00" x2="190.00" y2="154.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <line x1="190.00" y1="154.00" x2="274.00" y2="40.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="406.00" y1="40.00" x2="490.00" y2="154.00" stroke="#2f5f9e" stroke-dasharray="9 6" stroke-width="2"/>
+  <line x1="490.00" y1="403.00" x2="190.00" y2="403.00" stroke="#b23a2b" stroke-dasharray="12 4 2 4" stroke-width="2"/>
+  <text x="40" y="670" font-size="16" fill="#2e2a25">Camp-collar shirt: printed side up, top of the dress at the top.</text>
+  <text x="40" y="690" font-size="14" fill="#2e2a25"><tspan fill="#2f5f9e">- - - valley</tspan>   <tspan fill="#b23a2b">-·-·- mountain</tspan>   (as seen from this side)</text>
+</svg>

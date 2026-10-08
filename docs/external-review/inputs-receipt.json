@@ -1,0 +1,57 @@
+[
+  {
+    "library_file_id": "libfile_27e0700accdc8191a5902d22494e6bd4",
+    "file_id": "file_0000000073fc8230b04bb2133b767018",
+    "file_name": "Pasted text(20261007-004610).txt",
+    "current_version_number": 0,
+    "size_bytes": 5391,
+    "local_path": "inputs/Pasted text(20261007-004610).txt",
+    "exit_code": 0,
+    "bytes": 5391,
+    "sha256": "68db174bda217d073c70bedd0ac1b7f5010e08a5c8ebc5fdd06186e59ba815fd"
+  },
+  {
+    "library_file_id": "libfile_1ac03a93b43c8191b12b009c496899d5",
+    "file_id": "file_00000000b90481f5811780c6bb0fadca",
+    "file_name": "NOTES.md",
+    "current_version_number": 0,
+    "size_bytes": 10553,
+    "local_path": "inputs/NOTES.md",
+    "exit_code": 0,
+    "bytes": 10553,
+    "sha256": "7e3d46647d7b7f48faa098faa220cfd3dec830fe4bb8a710009359180ccf2d24"
+  },
+  {
+    "library_file_id": "libfile_c981c0dacc3c8191b8777e6b7af3d046",
+    "file_id": "file_00000000da0881fb97d84a0cdd412ce8",
+    "file_name": "necktie-PR25.patch",
+    "current_version_number": 0,
+    "size_bytes": 5338724,
+    "local_path": "inputs/necktie-PR25.patch",
+    "exit_code": 0,
+    "bytes": 5338724,
+    "sha256": "6d57bb242f56ac96903afecdc0b4a405299b7cd4d706a4464625250a5828bb43"
+  },
+  {
+    "library_file_id": "libfile_5dc9c9e632688191a6ff9faa18f84df2",
+    "file_id": "file_0000000072ec81fbb5cc76dba5e6b073",
+    "file_name": "shawl-bolero-NOTES.md",
+    "current_version_number": 0,
+    "size_bytes": 4732,
+    "local_path": "inputs/shawl-bolero-NOTES.md",
+    "exit_code": 0,
+    "bytes": 4732,
+    "sha256": "d2c5f133118e1872d74d26dc810ed9c1505482914476315f1cee0778e8d9f81f"
+  },
+  {
+    "library_file_id": "libfile_5c18c65f86348191896b45f718e48a62",
+    "file_id": "file_000000007aa081fb91c6f6937df68c24",
+    "file_name": "pcwork.zip",
+    "current_version_number": 0,
+    "size_bytes": 366948,
+    "local_path": "inputs/pcwork.zip",
+    "exit_code": 0,
+    "bytes": 366948,
+    "sha256": "aa8bb43586219e3d6e74a29c96d096da32004c0ac1da0c72ce47729a4b4a4cc4"
+  }
+]

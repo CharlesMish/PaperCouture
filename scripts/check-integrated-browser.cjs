@@ -10,7 +10,7 @@ try{
 await p.goto(base);await settle();await p.evaluate(()=>localStorage.setItem('__astra_synthetic_save','keep'));
 assert.deepEqual(await p.getByLabel('Garment design').locator('option').evaluateAll(xs=>xs.map(x=>x.value)),['dress','jacket','skirt','vest','pleats','clutch','apron','tunic','tabard']);
 for(const id of ['apron','clutch','tunic']){
- await p.getByLabel('Garment design').selectOption(id);await settle();assert.match(await p.locator('.experiment-note').innerText(),/Experimental/);await p.getByRole('radio',{name:'Border print',exact:true}).click();
+ await p.getByLabel('Garment design').selectOption(id);await settle();assert.match(await p.locator('.experiment-note').innerText(),/One square/);await p.getByRole('radio',{name:'Border print',exact:true}).click();
  const count=await p.evaluate(()=>paperCouture.timeline.ops.length);
  for(let i=0;i<count;i++){
   if(!process.env.SMOKE_ONLY){await p.evaluate(()=>paperCouture.controller.beginScrub());for(const t of [.25,.5,.75]){await p.evaluate(t=>paperCouture.controller.scrubTo(t),t);await p.waitForTimeout(100);await shot(`${id}-step${i+1}-${t}`)}await p.evaluate(()=>paperCouture.controller.endScrub(false));await settle()}
