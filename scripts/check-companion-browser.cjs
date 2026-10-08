@@ -46,14 +46,15 @@ async function bundle(url) {
     const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce', hasTouch: true, acceptDownloads: true });
     await context.tracing.start({ screenshots: false, snapshots: false, sources: false });
     let traceStopped = false;
-    const pendingRequests = new Map(), lifecycle = [], consoleMessages = [], failedRequests = [];
+    const pendingRequests = new Map(), lifecycle = [], consoleMessages = [], failedRequests = [], responses = [], completedRequests = [];
     context.setDefaultNavigationTimeout(90000);
     if (seed !== undefined) await context.addInitScript(({ key, seed }) => {
       if (localStorage.getItem(key) === null) localStorage.setItem(key, seed);
     }, { key, seed });
     const page = currentPage = await context.newPage(); page.setDefaultTimeout(60000); page.setDefaultNavigationTimeout(90000);
     page.on('request', r => pendingRequests.set(r, { url: r.url(), type: r.resourceType(), started: Date.now() }));
-    page.on('requestfinished', r => pendingRequests.delete(r));
+    page.on('requestfinished', r => { completedRequests.push({ url: r.url(), type: r.resourceType(), timing: r.timing(), time: Date.now() }); pendingRequests.delete(r); });
+    page.on('response', r => responses.push({ url: r.url(), status: r.status(), type: r.request().resourceType(), timing: r.request().timing(), time: Date.now() }));
     page.on('requestfailed', r => { failedRequests.push({ url: r.url(), error: r.failure() }); pendingRequests.delete(r); });
     page.on('console', m => { if (['warning', 'error'].includes(m.type())) { consoleMessages.push({ type: m.type(), text: m.text().slice(0, 2000) }); if (consoleMessages.length > 50) consoleMessages.shift(); } });
     for (const event of ['domcontentloaded', 'load', 'crash']) page.on(event, () => lifecycle.push({ event, url: page.url(), time: Date.now() }));
@@ -119,7 +120,7 @@ async function bundle(url) {
     });
     try { return await work({ page, context, btn, settle, load, open, state, raw, nudge, moveTo, fold, finish, display, positionPrint, capture, shot, exportPNG, metrics }); }
     catch (error) {
-      report.navigationDiagnostics = { url: page.url(), pendingRequests: [...pendingRequests.values()].map(r => ({ ...r, elapsedMs: Date.now() - r.started })), failedRequests, consoleMessages, lifecycle };
+      report.navigationDiagnostics = { url: page.url(), pendingRequests: [...pendingRequests.values()].map(r => ({ ...r, elapsedMs: Date.now() - r.started })), failedRequests, consoleMessages, lifecycle, responses, completedRequests };
       await context.tracing.stop({ path: path.join(out, 'failure-trace.zip') }).catch(e => { report.traceFailure = String(e); }); traceStopped = true;
       await page.screenshot({ path: path.join(out, 'failure.png') }).catch(() => {}); throw error;
     }
@@ -273,7 +274,16 @@ async function bundle(url) {
       report.beforeReload = await a.page.evaluate(() => ({ url: location.href, readyState: document.readyState, unsaved: paperCouture.pinboard.unsaved,
         durableMatchesState: localStorage.getItem('paper-couture.pinboard.v1') === JSON.stringify(paperCouture.pinboard.state),
         boardMemory: { ...paperCouture.pinboard.renderer.info.memory }, time: Date.now() }));
-      await a.page.reload(); await a.settle(); await a.open(); assert.deepEqual(await a.state(), retained); assert.equal(await a.raw(), newPaperSave);
+      const reloadProbe = setTimeout(() => { void (async () => {
+        const started = Date.now();
+        try {
+          const response = await fetch(report.beforeReload.url, { signal: AbortSignal.timeout(5000), headers: { 'Cache-Control': 'no-cache' } });
+          const html = await response.text();
+          report.reloadHTTPProbe = { status: response.status, elapsedMs: Date.now() - started, htmlSha256: sha(html), matchesCandidateHTML: sha(html) === report.candidateBundle.htmlSha256 };
+        } catch (error) { report.reloadHTTPProbe = { elapsedMs: Date.now() - started, error: String(error) }; }
+      })(); }, 15000);
+      try { await a.page.reload(); } finally { clearTimeout(reloadProbe); }
+      await a.settle(); await a.open(); assert.deepEqual(await a.state(), retained); assert.equal(await a.raw(), newPaperSave);
       await a.exportPNG('five-piece-reloaded');
       // One new-collection quota check uses only this disposable context's Storage
       // method. An old durable save stays intact and Retry writes the kept new state.
