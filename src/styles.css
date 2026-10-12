@@ -104,8 +104,8 @@ button:focus-visible {
 }
 .progress li {
   flex: 1;
-  height: 3px;
-  border-radius: 2px;
+  height: 5px;
+  border-radius: 3px;
   background: var(--rule);
   transition: background-color 0.25s;
 }
