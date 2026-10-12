@@ -1,3 +1,14 @@
+# Paper Couture — 2026-10 design pass (draft, not merged or published)
+
+Draft branch `claude/stoic-fermi-oopgag` on main `cedf65c`. Adds three experimental
+papers (Riso proof, Crease bloom, Marbled endpaper) and two unregistered origami
+studies (mitten pair, beret); refreshes the commission brief's inventory. No garment,
+existing paper, default, capture or geometry changes. Crease bloom is drawn on the
+Swing coat's own creases (`src/papers/coatMarks.ts`, checked against the
+construction). See [notes, comparisons, limits and recommendations](docs/design-pass-2026-10/NOTES.md).
+Tested on Node 22 in a cloud container with headless Chromium; no real phone or
+physical paper. No push to main, merge or deployment is authorized.
+
 # Paper Couture — authorized Swing coat publication
 
 Charlie approved publication of reviewed candidate `932b1e216f5752691cce398dc1dffab77bde84a1`

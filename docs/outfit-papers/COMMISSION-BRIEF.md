@@ -1,5 +1,8 @@
 # Paper Couture: independent outfit brainstorming brief
 
+Inventory refreshed on 2026-10-12 against main `cedf65c`; the 2026-10 design-pass
+draft (`docs/design-pass-2026-10/`) adds three experimental papers on top of it.
+
 Copy this brief into a separate Claude or Grok conversation. Give each the same
 reviewed source SHA, front/back images, and one mixed-board image. Ask them to work
 independently. No external model has been contacted for this study.
@@ -17,29 +20,43 @@ independently. No external model has been contacted for this study.
 > adding folds; do not add arbitrary creases simply to make an item smaller.
 > Preserve existing saved captures at their recorded sizes.
 >
-> Available baseline: Dress (straight/A-line/wide, sleeve choices), Box jacket
-> (two lengths and cuff choice), Wrap skirt (two wrap directions, band and length
-> choices), Lapel vest (short/longline), Pleated skirt (depth choice). Experimental
-> garments: Envelope clutch (no locking closure), Bib apron (no ties),
-> One-shoulder tunic (no cut neckline), Pointed tabard (no neck opening/ties).
-> Accessories: Diamond pin, Two-piece bow with optional third-square centre,
-> Neckerchief, Folded patch pocket, Folded tulip, experimental Folded sash.
-> The concurrent development collection adds experimental Boat-neck top,
-> Cross-wrap top, and a standalone Folded hat. The tops retain continuous paper
-> behind their neckline shapes; the hat is a flat crown/brim silhouette without
-> an opened cavity or wearable lock. A proposed funnel coat was parked because
-> it duplicated the straight dress. Confirm these against the supplied SHA.
-> Avoid duplicating these under new names. A cap is welcome only if its geometry
-> works; hats, gloves and scarves are examples rather than a checklist.
+> Inventory, refreshed against source main `cedf65c` (merged PR31, 2026-10-12).
+> Design offers one garment list. Established: Dress (Straight, Classic A-line or
+> Wide flare sides; Classic, Lifted or Dropped sleeves), Box jacket (Cropped or
+> Longer; plain or printed-corner cuffs), Wrap skirt (either wrap direction; turn-once
+> or turn-twice band; Short, Classic or Long), Lapel vest (Short, Longline or Tapered
+> hem), Pleated skirt (Shallow, Classic or Deep). Experimental, each with stated
+> limits and suggested starting square: Swing coat (20 cm; ten steps, long flared
+> front panels and edge-turn facings over continuous lining, broad shoulder yoke;
+> no opening or fastening), Fit-and-flare dress (nipped waist folded in one rigid
+> `collapse` step; sleeveless, no armholes), Camp-collar shirt (18 cm; folded
+> collar points and edge-turn cuffs; continuous backing at the neck), Open-front
+> capelet (18 cm), Cross-wrap top (18 cm), Boat-neck top (16 cm), Bib apron (14 cm),
+> One-shoulder tunic, Pointed tabard, Envelope clutch (8 cm), Folded hat (8 cm;
+> flat crown and brim), Ankle boot toe left / toe right (8 cm each; fold one of
+> each for a pair), Folded necktie (7 cm; kite-folded blade and pleated knot, no
+> loop) and Framed brooch (4.5 cm; Square or Rectangle frame). Accessories:
+> Diamond pin, Two-piece bow with optional third-square centre, Neckerchief,
+> Folded patch pocket, Folded tulip, experimental Folded sash. The five-piece
+> pinboard places pieces at their starting-square sizes and exports PNG.
+> Parked and not selectable: cross-front robe (reverse shawl dominated the chest),
+> trousers (gate-flap legs tore or left a solid centre), funnel coat (duplicated
+> the straight dress), notch crop and bolero studies. Avoid duplicating any of
+> these under new names. A cap, gloves or scarf are examples, not a checklist.
 >
-> Paper direction: existing Plum scatter/Corner bloom offer positionable flowers;
-> Running stitch, Pinstripe and lining, Indigo lattice and border prints already
-> cover textile/graphic directions. New study companions are Oat linen
-> (oat/plum), Slate grain (blue-grey/sage), and experimental Ginkgo pairs
-> (cream/plum, positionable leaf pairs). Prefer a complementary scale or palette,
-> not another large directional arrow. Bow folding worked; the owner disliked
-> its automatically selected ink and one late-fold appearance. There is no
-> confirmed missing-paper bug and no basis for speculative bow geometry edits.
+> Paper direction: 13 curated papers (Stripe and disc, the default; Running stitch;
+> Pinstripe and lining; Plum scatter; Oat linen; Slate grain; Plum seed; Broken
+> twill; Copper fleck; Border print; Botanical sprigs; Indigo lattice; Ivory, ink
+> border) and 17 experimental ones (Reed study, Arc study, Ginkgo pairs, Corner
+> bloom, Midnight orchard, Tidal bands, Woven checks, Seed dashes, Ink reverse,
+> Reverse garden, Starlit lining, Open stems, Falling chevrons, Sunray pleats,
+> Cut-paper mosaic, Wide frame, Compass lining), plus the hidden Diagnostic grid.
+> Plum scatter, Corner bloom, Ginkgo pairs and Reed study are positionable motifs
+> (finite slide); Seed dashes snaps by half-cells. Sunray pleats is the one
+> paper engineered to a garment's creases (Classic A-line dress at 0°). Broken
+> twill / Copper fleck / Reed study form the Swing coat's coordinated capsule.
+> Prefer a complementary scale or palette, not another large directional arrow,
+> and say plainly which garment and turn any crease-aware art is drawn for.
 >
 > Engine constraints: each sheet begins as an uncut square `[-1,1]²`, area 4.
 > It retains convex material polygons, rigid transforms and stack ranks.

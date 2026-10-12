@@ -28,6 +28,9 @@ import { slateGrain } from './slateGrain';
 import { ginkgoPairs } from './ginkgoPairs';
 import { reedStudy, brokenTwill, copperFleck } from './reedSuite';
 import { plumSeed } from './plumSeed';
+import { risoProof } from './risoProof';
+import { creaseBloom } from './creaseBloom';
+import { marbledEndpaper } from './marbledEndpaper';
 
 export type { PaperDesign } from './types';
 
@@ -68,6 +71,10 @@ export const PAPERS: PaperDesign[] = [
   cutPaperMosaic,
   wideFrame,
   compassLining,
+  // Fold-aware and craft-paper studies (2026-10 design pass), experimental.
+  risoProof,
+  creaseBloom,
+  marbledEndpaper,
   diagnosticPaper,
 ].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
 

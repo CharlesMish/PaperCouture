@@ -1,0 +1,70 @@
+{
+  "coatCreases": 19,
+  "studies": {
+    "mitten-left": {
+      "steps": 8,
+      "facets": 12,
+      "creases": 15,
+      "outline": {
+        "width": 1.217,
+        "height": 1.76
+      },
+      "maxHingeGap": 0.044,
+      "minZ": 0.0015,
+      "strictPiercings": 0,
+      "samplesPerOperation": 81
+    },
+    "mitten-right": {
+      "steps": 8,
+      "facets": 12,
+      "creases": 15,
+      "outline": {
+        "width": 1.217,
+        "height": 1.76
+      },
+      "maxHingeGap": 0.044,
+      "minZ": 0.0015,
+      "strictPiercings": 0,
+      "samplesPerOperation": 81
+    },
+    "mitten-v1": {
+      "steps": 8,
+      "facets": 12,
+      "creases": 15,
+      "outline": {
+        "width": 1.211,
+        "height": 1.7
+      },
+      "maxHingeGap": 0.0275,
+      "minZ": 0.0015,
+      "strictPiercings": 0,
+      "samplesPerOperation": 81
+    },
+    "beret": {
+      "steps": 8,
+      "facets": 13,
+      "creases": 16,
+      "outline": {
+        "width": 2,
+        "height": 1.03
+      },
+      "maxHingeGap": 0.0275,
+      "minZ": 0.0015,
+      "strictPiercings": 0,
+      "samplesPerOperation": 81
+    },
+    "beret-round": {
+      "steps": 12,
+      "facets": 29,
+      "creases": 44,
+      "outline": {
+        "width": 2,
+        "height": 1.03
+      },
+      "maxHingeGap": 0.044,
+      "minZ": 0.0015,
+      "strictPiercings": 0,
+      "samplesPerOperation": 81
+    }
+  }
+}
