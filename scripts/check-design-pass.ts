@@ -40,10 +40,10 @@ const turns = { 'swing-coat': edgeTurn(buildSwingCoat()), 'camp-shirt': edgeTurn
 assert(Math.abs(turns['swing-coat'] - 0.07) < 1e-9 && Math.abs(turns['camp-shirt'] - 0.08) < 1e-9, JSON.stringify(turns));
 assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 
-// --- Registry: three additions at the end of the experimental list, and
+// --- Registry: four additions at the end of the experimental list, and
 // every earlier paper keeps its id, position and curation.
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
-const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper'];
+const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
 assert.deepEqual(PAPERS.map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
 assert.equal(new Set(PAPERS.map(p => p.id)).size, PAPERS.length);
 for (const id of ADDED) {

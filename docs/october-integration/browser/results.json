@@ -1,0 +1,1468 @@
+{
+  "base": "http://127.0.0.1:5365",
+  "checks": [
+    "10 forward / 10 Back / 10 repeated forward real UI operations; every half-fold scrub cancelled; Start over during observed motion; unfinished pin disabled. Scrub uses the diagnostic controller, not a claimed touch gesture.",
+    "Folded mitten · thumb left: 9 real forward/Back/refold operations, each half-fold scrub cancelled, reset during observed motion, actual Front and Back renders. These UI checks do not certify continuous collision freedom or physical folding.",
+    "Folded mitten · thumb right: 9 real forward/Back/refold operations, each half-fold scrub cancelled, reset during observed motion, actual Front and Back renders. These UI checks do not certify continuous collision freedom or physical folding.",
+    "128 actual production renders: four registered papers × four turns × Front/Back × coat/shirt/skirt/brooch. Real picker selection and turns retain posed vertices, original UVs and final facets exactly; actual front/back sampling matrices remain paired.",
+    "Five explicit captures retain exact posed geometry/UVs and paper recipes: 20cm coat, 18cm shirt, 4.5cm brooch, and both 6cm mitten squares. Scale matrices equal squareCm/20 uniformly; all pieces stay within board bounds. Five-slot cap, move/Undo, remove/Undo, complete reload and byte-identical 1800×2100 exports pass.",
+    "390×844 and 320×568 touch emulation: canvas drag/cancel restores original positions without a save/history change; committed drag/Undo restores them; all four registered swatches work and no page overflows. Real phone/Safari remains untested.",
+    "Published v1 fixture keeps its exact original durable bytes on read; adding the new paper preserves all legacy geometry/material/matrix data, and the mixed board reloads and exports."
+  ],
+  "errors": [],
+  "sourceRequests": [],
+  "assets": [
+    "/assets/index-bFd0QWb3.js",
+    "/assets/index-BzK8gymu.css"
+  ],
+  "captures": [
+    {
+      "name": "motion-1",
+      "sha256": "70766b1240d4609b75178cab4da2bfd635101556a398a82e8dc8790f368eb0bf"
+    },
+    {
+      "name": "motion-10",
+      "sha256": "18f64fab6ecd6c7f550dc0626030ec6ec8cc925ac75fbafee0f8394dc7dd4ad8"
+    },
+    {
+      "name": "mitten-left-front",
+      "sha256": "c054975f0bbcc98beef3438aef8e1b62cedd47bb6fad8dac0359a0fddb5a7280"
+    },
+    {
+      "name": "mitten-left-back",
+      "sha256": "b22422a31c0874633cdd472d16960df7425a54cbe3fef7770069e15cda6c6447"
+    },
+    {
+      "name": "mitten-right-front",
+      "sha256": "6154b6d3d4ce1e60cdd47610a1a42e7f0df7042d9a6510391d7d69340d95a570"
+    },
+    {
+      "name": "mitten-right-back",
+      "sha256": "7f4a647b6ea63f42b3280d10a06cb53030cb93117b8fe53a089c841d09ddd165"
+    },
+    {
+      "name": "swing-coat-riso-proof-0-front",
+      "sha256": "b6c06e46a85f1f46f6ae285b4bcb6214f943747ec121680162dfe82dc112c46a"
+    },
+    {
+      "name": "swing-coat-riso-proof-0-back",
+      "sha256": "d6a3fe5f2a30acd489ce8bee8ca8cb6082724273dbb1effee8eb25a0d1f9c3f3"
+    },
+    {
+      "name": "swing-coat-riso-proof-1-front",
+      "sha256": "88be86e9a2dfd1c7ae82fa2b693a7cac0b41de841e198edac0ac1b1ce812036f"
+    },
+    {
+      "name": "swing-coat-riso-proof-1-back",
+      "sha256": "693802116971e0042d08e725e765191296bf4dbe8684002176a9f2daf6a5c6c8"
+    },
+    {
+      "name": "swing-coat-riso-proof-2-front",
+      "sha256": "b59ad6112813b181671909407449b4341316a6904c3c72aea356887db1727601"
+    },
+    {
+      "name": "swing-coat-riso-proof-2-back",
+      "sha256": "1a6ee37fc362994a84e1b132ecfe8abec9d77eec7ddbf84e5f61241c813a6b90"
+    },
+    {
+      "name": "swing-coat-riso-proof-3-front",
+      "sha256": "17a88ec332467ff6a0dd95a61080d0e48ea959d5b298a18089cfdaae7da89bfb"
+    },
+    {
+      "name": "swing-coat-riso-proof-3-back",
+      "sha256": "608e11096b043a4801bcaa86143bb2c80dd66e2908b26a7a564369d754c7a531"
+    },
+    {
+      "name": "swing-coat-crease-bloom-0-front",
+      "sha256": "c55a449c8674f7231ae3a94491bcc716ddbe8ec1d7445b1b1a34735da453cdc5"
+    },
+    {
+      "name": "swing-coat-crease-bloom-0-back",
+      "sha256": "ee17ecd33a3cdcacbb53f462758f842e7ae4c302a02965b93d8ef239adf0cf01"
+    },
+    {
+      "name": "swing-coat-crease-bloom-1-front",
+      "sha256": "5463f474f9708272da6c1923a8b391632853bc437c5d3f0e6c477c0fb71caaef"
+    },
+    {
+      "name": "swing-coat-crease-bloom-1-back",
+      "sha256": "ef35418081949e71d8f96977806afd9d2986c38f9fc3b4eeb6bd4a235dd1e71a"
+    },
+    {
+      "name": "swing-coat-crease-bloom-2-front",
+      "sha256": "5cb106666acad048a915aad596aa85947734cd5d762a9eb59edb8f6f18e25c48"
+    },
+    {
+      "name": "swing-coat-crease-bloom-2-back",
+      "sha256": "5fe34353dc5c5fd1d918b312671e886781f07d7f50e00b45cc8a2a1701d8b806"
+    },
+    {
+      "name": "swing-coat-crease-bloom-3-front",
+      "sha256": "5fc5ba85d209b2eeb5a15ac24ae571f8e519db070585474c125729cc107ee475"
+    },
+    {
+      "name": "swing-coat-crease-bloom-3-back",
+      "sha256": "dcc1aee4b1c757bad7b29b803ce0598c3d323b9b7decb95308a0703175335698"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-0-front",
+      "sha256": "cc44c55e719d46331d07e24ada7151857df3218c40b864795b7138f13d578fc0"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-0-back",
+      "sha256": "03482f120e901936edecebf3cf6aa3672c2ccf1992874322c7984fa62cfc9b8c"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-1-front",
+      "sha256": "246341853bb5a34d49509f5ce6785a50dad69913ccb208f3ca6e361acff8d87e"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-1-back",
+      "sha256": "0c58c79c3c310a9f722938990adf4998a27faaf3ed6ae970f86de57b467edc6d"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-2-front",
+      "sha256": "08c9b3a6d8c2b232ca920063034e63f58dc9249f1288b17dfec2f9c4c140b907"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-2-back",
+      "sha256": "d6c5717196998ccb84b79aeb0073e620bd7dc947092c2ab0e14afac056569bea"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-3-front",
+      "sha256": "843e9d6df3d41ab2e2f7c88b8b538100afd48b525efb6f1f771c6ab5cccff896"
+    },
+    {
+      "name": "swing-coat-marbled-endpaper-3-back",
+      "sha256": "afee95a900b5f073c2e659eac2618a30113ed4dba2103cfe8436fd0414bb5cdb"
+    },
+    {
+      "name": "swing-coat-dusk-wash-0-front",
+      "sha256": "302a9092e0124a66b5e0e653bc3262a491cd026f321f9357e188488f19da8dd0"
+    },
+    {
+      "name": "swing-coat-dusk-wash-0-back",
+      "sha256": "9435fa55bafe48294d66262091c000aec0ba00e2c339aea47b772b3cf4bab488"
+    },
+    {
+      "name": "swing-coat-dusk-wash-1-front",
+      "sha256": "6ab0abeb49ded713ae4b3f6316c96b55632029763afe15ce8c2373496585f65e"
+    },
+    {
+      "name": "swing-coat-dusk-wash-1-back",
+      "sha256": "c099364d841d2b5ce7110504b4b510afe1d0983c9c2fe219428a117026e684ea"
+    },
+    {
+      "name": "swing-coat-dusk-wash-2-front",
+      "sha256": "445c11b35ffea44695c7c6d79b2ec0dc40acd8502ea6bef83fca81b924d231d2"
+    },
+    {
+      "name": "swing-coat-dusk-wash-2-back",
+      "sha256": "a8c62c6369e772fa8390ccd4a9cb039c9009baa3847f46e8e53d20ad2b435c78"
+    },
+    {
+      "name": "swing-coat-dusk-wash-3-front",
+      "sha256": "fa84784d14cde8a2a1d39c5293a27f8313175acfe035fa2bf6edce2cb4fa8a93"
+    },
+    {
+      "name": "swing-coat-dusk-wash-3-back",
+      "sha256": "38105e2e71c253992ed80cd6d1e7216f453323e89f8ccc21bc92750b1cba9a12"
+    },
+    {
+      "name": "camp-shirt-riso-proof-0-front",
+      "sha256": "fabb50fd9f8a37e5ff175c9e199da5b52294d6369c3d320fea1c12849c2c3fc2"
+    },
+    {
+      "name": "camp-shirt-riso-proof-0-back",
+      "sha256": "ed5e2bd135b1eeed3b1531ed7d1e013956943f6ea12baec75712a952e1000b07"
+    },
+    {
+      "name": "camp-shirt-riso-proof-1-front",
+      "sha256": "f68a9749805b6ce67c29da5f6d29a4888c4107c65f136f7a4841b387dacb57da"
+    },
+    {
+      "name": "camp-shirt-riso-proof-1-back",
+      "sha256": "6cac7358e000380808f6e2391f2a5952fb590eaab5b9df22b72ace1b0064eda5"
+    },
+    {
+      "name": "camp-shirt-riso-proof-2-front",
+      "sha256": "d9266b25d3bdd34869b207b343757ed58e8984a5698e412d3ce01cb78951f8a7"
+    },
+    {
+      "name": "camp-shirt-riso-proof-2-back",
+      "sha256": "9b46621f45fb84ed47ec535b5feb91964b4133b4ab8eddaebcd3f5ceeae0ae57"
+    },
+    {
+      "name": "camp-shirt-riso-proof-3-front",
+      "sha256": "feb60bf9b11b5c1315e1e6f06e5065f27c34e766e424c89ce82fc790133d68c3"
+    },
+    {
+      "name": "camp-shirt-riso-proof-3-back",
+      "sha256": "3a1f1a2a5aad213ee25f83aaabaa9e559fc8f5ccf27c3d565d936c1b1bebb0a8"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-0-front",
+      "sha256": "e59796463185f6d1076a335a885978c76ae7f2f3b7be2b13ed086c9786769260"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-0-back",
+      "sha256": "c8162713d8efb7618fed4b5ec04b9843946d245fb50b16bbf596d84047b78417"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-1-front",
+      "sha256": "0997fb231274212bc852ed317e7505c4f454b242e54102d134ca3dc43a88e970"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-1-back",
+      "sha256": "d1426b1f51ea59d6ab8599ebe7c939edf23c034e67085014d02f4cc8a34419d9"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-2-front",
+      "sha256": "9d56fd60132939442380e91a1eda3966028cba2d7d6254608fe07f7cd5631834"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-2-back",
+      "sha256": "19ba665c43cbdcefc081f879c345d83f0c65a96f8f32f4e6cd525163f2a5c486"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-3-front",
+      "sha256": "ff33302e80e476050e5e7b141d6bb22f57183b651c1513411224efd54acca361"
+    },
+    {
+      "name": "camp-shirt-crease-bloom-3-back",
+      "sha256": "c628df1cd700852c8c208779e05f323ba14204f53f85359bd5a8e404aa9d335e"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-0-front",
+      "sha256": "448089312e2fbd10a61beca6baad56d96659f65cb97a5a511f91e73e76108f7e"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-0-back",
+      "sha256": "d6dc72e4eb7cec02e94a635e94254eed2ca4aa2749b94c6d0e3c1984edef7610"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-1-front",
+      "sha256": "d459fe7afdc5753edbe1ab3fab62ce30868d75651ef5b89698d8e32ae9680468"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-1-back",
+      "sha256": "6383b18084722c0b5f737861509ae19fbf6b6d2581d74797c2c74ebbf0ffb8f2"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-2-front",
+      "sha256": "aaa1bd9ee6ee4d39191415ac9399126a3290008d02e6e097dc05678f88f5b74d"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-2-back",
+      "sha256": "1cae98e5380db81c26e2ecbedc3eed4fc5e80fdca850320f3b9509bea88e6e23"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-3-front",
+      "sha256": "efad8b4b6b48fc8b72211eebb81ce767472fdae89367f34860c510977320d6f6"
+    },
+    {
+      "name": "camp-shirt-marbled-endpaper-3-back",
+      "sha256": "b7d7031fc80e1ad31dfef7a46996804e4929e0e96a7656ab0411688e4ef7aeb7"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-0-front",
+      "sha256": "9a2da62bea958e6b980c393e7aa5e62989b85399fa66783d674efe4f738d5ef3"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-0-back",
+      "sha256": "8aa64eabe560b77460e1d736581200fdf8b69aa8bd898491a7669870827617da"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-1-front",
+      "sha256": "78fc2609499bf04e558f6e4a8eb747efb173d6b405b565c6e9028acdd1f29fb9"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-1-back",
+      "sha256": "638dd2f54ca28be4e006aa7c29840ad4713300015157dddd6523e6548cff2bf8"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-2-front",
+      "sha256": "e9c6197d09d859712a17f89a5f72587b3e592a1fa04133c7723c120a0f491912"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-2-back",
+      "sha256": "0d2c6fc4b90f787ea94cb10b7b835241757a197a88613ee5ca416a2cf0839ce6"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-3-front",
+      "sha256": "e386578d2723dd0414bd325173966a0f60c7a4f713f41005cacb1287ad87413d"
+    },
+    {
+      "name": "camp-shirt-dusk-wash-3-back",
+      "sha256": "7d72277929e45b02603837eec6ab2137bd497a7268131cf1cdcd096ec3fc276a"
+    },
+    {
+      "name": "pleats-riso-proof-0-front",
+      "sha256": "1bd59e4fb8a7f26f6a17e8d30163c6decf28e00a2b7bfe61f95ad28685b17f7c"
+    },
+    {
+      "name": "pleats-riso-proof-0-back",
+      "sha256": "0566a0258875e120b48f68b766e2ea7318f4073a16a5aebfbacd7a2f49f73db3"
+    },
+    {
+      "name": "pleats-riso-proof-1-front",
+      "sha256": "91992107c4658887c6a06c1bad920d602c1f91b42c4d4f639f87a679cf427f53"
+    },
+    {
+      "name": "pleats-riso-proof-1-back",
+      "sha256": "a628ab51c68855fa433f5827b118dcc400b3fa1bee1d9eb16db9139c36f9f0fe"
+    },
+    {
+      "name": "pleats-riso-proof-2-front",
+      "sha256": "6c151885a41bf9a9ba5d21cbdc93a7622a6bd28de98f75935ec8e671faaba8e1"
+    },
+    {
+      "name": "pleats-riso-proof-2-back",
+      "sha256": "d56df5e739b89618431ffe1b900dc52bed527f4c43698759356f2107cd815853"
+    },
+    {
+      "name": "pleats-riso-proof-3-front",
+      "sha256": "fc0a987590c37d97dc53bbebf7a374906cad1cec50e613a097801696df2053fe"
+    },
+    {
+      "name": "pleats-riso-proof-3-back",
+      "sha256": "718ab0a4eaa4f192ab40f48f7d6390964fe981c057f32a94d776dc741e0fb78d"
+    },
+    {
+      "name": "pleats-crease-bloom-0-front",
+      "sha256": "841118c114b5de410f3e054a2534ceb50ba1f554c8d4b1cff54ad182e8721a0d"
+    },
+    {
+      "name": "pleats-crease-bloom-0-back",
+      "sha256": "d2c942f5f917e9d68692eaf1c0d20059d823d3892b73e3ef96c587fd8b86a923"
+    },
+    {
+      "name": "pleats-crease-bloom-1-front",
+      "sha256": "5f1554f30e50847139f449b5c02d5fab0e1be8945953de3b89fe3536f0520a80"
+    },
+    {
+      "name": "pleats-crease-bloom-1-back",
+      "sha256": "422f645489acca70a0d8b5e2728629a0deedced111e8d7295723289538f33717"
+    },
+    {
+      "name": "pleats-crease-bloom-2-front",
+      "sha256": "5d2bb4416ee88d665e3acf2012d4988dd09efba972e85608023e9c1529e895d1"
+    },
+    {
+      "name": "pleats-crease-bloom-2-back",
+      "sha256": "898b9551efe64dc233462b8753f73994104b9ec228238d2aed75b04036f67aeb"
+    },
+    {
+      "name": "pleats-crease-bloom-3-front",
+      "sha256": "c57ba4fbe43de61a103beb128997c51adbf87fe4b74a2045d546aab90c054cb2"
+    },
+    {
+      "name": "pleats-crease-bloom-3-back",
+      "sha256": "dff189b824bb865b004ffd247fe1c2a6cb8efca13c7bec2cdfbe5a24163b49d5"
+    },
+    {
+      "name": "pleats-marbled-endpaper-0-front",
+      "sha256": "d893dba877ce078ea6bf5250dc9998f4a081d00ca5fb4d940271fdd584dd2a29"
+    },
+    {
+      "name": "pleats-marbled-endpaper-0-back",
+      "sha256": "f66e343d1fa617e9af6e69c295492d0fc1463d246b29e54c195bad57b4e758a5"
+    },
+    {
+      "name": "pleats-marbled-endpaper-1-front",
+      "sha256": "218425dec02b429ccea454180a9bcb11acd5997d842f26c8dde762320ddab3aa"
+    },
+    {
+      "name": "pleats-marbled-endpaper-1-back",
+      "sha256": "c4c426e48ff0daf548655715f4f9563254c3d92b2bd661e20cf7669318dc3da5"
+    },
+    {
+      "name": "pleats-marbled-endpaper-2-front",
+      "sha256": "c111a40d898ef16cc8eb34a82f0c6d85feb1227d47622121e72946c418a78637"
+    },
+    {
+      "name": "pleats-marbled-endpaper-2-back",
+      "sha256": "66fc46960862209f197658689d8db91df20b0ad7d6804aa7bab2caea21370a88"
+    },
+    {
+      "name": "pleats-marbled-endpaper-3-front",
+      "sha256": "aa5902d1b66bcd24e05e1275bb553e5badcb981bf7eb643653e06a85204bbc71"
+    },
+    {
+      "name": "pleats-marbled-endpaper-3-back",
+      "sha256": "303987fd888caeea0e98c7a2933c3e6596eb4fd7a0f04d85322885b0661ca268"
+    },
+    {
+      "name": "pleats-dusk-wash-0-front",
+      "sha256": "d1864dad969acf5eb3958b6f33f2a807660887d28ebb580de7a555e8a7e13f16"
+    },
+    {
+      "name": "pleats-dusk-wash-0-back",
+      "sha256": "0254ac08897f75304910c4b5c7a7ad10f81ecb43fddad8847719e8897788cb0d"
+    },
+    {
+      "name": "pleats-dusk-wash-1-front",
+      "sha256": "a471e63deedb52af193191a88ab8906c2255a27ba79ef70af3f7f1324d6003fc"
+    },
+    {
+      "name": "pleats-dusk-wash-1-back",
+      "sha256": "9bae72ff4b5b811371b7779a9a82d79a3460182e8f7921fdf195b0b5f07041a5"
+    },
+    {
+      "name": "pleats-dusk-wash-2-front",
+      "sha256": "eed7bfe9c8de63297974861aff433e97e093316984a32d74c295b4a422e8b2c8"
+    },
+    {
+      "name": "pleats-dusk-wash-2-back",
+      "sha256": "7a99da55ba08bed454cc0a3bd4339ee1db2b52dc9d230e26e6b7da56934129d2"
+    },
+    {
+      "name": "pleats-dusk-wash-3-front",
+      "sha256": "42f1a71a2f7c6fdb190cdfe8c02c341a6d1b44866bec60b9c97aad7501ea227b"
+    },
+    {
+      "name": "pleats-dusk-wash-3-back",
+      "sha256": "29340c50c9189728fd4bf0e5481c5dac814c87efddfe4661e6984234b1360b4b"
+    },
+    {
+      "name": "framed-brooch-riso-proof-0-front",
+      "sha256": "8596173792c0c0cf50e7cd5f8e8f721b528890887cc4c3e495bb921feed285ae"
+    },
+    {
+      "name": "framed-brooch-riso-proof-0-back",
+      "sha256": "7f8620d0b20407544eea7592539de182ba4f1763bfeb4667ae0f1558b5de7b1c"
+    },
+    {
+      "name": "framed-brooch-riso-proof-1-front",
+      "sha256": "fab69d9949681f34fe60c50967e770de7cb4f21bef36f99832e8eeb3ca62a537"
+    },
+    {
+      "name": "framed-brooch-riso-proof-1-back",
+      "sha256": "459058dcf1bec6e4e2bf3658aa46b1d8c2c6cdf91d674ae44e3acede5a13620a"
+    },
+    {
+      "name": "framed-brooch-riso-proof-2-front",
+      "sha256": "78e74fb8a47c701d27195363ca62222654a1bb0c304e90b45545f331c5b8db40"
+    },
+    {
+      "name": "framed-brooch-riso-proof-2-back",
+      "sha256": "d4b8fb701182f01e63e44ae5e6127bdc9c219660882629d831b88743ebc2b181"
+    },
+    {
+      "name": "framed-brooch-riso-proof-3-front",
+      "sha256": "a2fea1fb46ab5b456d2eef223fda62e80022ffd7293f0d0b6aaa56340488ea37"
+    },
+    {
+      "name": "framed-brooch-riso-proof-3-back",
+      "sha256": "337e338a9e62866369f94266dce96d13ed4add17608c4d2d16cf01c578f36c9e"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-0-front",
+      "sha256": "8c8929d9819015d41afd782b45b91fee5ffae77628e5f6dacf26a5cd181187c3"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-0-back",
+      "sha256": "8d2b4f523763191d16a11871d937eb1978bbb1fb69ab179653e1bf43b6ab0dd3"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-1-front",
+      "sha256": "a3295e2a609a4e3496a0b4a87371513953b032d67cfe94500a404275ae8f1103"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-1-back",
+      "sha256": "2e882a89dfac6dc832adb9b103dfbcba6e58219701eda5d20f8aded8e72624ca"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-2-front",
+      "sha256": "ed96933df0541a10b9a53eb8863a044b1f3d0dc99c15e219ab7ba59d25ecae60"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-2-back",
+      "sha256": "86b5570f8aa682eb1016dde7a211c2bed4167d2c46d99e2a1791e72897bec20f"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-3-front",
+      "sha256": "d49bb861f053926ecea6f4e8c1ca8d955a1f8f7a5a9af0117b72f2a42a5417ed"
+    },
+    {
+      "name": "framed-brooch-crease-bloom-3-back",
+      "sha256": "78a1644f7f046681f862304d3a277c3131f587a72b5b5e9906be84455bb823c0"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-0-front",
+      "sha256": "bc9f057546d68dbe691a8492a754fd193e9cecc2a7ead856ff44c79b8353dd3b"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-0-back",
+      "sha256": "57280dc8ac1ca6e42f7d7ec12cc88b5282f8d4c523f140f6dfb9dcf328c74727"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-1-front",
+      "sha256": "6279dce8f1d5e5c1fe93c4186d3822ed8df941c5d70653f78234e7621d8886ab"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-1-back",
+      "sha256": "b4f5cb74e99be06ea88bb197a6fefba1219f73e0ef36c2946c2869528fee46bd"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-2-front",
+      "sha256": "5ef15d2425f7b32642a20b385ada37825aec13008ac8d98bbc6aceb04211ecf7"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-2-back",
+      "sha256": "01fcafc136898645280cde77881b6914bac5acac72c1761b83267fcd2bd6c7c2"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-3-front",
+      "sha256": "9b565ffdac7afcf55ddd8a50d7dc213e768c3aee689f3f7d30c8bf34c14e9358"
+    },
+    {
+      "name": "framed-brooch-marbled-endpaper-3-back",
+      "sha256": "050bfb6a88a3c9f68064fea289a3c44a3b6dfc95d1727bde16bbb0d8a159ea7f"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-0-front",
+      "sha256": "5538e0e21451f3bbc2fc2152ad084e9760670422986f1e8f47f4911342710793"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-0-back",
+      "sha256": "61243330e6e71a4101d816bdc85d9d362740326f843da987c7422ef931ccf9ad"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-1-front",
+      "sha256": "51ec6bf72e2d83da42d71771e208bdd39bad381e04a38278b17b35b2dce5ca74"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-1-back",
+      "sha256": "7b3a16992ccb984bb79e6677bc87eb42122e3f1014bce19dc0c69a84b7b192a3"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-2-front",
+      "sha256": "c291b9d0a99e4f84d40c9e267ae77b7c3b50482e2eec91b46167d9755f51dc99"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-2-back",
+      "sha256": "1acea2377a9468ed4b225f323de2a55fe7bc1a3c5dada98089a108e636eb71cb"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-3-front",
+      "sha256": "58f5efca5bdba6f708d816821d125dcd2756016a7543bd2764cdbdf25c5dfe36"
+    },
+    {
+      "name": "framed-brooch-dusk-wash-3-back",
+      "sha256": "9b86d029a6a665388fe9ae3bd2c32c407a9c1c19ffef238cab15579e79d35661"
+    },
+    {
+      "name": "outfit-desktop",
+      "sha256": "3108b5632bfe97f62c210951e06d42b66082f321ee4ac1335eaf640ec67b91df"
+    },
+    {
+      "name": "outfit-touch-390",
+      "sha256": "a906b18691c642f953ff3b8e0eb6c16dc5ac333c69d599b3081e1d4b4b2f7ad5"
+    },
+    {
+      "name": "picker-touch-390",
+      "sha256": "ff29a7d13fe9c0f818d1c65b4151eebaeb6c0205f2deaa36cee2f91287d3c2fa"
+    },
+    {
+      "name": "outfit-touch-320",
+      "sha256": "327d0cff2730ad966f33d5cf1d7c779045fe6b2aa380a49a1a72624b82ce8db0"
+    },
+    {
+      "name": "picker-touch-320",
+      "sha256": "e463a290f722e868e8d3d90a516d8371199c320bced85453adfbe61252f11e29"
+    }
+  ],
+  "physicalPhoneTested": false,
+  "physicalPaperTested": false,
+  "registeredMittens": [
+    {
+      "id": "mitten-left",
+      "name": "Folded mitten · thumb left"
+    },
+    {
+      "id": "mitten-right",
+      "name": "Folded mitten · thumb right"
+    }
+  ],
+  "gallery": [
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "swing-coat",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "pleats",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "riso-proof",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "crease-bloom",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turn": 3,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 0,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 1,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 2,
+      "side": "back"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "front"
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "dusk-wash",
+      "turn": 3,
+      "side": "back"
+    }
+  ],
+  "outfit": [
+    {
+      "design": "swing-coat",
+      "paper": "crease-bloom",
+      "turns": 0,
+      "squareCm": 20,
+      "scaleTo20cm": 1,
+      "dimensions": [
+        1.4254863262176514,
+        1.7800000309944153,
+        0.03849999909289181
+      ],
+      "normalizedDimensions": [
+        1.4254863262176514,
+        1.7800000309944153,
+        0.03849999909289181
+      ]
+    },
+    {
+      "design": "camp-shirt",
+      "paper": "dusk-wash",
+      "turns": 0,
+      "squareCm": 18,
+      "scaleTo20cm": 0.9,
+      "dimensions": [
+        1.2993962645530701,
+        1.0890000075101853,
+        0.04949999910313636
+      ],
+      "normalizedDimensions": [
+        1.443773627281189,
+        1.2100000083446503,
+        0.054999999003484845
+      ]
+    },
+    {
+      "design": "framed-brooch",
+      "paper": "marbled-endpaper",
+      "turns": 2,
+      "squareCm": 4.5,
+      "scaleTo20cm": 0.225,
+      "dimensions": [
+        0.3375,
+        0.3375,
+        0.003712499822722748
+      ],
+      "normalizedDimensions": [
+        1.5,
+        1.5,
+        0.016499999212101102
+      ]
+    },
+    {
+      "design": "mitten-left",
+      "paper": "riso-proof",
+      "turns": 0,
+      "squareCm": 6,
+      "scaleTo20cm": 0.3,
+      "dimensions": [
+        0.40562129616737364,
+        0.4349999964237213,
+        0.013199999718926846
+      ],
+      "normalizedDimensions": [
+        1.3520709872245789,
+        1.449999988079071,
+        0.04399999906308949
+      ]
+    },
+    {
+      "design": "mitten-right",
+      "paper": "riso-proof",
+      "turns": 0,
+      "squareCm": 6,
+      "scaleTo20cm": 0.3,
+      "dimensions": [
+        0.40562129616737364,
+        0.4349999964237213,
+        0.013199999718926846
+      ],
+      "normalizedDimensions": [
+        1.3520709872245789,
+        1.449999988079071,
+        0.04399999906308949
+      ]
+    }
+  ],
+  "export": {
+    "width": 1800,
+    "height": 2100,
+    "sha256": "6a9cda469be89fa00528b6380200ca9d7f6ef944645213904dbe98c583bb7562",
+    "reloadByteIdentical": true
+  },
+  "touch": [
+    {
+      "width": 390,
+      "height": 844,
+      "dragCancelUndo": true,
+      "picker": true,
+      "horizontalOverflow": false
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "dragCancelUndo": true,
+      "picker": true,
+      "horizontalOverflow": false
+    }
+  ],
+  "passed": true
+}

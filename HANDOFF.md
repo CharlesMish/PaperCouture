@@ -1,3 +1,29 @@
+# Paper Couture — October integration for owner review
+
+Branch `design/october-integration` starts from current main `cedf65c` and retains
+Claude’s submitted `3c448a9`. Charlie authorized preparing full integration,
+including critical fixes and a mitten recovery; **merge and publication still
+require review**. The separate `cmish.dev` website repository is untouched.
+
+Keep the four new papers Experimental: corrected Riso proof, crease-aligned
+Crease bloom, Marbled endpaper and the new quiet Dusk wash. Bloom/Marble cache
+their fixed rasters without changing pixels; Riso’s front intentionally changes
+where invalid fractional-power arithmetic previously omitted dots. Both recovered
+mitten hands are registered as flat ornaments, each suggested at a 6 cm starting
+square. They use the retained top at y=.75, not the rejected deeper .65 turn.
+The low wrist-root thumb has no hand opening. Synthetic connector intersections
+remain documented separately from sampled material-facet checks. Beret remains
+an unregistered study. No shared fold engine or renderer changes were made.
+
+Read [the integration review and actual comparisons](docs/october-integration/NOTES.md),
+[mitten reasoning and limits](docs/october-integration/mitten/NOTES.md), and
+[Dusk wash comparison](docs/october-integration/companion-paper/NOTES.md).
+The new exact-head CI workflow adds frozen-main geometry preservation,
+frozen-Claude paper preservation, drawing-level material correspondence and
+production browser/pinboard checks. Use Node 24, including the new
+`npm run check:mittens`; numerical/browser success is not a physical-paper trial.
+Historical permissions below apply only to their explicitly named candidates.
+
 # Paper Couture — 2026-10 design pass (draft, not merged or published)
 
 Draft branch `claude/stoic-fermi-oopgag` on main `cedf65c`. Adds three experimental

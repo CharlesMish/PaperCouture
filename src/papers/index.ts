@@ -31,6 +31,7 @@ import { plumSeed } from './plumSeed';
 import { risoProof } from './risoProof';
 import { creaseBloom } from './creaseBloom';
 import { marbledEndpaper } from './marbledEndpaper';
+import { duskWash } from './duskWash';
 
 export type { PaperDesign } from './types';
 
@@ -75,6 +76,7 @@ export const PAPERS: PaperDesign[] = [
   risoProof,
   creaseBloom,
   marbledEndpaper,
+  duskWash,
   diagnosticPaper,
 ].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border'].includes(p.id) ? 'curated' : 'experimental' }));
 

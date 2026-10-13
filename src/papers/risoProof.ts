@@ -21,8 +21,11 @@ export const PROOF_MARGIN = 0.068; // sheet units, from each edge (sheet is 2 wi
 const SCREEN = 1 / 58; // halftone cell, fraction of the canvas
 
 const clamp = (v: number) => Math.max(0, Math.min(1, v));
-const pinkAt = (y: number) => clamp(0.08 + 0.86 * ((y + 0.42) / 1.42) ** 1.2);
-const tealAt = (y: number) => clamp(0.08 + 0.86 * ((0.42 - y) / 1.42) ** 1.2);
+// Clamp the ramp before the fractional power. Negative bases produce NaN,
+// which used to reach Canvas as an invalid circle radius near either end.
+// Keep an intentional 8% second-ink floor throughout the printable sheet.
+const pinkAt = (y: number) => 0.08 + 0.86 * clamp((y + 0.42) / 1.42) ** 1.2;
+const tealAt = (y: number) => 0.08 + 0.86 * clamp((0.42 - y) / 1.42) ** 1.2;
 
 function halftone(ctx: CanvasRenderingContext2D, S: number, colour: string, angle: number, density: (y: number) => number, shift: [number, number]) {
   const cell = SCREEN * S, c = Math.cos(angle), s = Math.sin(angle);

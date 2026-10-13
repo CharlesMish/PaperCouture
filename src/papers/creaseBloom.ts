@@ -1,13 +1,11 @@
 import { SWING_COAT_CREASES, Segment } from './coatMarks';
 import type { PaperDesign } from './types';
 
-// Crease bloom: a fold-and-dye (itajime) idea drawn for the Swing coat. Dye
-// wicks in from every crease of the coat and from the raw edges of the square,
-// stopping in a feathered tide line. The dye at a point depends only on its
-// distance from the nearest crease and on where along that crease it lies;
-// both are unchanged when the paper folds over that crease, so each fold edge
-// of the finished coat carries one continuous halo that wraps round it. The
-// facings (0.07 wide) sit between a crease and the edge and dye solid.
+// A dye-inspired print aligned to the Swing coat's material creases at 0°.
+// Each individual source is symmetric about its own crease, but the combined
+// nearest-source field is NOT reflection-invariant about every crease: other
+// creases and raw edges can dominate on one side. This is authored artwork,
+// not a simulation or guarantee of exact folded-pattern registration.
 //
 // Both faces carry the same dye in the same material places, as dyed-through
 // paper would; the reverse ground is a shade cooler so the lining still reads.
@@ -28,10 +26,9 @@ function noise(t: number, seed: number): number {
 interface Source { ax: number; ay: number; dx: number; dy: number; L: number; seed: number }
 const SOURCES: Source[] = [...SWING_COAT_CREASES, ...EDGE].map(([[ax, ay], [bx, by]]) => {
   const dx = bx - ax, dy = by - ay, L = Math.hypot(dx, dy);
-  // Pieces of one line (and its left/right mirror) share a seed, so the coat's
-  // halos are symmetric; position along a piece is still taken from its own
-  // midpoint. Registration needs only that a fold over a crease preserves the
-  // distance from it and the position along it, which holds piece by piece.
+  // Collinear segments share a seed, but measure position from their own
+  // midpoint. That preserves Claude's artwork; it does not prove symmetry
+  // of the complete pattern across a fold.
   const seed = Math.round((Math.abs(dx * ay - dy * ax) / L) * 97 + Math.abs(dx / L) * 13);
   return { ax, ay, dx: dx / L, dy: dy / L, L, seed };
 });
@@ -56,20 +53,30 @@ export function bloomAt(x: number, y: number): number {
   return Math.min(1, body * 0.9 + tide);
 }
 
+// Reuse expensive fixed artwork across rotations and board restoration.
+// Bounded to four raster sizes/faces; callers only copy these private pixels.
+const rasters = new Map<string, ImageData>();
+
 function paint(ctx: CanvasRenderingContext2D, S: number, back: boolean) {
   // Compute at most 512 px and scale: the halo is soft and the cost is per pixel.
   const N = Math.min(S, 512);
-  const ground = back ? LINING : PEARL;
-  const g = [1, 3, 5].map(i => parseInt(ground.slice(i, i + 2), 16));
-  const img = new ImageData(N, N);
-  for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
-    // canvas -> material. The reverse canvas is seen from behind: x mirrors once.
-    const u = (px + 0.5) / N * 2 - 1;
-    const x = back ? -u : u, y = 1 - (py + 0.5) / N * 2;
-    const a = bloomAt(x, y) * (back ? 0.8 : 0.9);
-    const o = (py * N + px) * 4;
-    for (let c = 0; c < 3; c++) img.data[o + c] = Math.round(g[c] * (1 - a) + DYE[c] * a);
-    img.data[o + 3] = 255;
+  const key = `${N}:${back}`;
+  let img = rasters.get(key);
+  if (!img) {
+    const ground = back ? LINING : PEARL;
+    const g = [1, 3, 5].map(i => parseInt(ground.slice(i, i + 2), 16));
+    img = new ImageData(N, N);
+    for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+      // canvas -> material. The reverse canvas is seen from behind: x mirrors once.
+      const u = (px + 0.5) / N * 2 - 1;
+      const x = back ? -u : u, y = 1 - (py + 0.5) / N * 2;
+      const a = bloomAt(x, y) * (back ? 0.8 : 0.9);
+      const o = (py * N + px) * 4;
+      for (let c = 0; c < 3; c++) img.data[o + c] = Math.round(g[c] * (1 - a) + DYE[c] * a);
+      img.data[o + 3] = 255;
+    }
+    if (rasters.size >= 4) rasters.delete(rasters.keys().next().value!);
+    rasters.set(key, img);
   }
   if (N === S) { ctx.putImageData(img, 0, 0); return; }
   const tmp = document.createElement('canvas');
@@ -83,9 +90,9 @@ function paint(ctx: CanvasRenderingContext2D, S: number, back: boolean) {
 export const creaseBloom: PaperDesign = {
   id: 'crease-bloom',
   name: 'Crease bloom',
-  note: 'Petrol dye wicked along the Swing coat’s own creases; halos wrap each fold edge',
+  note: 'Petrol dye-inspired halos aligned to the Swing coat’s creases at 0°',
   reverse: LINING,
-  placementNote: 'Drawn for the Swing coat at 0°: every crease of that coat carries a mirrored halo, so the dye wraps round each fold edge and fills the facings. Other turns and garments move the halos off their creases.',
+  placementNote: 'Designed for the Swing coat at 0°: petrol halos follow its creases and shade the facings. Nearby halos overlap, so opposite sides of a fold need not match exactly. Other turns and garments make an abstract dyed lattice.',
   drawFront: (ctx, S) => paint(ctx, S, false),
   drawBack: (ctx, S) => paint(ctx, S, true),
 };

@@ -18,6 +18,8 @@ const recommended: Readonly<Record<string, number>> = {
   'boot-left': 8,
   'boot-right': 8,
   'framed-brooch': 4.5,
+  'mitten-left': 6,
+  'mitten-right': 6,
 };
 export function recommendedSquareCm(designId: string): number {
   return recommended[designId] ?? REFERENCE_SQUARE_CM;

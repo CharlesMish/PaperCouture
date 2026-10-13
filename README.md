@@ -135,3 +135,18 @@ Swing coat adds a long open-front silhouette with folded facings and a broad
 shawl-like shoulder yoke. Reed study, Broken twill and Copper fleck form a small
 coordinated paper set. See [illustrated selection and checks](docs/swing-coat/NOTES.md).
 The coat remains an experimental flat silhouette with continuous lining.
+
+## October integration candidate
+
+Riso proof, Crease bloom and Marbled endpaper from Claude’s October proposal
+remain Experimental after review and corrections. Dusk wash adds a quiet broad
+colour field. The recovered Folded mitten pair uses a retained top fold for a
+shorter palm: one intact 6 cm square per hand, approximately 4.1 × 4.4 cm finished.
+These are flat ornaments with a low wrist-root thumb and no hand opening.
+The original tall mitten and beret remain studies.
+
+See [actual comparisons, decisions, test results and physical limits](docs/october-integration/NOTES.md).
+There are now 22 main design entries, six optional accessories and 33 visible
+papers (13 curated, 20 Experimental); defaults and earlier IDs are preserved.
+Source integration is prepared for review. Nothing is merged or published to
+the separate website repository.

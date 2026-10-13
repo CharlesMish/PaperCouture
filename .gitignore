@@ -27,5 +27,8 @@ docs/*/tiles/
 .fit-flare-baseline/
 
 .swing-coat-qa/
+.october-qa/
+.october-main/
+.october-claude/
 docs/swing-coat/evidence/browser/*.png
 docs/swing-coat/evidence/papers/*.png

@@ -1,4 +1,9 @@
-# Design pass 2026-10: three papers, two origami studies
+# Design pass 2026-10: Claude’s submitted study
+
+Integration review and corrections: [October integration](../october-integration/NOTES.md).
+The original comparisons below predate the Riso finite-density correction and
+mitten refinement. The corrected candidate preserves Crease bloom and Marbled
+endpaper pixels. Those papers now cache their fixed artwork for repeat draws.
 
 Draft on `claude/stoic-fermi-oopgag`, built on source main `cedf65c` (merged PR31,
 Swing coat and Reed suite). Nothing is merged or published, and no live site is
@@ -51,12 +56,12 @@ the paper changes only the direction of the pink-to-teal fade.
 
 ### Crease bloom: artwork engineered to one garment's folds
 
-This is fold-and-dye (itajime). Petrol dye wicks in from every crease of the
-**Swing coat** and from the raw edges of the square, then stops in a feathered
-tide line. The dye at a point depends only on two things: its distance from the
-nearest crease, and its position along that crease. A fold over that crease
-preserves both, so every fold edge of the finished coat carries **one halo that
-wraps round it**, and the 0.07 facings dye solid. Both faces carry the same dye in
+This is a fold-and-dye-inspired print. Petrol-coloured halos follow every crease of the
+**Swing coat** and the raw edges of the square, ending in a feathered
+tide line. The dye combines contributions from the coat’s creases and the raw sheet edges.
+An individual contribution is symmetric about its own crease; the combined
+nearest-source field is not symmetric about every crease. The halos are
+**crease-aligned artwork**, not guaranteed identical ink on opposite sides of a fold. Both faces carry the same dye in
 the same material places (dyed-through); the reverse ground is a shade cooler.
 
 The crease list is kept outside the fold code, in `src/papers/coatMarks.ts`, as
@@ -72,7 +77,11 @@ would therefore be false, so this paper is specific to the coat.
 What the renders show
 ([Swing coat at all four turns, plus six other garments](evidence/crease-bloom.jpg)):
 
-- **0° is exact.**
+The historical sheet’s title says “registered”; read that as crease-aligned,
+not a demonstration of exact mirror symmetry or physical dye transfer.
+
+- **0° aligns the source lines with the coat’s creases.** It does not give exact
+  reflection symmetry of the combined dye field.
 - **180° is close but not exact.** The facings and sheet-edge halos are
   symmetric under a half-turn; the gate and yoke halos drift by up to about 0.1
   of the half-width.
@@ -93,10 +102,11 @@ ochre, slate, olive and amber, with a few pale "stone" drops, on a slate-flooded
 size. The reverse is plain laid paper with chain lines, like the inside of an
 old cover.
 
-The pattern is simulated the way the craft works. Ink drops spread and push
+The geometric pattern takes cues from the craft. Ink drops spread and push
 earlier ink outward (an area-preserving map), then rakes drag everything along
 their strokes. Every step has a closed-form inverse, so each pixel is coloured
 exactly by running the steps backwards from a fixed seed.
+This geometric construction is not a fluid or physical ink simulation.
 [Eight garments, front/back, 0° and 90°](evidence/marbled-garments.jpg): the
 combing runs vertically at 0° and across at 90°.
 
@@ -216,8 +226,7 @@ study.
 ## Recommendations
 
 1. **Crease bloom is the strongest idea.** It is the one paper that is clearly
-   *about* folding, and on the coat it gives every edge a dyed finish that no
-   flat print can. Keep it experimental and coat-specific, and say so in the
+   *about* folding: a flat print designed around this coat’s material creases. Keep it experimental and coat-specific, and say so in the
    picker (its placement note does). If it is liked, a companion drawn for the
    capelet would be cheap, since the same function would take a different crease
    list.
@@ -226,9 +235,9 @@ study.
    after Charlie has seen the pleated-skirt piping and the moiré in person.
 3. **Marbled endpaper is beautiful but not fold-aware.** It is a candidate for
    the experimental list only, unless the owner wants a bold statement paper.
-4. **Mitten: take it forward.** The next step is a full implementation (registry
-   entry, 6 cm suggested size, browser checks), optionally followed by a
-   collapse-based thumb.
+4. **Original recommendation: take the mitten forward.** Integration review
+   first tests a shorter hand made with a retained top fold. See the current
+   comparison and decision; the submitted eight-step version remains a study.
 5. **Beret: park it.** Do not implement it with simple folds.
 
 ## What was tested, and where

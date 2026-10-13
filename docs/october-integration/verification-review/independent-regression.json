@@ -1,0 +1,50 @@
+{
+  "node": "v24.19.0",
+  "reviewedHead": "09ddb9ae568511e9ed47d3dcf4ad3e5a3e869480",
+  "scope": "HEAD plus uncommitted October integration source, identified by the file hashes below. Local independent typecheck and complete npm test. Browser/build results are reported by the integration owner.",
+  "logs": {
+    "typecheck": {
+      "command": "npm run typecheck",
+      "exitCode": 0,
+      "bytes": 175,
+      "sha256": "f80b01f888b6fcad342d169786065eb886103e07b98f19831c877f9ea1d28663"
+    },
+    "test": {
+      "command": "npm test",
+      "exitCode": 0,
+      "bytes": 148382,
+      "sha256": "20b768a306a8a53ab7e8fd99213e2f71c79fb556b6bb4e09af974a9765046fee",
+      "scriptGroups": [
+        "test",
+        "check",
+        "check:collection",
+        "check:integrated",
+        "check:positioning",
+        "check:curation",
+        "check:board",
+        "check:sizing",
+        "check:outfit-folds",
+        "check:companions",
+        "check:necktie",
+        "check:camp-shirt",
+        "check:fit-flare",
+        "check:swing-coat",
+        "check:design-pass",
+        "check:mittens"
+      ]
+    }
+  },
+  "fileSha256": {
+    "src/fold/mitten.ts": "c451c96d36a9caf9fed13b55f6c0ec3cf71c3c1d8aee09cd212ca701c1f6a4e8",
+    "src/fold/garments.ts": "7300a02cea68cb8f76b5836cc64e950b117161c1c90875aee51c9292ec77cf5a",
+    "src/fold/paperSize.ts": "16a3aca917d9df2c29f1c8336205fe54584d2f8ec0c94d194c98739f6f833f90",
+    "src/papers/risoProof.ts": "af02784c0c33204bde72d4599702ce6a59ea2d7b5d3b97dedb2048de73a6bdde",
+    "src/papers/creaseBloom.ts": "140eccacc5b4751090cdc01fb67572a5e511958a3dab7def4991e79567a831cc",
+    "src/papers/marbledEndpaper.ts": "d6613396fd352aaeca5822d3d8915c817d7b307f12363daf27c9e90219c66861",
+    "src/papers/duskWash.ts": "5ac48c9515e88697665395c1ce912f06a9656d747ef7ab88a0f4fb723f1f367c",
+    "src/papers/index.ts": "9bb692428e4ae0dfae37a89fb04b430770e805d077a0ea7eb6e82cb77e1484b9",
+    "package.json": "22f00dc0e23b742817a3e90b21f9f6598e6320a199decc2b73480538ec6df8a6",
+    "scripts/check-mitten.ts": "e3aded30d873a0f3a29c95f2e9b0c8cbdcf0eaeef3c592d3e0592f3a897f0029",
+    "scripts/check-mitten-rendered.ts": "93b7d02ae70d514d6bc4e670ae9008ea7e6864af88581562c12d46b3c2753c0b"
+  }
+}

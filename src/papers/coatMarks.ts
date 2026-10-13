@@ -1,14 +1,13 @@
 // Where the Swing coat creases the square, in material coordinates (the
 // unfolded square is [-1, 1]^2, y toward the collar). Papers stay independent
-// of fold code at runtime; scripts/check-crease-papers.ts compares this list
+// of fold code at runtime; scripts/check-design-pass.ts compares this list
 // with the crease pattern of buildSwingCoat() so it cannot drift silently.
 //
 // Each segment is one straight crease between two vertices of the finished
 // crease pattern. The hem fold appears several times because it runs through
 // several layers: each layer carries its own copy, reflected by earlier folds.
-// Across any one crease the paper on either side is a mirror image of the
-// other, so ink that depends only on the distance from that crease (and the
-// position along it) lands on itself when the fold closes.
+// These coordinates locate the artwork's sources. They alone do not establish
+// reflection symmetry of the combined dye field or physical dyeing behavior.
 
 export type Segment = readonly [readonly [number, number], readonly [number, number]];
 

@@ -1,7 +1,7 @@
 # Paper Couture: independent outfit brainstorming brief
 
-Inventory refreshed on 2026-10-12 against main `cedf65c`; the 2026-10 design-pass
-draft (`docs/design-pass-2026-10/`) adds three experimental papers on top of it.
+Inventory refreshed on 2026-10-12 against main `cedf65c`; the October integration
+addendum at the end records the two recovered mitten entries and four new papers.
 
 Copy this brief into a separate Claude or Grok conversation. Give each the same
 reviewed source SHA, front/back images, and one mixed-board image. Ask them to work
@@ -47,10 +47,10 @@ independently. No external model has been contacted for this study.
 > Paper direction: 13 curated papers (Stripe and disc, the default; Running stitch;
 > Pinstripe and lining; Plum scatter; Oat linen; Slate grain; Plum seed; Broken
 > twill; Copper fleck; Border print; Botanical sprigs; Indigo lattice; Ivory, ink
-> border) and 17 experimental ones (Reed study, Arc study, Ginkgo pairs, Corner
+> border) and 16 visible experimental ones (Reed study, Arc study, Ginkgo pairs, Corner
 > bloom, Midnight orchard, Tidal bands, Woven checks, Seed dashes, Ink reverse,
 > Reverse garden, Starlit lining, Open stems, Falling chevrons, Sunray pleats,
-> Cut-paper mosaic, Wide frame, Compass lining), plus the hidden Diagnostic grid.
+> Cut-paper mosaic, Wide frame), plus hidden Compass lining and Diagnostic grid.
 > Plum scatter, Corner bloom, Ginkgo pairs and Reed study are positionable motifs
 > (finite slide); Seed dashes snaps by half-cells. Sunray pleats is the one
 > paper engineered to a garment's creases (Classic A-line dress at 0°). Broken
@@ -98,3 +98,20 @@ Starting references: `AGENTS.md`, `README.md`, `HANDOFF.md`,
 `src/papers/{types,printPosition}.ts`, `scripts/paperLanding.ts`,
 `docs/design-curation/NOTES.md`. The published baseline and development candidate
 have different SHAs; record which was actually supplied.
+
+## October integration addendum
+
+The source candidate on `design/october-integration` retains the current-main
+inventory above and adds two Experimental main-design entries, Folded mitten
+with thumb left/right, plus four visible Experimental papers: Riso proof,
+Crease bloom, Marbled endpaper and Dusk wash. The recovered mittens each use
+one 6 cm square and finish approximately 4.06 × 4.35 cm; they are flat ornaments
+with a low wrist-root thumb and no hand opening. Beret stays unregistered.
+
+Candidate totals: **22 main design entries, six optional accessories, 35 paper
+definitions / 33 visible papers**. The original 13 curated papers are unchanged;
+20 visible papers are Experimental. Compass lining and the diagnostic grid are
+hidden. See [review and rendered evidence](../october-integration/NOTES.md) for
+the Riso arithmetic correction, Crease bloom’s limited alignment claim, remaining
+mitten connector intersections, and the distinction between numerical checks
+and physical-paper feasibility. This candidate is not merged or published.

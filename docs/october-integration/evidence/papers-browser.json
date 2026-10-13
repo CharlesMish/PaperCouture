@@ -1,0 +1,171 @@
+{
+  "rows": [
+    {
+      "id": "riso-proof",
+      "sideHashes": {
+        "front": "9403cc604b38a721a8445800ed42843e24ec15622802f03a9fac0593f3d051ee",
+        "back": "f60e9eea3bc018fc303064256abe9090ff836bcf48ecfc2f172136f345a56ba9"
+      },
+      "timings": {
+        "front": {
+          "firstDrawMs": 8.399999998509884,
+          "warmMedianMs": 2.699999999254942
+        },
+        "back": {
+          "firstDrawMs": 2.600000001490116,
+          "warmMedianMs": 1.4000000022351742
+        }
+      },
+      "turns": [
+        {
+          "q": 0,
+          "points": 4,
+          "maxMatrixError": 0
+        },
+        {
+          "q": 1,
+          "points": 4,
+          "maxMatrixError": 5.898059818321144e-17
+        },
+        {
+          "q": 2,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        },
+        {
+          "q": 3,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        }
+      ]
+    },
+    {
+      "id": "crease-bloom",
+      "sideHashes": {
+        "front": "0ddf6aa121b7c98cec80923b044a3ee922fe4866ea43a07e8c8733f8942f7455",
+        "back": "59063848dadb1b521ea7b5210230b6314501f3a57ba14ebc3ea6d6a0b929cd16"
+      },
+      "timings": {
+        "front": {
+          "firstDrawMs": 163.69999999925494,
+          "warmMedianMs": 0.19999999925494194
+        },
+        "back": {
+          "firstDrawMs": 156.20000000298023,
+          "warmMedianMs": 0.4000000022351742
+        }
+      },
+      "turns": [
+        {
+          "q": 0,
+          "points": 4,
+          "maxMatrixError": 0,
+          "maxDyeError": 0.0053626854090188525
+        },
+        {
+          "q": 1,
+          "points": 4,
+          "maxMatrixError": 5.898059818321144e-17,
+          "maxDyeError": 0.0053626854090188525
+        },
+        {
+          "q": 2,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16,
+          "maxDyeError": 0.0053626854090188525
+        },
+        {
+          "q": 3,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16,
+          "maxDyeError": 0.0053626854090188525
+        }
+      ]
+    },
+    {
+      "id": "marbled-endpaper",
+      "sideHashes": {
+        "front": "3cf17a203e4f422c6e0a1a4691ad5f3f662051553eee12c7a0f0ec9468abe76b",
+        "back": "a23133df5ea4539409355934e413bd998fccab56b5086949d82618827b3f8d27"
+      },
+      "timings": {
+        "front": {
+          "firstDrawMs": 429.69999999925494,
+          "warmMedianMs": 0.20000000298023224
+        },
+        "back": {
+          "firstDrawMs": 1.5,
+          "warmMedianMs": 0.09999999776482582
+        }
+      },
+      "turns": [
+        {
+          "q": 0,
+          "points": 4,
+          "maxMatrixError": 0
+        },
+        {
+          "q": 1,
+          "points": 4,
+          "maxMatrixError": 5.898059818321144e-17
+        },
+        {
+          "q": 2,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        },
+        {
+          "q": 3,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        }
+      ]
+    },
+    {
+      "id": "dusk-wash",
+      "sideHashes": {
+        "front": "8d19a91ee1cd3bd7f941bb84c13366726030792b65194c5315f2399776df2f16",
+        "back": "052ff27e1f723e109f210e1e2bca7c44809fd1c912b30e9a523b0bf2f9bcf668"
+      },
+      "timings": {
+        "front": {
+          "firstDrawMs": 1.5,
+          "warmMedianMs": 0
+        },
+        "back": {
+          "firstDrawMs": 0.8999999985098839,
+          "warmMedianMs": 0
+        }
+      },
+      "turns": [
+        {
+          "q": 0,
+          "points": 4,
+          "maxMatrixError": 0
+        },
+        {
+          "q": 1,
+          "points": 4,
+          "maxMatrixError": 5.898059818321144e-17
+        },
+        {
+          "q": 2,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        },
+        {
+          "q": 3,
+          "points": 4,
+          "maxMatrixError": 2.220446049250313e-16
+        }
+      ]
+    }
+  ],
+  "circleCalls": 123326,
+  "bloomReflectionWitness": {
+    "a": 0.7358978696113521,
+    "b": 0.00004348989628390332,
+    "difference": 0.7358543797150682
+  },
+  "limits": "Numerical drawing/texture checks; no physical dye or fold certification."
+}

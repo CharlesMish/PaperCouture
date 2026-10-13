@@ -64,19 +64,29 @@ export function marbleAt(x: number, y: number): number {
   return -1;
 }
 
+// Reuse expensive fixed artwork across rotations and board restoration.
+// Bounded to four raster sizes/faces; callers only copy these private pixels.
+const rasters = new Map<string, ImageData>();
+
 function marble(ctx: CanvasRenderingContext2D, S: number) {
   const N = Math.min(S, 512), sub = S <= 256 ? 2 : 1; // swatches need the extra samples
-  const rgb = [SIZE_GROUND, ...INKS].map(c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)));
-  const img = new ImageData(N, N);
-  for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
-    const acc = [0, 0, 0];
-    for (let a = 0; a < sub; a++) for (let b = 0; b < sub; b++) {
-      const col = rgb[marbleAt((px + (a + 0.5) / sub) / N, (py + (b + 0.5) / sub) / N) + 1];
-      acc[0] += col[0]; acc[1] += col[1]; acc[2] += col[2];
+  const key = `${N}:${sub}`;
+  let img = rasters.get(key);
+  if (!img) {
+    const rgb = [SIZE_GROUND, ...INKS].map(c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16)));
+    img = new ImageData(N, N);
+    for (let py = 0; py < N; py++) for (let px = 0; px < N; px++) {
+      const acc = [0, 0, 0];
+      for (let a = 0; a < sub; a++) for (let b = 0; b < sub; b++) {
+        const col = rgb[marbleAt((px + (a + 0.5) / sub) / N, (py + (b + 0.5) / sub) / N) + 1];
+        acc[0] += col[0]; acc[1] += col[1]; acc[2] += col[2];
+      }
+      const o = (py * N + px) * 4;
+      for (let c = 0; c < 3; c++) img.data[o + c] = Math.round(acc[c] / (sub * sub));
+      img.data[o + 3] = 255;
     }
-    const o = (py * N + px) * 4;
-    for (let c = 0; c < 3; c++) img.data[o + c] = Math.round(acc[c] / (sub * sub));
-    img.data[o + 3] = 255;
+    if (rasters.size >= 4) rasters.delete(rasters.keys().next().value!);
+    rasters.set(key, img);
   }
   if (N === S) { ctx.putImageData(img, 0, 0); return; }
   const tmp = document.createElement('canvas');
