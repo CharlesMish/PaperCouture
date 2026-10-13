@@ -10,13 +10,17 @@ const sample: BoardState = { ...emptyBoard(), selected: 'a', items: [{ id: 'a', 
 } }] };
 assert.deepEqual(parseBoard(JSON.stringify(sample), paperIds), sample);
 const full: BoardState = { ...sample, items: Array.from({ length: MAX_PIECES }, (_, n) => ({ ...sample.items[0], id: `piece-${n}` })), selected: 'piece-0' };
-assert.equal(MAX_PIECES, 5);
+assert.equal(MAX_PIECES, 8);
 assert.deepEqual(parseBoard(JSON.stringify(full), paperIds), full);
 assert.throws(() => parseBoard(JSON.stringify({ ...full, items: [...full.items, { ...sample.items[0], id: 'one-too-many' }] }), paperIds), /Unsupported board/);
+assert.deepEqual(parseBoard(JSON.stringify({ ...full, format: 'roomy' }), paperIds), { ...full, format: 'roomy' });
 const undo = copyBoard(sample); sample.items[0].x = .5;
 assert.equal(undo.items[0].x, 0); assert.equal(undo.items[0].snapshot, sample.items[0].snapshot);
 for (const corrupt of [
   (s: any) => { s.version = 2; },
+  (s: any) => { s.format = 'unknown'; },
+  (s: any) => { s.format = ['roomy']; },
+  (s: any) => { s.format = null; },
   (s: any) => { s.items = Array(MAX_PIECES + 1).fill(s.items[0]); },
   (s: any) => { s.selected = 'missing'; },
   (s: any) => { s.items[0].snapshot.geometries[0].position[0] = null; },

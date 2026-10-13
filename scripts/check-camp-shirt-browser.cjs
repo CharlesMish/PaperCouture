@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Isolated local contexts only; never reads the owner's browser/profile/save.
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
@@ -86,7 +87,7 @@ const key = 'paper-couture.pinboard.v1';
   await load('design=camp-shirt&paper=corner-bloom&step=99&view=display&printX=0.125&printY=-0.125');await open();
   await page.getByLabel('Starting square size').selectOption('14.4');const preRepeat=await board();await btn('Pin current piece').click();const repeated=await board();assert.deepEqual(repeated.items.slice(0,-1),preRepeat.items);assert.equal(repeated.items.at(-1).paperSize.sideCm,14.4);
   assert.equal(JSON.stringify(repeated.items[0].snapshot.geometries),JSON.stringify(repeated.items.at(-1).snapshot.geometries),'JSON round-trip only canonicalizes signed zero');assert.deepEqual(repeated.items[0].snapshot.materials,repeated.items.at(-1).snapshot.materials);
-  assert(await btn('Board full · five pieces').isDisabled());await btn('Remove selected').click();await btn('Undo').click();assert.deepEqual(await board(),repeated);await btn('Remove selected').click();
+  await checkCapacity(page);await btn('Remove selected').click();await btn('Undo').click();assert.deepEqual(await board(),repeated);await btn('Remove selected').click();
   // Retain outfit while making local UI move/tilt changes and undo them.
   await page.getByLabel('Selected board piece').selectOption(outfit.items[0].id);const arranged=await board();await btn('Move right').click();await btn('Undo').click();assert.deepEqual(await board(),arranged);
   await page.getByLabel('Pinboard tilt').fill('8');await btn('Undo').click();assert.deepEqual(await board(),arranged);
@@ -95,7 +96,7 @@ const key = 'paper-couture.pinboard.v1';
    await page.setViewportSize({width,height});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),width);await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);await shot(`outfit-${width}`);
   }
   await page.setViewportSize({width:1180,height:900});await btn('Return to folding').click();await settle();await btn('Start over').click();await settle();await open();assert.deepEqual(await board(),arranged);
-  result.checks.push('18cm shirt with 20cm skirt, 8cm hat and 8cm clutch: actual pin controls; exact posed vertices/UVs; independent 14.4cm repeat capture; five-slot cap; remove/Undo, move/tilt/Undo, reload and reset preserve captures; 390/320/landscape layouts; PNG byte-identical to the visible 1800×2100 composite.');console.log(result.checks.at(-1));
+  result.checks.push('18cm shirt with 20cm skirt, 8cm hat and 8cm clutch: actual pin controls; exact posed vertices/UVs; independent 14.4cm repeat capture; eight-slot cap with exact restoration of the five-piece composition; remove/Undo, move/tilt/Undo, reload and reset preserve captures; 390/320/landscape layouts; PNG byte-identical to the visible 1800×2100 composite.');console.log(result.checks.at(-1));
   await context.close();
   // Same exact prior capture fixture in a fresh profile. New reader must not
   // reinterpret or rewrite valid captures when a new design is introduced.

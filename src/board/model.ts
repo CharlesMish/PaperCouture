@@ -1,8 +1,9 @@
+import type { BoardFormat } from './layout';
 import type { StartingPaperSize } from '../fold/paperSize';
 
 /** Version one stores posed vertices, never a recipe that can refold a kept piece. */
 export const BOARD_KEY = 'paper-couture.pinboard.v1';
-export const MAX_PIECES = 5;
+export const MAX_PIECES = 8;
 export const MAX_SAVE_LENGTH = 2_000_000;
 export const BACKGROUNDS = { Linen: '#d3c8b5', Rose: '#c4a09f', Slate: '#59646a' };
 export type Background = keyof typeof BACKGROUNDS;
@@ -17,7 +18,7 @@ export interface FrozenPiece {
   parts: { geometry: number; material: number; matrix: number[]; kind: 'mesh' | 'lines' }[];
 }
 export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number; paperSize?: StartingPaperSize }
-export interface BoardState { version: 1; background: Background; selected: string | null; items: BoardItem[] }
+export interface BoardState { version: 1; format?: BoardFormat; background: Background; selected: string | null; items: BoardItem[] }
 export const emptyBoard = (): BoardState => ({ version: 1, background: 'Linen', selected: null, items: [] });
 export function copyBoard(s: BoardState): BoardState {
   // Geometry and paper descriptions are immutable and may be shared by Undo states.
@@ -33,7 +34,7 @@ const text = (v: unknown, max: number): v is string => typeof v === 'string' && 
 export function parseBoard(raw: string, paperIds: readonly string[]): BoardState {
   if (raw.length > MAX_SAVE_LENGTH) throw new Error('Board is too large');
   const s: unknown = JSON.parse(raw);
-  if (!record(s) || s.version !== 1 || typeof s.background !== 'string' || !Object.hasOwn(BACKGROUNDS, s.background)
+  if (!record(s) || s.version !== 1 || (s.format !== undefined && s.format !== 'standard' && s.format !== 'roomy') || typeof s.background !== 'string' || !Object.hasOwn(BACKGROUNDS, s.background)
     || !Array.isArray(s.items) || s.items.length > MAX_PIECES) throw new Error('Unsupported board');
   const ids = new Set<string>();
   for (const item of s.items) {

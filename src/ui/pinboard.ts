@@ -3,7 +3,7 @@ import { PAPERS } from '../papers';
 import { rotationCheckPaper } from '../papers/rotationCheck';
 import { BACKGROUNDS, Background, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES } from '../board/model';
 import { capture, restore } from '../board/snapshot';
-import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_EXPORT_WIDTH, BOARD_EXPORT_HEIGHT } from '../board/layout';
+import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_FORMATS, BoardFormat } from '../board/layout';
 import { describePaperSize, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
 
 export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number; paperSize?: PaperSizeSource }
@@ -23,6 +23,9 @@ export class Pinboard {
   private history: BoardState[] = [];
   private title = document.createElement('h2');
   private tilt = document.createElement('input');
+  private format = document.createElement('select');
+  private note = document.createElement('p');
+  private get layout() { return BOARD_FORMATS[this.state.format ?? 'standard']; }
   private background = document.createElement('select');
   private source = document.createElement('select');
   private size = document.createElement('select');
@@ -59,8 +62,6 @@ export class Pinboard {
     caption.textContent = 'Select paper to move it. The outline marks your selection and stays out of the PNG.';
     left.append(this.canvas, caption);
     const tools = document.createElement('div'); tools.className = 'board-tools';
-    const hint = document.createElement('p');
-    hint.textContent = 'Up to five finished pieces.';
     const sourceLabel = this.label('Capture', this.source, 'Piece to pin');
     const sizeLabel = this.label('Starting paper', this.size, 'Starting square size');
     this.sizeNote.className = 'editor-readout';
@@ -73,6 +74,10 @@ export class Pinboard {
     this.add = this.button('Pin current piece', () => this.pin()); this.add.classList.add('btn-primary');
     const selectionLabel = this.label('Selected', this.pieces, 'Selected board piece');
     this.pieces.onchange = () => { this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
+    const formatLabel = this.label('Board size', this.format, 'Board size');
+    this.format.add(new Option('Standard', 'standard'));
+    this.format.add(new Option('Roomy · more space', 'roomy'));
+    this.format.onchange = () => this.changeFormat(this.format.value as BoardFormat);
     const bg = this.label('Background', this.background, 'Pinboard background');
     for (const name of Object.keys(BACKGROUNDS)) this.background.add(new Option(name, name));
     this.background.onchange = () => this.mutate(() => { this.state.background = this.background.value as Background; this.setBackground(); });
@@ -103,12 +108,11 @@ export class Pinboard {
     this.download = this.button('Save PNG', () => { void this.exportPNG(); }); this.download.classList.add('btn-primary');
     const back = this.button('Return to piece', () => this.dialog.close());
     const workshop = this.button('Return to folding', () => { this.dialog.close(); this.handlers.workshop(); });
-    const note = document.createElement('p'); note.className = 'editor-readout';
-    note.textContent = `PNG · ${BOARD_EXPORT_WIDTH} × ${BOARD_EXPORT_HEIGHT} · selected background. Board saves in this browser on this device. Undo keeps the last 20 changes in this tab.`;
+    this.note.className = 'editor-readout';
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
     this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
     this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
-    tools.append(hint, sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, note, this.storageStatus, this.retry, this.status);
+    tools.append(sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, formatLabel, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, this.note, this.storageStatus, this.retry, this.status);
     const body = document.createElement('div'); body.className = 'board-body'; body.append(left, tools);
     this.dialog.append(this.title, body); parent.append(this.dialog);
     this.selection.visible = false; this.scene.add(this.selection);
@@ -135,7 +139,7 @@ export class Pinboard {
       if (Math.hypot(e.clientX-d.x, e.clientY-d.y) < 6 && !d.moved) return;
       d.moved = true;
       const r = this.canvas.getBoundingClientRect(), before = d.before.items.find(i => i.id === d.item)!, item = this.selected()!;
-      item.x = before.x + (e.clientX-d.x)/r.width*WIDTH; item.y = before.y - (e.clientY-d.y)/r.height*HEIGHT;
+      item.x = before.x + (e.clientX-d.x)/r.width*this.layout.width; item.y = before.y - (e.clientY-d.y)/r.height*this.layout.height;
       this.position(); this.constrain(item.id); this.render();
     });
     this.canvas.addEventListener('pointerup', e => { if (e.pointerId === this.drag?.id) this.finishDrag(true); });
@@ -228,6 +232,9 @@ export class Pinboard {
     this.title.focus({ preventScroll: true }); this.dialog.scrollTop = 0; this.render();
   }
   private refresh() {
+    this.title.textContent = `Your pinboard · ${this.state.items.length}/${MAX_PIECES}`;
+    this.format.value = this.state.format ?? 'standard';
+    this.note.textContent = `${this.state.format === 'roomy' ? 'Roomy gives more arranging space; pieces appear smaller in the overview. ' : ''}PNG · ${this.layout.exportWidth} × ${this.layout.exportHeight}. Board saves on this device. Undo keeps the last 20 changes in this tab.`;
     this.launcher.textContent = `View board (${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
     this.pieces.replaceChildren();
     for (const [i, item] of this.state.items.entries()) this.pieces.add(new Option(`${i+1}. ${item.title}`, item.id));
@@ -241,12 +248,46 @@ export class Pinboard {
     this.undo.disabled = !this.history.length; this.download.disabled = !this.state.items.length;
     this.add.disabled = this.state.items.length >= MAX_PIECES || !this.source.length || this.source.value === '';
     this.size.disabled = !this.source.length || this.source.value === '';
-    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · five pieces' : 'Pin current piece';
+    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · eight pieces' : 'Pin current piece';
     this.storageStatus.textContent = this.saveWarning || 'Board saved on this device.';
     this.retry.hidden = !this.unsaved;
     if (this.unsaved && this.dialog.open) this.storageStatus.scrollIntoView({ block: 'nearest' });
   }
+  private changeFormat(format: BoardFormat) {
+    this.finishDrag(false); this.finishTilt();
+    if (format === (this.state.format ?? 'standard')) return;
+    const { width, height } = BOARD_FORMATS[format];
+    this.position();
+    const fits = [...this.groups.values()].every(group => {
+      const b = new THREE.Box3().setFromObject(group, true);
+      return b.min.x >= -width/2 + MARGIN - 1e-6 && b.max.x <= width/2 - MARGIN + 1e-6
+        && b.min.y >= -height/2 + MARGIN - 1e-6 && b.max.y <= height/2 - MARGIN + 1e-6;
+    });
+    if (!fits) {
+      this.format.value = this.state.format ?? 'standard';
+      this.status.textContent = 'Move the outer pieces closer to the centre before choosing Standard. Your arrangement has stayed in place.';
+      this.status.scrollIntoView({ block: 'nearest' }); return;
+    }
+    this.mutate(() => {
+      if (format === 'standard') delete this.state.format;
+      else this.state.format = format;
+    });
+    this.status.textContent = format === 'roomy'
+      ? 'More space around your pieces. Their paper sizes and positions are unchanged.'
+      : 'Standard board restored. Your pieces have stayed in place.';
+  }
+  private applyLayout() {
+    const { width, height } = this.layout;
+    this.camera.left = -width/2; this.camera.right = width/2;
+    this.camera.top = height/2; this.camera.bottom = -height/2; this.camera.updateProjectionMatrix();
+    this.dialog.style.setProperty('--board-aspect', String(width/height));
+    if (this.backing && (this.backing.geometry.parameters.width !== width || this.backing.geometry.parameters.height !== height)) {
+      this.backing.geometry.dispose(); this.backing.geometry = new THREE.PlaneGeometry(width, height);
+    }
+  }
+
   private reconcile() {
+    this.applyLayout();
     for (const [id, group] of this.groups) if (!this.state.items.some(i => i.id === id)) {
       group.userData.dispose(); group.removeFromParent(); this.groups.delete(id);
     }
@@ -270,7 +311,7 @@ export class Pinboard {
     const item = this.state.items.find(i => i.id === id), group = this.groups.get(id); if (!item || !group) return;
     group.updateMatrixWorld(true); const b = new THREE.Box3().setFromObject(group, true);
     const clamp = (lo: number, hi: number, extent: number) => hi-lo > 2*(extent-MARGIN) ? -(lo+hi)/2 : Math.max(-extent+MARGIN-lo, Math.min(extent-MARGIN-hi, 0));
-    item.x += clamp(b.min.x, b.max.x, WIDTH/2); item.y += clamp(b.min.y, b.max.y, HEIGHT/2); this.position();
+    item.x += clamp(b.min.x, b.max.x, this.layout.width/2); item.y += clamp(b.min.y, b.max.y, this.layout.height/2); this.position();
   }
   private render() {
     if (!this.renderer || !this.dialog.open || this.exporting) return;
@@ -278,7 +319,7 @@ export class Pinboard {
     this.selection.visible = !!group;
     if (group) { this.selection.box.setFromObject(group, true); this.selection.updateMatrixWorld(true); }
     const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));
-    this.renderer.setSize(w, Math.round(w*HEIGHT/WIDTH), false); this.renderer.render(this.scene, this.camera);
+    this.renderer.setSize(w, Math.round(w*this.layout.height/this.layout.width), false); this.renderer.render(this.scene, this.camera);
   }
 
   private init() {
@@ -293,7 +334,7 @@ export class Pinboard {
     key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.camera.near = .1; key.shadow.camera.far = 15;
     key.shadow.bias = -.0002; key.shadow.normalBias = .004;
     this.scene.add(key, this.arrangement);
-    this.backing = new THREE.Mesh(new THREE.PlaneGeometry(WIDTH, HEIGHT), new THREE.MeshStandardMaterial({ roughness: 1 }));
+    this.backing = new THREE.Mesh(new THREE.PlaneGeometry(this.layout.width, this.layout.height), new THREE.MeshStandardMaterial({ roughness: 1 }));
     this.backing.position.z = -.15; this.backing.receiveShadow = true; this.scene.add(this.backing);
     this.setBackground();
   }
@@ -306,7 +347,7 @@ export class Pinboard {
       ctx.fillStyle = '#29231d0c'; ctx.fillRect(i, 0, 1, 256);
     }
     const texture = new THREE.CanvasTexture(c); texture.colorSpace = THREE.SRGBColorSpace;
-    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(4, 4*HEIGHT/WIDTH);
+    texture.wrapS = texture.wrapT = THREE.RepeatWrapping; texture.repeat.set(4, 4*this.layout.height/this.layout.width);
     this.backing.material.map?.dispose(); this.backing.material.map = texture; this.backing.material.needsUpdate = true;
   }
 
@@ -316,7 +357,7 @@ export class Pinboard {
     this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = true);
     this.status.textContent = 'Preparing PNG…';
     try {
-      this.renderer.setSize(BOARD_EXPORT_WIDTH, BOARD_EXPORT_HEIGHT, false); this.renderer.render(this.scene, this.camera);
+      this.renderer.setSize(this.layout.exportWidth, this.layout.exportHeight, false); this.renderer.render(this.scene, this.camera);
       const blob = await new Promise<Blob>((resolve, reject) => this.canvas.toBlob(b => b ? resolve(b) : reject(new Error('PNG unavailable')), 'image/png'));
       const url = URL.createObjectURL(blob), link = document.createElement('a');
       link.href = url; link.download = 'paper-couture-pinboard.png'; link.hidden = true;

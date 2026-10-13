@@ -1,3 +1,22 @@
+# Paper Couture — more pinboard room (owner review)
+
+Charlie asked for further preparation and more board space. The October review
+branch now supports eight independent captures and an optional Roomy board
+(4.8 × 5.6 versus Standard 3.6 × 4.2; about 78% more area). Standard remains the
+default. Captured sizes, coordinates, artwork and fold geometry are unchanged.
+Shrinking is refused if any piece would lie outside Standard; no automatic moving
+or scaling. Undo restores board format. Existing saves need no migration.
+
+The previous `753b8e6` CI did not all pass: two composition workflows caught the
+mobile starting-square control below the initial tools viewport; the October
+45-minute job exhausted its time during the phone gate after the 128-view gallery
+passed. The redundant capacity paragraph is replaced by a header count, preserving
+full-width controls and paper preview size. Phone and Roomy checks have their own
+CI job. See [implementation, evidence and limits](docs/october-integration/roomy-board/NOTES.md).
+
+Keep source and website separate. Nothing merged or published. Physical-paper,
+real-phone/Safari and first-draw performance work remain outstanding.
+
 # Paper Couture — external-review follow-up
 
 Charlie asked to complete the follow-up work after Claude/Grok's reviews of

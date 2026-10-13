@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Smoke the served production bundle, never Vite source modules or a personal
 // browser profile. Diagnostic layout places the five real UI captures; fold,
 // capture, size, movement, remove/Undo, reload and export use their actual UI.
@@ -96,7 +97,7 @@ async function bundle() {
       // Evidence-only placement: the five captures come from the real Pin UI.
       await page.evaluate(({ x, y }) => { const b = paperCouture.pinboard; b.mutate(() => { const i = b.state.items.at(-1); i.x = x; i.y = y; b.position(); b.constrain(i.id); }); }, piece);
     }
-    assert(await btn('Board full · five pieces').isDisabled()); assert.equal((await state()).items.length, 5);
+    await checkCapacity(page); assert.equal((await state()).items.length, 5);
     result.measurements = await measure();
     for (const { bounds: [left, right, bottom, top] } of result.measurements) assert(left >= -1.72001 && right <= 1.72001 && bottom >= -2.02001 && top <= 2.02001, 'Every real capture fits the board');
     const initial = await state();
@@ -108,7 +109,7 @@ async function bundle() {
     await page.reload(); await settle(); await open(); assert.deepEqual(await state(), initial);
     assert.equal(await page.evaluate(key => localStorage.getItem(key), key), durable, 'Reload/open must not rewrite the save');
     result.checks.push('Served compiled JS/CSS; three new experimental design IDs and three new papers registered; Boat-neck top completed with seven actual fold controls.',
-      'Five actual Pin captures with16/20/18/8/8cm defaults; old captures survive every added piece; full button disables sixth; movement/layer/removeUndo and exact five-piece reload.');
+      'Five actual Pin captures with16/20/18/8/8cm defaults; old captures survive every added piece; eight-slot capacity and exact Undo restoration; movement/layer/removeUndo and exact five-piece reload.');
     for (const [width, height] of [[1280, 900], [390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await page.locator('.board-tools').evaluate(e => { e.scrollTop = 0; });
       const layout = await page.evaluate(() => {

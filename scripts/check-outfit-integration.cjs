@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Fresh browser contexts only: actual compositions, compatibility and controls.
 // No user profiles or existing browser storage are opened or cleared.
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -129,7 +130,7 @@ fs.mkdirSync(out, { recursive: true });
       await open(); const previous = await state(); await btn('Pin current piece').click();
       assert.deepEqual((await state()).items.slice(0, -1), previous.items); await moveTo(x, y);
     }
-    assert.equal((await state()).items.length, 5); assert(await btn('Board full · five pieces').isDisabled());
+    assert.equal((await state()).items.length, 5); await checkCapacity(page);
     const full = await state(); const m = await metrics(); assertBoard(m); report.measurements.push({ name: 'five-piece-outfit', ...m });
     await exportPNG('five-piece-outfit');
     const durable = await page.evaluate(k => localStorage.getItem(k), key);

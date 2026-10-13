@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Companion collection regression against a separately served frozen PR24 build.
 // Fresh, sequential browser contexts only; never a user's profile or storage.
 // Uses the running app's diagnostic objects and real controls, with no source imports.
@@ -160,7 +161,7 @@ async function bundle(url) {
     // shapes can be opened by PR24; the recipes, geometry and matrices are exact.
     await visit(base, undefined, async a => {
       const ids = [...new Set([...requiredIds, ...(accentId === 'clutch' ? [] : [accentId])])];
-      assert(ids.length <= 5, 'New-design test captures must respect the real five-piece cap');
+      assert(ids.length <= 5, 'New-design test captures must respect the five-piece comparison fixture');
       for (const [index, id] of ids.entries()) {
         await a.load(`design=${id}&paper=${index % 2 ? 'plum-scatter' : 'corner-bloom'}&step=0&view=workshop`);
         assert.equal(await a.page.getByLabel('Garment design').inputValue(), id); assert.match(await a.page.locator('.studio-note').innerText(), /(One square|Small intact square)/);
@@ -221,8 +222,8 @@ async function bundle(url) {
         assert.equal(await a.page.evaluate(() => paperCouture.garmentId), piece.id); assert.equal(await a.page.evaluate(() => paperCouture.paperId), piece.paper);
         await a.capture(piece.cm); await a.moveTo(piece.x, piece.y);
       }
-      const full = await a.state(), durable = await a.raw(); assert.equal(full.items.length, 5); assert(await a.btn('Board full · five pieces').isDisabled());
-      await a.btn('Board full · five pieces').evaluate(e => e.click()); assert.deepEqual(await a.state(), full); assert.equal(await a.raw(), durable);
+      const full = await a.state(), durable = await a.raw(); assert.equal(full.items.length, 5); await checkCapacity(a.page);
+      assert.deepEqual(await a.state(), full); assert.equal(await a.raw(), durable);
       assert(full.items.some(i => i.snapshot.materials.some(m => m.paper?.id === paperId)), 'New-paper rollback test must contain the new paper');
       for (const [width, height] of [[1280, 900], [390, 844], [320, 568]]) {
         await a.page.setViewportSize({ width, height }); await a.page.locator('.board-tools').evaluate(e => { e.scrollTop = 0; });
@@ -295,7 +296,7 @@ async function bundle(url) {
       assert.deepEqual(JSON.parse(await a.raw()), unsaved); await a.btn('Undo').click(); assert.deepEqual(await a.state(), retained);
     });
     report.checks.push('Five actual captures compose capelet/skirt/two independent boots/accent; desktop/390/320 full-board camera, measurable readable extents, 44px size choice, selection and exact scene PNG. Small-accent touch cancel/commit/Undo and empty-space behavior pass.');
-    report.checks.push('Sixth pin is blocked; all five pieces survive repeated all-edge movement at both tilt limits, layer/removeUndo, stable GPU counts, exact reload and injected quota/retry without losing the durable board.');
+    report.checks.push('Ninth pin is blocked; all five pieces survive repeated all-edge movement at both tilt limits, layer/removeUndo, stable GPU counts, exact reload and injected quota/retry without losing the durable board.');
 
     // A separate five-slot composition proves the capelet's shoulder-layer role
     // over a top, rather than relying on the capelet/skirt arrangement alone.
@@ -312,7 +313,7 @@ async function bundle(url) {
         assert.equal(await a.page.evaluate(() => paperCouture.garmentId), piece.id);
         await a.capture(piece.cm); await a.moveTo(piece.x, piece.y);
       }
-      const full = await a.state(); assert.equal(full.items.length, 5); assert(await a.btn('Board full · five pieces').isDisabled());
+      const full = await a.state(); assert.equal(full.items.length, 5); await checkCapacity(a.page);
       for (const [width, height] of [[1280, 900], [390, 844], [320, 568]]) {
         await a.page.setViewportSize({ width, height }); await a.page.locator('.board-tools').evaluate(e => { e.scrollTop = 0; });
         const m = await a.metrics(); assertBoard(m);

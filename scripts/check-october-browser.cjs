@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Production-compatible October integration check. No source-module imports,
 // injected papers, private profile, existing owner saves or external services.
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -166,7 +167,7 @@ function snapshotBounds(snapshot) {
       // Repeatable styling coordinates, separate from the real move/drag tests.
       await page.evaluate(({ x, y }) => { const b = paperCouture.pinboard; b.mutate(() => { const item = b.state.items.at(-1); item.x = x; item.y = y; b.position(); b.constrain(item.id); }); }, { x, y });
     }
-    let finalBoard = await board(); assert.equal(finalBoard.items.length, 5); assert(await btn('Board full · five pieces').isDisabled());
+    let finalBoard = await board(); assert.equal(finalBoard.items.length, 5); await checkCapacity(page);
     for (const item of finalBoard.items) {
       const bounds = snapshotBounds(item.snapshot);
       assert(bounds.min[0] + item.x >= -1.72001 && bounds.max[0] + item.x <= 1.72001);
