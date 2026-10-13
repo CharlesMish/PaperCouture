@@ -2,7 +2,7 @@
 // not physical-paper certification or a continuous-collision proof.
 import assert from 'node:assert/strict';
 import { mkdirSync, writeFileSync } from 'node:fs';
-import { buildMitten } from '../src/fold/mitten';
+import { buildMitten, MITTEN_GEOMETRY } from '../src/fold/mitten';
 import { buildGarment, GARMENTS, attachmentAnchors } from '../src/fold/garments';
 import { recommendedSquareCm } from '../src/fold/paperSize';
 import { checkState, modelPoly, findAdjacency, isFlipped, type SheetState } from '../src/fold/engine';
@@ -71,7 +71,9 @@ for(const hand of ['left','right'] as const){
   const cp=creasePattern(c);assert.deepEqual(vertexProblems(cp),[]);
   const final=tl.states.at(-1)!,s=hand==='left'?-1:1;
   assert(!isFlipped(visibleAt(final,0,0)),'palm is the original printed face');
-  assert(isFlipped(visibleAt(final,0,-.55)),'cuff shows the actual reverse');
+  // Sample inside the authored cuff, not at a fixed palm-space coordinate.
+  // The previous -.55 sample moves above the cuff when its depth is .20.
+  assert(isFlipped(visibleAt(final,0,-1+1.5*MITTEN_GEOMETRY.cuff)),'cuff shows the actual reverse');
   assert(isFlipped(visibleAt(final,s*.70,-.42)),'thumb shows the actual reverse');
   for(let step=0;step<c.ops.length;step++){
     const ctrl: FoldController=new FoldController(c.ops.length,()=>1);ctrl.jumpTo(step);ctrl.next();ctrl.update(.37);const pose: ReturnType<FoldController['pose']>=ctrl.pose();ctrl.prev();assert.deepEqual(ctrl.pose(),pose);ctrl.update(2);assert.equal(ctrl.step,step);

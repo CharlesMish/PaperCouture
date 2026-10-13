@@ -1,3 +1,25 @@
+# Paper Couture — external-review follow-up
+
+Charlie asked to complete the follow-up work after Claude/Grok's reviews of
+PR35 at `ceb324d`. The candidate now uses the independently compared `.25` cuff
+and `.20` thumb hinge, preserving the nine operations and top at `.75`. The
+finished 6 cm-square ornament is approximately 3.85 × 4.50 cm. Short Left/Right
+mitten titles preserve handedness in capture controls. See the
+[thumb comparison](docs/october-integration/thumb-followup/NOTES.md) and
+[mobile follow-up](docs/october-integration/followup/NOTES.md).
+
+Display controls wrap on narrow screens and board selects use the available
+width. Phone-width execution exposed foreground paper disappearing behind fixed
+fog when the fitting camera retreats; `Stage.render` now keeps background haze
+beyond the paper. This is a concrete visibility correction, not a fold-engine
+change. The new production phone gate starts unfolded at 320/390 px and exercises
+touch swatch scrolling, folding, small-flap grips, readable controls, pinning,
+reload and export. Prior evidence below describes the earlier candidate.
+
+Keep all four papers Experimental, their artwork unchanged, and the beret parked.
+No physical-paper or real-phone/Safari trial has occurred. The separate website
+repository is untouched; no merge or publication is authorized by this follow-up.
+
 # Paper Couture — October integration for owner review
 
 Branch `design/october-integration` starts from current main `cedf65c` and retains

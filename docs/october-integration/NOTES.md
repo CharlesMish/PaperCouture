@@ -1,5 +1,13 @@
 # October integration candidate
 
+**13 October follow-up:** the external reviews led to a
+[smaller cuff and revised thumb crease](thumb-followup/NOTES.md), short Left/Right
+mitten names, and [mobile layout and visibility corrections](followup/NOTES.md).
+Current finished mitten dimensions are 3.85 × 4.50 cm from a 6 cm square.
+The comparisons and measurements below retain the earlier `ceb324d` candidate;
+use the follow-up reports for the current source. All four paper artworks remain
+unchanged. Source merge and website publication still require owner review.
+
 Prepared from current source main **`cedf65c8e71624b8d3cdbcd09f3422f21666dec3`**,
 with Claude’s original commit **`3c448a9e9bc992e3fae91b42f83cb4e67d213787`**
 retained in the history. Main was rechecked during integration. This source

@@ -141,7 +141,8 @@ The coat remains an experimental flat silhouette with continuous lining.
 Riso proof, Crease bloom and Marbled endpaper from Claude’s October proposal
 remain Experimental after review and corrections. Dusk wash adds a quiet broad
 colour field. The recovered Folded mitten pair uses a retained top fold for a
-shorter palm: one intact 6 cm square per hand, approximately 4.1 × 4.4 cm finished.
+shorter palm: one intact 6 cm square per hand, approximately 3.85 × 4.50 cm finished
+after the [reviewed cuff refinement](docs/october-integration/thumb-followup/NOTES.md).
 These are flat ornaments with a low wrist-root thumb and no hand opening.
 The original tall mitten and beret remain studies.
 

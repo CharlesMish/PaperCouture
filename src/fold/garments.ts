@@ -38,8 +38,8 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
-  { id: 'mitten-left', name: 'Folded mitten · thumb left', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
-  { id: 'mitten-right', name: 'Folded mitten · thumb right', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
+  { id: 'mitten-left', name: 'Left mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
+  { id: 'mitten-right', name: 'Right mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
 export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : id === 'necktie' ? Math.PI / 4 : 0; }

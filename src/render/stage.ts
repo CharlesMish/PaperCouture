@@ -165,6 +165,14 @@ export class Stage {
   }
 
   render(): void {
+    // A short free viewport moves the framing camera farther away. Keep the
+    // paper in front of the background haze rather than fading it out when
+    // controls need more space. The original 9..22 fog stays at close range.
+    const fog = this.scene.fog;
+    if (fog instanceof THREE.Fog) {
+      fog.near = Math.max(9, this.camera.position.distanceTo(this.modelRoot.position) + 3);
+      fog.far = fog.near + 13;
+    }
     this.renderer.render(this.scene, this.camera);
   }
 }

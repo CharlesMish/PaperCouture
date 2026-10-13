@@ -15,7 +15,7 @@ interface MittenParams {
   top: number;     // retained top turn; no trimming
   tip: number;     // fingertip corner folds, along each edge
 }
-export const MITTEN_GEOMETRY: Readonly<MittenParams> = { cuff: 0.30, side: 0.50, thumbAt: 0.50, top: 0.75, tip: 0.30 };
+export const MITTEN_GEOMETRY: Readonly<MittenParams> = { cuff: 0.25, side: 0.50, thumbAt: 0.20, top: 0.75, tip: 0.30 };
 
 export function buildMitten(thumb: ThumbSide = 'left'): Construction {
   const p = MITTEN_GEOMETRY;
@@ -29,7 +29,7 @@ export function buildMitten(thumb: ThumbSide = 'left'): Construction {
   });
   const bottom = -1 + p.cuff;
   // The thumb-side flap's free edge lies at x = side - (1 - side) once folded.
-  return { name: `Folded mitten, thumb ${thumb}`, meta: { top: p.top, shoulderPoint: v2(0, p.top), sleeveCutDir: v2(1, 0) }, ops: [
+  return { name: `${thumb === 'left' ? 'Left' : 'Right'} mitten`, meta: { top: p.top, shoulderPoint: v2(0, p.top), sleeveCutDir: v2(1, 0) }, ops: [
     fold('mitt-cuff', 'Turn up the cuff', 'Fold the lower strip onto the print. Its reverse becomes the cuff.', [-1.5, bottom], [1.5, bottom], [0, -1]),
     { kind: 'turn', id: 'mitt-back', title: 'Turn over', hint: 'Shape the hand from the back so the print stays whole on the front.' },
     fold('mitt-top', 'Fold down the hand top', 'Fold the upper strip behind the palm. Keep all of the square; this makes a shorter mitten.', [-1.5, p.top], [1.5, p.top], [0, 1]),

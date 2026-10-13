@@ -55,6 +55,7 @@ jobs:
           node scripts/check-design-pass-browser.cjs
           BASE_URL=http://127.0.0.1:5627 CAPTURE_DIR=.october-qa/dusk node docs/october-integration/companion-paper/check-dusk-wash.cjs
           node scripts/check-october-browser.cjs
+          CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:

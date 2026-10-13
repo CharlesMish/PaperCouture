@@ -1,0 +1,342 @@
+{
+  "node": "v24.19.0",
+  "base": "ceb324d050efb15b16cbc358be112369d17d02fe",
+  "checks": [
+    {
+      "version": "baseline",
+      "hand": "left",
+      "geometry": {
+        "hand": "left",
+        "steps": 9,
+        "facets": 19,
+        "creases": 28,
+        "retainedArea": 4,
+        "width": 1.35207100591716,
+        "height": 1.45,
+        "suggestedSquareCm": 6,
+        "finishedCm": {
+          "width": 4.05621301775148,
+          "height": 4.35
+        },
+        "maxEdgeError": 6.661338147750939e-16,
+        "maxHingeGap": 0.044,
+        "maxIdealHingeGap": 8.082843468636271e-16,
+        "hingeLimit": 0.044,
+        "minZ": 0.0015,
+        "samplesPerOperation": 161,
+        "operations": [
+          {
+            "id": "mitt-cuff",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-back",
+            "maxHingeGap": 0.0055000000000002495,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-top",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-far-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-a",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-b",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-front",
+            "maxHingeGap": 0.044,
+            "strictTrianglePiercings": 0
+          }
+        ]
+      },
+      "rendered": {
+        "samplesPerOperation": 201,
+        "counts": {
+          "facetFacet": 0,
+          "facetHinge": 3782,
+          "hingeHinge": 4798
+        },
+        "worstDepth": {
+          "facetFacet": 0,
+          "facetHinge": 0.016500038551988394,
+          "hingeHinge": 0.002411327843339015
+        }
+      }
+    },
+    {
+      "version": "baseline",
+      "hand": "right",
+      "geometry": {
+        "hand": "right",
+        "steps": 9,
+        "facets": 19,
+        "creases": 28,
+        "retainedArea": 4,
+        "width": 1.35207100591716,
+        "height": 1.45,
+        "suggestedSquareCm": 6,
+        "finishedCm": {
+          "width": 4.05621301775148,
+          "height": 4.35
+        },
+        "maxEdgeError": 6.661338147750939e-16,
+        "maxHingeGap": 0.044000000000000004,
+        "maxIdealHingeGap": 8.082843468636271e-16,
+        "hingeLimit": 0.044,
+        "minZ": 0.0015,
+        "samplesPerOperation": 161,
+        "operations": [
+          {
+            "id": "mitt-cuff",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-back",
+            "maxHingeGap": 0.0055000000000002495,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-top",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-far-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-a",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-b",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-front",
+            "maxHingeGap": 0.044000000000000004,
+            "strictTrianglePiercings": 0
+          }
+        ]
+      },
+      "rendered": {
+        "samplesPerOperation": 201,
+        "counts": {
+          "facetFacet": 0,
+          "facetHinge": 3223,
+          "hingeHinge": 3617
+        },
+        "worstDepth": {
+          "facetFacet": 0,
+          "facetHinge": 0.02199898267137348,
+          "hingeHinge": 2.527959180644348e-07
+        }
+      }
+    },
+    {
+      "version": "variant",
+      "hand": "left",
+      "geometry": {
+        "hand": "left",
+        "steps": 9,
+        "facets": 19,
+        "creases": 28,
+        "retainedArea": 4,
+        "width": 1.283080260303688,
+        "height": 1.5,
+        "suggestedSquareCm": 6,
+        "finishedCm": {
+          "width": 3.849240780911064,
+          "height": 4.5
+        },
+        "maxEdgeError": 6.661338147750939e-16,
+        "maxHingeGap": 0.044,
+        "maxIdealHingeGap": 7.021666937153402e-16,
+        "hingeLimit": 0.044,
+        "minZ": 0.0015,
+        "samplesPerOperation": 161,
+        "operations": [
+          {
+            "id": "mitt-cuff",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-back",
+            "maxHingeGap": 0.0055000000000002495,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-top",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-far-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-a",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-b",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-front",
+            "maxHingeGap": 0.044,
+            "strictTrianglePiercings": 0
+          }
+        ]
+      },
+      "rendered": {
+        "samplesPerOperation": 201,
+        "counts": {
+          "facetFacet": 0,
+          "facetHinge": 3705,
+          "hingeHinge": 4816
+        },
+        "worstDepth": {
+          "facetFacet": 0,
+          "facetHinge": 0.016500031914805088,
+          "hingeHinge": 0.0024112219142309946
+        }
+      }
+    },
+    {
+      "version": "variant",
+      "hand": "right",
+      "geometry": {
+        "hand": "right",
+        "steps": 9,
+        "facets": 19,
+        "creases": 28,
+        "retainedArea": 4,
+        "width": 1.283080260303688,
+        "height": 1.5,
+        "suggestedSquareCm": 6,
+        "finishedCm": {
+          "width": 3.849240780911064,
+          "height": 4.5
+        },
+        "maxEdgeError": 6.661338147750939e-16,
+        "maxHingeGap": 0.044000000000000004,
+        "maxIdealHingeGap": 7.447602459741819e-16,
+        "hingeLimit": 0.044,
+        "minZ": 0.0015,
+        "samplesPerOperation": 161,
+        "operations": [
+          {
+            "id": "mitt-cuff",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-back",
+            "maxHingeGap": 0.0055000000000002495,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-top",
+            "maxHingeGap": 0.0055,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-thumb",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-far-side",
+            "maxHingeGap": 0.027499999999999997,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-a",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-tip-b",
+            "maxHingeGap": 0.0385,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "mitt-front",
+            "maxHingeGap": 0.044000000000000004,
+            "strictTrianglePiercings": 0
+          }
+        ]
+      },
+      "rendered": {
+        "samplesPerOperation": 201,
+        "counts": {
+          "facetFacet": 0,
+          "facetHinge": 3138,
+          "hingeHinge": 3633
+        },
+        "worstDepth": {
+          "facetFacet": 0,
+          "facetHinge": 0.02199898197290137,
+          "hingeHinge": 2.527959180644348e-07
+        }
+      }
+    }
+  ]
+}

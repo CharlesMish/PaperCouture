@@ -28,6 +28,7 @@ docs/*/tiles/
 
 .swing-coat-qa/
 .october-qa/
+.phone-qa/
 .october-main/
 .october-claude/
 docs/swing-coat/evidence/browser/*.png
