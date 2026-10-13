@@ -100,7 +100,7 @@ const key = 'paper-couture.pinboard.v1';
   await btn('Pin current piece').click();await page.evaluate(()=>{const b=paperCouture.pinboard;b.mutate(()=>{const i=b.state.items.at(-1);i.x=-.78;i.y=-1.10;b.position();b.constrain(i.id)})});
   await shot('outfit-five-desktop');await p.exportPNG('outfit-five-composite');
   for(const [width,height] of [[390,844],[320,568]]){await page.setViewportSize({width,height});await shot(`outfit-five-${width}`)}
-  result.checks.push('20cm coat with 18cm shirt, 20cm skirt and 8cm hat: actual pin controls; exact posed vertices/UVs; independent 16cm repeat capture; eight-slot cap with exact restoration of the five-piece composition; remove/Undo, move/tilt/Undo, reload and reset preserve captures; 390/320/landscape layouts; PNG byte-identical to the visible 1800×2100 composite.');console.log(result.checks.at(-1));
+  result.checks.push('20cm coat with 18cm shirt, 20cm skirt and 8cm hat: actual pin controls; exact posed vertices/UVs; independent 16cm repeat capture; 12-slot cap with exact restoration of the five-piece composition; remove/Undo, move/tilt/Undo, reload and reset preserve captures; 390/320/landscape layouts; PNG byte-identical to the visible 1800×2100 composite.');console.log(result.checks.at(-1));
   await context.close();
   // Same exact prior capture fixture in a fresh profile. New reader must not
   // reinterpret or rewrite valid captures when a new design is introduced.

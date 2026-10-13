@@ -1,7 +1,8 @@
 # Paper Couture — more pinboard room (owner review)
 
-Charlie asked for further preparation and more board space. The October review
-branch now supports eight independent captures and an optional Roomy board
+Charlie asked for further preparation and more board space, then increased the
+requested capacity to twelve to accommodate two wardrobe sets. The October review
+branch now supports twelve independent captures and an optional Roomy board
 (4.8 × 5.6 versus Standard 3.6 × 4.2; about 78% more area). Standard remains the
 default. Captured sizes, coordinates, artwork and fold geometry are unchanged.
 Shrinking is refused if any piece would lie outside Standard; no automatic moving

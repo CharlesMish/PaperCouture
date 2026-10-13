@@ -109,7 +109,7 @@ async function bundle() {
     await page.reload(); await settle(); await open(); assert.deepEqual(await state(), initial);
     assert.equal(await page.evaluate(key => localStorage.getItem(key), key), durable, 'Reload/open must not rewrite the save');
     result.checks.push('Served compiled JS/CSS; three new experimental design IDs and three new papers registered; Boat-neck top completed with seven actual fold controls.',
-      'Five actual Pin captures with16/20/18/8/8cm defaults; old captures survive every added piece; eight-slot capacity and exact Undo restoration; movement/layer/removeUndo and exact five-piece reload.');
+      'Five actual Pin captures with16/20/18/8/8cm defaults; old captures survive every added piece; 12-slot capacity and exact Undo restoration; movement/layer/removeUndo and exact five-piece reload.');
     for (const [width, height] of [[1280, 900], [390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await page.locator('.board-tools').evaluate(e => { e.scrollTop = 0; });
       const layout = await page.evaluate(() => {

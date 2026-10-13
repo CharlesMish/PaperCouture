@@ -1,13 +1,15 @@
 # More room to arrange
 
 Owner-review follow-up to `753b8e6`, continuing PR35 on main `cedf65c`.
+Charlie subsequently requested twelve slots for two wardrobe sets. Board
+dimensions remain unchanged; the twelve-piece follow-up is documented below.
 No merge, website import or publication. No new design, fold, paper, material
 coordinate or capture-scale changes.
 
 ## What changes
 
-- Eight separately captured pieces, so two mittens need not displace the skirt
-  and brooch. The ninth capture is blocked; no paired-square shortcut.
+- Twelve separately captured pieces, so two mittens need not displace the skirt
+  and brooch. The thirteenth capture is blocked; no paired-square shortcut.
 - Standard stays 3.6 × 4.2 with its 1800 × 2100 export. Roomy is optional,
   4.8 × 5.6 with a 2400 × 2800 export: 33⅓% more in each direction, 77.8% more
   area, and the same exported pixels per world unit. The preview aspect stays
@@ -28,12 +30,12 @@ The v1 record retains its original key. Optional `format: "roomy"` describes
 only the board. Missing format means Standard; opening an old record neither
 adds the field nor writes the record. Captured matrices, vertices, materials,
 UVs, starting-square descriptions and coordinates remain immutable. The parser
-rejects unknown/non-string formats and more than eight items. The existing
+rejects unknown/non-string formats and more than twelve items. The existing
 2,000,000-character limit, quota warning/retry and cross-tab protection remain.
-Eight slots do not override a browser quota or promise every possible heavy
+Twelve slots do not override a browser quota or promise every possible heavy
 accessory combination fits that byte budget.
 
-An older five-slot application rejects records with six–eight pieces without
+An older five-slot application rejects records with six–twelve pieces without
 replacing them. An old build can read a Roomy record with five or fewer pieces
 but does not know its larger camera; outer pieces may be offscreen. Do not use
 a downgrade as an editing workflow. No migration or backwards rendering claim.
@@ -51,12 +53,30 @@ while running the phone gate. Phone + Roomy now run in a separate 30-minute job;
 no coverage is dropped and the gallery time limit remains 45 minutes.
 
 Existing five-piece styling fixtures retain their contents and screenshot/export
-comparisons. Their shared capacity helper really pins through eight, checks the
-ninth is disabled and cannot mutate the save, then undoes those additional pins
+comparisons. Their shared capacity helper really pins through twelve, checks the
+thirteenth is disabled and cannot mutate the save, then undoes those additional pins
 and verifies exact restoration. The dedicated board lifetime check keeps all
-eight through remove/Undo/open/close, reload and storage failures.
+twelve through remove/Undo/open/close, reload and storage failures.
 
-## Evidence and checks
+## Twelve-piece capacity follow-up
+
+At Charlie’s request, capacity is twelve on both board formats. Standard and
+Roomy dimensions are unchanged. The full label now derives from the capacity
+constant; the thirteenth capture is blocked. The regression fixtures pin through
+twelve, then use Undo to restore their original compositions.
+
+The production twelve-piece check passes on `index-DOMNZ0Yo.js`: actual captures,
+blocked thirteenth pin, retained snapshot/scale, shrink refusal, remove/Undo,
+reload, board bounds and mitten touch cancel/commit/Undo at 320/390 px. Export
+before and after reload is identical at 2400 × 2800
+(`89072c5c589aec8c5bb6cc8ec5c1ef3fecdbe65166f289eecc142bd059c6a30b`).
+The mixed two-set fixture uses 286,559 characters under the unchanged
+2,000,000-character limit. Original five-piece records still open without a write;
+Standard → Roomy → Undo retains their exact PNG. No real-device claim.
+
+![Twelve separately captured pieces arranged as two sets](twelve-piece-outfit.jpg)
+
+## Earlier eight-piece evidence and checks
 
 Node 24.19.0: full `npm test`, typecheck and production build pass. The Roomy
 production gate passes on `index-BcgzI2BQ.js`, including:

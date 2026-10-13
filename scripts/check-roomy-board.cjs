@@ -47,9 +47,11 @@ fs.mkdirSync(out, { recursive: true });
   // Clear this isolated fixture only, then build the candidate outfit via actual Pin controls.
   await page.evaluate(k=>localStorage.removeItem(k),key);
   const outfit=[
-   ['swing-coat','dusk-wash',20,-.8,.3],['camp-shirt','riso-proof',18,.9,.6],
-   ['framed-brooch','marbled-endpaper',4.5,.4,1.7],['mitten-left','oat-linen',6,-1.3,-1.6],['mitten-right','oat-linen',6,-.65,-1.6],
-   ['pleats','slate-grain',20,1,-.85],['hat','oat-linen',8,-.9,2.1],['clutch','dusk-wash',8,1.1,-2.1],
+   ['swing-coat','dusk-wash',20,1,.7],['camp-shirt','riso-proof',18,-.95,.7],
+   ['framed-brooch','marbled-endpaper',4.5,0,1.7],['mitten-left','oat-linen',6,-1.3,-1.6],['mitten-right','oat-linen',6,-.65,-1.6],
+   ['pleats','slate-grain',20,1,-.85],['hat','oat-linen',8,1,2.25],['clutch','dusk-wash',8,0,-.7],
+   ['skirt','slate-grain',20,-.95,-.6],['hat','dusk-wash',8,-.95,1.9],
+   ['boot-left','slate-grain',8,.65,-2.15],['boot-right','slate-grain',8,1.35,-2.15],
   ];
   for(const [index,[design,paper,cm,x,y]] of outfit.entries()) {
    await load(`design=${design}&paper=${paper}&step=99&view=display`);
@@ -65,15 +67,15 @@ fs.mkdirSync(out, { recursive: true });
     await shot('roomy-five-desktop');
    }
   }
-  assert(await btn('Board full · eight pieces').isDisabled());const full=await state(), durable=await raw();
-  await btn('Board full · eight pieces').evaluate(e=>e.click());assert.equal(await raw(),durable);
+  assert(await btn('Board full · 12 pieces').isDisabled());const full=await state(), durable=await raw();
+  await btn('Board full · 12 pieces').evaluate(e=>e.click());assert.equal(await raw(),durable);
   await page.getByLabel('Board size',{exact:true}).selectOption('standard');assert.deepEqual(await state(),full);assert.equal(await raw(),durable);
   assert((await page.getByRole('status').allTextContents()).some(s=>s.includes('Move the outer pieces')));
   await btn('Remove selected').click();await btn('Undo').click();assert.deepEqual(await state(),full);
-  const fullPNG=await png('roomy-eight-export');assert.equal(fullPNG.width,2400);assert.equal(fullPNG.height,2800);
-  fs.writeFileSync(path.join(out,'eight-piece.json'),durable);result.export=fullPNG;result.saveCharacters=durable.length;assert(durable.length<2000000);
-  await page.reload();await settle();await open();assert.deepEqual(await state(),JSON.parse(durable));assert.equal(await raw(),durable);assert.deepEqual(await png('roomy-eight-reloaded'),fullPNG);
-  result.checks.push('Eight actual captures; ninth blocked; no-loss refusal to shrink around outlying pieces; remove/Undo, exact reload and identical 2400×2800 PNG.');
+  const fullPNG=await png('roomy-twelve-export');assert.equal(fullPNG.width,2400);assert.equal(fullPNG.height,2800);
+  fs.writeFileSync(path.join(out,'twelve-piece.json'),durable);result.export=fullPNG;result.saveCharacters=durable.length;assert(durable.length<2000000);
+  await page.reload();await settle();await open();assert.deepEqual(await state(),JSON.parse(durable));assert.equal(await raw(),durable);assert.deepEqual(await png('roomy-twelve-reloaded'),fullPNG);
+  result.checks.push('Twelve actual captures; thirteenth blocked; no-loss refusal to shrink around outlying pieces; remove/Undo, exact reload and identical 2400×2800 PNG.');
   // Movement bounds use the larger area, including a tilt, and Undo is exact.
   const item=full.items[4];await page.getByLabel('Selected board piece').selectOption(item.id);
   const beforeMove=await state();await page.getByLabel('Pinboard tilt').fill('12');
@@ -91,7 +93,7 @@ fs.mkdirSync(out, { recursive: true });
    const m=await metrics();assert(!m.overflow);assert(m.sizeVisible,`Starting square immediately reachable at ${width}`);
    assert.deepEqual(m.camera,[-2.4,2.4,-2.8,2.8]);assert.deepEqual(m.backing,[4.8,5.6]);assert(Math.abs(m.canvas[2]/m.canvas[3]-4.8/5.6)<.005);
    for(const p of m.pieces){const [l,r,b,t]=p.bounds;assert(l>=-2.32001&&r<=2.32001&&b>=-2.72001&&t<=2.72001)}
-   result.layouts.push(m);await shot(`roomy-eight-${width}`);
+   result.layouts.push(m);await shot(`roomy-twelve-${width}`);
    if(width<720){
     const cdp=await context.newCDPSession(page), glove=m.pieces[4], [l,r,b,t]=glove.bounds;
     const [cx,cy,cw,ch]=m.canvas,x=cx+((l+r)/2+2.4)/4.8*cw,y=cy+(2.8-(b+t)/2)/5.6*ch;

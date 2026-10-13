@@ -296,7 +296,7 @@ async function bundle(url) {
       assert.deepEqual(JSON.parse(await a.raw()), unsaved); await a.btn('Undo').click(); assert.deepEqual(await a.state(), retained);
     });
     report.checks.push('Five actual captures compose capelet/skirt/two independent boots/accent; desktop/390/320 full-board camera, measurable readable extents, 44px size choice, selection and exact scene PNG. Small-accent touch cancel/commit/Undo and empty-space behavior pass.');
-    report.checks.push('Ninth pin is blocked; all five pieces survive repeated all-edge movement at both tilt limits, layer/removeUndo, stable GPU counts, exact reload and injected quota/retry without losing the durable board.');
+    report.checks.push('Thirteenth pin is blocked; all five pieces survive repeated all-edge movement at both tilt limits, layer/removeUndo, stable GPU counts, exact reload and injected quota/retry without losing the durable board.');
 
     // A separate five-slot composition proves the capelet's shoulder-layer role
     // over a top, rather than relying on the capelet/skirt arrangement alone.

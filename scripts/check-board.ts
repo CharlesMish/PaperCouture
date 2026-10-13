@@ -10,7 +10,7 @@ const sample: BoardState = { ...emptyBoard(), selected: 'a', items: [{ id: 'a', 
 } }] };
 assert.deepEqual(parseBoard(JSON.stringify(sample), paperIds), sample);
 const full: BoardState = { ...sample, items: Array.from({ length: MAX_PIECES }, (_, n) => ({ ...sample.items[0], id: `piece-${n}` })), selected: 'piece-0' };
-assert.equal(MAX_PIECES, 8);
+assert.equal(MAX_PIECES, 12);
 assert.deepEqual(parseBoard(JSON.stringify(full), paperIds), full);
 assert.throws(() => parseBoard(JSON.stringify({ ...full, items: [...full.items, { ...sample.items[0], id: 'one-too-many' }] }), paperIds), /Unsupported board/);
 assert.deepEqual(parseBoard(JSON.stringify({ ...full, format: 'roomy' }), paperIds), { ...full, format: 'roomy' });

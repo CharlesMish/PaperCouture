@@ -248,7 +248,7 @@ export class Pinboard {
     this.undo.disabled = !this.history.length; this.download.disabled = !this.state.items.length;
     this.add.disabled = this.state.items.length >= MAX_PIECES || !this.source.length || this.source.value === '';
     this.size.disabled = !this.source.length || this.source.value === '';
-    this.add.textContent = this.state.items.length >= MAX_PIECES ? 'Board full · eight pieces' : 'Pin current piece';
+    this.add.textContent = this.state.items.length >= MAX_PIECES ? `Board full · ${MAX_PIECES} pieces` : 'Pin current piece';
     this.storageStatus.textContent = this.saveWarning || 'Board saved on this device.';
     this.retry.hidden = !this.unsaved;
     if (this.unsaved && this.dialog.open) this.storageStatus.scrollIntoView({ block: 'nearest' });

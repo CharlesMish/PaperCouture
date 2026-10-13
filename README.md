@@ -90,11 +90,11 @@ browser verification used a separate audit harness, not these Python scripts.
 
 ## Print placement and pinboard candidate
 
-See [the eight-piece / Roomy follow-up](docs/october-integration/roomy-board/NOTES.md) for current board behavior, mobile corrections and checks.
+See [the 12-piece / Roomy follow-up](docs/october-integration/roomy-board/NOTES.md) for current board behavior, mobile corrections and checks.
 
 Corner bloom and Plum scatter support bounded artwork sliding; Seed dashes has
 verified half-cell positions. Fold any current piece, enter Display and use
-Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to eight independently arranged pieces. Choose Standard or Roomy in Board size; Roomy adds about 78% arranging area without resizing your paper. Standard remains the default. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
+Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to twelve independently arranged pieces. Choose Standard or Roomy in Board size; Roomy adds about 78% arranging area without resizing your paper. Standard remains the default. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
 [behavior, limits and checks](docs/print-position-pinboard/NOTES.md).
 
 ## Outfit proportions and collection draft
