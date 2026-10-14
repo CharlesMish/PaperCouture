@@ -502,3 +502,7 @@ button:focus-visible {
   .board-photograph .board-preview { width: min(100%, calc((100dvh - 164px) * var(--board-aspect))); align-self: center; }
   .board-photo-bar .btn { padding: 8px; font-size: .85rem; }
 }
+.board-guide-adjust { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.board-guide-adjust[hidden] { display: none; }
+.board-guide-adjust .board-finish-controls { padding: 0 0 10px; }
+.pinboard-canvas.moving-guide { cursor: move; }

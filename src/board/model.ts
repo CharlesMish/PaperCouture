@@ -17,12 +17,15 @@ export interface FrozenPiece {
   materials: Surface[];
   parts: { geometry: number; material: number; matrix: number[]; kind: 'mesh' | 'lines' }[];
 }
+export type GuideId = 'one' | 'left' | 'right';
+export interface GuideTransform { x: number; y: number; scale: number }
 export interface BoardAppearance {
   surface: 'natural' | 'rose' | 'slate' | 'linen';
-  pins: 'none' | 'brass' | 'pearl' | 'red';
+  pins: 'none' | 'brass' | 'pearl' | 'red' | 'white' | 'black';
   guide: 'none' | 'one' | 'two';
   lighting: 'soft' | 'clear' | 'warm';
   guideInPhoto: boolean;
+  guideTransforms?: Partial<Record<GuideId, GuideTransform>>;
 }
 export const defaultAppearance = (): BoardAppearance => ({ surface: 'natural', pins: 'brass', guide: 'none', lighting: 'soft', guideInPhoto: false });
 export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number; paperSize?: StartingPaperSize; pin?: { x: number; y: number } }
@@ -30,7 +33,8 @@ export interface BoardState { version: 1; format?: BoardFormat; background: Back
 export const emptyBoard = (): BoardState => ({ version: 1, background: 'Linen', selected: null, items: [] });
 export function copyBoard(s: BoardState): BoardState {
   // Geometry and paper descriptions are immutable and may be shared by Undo states.
-  return { ...s, ...(s.appearance ? { appearance: { ...s.appearance } } : {}),
+  return { ...s, ...(s.appearance ? { appearance: { ...s.appearance,
+    ...(s.appearance.guideTransforms ? { guideTransforms: Object.fromEntries(Object.entries(s.appearance.guideTransforms).map(([id, pose]) => [id, { ...pose }])) } : {}) } } : {}),
     items: s.items.map(item => ({ ...item, ...(item.pin ? { pin: { ...item.pin } } : {}) })) };
 }
 
@@ -49,10 +53,16 @@ export function parseBoard(raw: string, paperIds: readonly string[]): BoardState
   if (s.appearance !== undefined) {
     const a = s.appearance;
     if (!record(a) || typeof a.surface !== 'string' || !['natural', 'rose', 'slate', 'linen'].includes(a.surface)
-      || typeof a.pins !== 'string' || !['none', 'brass', 'pearl', 'red'].includes(a.pins)
+      || typeof a.pins !== 'string' || !['none', 'brass', 'pearl', 'red', 'white', 'black'].includes(a.pins)
       || typeof a.guide !== 'string' || !['none', 'one', 'two'].includes(a.guide)
       || typeof a.lighting !== 'string' || !['soft', 'clear', 'warm'].includes(a.lighting)
       || typeof a.guideInPhoto !== 'boolean') throw new Error('Invalid board finish');
+    if (a.guideTransforms !== undefined) {
+      const poses = a.guideTransforms;
+      if (!record(poses) || Object.keys(poses).some(id => !['one', 'left', 'right'].includes(id))) throw new Error('Invalid figure guides');
+      for (const pose of Object.values(poses)) if (!record(pose) || !numeric(pose.x, 4) || !numeric(pose.y, 4)
+        || !numeric(pose.scale, 1.5) || Number(pose.scale) < .5) throw new Error('Invalid figure guide position');
+    }
   }
   for (const item of s.items) {
     if (!record(item) || !text(item.id, 80) || ids.has(item.id) || !text(item.title, 180)

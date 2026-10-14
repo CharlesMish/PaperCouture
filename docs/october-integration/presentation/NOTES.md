@@ -4,13 +4,50 @@ This follow-up builds on the reviewed twelve-piece branch at `87a089d`, whose
 eight GitHub workflows passed. It adds a finishing surface, not new folds.
 Source PR35 remains for owner review; the separate website has not been changed.
 
+## Current follow-up: adjustable guides and neutral pins
+
+This follow-up starts at `606c420`. White and charcoal-black pins use smaller,
+flatter heads than the retained brass/pearl/red styles. Existing pin styles and
+saved arrangements keep their earlier rendering.
+
+Under **Finish & photograph → Adjust guides**, choose Guide 1 or Guide 2 (a
+single figure is selected automatically). **Move guide** enables dragging
+anywhere on the board to move that figure, including when clothes cover its
+outline. **Done moving guide** or Escape returns to paper arrangement. Keyboard
+arrows work while Move guide is active; the four guide buttons work without
+entering that mode. The selected guide has an editing outline, excluded from PNG.
+
+**Size** scales only the selected guide, from 50% up to 150%, capped by the board's
+available height/width. Movement is bounded so the whole reference remains on the
+board. Each paired guide can have a different size; neither the other figure nor
+any garment changes. **Reset guide** restores the selected figure's default
+position and size. Undo reverses a drag or size gesture in one step.
+
+Off retains the adjustments. Single-figure and paired-figure positions are stored
+separately, so switching count and returning restores each arrangement. Existing
+saves keep implicit defaults with no new fields written on open. If Standard is
+too small for a saved Roomy guide pose, the reference is fitted only for rendering;
+returning to Roomy restores the chosen pose. Editing the fitted pose then saves
+that new choice. Captured garments follow the existing no-loss board-size rule.
+
+[Claude's external review brief](CLAUDE-REVIEW.md) starts with this latest board
+experience, then asks for a bounded paper-pairing and typography critique.
+
+![Brass, slim white and slim black on the same twelve pieces](neutral-pins.jpg)
+
+![Independent guide sizes and the phone controls](adjustable-guides.jpg)
+
+The newer images are actual production browser renders. Only guide appearance
+and poses change between these views; the twelve captured pieces stay exact.
+The [portable adjustment study](render-adjustments.cjs) reproduces them.
+
 ## Using it
 
 Open **View board**, then **Finish & photograph**. Choose Natural cork, Rose cork,
 Slate cork, or Linen cloth. **Original board** restores the earlier backing and
 lighting. Existing saves keep their original appearance until a surface is chosen.
 
-Choose Brass, Pearl, Red, or No pins. **Place pin** lets you tap visible paper on
+Choose Brass, Pearl, Slim white, Slim black, Red, or No pins. **Place pin** lets you tap visible paper on
 the selected piece. **Reset pin** finds a point near its upper edge automatically.
 A pin follows the piece when moved or tilted; a covered pin remains under the
 covering paper. Pins are decorative and do not add a board slot or stop dragging.
@@ -109,3 +146,30 @@ arrangement reference, not automatic fitting. These are resized actual browser
 renders/exports, with labels added for review. The portable
 [render study](render-study.cjs) reproduces the source views; run it after the
 Roomy regression creates its fixture.
+
+### Adjustable-guide verification
+
+The follow-up passes Node 24 typecheck, board-model checks, the full numerical
+suite and the production build. Its new `check-guide-browser.cjs` passes alongside
+the existing presentation regression. [Guide results](guide-results.json) record:
+
+- Exact retained-606 default-guide PNG, with no new saved poses on open.
+- Independent one/left/right movement and scaling; Off/On, Reset and Undo.
+- Exact garment records throughout; unchanged export pixels when guides are excluded.
+- Slim-white/slim-black rendered differences; custom-guide reload/export identity.
+- 150% Roomy guide plus long drags stays bounded; Standard fits the visible guide
+  without rewriting its saved pose, and Undo restores Roomy.
+- Real emulated touch cancel/commit/Undo and keyboard nudges at 320/390px, with
+  usable control hit targets. Browser auto-scroll tests reachability, not discovery.
+
+Independent code review also checked 180 geometry-bound cases across formats,
+guide counts, stroke tones, scales and extreme offsets. No new physical-paper or
+real-phone trial is implied. The three original pin styles matched their earlier
+geometry/material hashes at four representative radii. No authored paper or fold
+geometry changed.
+
+The existing presentation test initially hit an ambiguous test locator when the
+new nested Adjust guides section introduced a second `summary`. Its locator now
+targets the finishing drawer's direct summary; the complete rerun passes with
+all original assertions retained. The new guide regression is included in the
+phone-and-board CI job; check GitHub for the exact updated-head result.

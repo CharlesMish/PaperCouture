@@ -90,7 +90,7 @@ browser verification used a separate audit harness, not these Python scripts.
 
 ## Print placement and pinboard candidate
 
-Use **Finish & photograph** on the board for cork or linen, optional pins, flat outfit guides and a clean photograph view. See [the presentation pass](docs/october-integration/presentation/NOTES.md).
+Use **Finish & photograph** on the board for cork or linen, optional pins (including slim white/black), independently movable/scalable flat outfit guides and a clean photograph view. See [the presentation pass](docs/october-integration/presentation/NOTES.md).
 
 See [the 12-piece / Roomy follow-up](docs/october-integration/roomy-board/NOTES.md) for current board behavior, mobile corrections and checks.
 

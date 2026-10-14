@@ -1,6 +1,12 @@
 import * as THREE from 'three';
-import { BoardState } from './model';
+import { BoardState, GuideId, GuideTransform } from './model';
 import { makeFigureGuides, makePin, disposeDecor } from './decor';
+import { BOARD_MARGIN } from './layout';
+
+interface GuideSlot {
+  object: THREE.Object3D; baseX: number; baseScale: number; bounds: THREE.Box3;
+  pose: GuideTransform; maxScale: number;
+}
 
 /** Presentation objects never enter captured geometry, garment bounds, or picking. */
 export class BoardDecor {
@@ -11,6 +17,9 @@ export class BoardDecor {
   private pinStyle = 'none';
   private guideKey = '';
   private guide?: THREE.Group;
+  private guides = new Map<GuideId, GuideSlot>();
+  private width = 3.6;
+  private height = 4.2;
   private ray = new THREE.Raycaster();
 
   private hit(x: number, y: number, groups: THREE.Object3D[]) {
@@ -18,18 +27,45 @@ export class BoardDecor {
     return this.ray.intersectObjects(groups, true).find(h => h.object instanceof THREE.Mesh);
   }
 
+  guideInfo(id: GuideId) { return this.guides.get(id); }
+
+  constrainGuide(id: GuideId, pose: GuideTransform): GuideTransform {
+    const slot = this.guides.get(id); if (!slot) return pose;
+    const scale = THREE.MathUtils.clamp(pose.scale, .5, slot.maxScale), b = slot.bounds;
+    return { scale,
+      x: THREE.MathUtils.clamp(pose.x, -this.width/2 + BOARD_MARGIN - b.min.x*scale, this.width/2 - BOARD_MARGIN - b.max.x*scale),
+      y: THREE.MathUtils.clamp(pose.y, -this.height/2 + BOARD_MARGIN - b.min.y*scale, this.height/2 - BOARD_MARGIN - b.max.y*scale) };
+  }
+
   sync(state: BoardState, groups: Map<string, THREE.Group>, width: number, height: number, photograph: boolean) {
+    this.width = width; this.height = height;
     const a = state.appearance, style = a?.pins ?? 'none';
     const guideKey = `${a?.guide ?? 'none'}:${a?.surface}:${width}:${height}`;
     if (guideKey !== this.guideKey) {
       if (this.guide) { disposeDecor(this.guide); this.guide.removeFromParent(); this.guide = undefined; }
+      this.guides.clear();
       this.guideKey = guideKey;
       if (a && a.guide !== 'none') {
         this.guide = makeFigureGuides(a.guide === 'one' ? 1 : 2, width, height, a.surface === 'slate' ? 'light' : 'dark');
+        for (const [index, figure] of this.guide.children.entries()) {
+          const id: GuideId = a.guide === 'one' ? 'one' : index === 0 ? 'left' : 'right';
+          const bounds = new THREE.Box3().setFromObject(figure, true).translate(new THREE.Vector3(-figure.position.x, 0, 0));
+          const size = bounds.getSize(new THREE.Vector3());
+          this.guides.set(id, { object: figure, baseX: figure.position.x, baseScale: figure.scale.x, bounds,
+            pose: { x: figure.position.x, y: 0, scale: 1 },
+            maxScale: Math.floor(100 * Math.min(1.5, (width-2*BOARD_MARGIN)/size.x, (height-2*BOARD_MARGIN)/size.y)) / 100 });
+        }
         this.guide.position.z = -.135; this.root.add(this.guide);
       }
     }
     if (this.guide) this.guide.visible = !photograph || !!a?.guideInPhoto;
+    for (const [id, slot] of this.guides) {
+      // Saved choices remain intact when switching board formats; only the
+      // visible reference is fitted. Restoring Roomy recovers the chosen pose.
+      slot.pose = this.constrainGuide(id, a?.guideTransforms?.[id] ?? { x: slot.baseX, y: 0, scale: 1 });
+      slot.object.position.set(slot.pose.x, slot.pose.y, 0);
+      slot.object.scale.setScalar(slot.baseScale * slot.pose.scale);
+    }
     if (style !== this.pinStyle) {
       for (const pin of this.pins.values()) { disposeDecor(pin); pin.removeFromParent(); }
       this.pins.clear(); this.pinStyle = style;

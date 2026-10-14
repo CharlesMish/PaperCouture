@@ -21,6 +21,21 @@ assert.deepEqual(parseBoard(JSON.stringify(finished), paperIds), finished);
 const previous = copyBoard(finished); finished.appearance.surface = 'slate'; finished.items[0].pin.x = .7;
 assert.equal(previous.appearance?.surface, 'natural'); assert.equal(previous.items[0].pin?.x, .2);
 assert.equal(previous.items[0].snapshot, finished.items[0].snapshot);
+const guided = copyBoard(finished);
+guided.appearance!.guideTransforms = { one: { x: .2, y: -.3, scale: .75 }, right: { x: 1.1, y: .1, scale: 1.25 } };
+const guideUndo = copyBoard(guided);
+guided.appearance!.guideTransforms!.one!.x = .5;
+assert.equal(guideUndo.appearance!.guideTransforms!.one!.x, .2);
+assert.equal(guideUndo.items[0].snapshot, guided.items[0].snapshot);
+for (const pins of ['white', 'black'] as const) {
+  guided.appearance!.pins = pins;
+  assert.deepEqual(parseBoard(JSON.stringify(guided), paperIds), guided);
+}
+for (const guideTransforms of [
+  [], { unknown: { x: 0, y: 0, scale: 1 } }, { one: null },
+  { one: { x: 0, y: 0, scale: 0 } }, { one: { x: 0, y: 0, scale: 1.51 } },
+  { one: { x: '0', y: 0, scale: 1 } }, { one: { x: 0, y: null, scale: 1 } },
+]) assert.throws(() => parseBoard(JSON.stringify({ ...guided, appearance: { ...guided.appearance, guideTransforms } }), paperIds));
 for (const change of [
   (s: any) => { s.appearance.surface = ['natural']; },
   (s: any) => { s.appearance.pins = 'unrecognised'; },

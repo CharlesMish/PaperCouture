@@ -85,6 +85,7 @@ jobs:
           CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
           CAPTURE_DIR=.october-qa/roomy node scripts/check-roomy-board.cjs
           CAPTURE_DIR=.october-qa/presentation node scripts/check-presentation-browser.cjs
+          CAPTURE_DIR=.october-qa/guides node scripts/check-guide-browser.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:

@@ -1,3 +1,18 @@
+# Paper Couture — adjustable guides and neutral pins (owner review)
+
+Charlie approved the corkboard direction and requested slim white/black pins,
+movable/scalable guides, and a packet for Claude's independent review. This
+follow-up starts at `606c420`, preserving the board, garment captures and paper
+art. Each single/paired guide now has independent saved placement and uniform
+size, with a separate Move guide mode, keyboard/buttons, Reset and Undo. Off
+preserves adjustments. Scale/movement stay within the board; switching board
+formats fits the rendered guide without rewriting the saved choice.
+
+[Current behavior and evidence](docs/october-integration/presentation/NOTES.md)
+· [Claude review brief](docs/october-integration/presentation/CLAUDE-REVIEW.md).
+The source PR35 remains the review destination. Nothing is merged or deployed;
+keep the separate website untouched. Check CI on the actual new head.
+
 # Paper Couture — corkboard finishing pass (owner review)
 
 Charlie requested a corkboard feel, visible/placeable pins, optional flat figure

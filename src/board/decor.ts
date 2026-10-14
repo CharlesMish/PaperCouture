@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export type PinStyle = 'brass' | 'pearl' | 'red';
+export type PinStyle = 'brass' | 'pearl' | 'red' | 'white' | 'black';
 
 /** Decorative hardware only: its origin is the paper contact point, +z faces the viewer. */
 export function makePin(style: PinStyle, radius: number): THREE.Group {
@@ -9,6 +9,7 @@ export function makePin(style: PinStyle, radius: number): THREE.Group {
   // Bound the depth independently of radius so a large preview pin does not
   // become a floating ornament. No geometry extends behind the contact plane.
   const r = THREE.MathUtils.clamp(Number.isFinite(radius) ? radius : .035, .012, .06);
+  if (style === 'white' || style === 'black') return makeSlimPin(pin, style, r);
   const colors = { brass: '#b39659', pearl: '#e7dfcd', red: '#a84c43' } as const;
   const headMaterial = new THREE.MeshStandardMaterial({
     color: colors[style],
@@ -31,6 +32,41 @@ export function makePin(style: PinStyle, radius: number): THREE.Group {
   const headDepth = Math.min(r * .5, .018);
   head.scale.z = headDepth / r;
   head.position.set(-r * .07, r * .08, .004 + depth + headDepth);
+  pin.add(head);
+  for (const child of pin.children) {
+    child.castShadow = true;
+    child.receiveShadow = false;
+  }
+  pin.userData.decor = 'pin';
+  pin.userData.style = style;
+  pin.userData.radius = r;
+  return pin;
+}
+
+/** Smaller, low-profile drawing-pin heads; the existing dome styles stay unchanged. */
+function makeSlimPin(pin: THREE.Group, style: 'white' | 'black', radius: number): THREE.Group {
+  const r = radius * .8;
+  const headMaterial = new THREE.MeshStandardMaterial({
+    color: style === 'white' ? '#f5f2ea' : '#34332f',
+    metalness: .06,
+    roughness: .43,
+  });
+  const metalMaterial = new THREE.MeshStandardMaterial({ color: '#888780', metalness: .65, roughness: .42 });
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(r * .34, r * .38, .002, 16), metalMaterial);
+  collar.rotation.x = Math.PI / 2;
+  collar.position.z = .001;
+  pin.add(collar);
+
+  const depth = Math.min(.006, r * .22);
+  const shaft = new THREE.Mesh(new THREE.CylinderGeometry(r * .09, r * .09, depth, 10), metalMaterial);
+  shaft.rotation.x = Math.PI / 2;
+  shaft.position.z = .002 + depth / 2;
+  pin.add(shaft);
+
+  const head = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), headMaterial);
+  const headDepth = Math.min(.006, r * .16);
+  head.scale.z = headDepth / r;
+  head.position.z = .002 + depth + headDepth;
   pin.add(head);
   for (const child of pin.children) {
     child.castShadow = true;

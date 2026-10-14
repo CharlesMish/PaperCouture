@@ -35,7 +35,7 @@ fs.mkdirSync(out, { recursive: true });
   });
   const finishTools = async () => {
     const details = page.locator('details').filter({ has: control('Board surface') });
-    if (await details.count() && !await details.evaluate(e => e.open)) await details.locator('summary').click();
+    if (await details.count() && !await details.evaluate(e => e.open)) await details.locator(':scope > summary').click();
   };
   const exported = async (name, photograph = false) => {
     const [download] = await Promise.all([page.waitForEvent('download'), btn(photograph ? 'Save photograph' : 'Save PNG').click()]);
