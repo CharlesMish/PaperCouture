@@ -157,7 +157,7 @@ button:focus-visible {
   background: var(--accent);
   color: #fff;
 }
-.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.08); }
 
 @media (max-width: 520px) {
   .dock { padding: 9px 10px 10px; border-radius: 16px; }

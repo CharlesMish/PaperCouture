@@ -1,5 +1,10 @@
 # Claude review brief: the finished Paper Couture board
 
+Charlie returned Claude's review of `6284b4e`; the three accepted repairs and
+their verification are in [the follow-up](REVIEW-FOLLOWUP.md). The original brief
+below is retained for context. Use the new PR head for any follow-up review and
+keep predecessor evidence separate.
+
 Charlie would like an independent, critical review of the place where the craft
 ends: a corkboard collage that is enjoyable to arrange, dress and photograph.
 The board should feel worth spending time with after the folding is finished.

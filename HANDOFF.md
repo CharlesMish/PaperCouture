@@ -1,3 +1,17 @@
+# Paper Couture — Claude board-review repairs (owner review)
+
+Charlie supplied Claude's read-only review of `6284b4e` and authorized agreed
+repairs. Primary board buttons keep their accent fill on hover/touch hover.
+Adjust guides outlines the chosen figure even outside Move mode; selecting or
+editing paper returns focus to it. Resizing a figure preserves its original
+stroke weight in board units, including correct movement bounds. Default 100%
+guide appearance is retained. Garments, papers, pins and lighting are unchanged.
+
+Read [the review decisions and verification](docs/october-integration/presentation/REVIEW-FOLLOWUP.md).
+All 17 jobs on the reviewed predecessor passed; check the new head separately.
+PR35 remains the review destination. Nothing is merged or deployed; keep the
+separate website untouched. Real-phone/Safari and physical-paper limits remain.
+
 # Paper Couture — adjustable guides and neutral pins (owner review)
 
 Charlie approved the corkboard direction and requested slim white/black pins,

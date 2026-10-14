@@ -26,6 +26,7 @@ export class Pinboard {
   private surface = document.createElement('select');
   private pinStyle = document.createElement('select');
   private guide = document.createElement('select');
+  private finish = document.createElement('details');
   private guideAdjust = document.createElement('details');
   private guideTarget = document.createElement('select');
   private guideSize = document.createElement('input');
@@ -101,7 +102,7 @@ export class Pinboard {
     this.savedSize.className = 'editor-readout';
     this.add = this.button('Pin current piece', () => this.pin()); this.add.classList.add('btn-primary');
     const selectionLabel = this.label('Selected', this.pieces, 'Selected board piece');
-    this.pieces.onchange = () => { this.movingGuide = false; this.placingPin = false; this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
+    this.pieces.onchange = () => { this.focusPaper(); this.placingPin = false; this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
     const formatLabel = this.label('Board size', this.format, 'Board size');
     this.format.add(new Option('Standard', 'standard'));
     this.format.add(new Option('Roomy · more space', 'roomy'));
@@ -113,7 +114,7 @@ export class Pinboard {
     this.tilt.type = 'range'; this.tilt.min = '-12'; this.tilt.max = '12'; this.tilt.step = '1';
     this.tilt.oninput = () => {
       const item = this.selected(); if (!item || this.exporting) return;
-      this.movingGuide = false; this.placingPin = false; this.finishGuideSize();
+      this.focusPaper(); this.placingPin = false; this.finishGuideSize();
       this.tiltBefore ??= copyBoard(this.state); item.tilt = Number(this.tilt.value);
       this.position(); this.constrain(item.id); this.render();
     };
@@ -141,7 +142,7 @@ export class Pinboard {
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
     this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
     this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
-    const finish = document.createElement('details'); finish.className = 'board-finish';
+    const finish = this.finish; finish.className = 'board-finish';
     const summary = document.createElement('summary'); summary.textContent = 'Finish & photograph';
     const finishBody = document.createElement('div'); finishBody.className = 'board-finish-controls';
     for (const [value, name] of [['original', 'Original board'], ['natural', 'Natural cork'], ['rose', 'Rose cork'], ['slate', 'Slate cork'], ['linen', 'Linen cloth']]) this.surface.add(new Option(name, value));
@@ -162,11 +163,11 @@ export class Pinboard {
     this.guideInPhoto.onchange = () => this.changeAppearance('guideInPhoto', this.guideInPhoto.checked);
     const guideLabel = this.label('Keep guide in photograph', this.guideInPhoto, 'Include guide in photograph'); guideLabel.className = 'board-check';
     this.placePin = this.button('Place pin', () => {
-      this.movingGuide = false; this.finishDrag(false); this.finishTilt(); this.finishGuideSize(); this.placingPin = !this.placingPin;
+      this.focusPaper(); this.finishDrag(false); this.finishTilt(); this.finishGuideSize(); this.placingPin = !this.placingPin;
       this.status.textContent = this.placingPin ? 'Tap the selected paper to place its pin. Or use Reset pin for an automatic position.' : 'Pin placement cancelled.';
       this.refresh(); this.render();
     });
-    this.resetPin = this.button('Reset pin', () => this.mutate(() => { const item = this.selected(); if (item) delete item.pin; this.placingPin = false; }));
+    this.resetPin = this.button('Reset pin', () => { this.focusPaper(); this.mutate(() => { const item = this.selected(); if (item) delete item.pin; this.placingPin = false; }); });
     const pinActions = document.createElement('div'); pinActions.className = 'editor-actions'; pinActions.append(this.placePin, this.resetPin);
     this.guideAdjust.className = 'board-guide-adjust';
     const guideSummary = document.createElement('summary'); guideSummary.textContent = 'Adjust guides';
@@ -203,12 +204,21 @@ export class Pinboard {
     guideBody.append(this.label('Adjust', this.guideTarget, 'Guide to adjust'), this.guideEdit, this.guideHint,
       this.label('Size', this.guideSize, 'Guide size'), this.guideSizeValue, guideMoves, guideReset);
     this.guideAdjust.append(guideSummary, guideBody);
-    const endGuideMode = () => {
-      if (this.movingGuide && (!finish.open || !this.guideAdjust.open)) {
-        this.finishDrag(false); this.movingGuide = false; this.refresh(); this.render();
+    const updateGuideFocus = () => {
+      if (this.adjustingGuide) this.placingPin = false;
+      // Details remain operable while the PNG is encoding. Keep transient focus
+      // coherent, but leave the export scene and disabled controls untouched.
+      if (this.exporting) {
+        if (!finish.open || !this.guideAdjust.open) this.movingGuide = false;
+        return;
       }
+      if (!finish.open || !this.guideAdjust.open) {
+        if (this.movingGuide) { this.finishDrag(false); this.movingGuide = false; }
+        this.finishGuideSize();
+      }
+      this.refresh(); this.render();
     };
-    finish.addEventListener('toggle', endGuideMode); this.guideAdjust.addEventListener('toggle', endGuideMode);
+    finish.addEventListener('toggle', updateGuideFocus); this.guideAdjust.addEventListener('toggle', updateGuideFocus);
     const explanation = document.createElement('p'); explanation.className = 'editor-readout';
     explanation.textContent = 'A flat guide for arranging clothes. It does not resize your paper. Pins are decorative; drag the paper to move it.';
     this.photo = this.button('Photograph', () => this.setPhotoMode(true));
@@ -253,7 +263,7 @@ export class Pinboard {
         this.mutate(() => { this.selected()!.pin = { x: local.x, y: local.y }; this.placingPin = false; });
         this.status.textContent = 'Pin placed. It will stay with this piece.'; e.preventDefault(); return;
       }
-      this.state.selected = id;
+      this.focusPaper(); this.state.selected = id;
       this.drag = { kind: 'paper', id: e.pointerId, x: e.clientX, y: e.clientY, item: id, before: copyBoard(this.state), moved: false };
       this.canvas.setPointerCapture(e.pointerId); this.canvas.focus({ preventScroll: true }); e.preventDefault();
       this.refresh(); this.render();
@@ -287,6 +297,12 @@ export class Pinboard {
   private activeGuide(): GuideId {
     return this.state.appearance?.guide === 'one' ? 'one' : this.guideTarget.value === 'right' ? 'right' : 'left';
   }
+  private get adjustingGuide() { return this.finish.open && this.guideAdjust.open && !this.guideAdjust.hidden; }
+  private focusPaper() {
+    // Closing the guide controls makes the outline's handoff explicit while
+    // preserving every guide pose. Only Move guide changes canvas dragging.
+    this.movingGuide = false; this.guideAdjust.open = false;
+  }
   private writeGuide(id: GuideId, pose: GuideTransform) {
     const appearance = this.state.appearance; if (!appearance) return;
     appearance.guideTransforms = { ...appearance.guideTransforms, [id]: this.decor.constrainGuide(id, pose) };
@@ -319,7 +335,7 @@ export class Pinboard {
     const b = document.createElement('button'); b.className = 'btn btn-quiet'; b.textContent = label;
     b.onclick = () => { if (!this.exporting) action(); }; return b;
   }
-  private selectedButton(label: string, action: () => void) { const b = this.button(label, action); this.selectedTools.push(b); return b; }
+  private selectedButton(label: string, action: () => void) { const b = this.button(label, () => { this.focusPaper(); action(); }); this.selectedTools.push(b); return b; }
   private selected() { return this.state.items.find(i => i.id === this.state.selected); }
   private captureSize(): PaperSizeSource | undefined {
     const source = this.handlers.sources()[Number(this.source.value)];
@@ -359,6 +375,7 @@ export class Pinboard {
   }
   private nudge(x: number, y: number) {
     if (!this.selected()) return;
+    this.focusPaper();
     this.mutate(() => { const i = this.selected()!; i.x += x*.08; i.y += y*.08; this.position(); this.constrain(i.id); });
   }
   private layer(delta: number) {
@@ -369,6 +386,7 @@ export class Pinboard {
   private pin() {
     const source = this.handlers.sources()[Number(this.source.value)];
     if (!source || this.state.items.length >= MAX_PIECES) return;
+    this.focusPaper();
     try {
       const sizing = this.captureSize()!, side = Number(this.size.value);
       if (!squareChoices(sizing).includes(side)) throw new Error('Choose a starting square');
@@ -431,14 +449,16 @@ export class Pinboard {
     this.guideEdit.setAttribute('aria-pressed', String(this.movingGuide));
     const guideName = guideId === 'one' ? 'the figure guide' : guideId === 'left' ? 'Guide 1' : 'Guide 2';
     this.guideHint.textContent = this.movingGuide ? `Drag anywhere on the board to move ${guideName}. Clothes stay in place.`
-      : 'Adjust each guide independently. Move guide enables dragging; the arrows also work.';
+      : `The outline marks ${guideName}. Use Size or the guide arrows; Move guide enables dragging.`;
     this.caption.textContent = this.movingGuide ? this.guideHint.textContent : this.placingPin
       ? 'Tap visible paper on the selected piece to place its pin.'
-      : 'Select paper to move it. The outline marks your selection and stays out of the PNG.';
+      : this.adjustingGuide ? `${this.guideHint.textContent} Select paper to return to arranging it.`
+        : 'Select paper to move it. The outline marks your selection and stays out of the PNG.';
     this.canvas.classList.toggle('moving-guide', this.movingGuide);
     this.canvas.setAttribute('aria-label', this.movingGuide
       ? 'Move selected figure guide. Drag anywhere on this board, or use arrow keys. Clothes stay in place.'
-      : 'Pinboard front view. Select and drag paper. Empty space does not pan. Arrow keys move the selected piece.');
+      : this.adjustingGuide ? `Pinboard front view. The outline marks ${guideName}. Use the guide controls to adjust it. Select paper to return to arranging; arrow keys move the selected paper.`
+        : 'Pinboard front view. Select and drag paper. Empty space does not pan. Arrow keys move the selected piece.');
     this.guideSize.max = String(Math.round((info?.maxScale ?? 1.5)*100));
     this.guideSize.value = String(Math.round((info?.pose.scale ?? 1)*100));
     this.guideSize.setAttribute('aria-valuetext', `${this.guideSize.value} percent`);
@@ -513,7 +533,7 @@ export class Pinboard {
   private render() {
     if (!this.renderer || !this.dialog.open || this.exporting) return;
     this.syncDecor();
-    const group = this.movingGuide ? this.decor.guideInfo(this.activeGuide())?.object : this.state.selected && this.groups.get(this.state.selected);
+    const group = this.adjustingGuide ? this.decor.guideInfo(this.activeGuide())?.object : this.state.selected && this.groups.get(this.state.selected);
     this.selection.visible = !!group && !this.photoMode && !this.placingPin;
     if (group) { this.selection.box.setFromObject(group, true); this.selection.updateMatrixWorld(true); }
     const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));

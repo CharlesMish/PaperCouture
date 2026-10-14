@@ -1,10 +1,11 @@
 import * as THREE from 'three';
 import { BoardState, GuideId, GuideTransform } from './model';
-import { makeFigureGuides, makePin, disposeDecor } from './decor';
+import { makeFigureGuides, makePin, disposeDecor, figureGuideBounds, setFigureGuideStrokeScale } from './decor';
 import { BOARD_MARGIN } from './layout';
 
 interface GuideSlot {
   object: THREE.Object3D; baseX: number; baseScale: number; bounds: THREE.Box3;
+  fitBounds: THREE.Box3; boundsScale: number;
   pose: GuideTransform; maxScale: number;
 }
 
@@ -31,10 +32,15 @@ export class BoardDecor {
 
   constrainGuide(id: GuideId, pose: GuideTransform): GuideTransform {
     const slot = this.guides.get(id); if (!slot) return pose;
-    const scale = THREE.MathUtils.clamp(pose.scale, .5, slot.maxScale), b = slot.bounds;
+    const scale = THREE.MathUtils.clamp(pose.scale, .5, slot.maxScale);
+    if (slot.boundsScale !== scale) {
+      figureGuideBounds(slot.object, slot.baseScale, scale, slot.fitBounds);
+      slot.boundsScale = scale;
+    }
+    const b = slot.fitBounds;
     return { scale,
-      x: THREE.MathUtils.clamp(pose.x, -this.width/2 + BOARD_MARGIN - b.min.x*scale, this.width/2 - BOARD_MARGIN - b.max.x*scale),
-      y: THREE.MathUtils.clamp(pose.y, -this.height/2 + BOARD_MARGIN - b.min.y*scale, this.height/2 - BOARD_MARGIN - b.max.y*scale) };
+      x: THREE.MathUtils.clamp(pose.x, -this.width/2 + BOARD_MARGIN - b.min.x, this.width/2 - BOARD_MARGIN - b.max.x),
+      y: THREE.MathUtils.clamp(pose.y, -this.height/2 + BOARD_MARGIN - b.min.y, this.height/2 - BOARD_MARGIN - b.max.y) };
   }
 
   sync(state: BoardState, groups: Map<string, THREE.Group>, width: number, height: number, photograph: boolean) {
@@ -49,11 +55,21 @@ export class BoardDecor {
         this.guide = makeFigureGuides(a.guide === 'one' ? 1 : 2, width, height, a.surface === 'slate' ? 'light' : 'dark');
         for (const [index, figure] of this.guide.children.entries()) {
           const id: GuideId = a.guide === 'one' ? 'one' : index === 0 ? 'left' : 'right';
-          const bounds = new THREE.Box3().setFromObject(figure, true).translate(new THREE.Vector3(-figure.position.x, 0, 0));
-          const size = bounds.getSize(new THREE.Vector3());
+          const bounds = figureGuideBounds(figure, figure.scale.x, 1, new THREE.Box3());
+          const fitBounds = new THREE.Box3();
+          // Width no longer scales with the centerline. Find the largest whole
+          // percent using the compensated ribbon's real bounds, not old bounds*s.
+          let low = 50, high = 150;
+          while (low < high) {
+            const percent = Math.ceil((low + high) / 2);
+            figureGuideBounds(figure, figure.scale.x, percent/100, fitBounds);
+            if (fitBounds.max.x-fitBounds.min.x <= width-2*BOARD_MARGIN && fitBounds.max.y-fitBounds.min.y <= height-2*BOARD_MARGIN) low = percent;
+            else high = percent - 1;
+          }
           this.guides.set(id, { object: figure, baseX: figure.position.x, baseScale: figure.scale.x, bounds,
+            fitBounds: fitBounds.copy(bounds), boundsScale: 1,
             pose: { x: figure.position.x, y: 0, scale: 1 },
-            maxScale: Math.floor(100 * Math.min(1.5, (width-2*BOARD_MARGIN)/size.x, (height-2*BOARD_MARGIN)/size.y)) / 100 });
+            maxScale: low/100 });
         }
         this.guide.position.z = -.135; this.root.add(this.guide);
       }
@@ -63,6 +79,7 @@ export class BoardDecor {
       // Saved choices remain intact when switching board formats; only the
       // visible reference is fitted. Restoring Roomy recovers the chosen pose.
       slot.pose = this.constrainGuide(id, a?.guideTransforms?.[id] ?? { x: slot.baseX, y: 0, scale: 1 });
+      setFigureGuideStrokeScale(slot.object, slot.pose.scale);
       slot.object.position.set(slot.pose.x, slot.pose.y, 0);
       slot.object.scale.setScalar(slot.baseScale * slot.pose.scale);
     }

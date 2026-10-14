@@ -4,7 +4,15 @@ This follow-up builds on the reviewed twelve-piece branch at `87a089d`, whose
 eight GitHub workflows passed. It adds a finishing surface, not new folds.
 Source PR35 remains for owner review; the separate website has not been changed.
 
-## Current follow-up: adjustable guides and neutral pins
+## Current follow-up: Claude's board review
+
+The review of `6284b4e` led to three focused repairs: filled primary buttons retain
+their fill on hover, Adjust guides outlines the selected figure without requiring
+Move mode, and changing guide size preserves its original stroke weight. See
+[decisions, actual comparisons and checks](REVIEW-FOLLOWUP.md). Lighting, new-board
+defaults and photograph framing remain separate review choices.
+
+## Adjustable guides and neutral pins
 
 This follow-up starts at `606c420`. White and charcoal-black pins use smaller,
 flatter heads than the retained brass/pearl/red styles. Existing pin styles and
@@ -13,12 +21,15 @@ saved arrangements keep their earlier rendering.
 Under **Finish & photograph → Adjust guides**, choose Guide 1 or Guide 2 (a
 single figure is selected automatically). **Move guide** enables dragging
 anywhere on the board to move that figure, including when clothes cover its
-outline. **Done moving guide** or Escape returns to paper arrangement. Keyboard
+outline. **Done moving guide** or Escape ends the full-board guide drag mode. Keyboard
 arrows work while Move guide is active; the four guide buttons work without
-entering that mode. The selected guide has an editing outline, excluded from PNG.
+entering that mode. While Adjust guides is open, the selected guide has an editing
+outline, excluded from PNG. Closing the section or selecting/editing paper restores
+the paper outline. Selecting paper closes Adjust guides without changing its poses.
 
 **Size** scales only the selected guide, from 50% up to 150%, capped by the board's
-available height/width. Movement is bounded so the whole reference remains on the
+available height/width. Stroke weight stays constant in board units as the figure
+changes size. Movement is bounded so the whole reference remains on the
 board. Each paired guide can have a different size; neither the other figure nor
 any garment changes. **Reset guide** restores the selected figure's default
 position and size. Undo reverses a drag or size gesture in one step.

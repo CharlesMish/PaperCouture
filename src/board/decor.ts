@@ -80,9 +80,17 @@ function makeSlimPin(pin: THREE.Group, style: 'white' | 'black', radius: number)
 
 type Point = readonly [number, number];
 
+interface GuideStroke {
+  original: Float32Array;
+  centers: Float64Array;
+  scale: number;
+}
+const guideStrokes = new WeakMap<THREE.BufferGeometry, GuideStroke>();
+
 /** A flat ribbon avoids platform-dependent WebGL line widths in preview and PNG. */
 function stroke(points: readonly Point[], width: number, material: THREE.MeshBasicMaterial): THREE.Mesh {
   const positions: number[] = [];
+  const centers: number[] = [];
   for (let i = 1; i < points.length; i++) {
     const [ax, ay] = points[i - 1], [bx, by] = points[i];
     const length = Math.hypot(bx - ax, by - ay);
@@ -90,11 +98,52 @@ function stroke(points: readonly Point[], width: number, material: THREE.MeshBas
     const nx = -(by - ay) / length * width / 2, ny = (bx - ax) / length * width / 2;
     positions.push(ax + nx, ay + ny, 0, ax - nx, ay - ny, 0, bx + nx, by + ny, 0,
       bx + nx, by + ny, 0, ax - nx, ay - ny, 0, bx - nx, by - ny, 0);
+    centers.push(ax, ay, 0, ax, ay, 0, bx, by, 0, bx, by, 0, ax, ay, 0, bx, by, 0);
   }
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.computeBoundingSphere();
+  guideStrokes.set(geometry, { original: new Float32Array(geometry.getAttribute('position').array),
+    centers: new Float64Array(centers), scale: 1 });
   return new THREE.Mesh(geometry, material);
+}
+
+/** Keep the fitted guide's ribbon width unchanged while its centerline scales. */
+export function setFigureGuideStrokeScale(figure: THREE.Object3D, scale: number): void {
+  for (const child of figure.children) {
+    if (!(child instanceof THREE.Mesh)) continue;
+    const stroke = guideStrokes.get(child.geometry); if (!stroke || stroke.scale === scale) continue;
+    const positions = child.geometry.getAttribute('position') as THREE.BufferAttribute;
+    const values = positions.array;
+    // Restore the exact original Float32 coordinates at 100%, including after
+    // a size round trip. All other sizes reuse this same geometry and buffer.
+    if (scale === 1) values.set(stroke.original);
+    else for (let i = 0; i < values.length; i++)
+      values[i] = stroke.centers[i] + (stroke.original[i] - stroke.centers[i]) / scale;
+    positions.needsUpdate = true;
+    child.geometry.computeBoundingBox();
+    child.geometry.computeBoundingSphere();
+    stroke.scale = scale;
+  }
+}
+
+/** Exact prospective ribbon bounds, relative to the figure's board-space origin. */
+export function figureGuideBounds(figure: THREE.Object3D, baseScale: number, scale: number, target: THREE.Box3): THREE.Box3 {
+  target.makeEmpty();
+  const worldScale = baseScale * scale;
+  for (const child of figure.children) {
+    if (!(child instanceof THREE.Mesh)) continue;
+    const stroke = guideStrokes.get(child.geometry); if (!stroke) continue;
+    for (let i = 0; i < stroke.original.length; i += 3) {
+      // Float32 rounding mirrors the actual reusable GPU position buffer.
+      const x = (scale === 1 ? stroke.original[i] : Math.fround(stroke.centers[i] + (stroke.original[i] - stroke.centers[i]) / scale)) * worldScale;
+      const y = (scale === 1 ? stroke.original[i+1] : Math.fround(stroke.centers[i+1] + (stroke.original[i+1] - stroke.centers[i+1]) / scale)) * worldScale;
+      target.min.x = Math.min(target.min.x, x); target.max.x = Math.max(target.max.x, x);
+      target.min.y = Math.min(target.min.y, y); target.max.y = Math.max(target.max.y, y);
+    }
+  }
+  target.min.z = target.max.z = 0;
+  return target;
 }
 
 function curve(points: readonly Point[]): Point[] {

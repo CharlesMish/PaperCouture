@@ -19,7 +19,7 @@
     "check:integrated": "node --import tsx scripts/check-integrated.ts",
     "check:positioning": "node --import tsx scripts/check-positioning.ts",
     "check:curation": "node --import tsx scripts/check-design-curation.ts",
-    "check:board": "node --import tsx scripts/check-board.ts",
+    "check:board": "node --import tsx scripts/check-board.ts && node --import tsx scripts/check-guide-geometry.ts",
     "check:sizing": "node --import tsx scripts/check-sizing.ts",
     "check:outfit-folds": "node --import tsx scripts/check-outfit-folds.ts",
     "check:companions": "node --import tsx scripts/check-companion-folds.ts && node --import tsx scripts/check-framed-brooch.ts && node --import tsx scripts/check-plum-seed.ts",
