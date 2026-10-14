@@ -63,7 +63,7 @@ jobs:
           include-hidden-files: true
   phone-and-board:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v6
         with:
@@ -84,6 +84,7 @@ jobs:
           curl -fsS "$BASE_URL/" > /dev/null
           CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
           CAPTURE_DIR=.october-qa/roomy node scripts/check-roomy-board.cjs
+          CAPTURE_DIR=.october-qa/presentation node scripts/check-presentation-browser.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:

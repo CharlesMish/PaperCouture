@@ -1,3 +1,17 @@
+# Paper Couture — corkboard finishing pass (owner review)
+
+Charlie requested a corkboard feel, visible/placeable pins, optional flat figure
+guides and a photograph view. The finishing drawer adds three cork colors and
+linen, three pin styles, one/two guides with explicit photograph inclusion, and
+three bounded lighting choices. Twelve slots and both board sizes are retained.
+Existing saves keep their old appearance until a surface is chosen. No garment,
+paper artwork, sizing or fold-engine changes; decor stays outside frozen captures.
+
+Read [the presentation notes and actual comparison](docs/october-integration/presentation/NOTES.md).
+Source PR35 is the review destination. Do not merge or publish without Charlie's
+review; the separate website repository is untouched. Prior `87a089d` had all
+eight GitHub workflows green. New-head results must be checked independently.
+
 # Paper Couture — more pinboard room (owner review)
 
 Charlie asked for further preparation and more board space, then increased the

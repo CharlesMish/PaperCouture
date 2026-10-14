@@ -481,3 +481,24 @@ button:focus-visible {
   .pinboard-dialog .board-preview { width: min(100%, calc((100dvh - 250px) * var(--board-aspect))); align-self: start; }
   .pinboard-dialog .board-preview p { display: none; }
 }
+
+/* A finishing drawer keeps capture and square size easy to reach on a phone. */
+.board-finish { margin: 4px 0; border: 1px solid var(--rule); border-radius: 10px; }
+.board-finish summary { padding: 12px; min-height: 44px; box-sizing: border-box; cursor: pointer; font-size: .9rem; }
+.board-finish-controls { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 12px; }
+.board-tools .board-check { flex-wrap: nowrap; justify-content: flex-start; }
+.board-tools .board-check input { flex: 0 0 22px; width: 22px; height: 44px; margin: 0; }
+.board-tools label[hidden] { display: none; }
+.pinboard-canvas.placing-pin { cursor: crosshair; }
+.board-photo-bar { display: none; }
+.pinboard-dialog.board-photograph { width: 1050px; }
+.board-photograph .board-tools, .board-photograph .board-preview > p { display: none; }
+.board-photograph .board-body { display: flex; align-items: center; justify-content: center; }
+.board-photograph .board-preview { width: min(100%, calc(min(716px, 100dvh - 168px) * var(--board-aspect))); }
+.board-photograph .pinboard-canvas { cursor: default; }
+.board-photograph .board-photo-bar { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+.board-photo-bar .btn { min-height: 44px; flex: 1; }
+@media (max-width: 719px) {
+  .board-photograph .board-preview { width: min(100%, calc((100dvh - 164px) * var(--board-aspect))); align-self: center; }
+  .board-photo-bar .btn { padding: 8px; font-size: .85rem; }
+}

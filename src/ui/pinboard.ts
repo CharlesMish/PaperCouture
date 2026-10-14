@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 import { PAPERS } from '../papers';
 import { rotationCheckPaper } from '../papers/rotationCheck';
-import { BACKGROUNDS, Background, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES } from '../board/model';
+import { BACKGROUNDS, Background, BoardAppearance, BoardState, BoardStore, copyBoard, defaultAppearance, emptyBoard, MAX_PIECES } from '../board/model';
+import { BoardDecor } from '../board/presentation';
+import { createCorkTexture } from '../board/surfaces';
 import { capture, restore } from '../board/snapshot';
 import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_FORMATS, BoardFormat } from '../board/layout';
 import { describePaperSize, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
@@ -17,6 +19,21 @@ export class Pinboard {
   private camera = new THREE.OrthographicCamera(-WIDTH/2, WIDTH/2, HEIGHT/2, -HEIGHT/2, .1, 20);
   private renderer?: THREE.WebGLRenderer;
   private backing?: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshStandardMaterial>;
+  private decor = new BoardDecor();
+  private keyLight = new THREE.DirectionalLight('#fff3e2', 2.1);
+  private fillLight = new THREE.HemisphereLight('#fff6ea', '#8f877a', 1.25);
+  private surfaceKey = '';
+  private surface = document.createElement('select');
+  private pinStyle = document.createElement('select');
+  private guide = document.createElement('select');
+  private lighting = document.createElement('select');
+  private guideInPhoto = document.createElement('input');
+  private photoMode = false;
+  private placingPin = false;
+  private placePin: HTMLButtonElement;
+  private resetPin: HTMLButtonElement;
+  private photo: HTMLButtonElement;
+  private photoSave: HTMLButtonElement;
   private state: BoardState = emptyBoard();
   private store = new BoardStore(() => localStorage, [...PAPERS.map(p => p.id), rotationCheckPaper.id]);
   private groups = new Map<string, THREE.Group>();
@@ -73,14 +90,14 @@ export class Pinboard {
     this.savedSize.className = 'editor-readout';
     this.add = this.button('Pin current piece', () => this.pin()); this.add.classList.add('btn-primary');
     const selectionLabel = this.label('Selected', this.pieces, 'Selected board piece');
-    this.pieces.onchange = () => { this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
+    this.pieces.onchange = () => { this.placingPin = false; this.finishDrag(false); this.state.selected = this.pieces.value; this.refresh(); this.render(); };
     const formatLabel = this.label('Board size', this.format, 'Board size');
     this.format.add(new Option('Standard', 'standard'));
     this.format.add(new Option('Roomy · more space', 'roomy'));
     this.format.onchange = () => this.changeFormat(this.format.value as BoardFormat);
     const bg = this.label('Background', this.background, 'Pinboard background');
     for (const name of Object.keys(BACKGROUNDS)) this.background.add(new Option(name, name));
-    this.background.onchange = () => this.mutate(() => { this.state.background = this.background.value as Background; this.setBackground(); });
+    this.background.onchange = () => this.mutate(() => { this.state.background = this.background.value as Background; });
     const angle = this.label('Tilt', this.tilt, 'Pinboard tilt');
     this.tilt.type = 'range'; this.tilt.min = '-12'; this.tilt.max = '12'; this.tilt.step = '1';
     this.tilt.oninput = () => {
@@ -101,7 +118,7 @@ export class Pinboard {
         this.status.textContent = 'Piece removed. Undo restores it, including its position.';
       })));
     this.undo = this.button('Undo', () => {
-      this.finishDrag(false); this.finishTilt(); const previous = this.history.pop(); if (!previous) return;
+      this.placingPin = false; this.finishDrag(false); this.finishTilt(); const previous = this.history.pop(); if (!previous) return;
       this.state = previous; this.reconcile(); this.setBackground(); this.persist(); this.refresh(); this.render();
       this.status.textContent = 'Last board change undone.';
     });
@@ -112,16 +129,57 @@ export class Pinboard {
     this.status.setAttribute('role', 'status'); this.status.className = 'editor-readout';
     this.storageStatus.setAttribute('role', 'status'); this.storageStatus.className = 'board-storage editor-readout';
     this.retry = this.button('Retry saving board', () => { this.persist(); this.refresh(); });
-    tools.append(sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, formatLabel, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, this.note, this.storageStatus, this.retry, this.status);
+    const finish = document.createElement('details'); finish.className = 'board-finish';
+    const summary = document.createElement('summary'); summary.textContent = 'Finish & photograph';
+    const finishBody = document.createElement('div'); finishBody.className = 'board-finish-controls';
+    for (const [value, name] of [['original', 'Original board'], ['natural', 'Natural cork'], ['rose', 'Rose cork'], ['slate', 'Slate cork'], ['linen', 'Linen cloth']]) this.surface.add(new Option(name, value));
+    this.surface.onchange = () => this.mutate(() => {
+      this.placingPin = false;
+      if (this.surface.value === 'original') delete this.state.appearance;
+      else this.state.appearance = { ...(this.state.appearance ?? defaultAppearance()), surface: this.surface.value as BoardAppearance['surface'] };
+    });
+    const appearanceSelect = <K extends 'pins' | 'guide' | 'lighting'>(select: HTMLSelectElement, field: K, options: [BoardAppearance[K], string][]) => {
+      for (const [value, name] of options) select.add(new Option(name, value));
+      select.onchange = () => this.changeAppearance(field, select.value as BoardAppearance[K]);
+    };
+    appearanceSelect(this.pinStyle, 'pins', [['none', 'No pins'], ['brass', 'Brass'], ['pearl', 'Pearl'], ['red', 'Red']]);
+    appearanceSelect(this.guide, 'guide', [['none', 'Off'], ['one', 'One figure'], ['two', 'Two figures']]);
+    appearanceSelect(this.lighting, 'lighting', [['soft', 'Soft daylight'], ['clear', 'Clear daylight'], ['warm', 'Warm afternoon']]);
+    const originalLight = new Option('Original light', 'original'); originalLight.disabled = true; this.lighting.add(originalLight);
+    this.guideInPhoto.type = 'checkbox';
+    this.guideInPhoto.onchange = () => this.changeAppearance('guideInPhoto', this.guideInPhoto.checked);
+    const guideLabel = this.label('Keep guide in photograph', this.guideInPhoto, 'Include guide in photograph'); guideLabel.className = 'board-check';
+    this.placePin = this.button('Place pin', () => {
+      this.finishDrag(false); this.finishTilt(); this.placingPin = !this.placingPin;
+      this.status.textContent = this.placingPin ? 'Tap the selected paper to place its pin. Or use Reset pin for an automatic position.' : 'Pin placement cancelled.';
+      this.refresh(); this.render();
+    });
+    this.resetPin = this.button('Reset pin', () => this.mutate(() => { const item = this.selected(); if (item) delete item.pin; this.placingPin = false; }));
+    const pinActions = document.createElement('div'); pinActions.className = 'editor-actions'; pinActions.append(this.placePin, this.resetPin);
+    const explanation = document.createElement('p'); explanation.className = 'editor-readout';
+    explanation.textContent = 'A flat guide for arranging clothes. It does not resize your paper. Pins are decorative; drag the paper to move it.';
+    this.photo = this.button('Photograph', () => this.setPhotoMode(true));
+    finishBody.append(this.label('Surface', this.surface, 'Board surface'), this.label('Pins', this.pinStyle, 'Pin style'), pinActions,
+      this.label('Outfit guide', this.guide, 'Figure guide'), explanation, guideLabel, this.label('Light', this.lighting, 'Board lighting'), this.photo);
+    finish.append(summary, finishBody);
+    tools.append(sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, finish, formatLabel, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, this.note, this.storageStatus, this.retry, this.status);
+    const photoBar = document.createElement('div'); photoBar.className = 'board-photo-bar';
+    this.photoSave = this.button('Save photograph', () => { void this.exportPNG(); }); this.photoSave.classList.add('btn-primary');
+    photoBar.append(this.button('Back to arranging', () => this.setPhotoMode(false)), this.photoSave);
+    left.append(photoBar);
     const body = document.createElement('div'); body.className = 'board-body'; body.append(left, tools);
     this.dialog.append(this.title, body); parent.append(this.dialog);
     this.selection.visible = false; this.scene.add(this.selection);
-    this.dialog.addEventListener('cancel', e => { if (this.exporting) e.preventDefault(); });
-    this.dialog.addEventListener('close', () => { this.finishDrag(false); this.finishTilt(); });
+    this.dialog.addEventListener('cancel', e => {
+      if (this.exporting) e.preventDefault();
+      else if (this.photoMode) { e.preventDefault(); this.setPhotoMode(false); }
+      else if (this.placingPin) { e.preventDefault(); this.placingPin = false; this.refresh(); this.render(); }
+    });
+    this.dialog.addEventListener('close', () => { this.finishDrag(false); this.finishTilt(); this.setPhotoMode(false); });
     window.addEventListener('beforeunload', e => { if (this.unsaved) e.preventDefault(); });
     new ResizeObserver(() => { if (this.dialog.open && !this.exporting) this.render(); }).observe(this.canvas);
     this.canvas.addEventListener('pointerdown', e => {
-      if (this.exporting || this.drag || !e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if (this.exporting || this.photoMode || this.drag || !e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0)) return;
       this.finishTilt();
       const r = this.canvas.getBoundingClientRect(), ray = new THREE.Raycaster();
       ray.setFromCamera(new THREE.Vector2((e.clientX-r.left)/r.width*2-1, 1-(e.clientY-r.top)/r.height*2), this.camera);
@@ -129,7 +187,14 @@ export class Pinboard {
       const hit = ray.intersectObjects([...this.groups.values()], true).find(h => h.object instanceof THREE.Mesh);
       if (!hit) return;
       let group = hit.object; while (group.parent !== this.arrangement && group.parent) group = group.parent;
-      const id = group.userData.boardId as string; this.state.selected = id;
+      const id = group.userData.boardId as string;
+      if (this.placingPin) {
+        if (id !== this.state.selected) { this.status.textContent = 'Tap visible paper on the selected piece, or cancel pin placement.'; return; }
+        const local = group.worldToLocal(hit.point.clone());
+        this.mutate(() => { this.selected()!.pin = { x: local.x, y: local.y }; this.placingPin = false; });
+        this.status.textContent = 'Pin placed. It will stay with this piece.'; e.preventDefault(); return;
+      }
+      this.state.selected = id;
       this.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, item: id, before: copyBoard(this.state), moved: false };
       this.canvas.setPointerCapture(e.pointerId); this.canvas.focus({ preventScroll: true }); e.preventDefault();
       this.refresh(); this.render();
@@ -147,11 +212,24 @@ export class Pinboard {
     this.canvas.addEventListener('lostpointercapture', () => this.finishDrag(false));
     this.canvas.addEventListener('keydown', e => {
       const d: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
-      if (d[e.key]) { e.preventDefault(); this.nudge(...d[e.key]); }
+      if (d[e.key] && !this.photoMode && !this.placingPin) { e.preventDefault(); this.nudge(...d[e.key]); }
     });
     this.refresh();
   }
 
+  private changeAppearance<K extends keyof BoardAppearance>(key: K, value: BoardAppearance[K]) {
+    this.mutate(() => { this.state.appearance = { ...(this.state.appearance ?? defaultAppearance()), [key]: value }; this.placingPin = false; });
+  }
+  private setPhotoMode(enabled: boolean) {
+    this.finishDrag(true); this.finishTilt(); this.placingPin = false; this.photoMode = enabled;
+    this.dialog.classList.toggle('board-photograph', enabled);
+    this.canvas.tabIndex = enabled ? -1 : 0;
+    this.refresh(); this.render();
+    if (this.dialog.open) (enabled ? this.photoSave : this.photo).focus({ preventScroll: true });
+  }
+  private syncDecor(photograph = this.photoMode) {
+    this.decor.sync(this.state, this.groups, this.layout.width, this.layout.height, photograph);
+  }
   private label(text: string, control: HTMLElement, name: string) {
     const label = document.createElement('label'); label.textContent = text; control.setAttribute('aria-label', name); label.append(control); return label;
   }
@@ -178,6 +256,7 @@ export class Pinboard {
   private checkpoint(before: BoardState) { this.history.push(before); if (this.history.length > 20) this.history.shift(); }
   private mutate(action: () => void) {
     if (this.exporting) return;
+    this.placingPin = false;
     this.finishDrag(false); this.finishTilt(); this.checkpoint(copyBoard(this.state)); action();
     this.reconcile(); this.persist(); this.refresh(); this.render();
   }
@@ -246,6 +325,17 @@ export class Pinboard {
     this.tilt.value = String(this.selected()?.tilt ?? 0); this.background.value = this.state.background;
     this.selectedTools.forEach(b => b.disabled = !this.selected());
     this.undo.disabled = !this.history.length; this.download.disabled = !this.state.items.length;
+    this.photo.disabled = this.photoSave.disabled = !this.state.items.length;
+    const appearance = this.state.appearance;
+    this.surface.value = appearance?.surface ?? 'original'; this.pinStyle.value = appearance?.pins ?? 'none';
+    this.guide.value = appearance?.guide ?? 'none'; this.lighting.value = appearance?.lighting ?? 'original';
+    this.pinStyle.disabled = this.guide.disabled = this.lighting.disabled = !appearance;
+    this.guideInPhoto.checked = appearance?.guideInPhoto ?? false; this.guideInPhoto.disabled = !appearance || appearance.guide === 'none';
+    this.background.disabled = !!appearance;
+    this.background.closest('label')!.hidden = !!appearance;
+    this.placePin.disabled = this.resetPin.disabled = !this.selected() || !appearance || appearance.pins === 'none';
+    this.placePin.textContent = this.placingPin ? 'Cancel pin placement' : 'Place pin';
+    this.canvas.classList.toggle('placing-pin', this.placingPin);
     this.add.disabled = this.state.items.length >= MAX_PIECES || !this.source.length || this.source.value === '';
     this.size.disabled = !this.source.length || this.source.value === '';
     this.add.textContent = this.state.items.length >= MAX_PIECES ? `Board full · ${MAX_PIECES} pieces` : 'Pin current piece';
@@ -294,7 +384,7 @@ export class Pinboard {
     for (const item of this.state.items) if (!this.groups.has(item.id)) {
       const group = restore(item.snapshot); group.userData.boardId = item.id; this.groups.set(item.id, group); this.arrangement.add(group);
     }
-    this.position(); this.renderer?.renderLists.dispose();
+    this.position(); this.setBackground(); this.renderer?.renderLists.dispose();
   }
   private position() {
     let top = -.10;
@@ -316,7 +406,8 @@ export class Pinboard {
   private render() {
     if (!this.renderer || !this.dialog.open || this.exporting) return;
     const group = this.state.selected && this.groups.get(this.state.selected);
-    this.selection.visible = !!group;
+    this.selection.visible = !!group && !this.photoMode && !this.placingPin;
+    this.syncDecor();
     if (group) { this.selection.box.setFromObject(group, true); this.selection.updateMatrixWorld(true); }
     const w = Math.max(1, Math.round(this.canvas.clientWidth * Math.min(devicePixelRatio, 2)));
     this.renderer.setSize(w, Math.round(w*this.layout.height/this.layout.width), false); this.renderer.render(this.scene, this.camera);
@@ -329,19 +420,34 @@ export class Pinboard {
     this.renderer.toneMapping = THREE.NeutralToneMapping; this.renderer.toneMappingExposure = 1.05;
     this.renderer.shadowMap.enabled = true; this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.camera.position.set(0, 0, 8);
-    this.scene.add(new THREE.HemisphereLight('#fff6ea', '#8f877a', 1.25));
-    const key = new THREE.DirectionalLight('#fff3e2', 2.1); key.position.set(-2.6, 5.2, 5);
+    this.scene.add(this.fillLight);
+    const key = this.keyLight; key.position.set(-2.6, 5.2, 5);
     key.castShadow = true; key.shadow.mapSize.set(2048, 2048); key.shadow.camera.near = .1; key.shadow.camera.far = 15;
     key.shadow.bias = -.0002; key.shadow.normalBias = .004;
-    this.scene.add(key, this.arrangement);
+    this.scene.add(key, this.arrangement, this.decor.root);
     this.backing = new THREE.Mesh(new THREE.PlaneGeometry(this.layout.width, this.layout.height), new THREE.MeshStandardMaterial({ roughness: 1 }));
     this.backing.position.z = -.15; this.backing.receiveShadow = true; this.scene.add(this.backing);
     this.setBackground();
   }
   private setBackground() {
     if (!this.backing) return;
+    const a = this.state.appearance, light = a?.lighting;
+    this.keyLight.position.set(...(light ? [-1, 1.4, 12] : [-2.6, 5.2, 5]) as [number, number, number]);
+    this.keyLight.intensity = light === 'clear' ? 2 : light ? 1.6 : 2.1;
+    this.keyLight.color.set(light === 'warm' ? '#ffe0b4' : light ? '#fff9ef' : '#fff3e2');
+    this.fillLight.intensity = light === 'clear' ? 1.3 : light ? 1.65 : 1.25;
+    this.fillLight.color.set(light === 'warm' ? '#fff1da' : '#fff6ea');
+    this.keyLight.shadow.camera.far = light ? 30 : 15; this.keyLight.shadow.camera.updateProjectionMatrix();
+    const signature = `${a?.surface ?? 'original'}:${this.state.background}:${this.layout.width}:${this.layout.height}`;
+    if (this.surfaceKey === signature) return;
+    this.surfaceKey = signature;
+    if (a && a.surface !== 'linen') {
+      this.backing.material.map?.dispose();
+      this.backing.material.map = createCorkTexture(a.surface, this.layout.width, this.layout.height);
+      this.backing.material.needsUpdate = true; return;
+    }
     const c = document.createElement('canvas'); c.width = c.height = 256; const ctx = c.getContext('2d')!;
-    ctx.fillStyle = BACKGROUNDS[this.background.value as Background]; ctx.fillRect(0, 0, 256, 256);
+    ctx.fillStyle = BACKGROUNDS[a ? 'Linen' : this.state.background]; ctx.fillRect(0, 0, 256, 256);
     for (let i = 0; i < 256; i += 3) {
       ctx.fillStyle = '#ffffff09'; ctx.fillRect(0, i, 256, 1);
       ctx.fillStyle = '#29231d0c'; ctx.fillRect(i, 0, 1, 256);
@@ -353,7 +459,8 @@ export class Pinboard {
 
   private async exportPNG() {
     if (!this.renderer || this.exporting) return;
-    this.finishDrag(true); this.finishTilt(); this.selection.visible = false; this.exporting = true;
+    const focusBefore = document.activeElement;
+    this.finishDrag(true); this.finishTilt(); this.selection.visible = false; this.syncDecor(true); this.exporting = true;
     this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = true);
     this.status.textContent = 'Preparing PNG…';
     try {
@@ -370,6 +477,7 @@ export class Pinboard {
       this.exporting = false;
       this.dialog.querySelectorAll<HTMLButtonElement | HTMLInputElement | HTMLSelectElement>('button,input,select').forEach(e => e.disabled = false);
       this.refresh(); this.render();
+      if (focusBefore instanceof HTMLElement && this.dialog.open && focusBefore.isConnected) focusBefore.focus({ preventScroll: true });
     }
   }
 }
