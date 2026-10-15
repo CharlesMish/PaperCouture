@@ -14,8 +14,9 @@ import { buildNecktie } from './necktie';
 import { buildCampShirt } from './campShirt';
 import { buildSwingCoat } from './swingCoat';
 import { buildFitFlare } from './fitFlare';
+import { buildCoatDress, DEFAULT_COAT_DRESS } from './coatDress';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -29,6 +30,7 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
   { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
   { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
+  { id: 'coat-dress', name: 'Coat-dress', experiment: 'One square · collar, fronts and short sleeves from one rigid shoulder collapse, waist from a second; no neck opening, armholes or fastening' },
   { id: 'swing-coat', name: 'Swing coat', experiment: 'One square · long front panels and folded facings over continuous lining, no through-opening or fastening' },
   { id: 'fit-flare', name: 'Fit-and-flare dress', experiment: 'One square · nipped waist from a pleat and hidden gussets folded in one rigid move; sleeveless, no armholes or neck opening' },
   { id: 'camp-shirt', name: 'Camp-collar shirt', experiment: 'One square · folded collar and cuffs on a flat shirt, no neck opening or locking tuck' },
@@ -46,6 +48,7 @@ export function garmentIdFrom(value: string | null): GarmentId {
 export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOptions = DEFAULT_OPTIONS) {
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
+    case 'coat-dress': return buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: options.coatSide });
     case 'swing-coat': return buildSwingCoat();
     case 'camp-shirt': return buildCampShirt();
     case 'fit-flare': return buildFitFlare();

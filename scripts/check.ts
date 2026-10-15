@@ -24,6 +24,7 @@ import { buildNeckerchief } from '../src/fold/neckerchief';
 import { buildPocketSquare } from '../src/fold/pocketSquare';
 import { buildTulip } from '../src/fold/tulip';
 import { buildFitFlare } from '../src/fold/fitFlare';
+import { buildCoatDress, DEFAULT_COAT_DRESS } from '../src/fold/coatDress';
 import { collapseAngles, loopResidual } from '../src/fold/collapse';
 import { creasePattern, vertexProblems } from './crease_pattern';
 import { COLLAR_Y, SIDE_APEX_Y, SIDE_HALF_ANGLE } from '../src/papers/dressMarks';
@@ -43,7 +44,9 @@ for (const construction of [buildDress(), buildSilhouette('straight'), buildSilh
   // PR #14
   buildLapelVest('pointed'),
   // fit-and-flare: the waist is a collapse step (src/fold/collapse.ts)
-  buildFitFlare()]) {
+  buildFitFlare(),
+  // coat-dress: a rigid shoulder collapse, then the fit-and-flare waist (src/fold/coatDress.ts)
+  buildCoatDress(), buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: 'print' })]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
