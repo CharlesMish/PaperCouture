@@ -1,3 +1,22 @@
+# Paper Couture — coat-dress (Claude, 2026-10-15)
+
+Branch `claude/coat-dress` from main `cedf65c`, at Charlie's request in a Claude chat.
+One new design, `coat-dress` (Design list; experiment). Notes, evidence and the
+printable folding sheet: [docs/coat-dress/NOTES.md](docs/coat-dress/NOTES.md).
+
+- `src/fold/coatDress.ts`: one rigid shoulder collapse (a degree-4 vertex at each
+  shoulder; closed-form fold rates) gives the fronts, collar, back yoke and short
+  sleeves; the fit-and-flare waist is solved against a leaning side seam.
+- `garmentOptions.ts`: a `coatSide` decision (Reverse-colour coat / Printed coat)
+  before the shoulders. `sharedFoldPrefix` now compares collapse steps by their
+  whole spec, so two collapses sharing an id are not treated as already folded.
+- Checks: `scripts/check-coat-dress.ts` (in `npm test`), `scripts/check-coat-dress-browser.cjs`
+  (CI: `.github/workflows/coat-dress.yml`), `scripts/foldMetrics.ts` (`npm run fold-metrics`),
+  `check.ts` and `check-collection.ts` include both colourways; the legacy design-list
+  assertion in `check-fit-flare-browser.cjs` lists 21 designs.
+
+Not tested on a real phone or in physical paper.
+
 # Paper Couture — authorized Swing coat publication
 
 Charlie approved publication of reviewed candidate `932b1e216f5752691cce398dc1dffab77bde84a1`

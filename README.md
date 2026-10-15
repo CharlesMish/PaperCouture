@@ -135,3 +135,13 @@ Swing coat adds a long open-front silhouette with folded facings and a broad
 shawl-like shoulder yoke. Reed study, Broken twill and Copper fleck form a small
 coordinated paper set. See [illustrated selection and checks](docs/swing-coat/NOTES.md).
 The coat remains an experimental flat silhouette with continuous lining.
+
+## Coat-dress
+
+Coat-dress is one square folded in two rigid collapses: a sailor collar in front
+that becomes a square cape across the back, fronts that meet under the collar and
+open over an underskirt, short sleeves under the collar, a pleated waist and a
+flared skirt. A Coat colour choice before the shoulders decides which side of the
+paper the coat shows. `npm run check:coat-dress` covers it; `npm run fold-metrics`
+compares physical-risk measurements across designs. See [the notes, scale and
+checks](docs/coat-dress/NOTES.md) and the [printable folding sheet](docs/coat-dress/coat-dress-folding-sheet.pdf).

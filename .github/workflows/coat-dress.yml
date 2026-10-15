@@ -1,0 +1,37 @@
+name: Coat-dress
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Fold the coat-dress in the browser
+        env:
+          BASE_URL: http://127.0.0.1:5737
+          CAPTURE_DIR: .coat-dress-qa
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 5737 --strictPort > /tmp/coat-dress-preview.log 2>&1 &
+          for i in {1..30}; do curl -fsS http://127.0.0.1:5737/ > /dev/null && break; sleep 1; done
+          curl -fsS http://127.0.0.1:5737/ > /dev/null
+          node scripts/check-coat-dress-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: coat-dress-evidence
+          path: .coat-dress-qa/
+          include-hidden-files: true
