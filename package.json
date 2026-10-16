@@ -34,7 +34,8 @@
     "coat-dress-pattern": "node --import tsx scripts/coat-dress-pattern.ts",
     "gown-pattern": "node --import tsx scripts/gown-pattern.ts",
     "kimono-pattern": "node --import tsx scripts/kimono-pattern.ts",
-    "check:zori-sensu": "node --import tsx scripts/check-zori-sensu.ts"
+    "check:zori-sensu": "node --import tsx scripts/check-zori-sensu.ts",
+    "zori-sensu-pattern": "node --import tsx scripts/zori-sensu-pattern.ts"
   },
   "dependencies": {
     "three": "0.170.0"

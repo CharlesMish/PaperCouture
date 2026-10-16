@@ -1,3 +1,29 @@
+# Paper Couture — zori, folding fan and four papers (Claude, 2026-10-16)
+
+Branch `claude/kimono-companions` from `claude/kimono`, at Charlie's request in a
+Claude chat. Two new board designs, `zori` and `sensu` (Design list; experiments),
+and four papers. Notes, evidence and the printable folding sheet:
+[docs/kimono-companions/NOTES.md](docs/kimono-companions/NOTES.md).
+
+- `src/fold/zori.ts`: band, fold in half, both top corners down (the back layer's
+  band comes round as the thong), then from the back the sides, the toe and the
+  rounding. One design; a pair is two of it.
+- `src/fold/sensu.ts`: fold in half, round the corners, then five pleat steps, each
+  one rigid two-crease collapse a side through the rivet, outermost first.
+- `src/papers/classicSuite.ts`: Seigaiha waves, Asanoha, Polka dot, Houndstooth,
+  added to the curated set.
+- `garmentOptions.ts`: `zoriSide` and `sensuSide` decisions at the first fold.
+- `src/ui/pinboard.ts`: a pinned piece stacks only above earlier pieces it overlaps
+  (it used to sit above all of them, floating later pieces and their shadows).
+- `scripts/check.ts`: a 19-level fold allowance for the zori (8 paper layers at most
+  per crease). Flagged for review.
+- Checks: `scripts/check-zori-sensu.ts` (in `npm test`),
+  `scripts/check-zori-sensu-browser.cjs` (CI: `.github/workflows/kimono-companions.yml`);
+  `check.ts` and `check-collection.ts` include both colourways; the legacy
+  design-list assertion lists 25 designs and the accessory list the obi.
+
+Not tested on a real phone or in physical paper.
+
 # Paper Couture — kimono and obi (Claude, 2026-10-16)
 
 Branch `claude/kimono` from `claude/gown`, at Charlie's request in a Claude chat.

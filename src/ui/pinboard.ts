@@ -256,13 +256,18 @@ export class Pinboard {
     this.position(); this.renderer?.renderLists.dispose();
   }
   private position() {
-    let top = -.10;
+    const placed: { box: THREE.Box3; top: number }[] = [];
     for (const item of this.state.items) {
       const g = this.groups.get(item.id); if (!g) continue;
       g.position.set(item.x, item.y, 0); g.rotation.z = -item.tilt * Math.PI / 180; g.updateMatrixWorld(true);
       const box = new THREE.Box3().setFromObject(g, true);
-      // Whole pieces occupy disjoint depth intervals, including protruding accessories.
-      g.position.z = top - box.min.z; top += box.max.z - box.min.z + .025;
+      // Pieces that overlap on the board occupy disjoint depth intervals, later ones
+      // above, including protruding accessories. A piece that overlaps nothing
+      // pinned before it rests on the board, so its shadow stays beside it.
+      let base = -.10;
+      for (const p of placed) if (p.box.min.x < box.max.x && box.min.x < p.box.max.x && p.box.min.y < box.max.y && box.min.y < p.box.max.y) base = Math.max(base, p.top + .025);
+      g.position.z = base - box.min.z;
+      placed.push({ box, top: base + box.max.z - box.min.z });
       g.updateMatrixWorld(true);
     }
   }

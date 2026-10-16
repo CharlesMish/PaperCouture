@@ -165,3 +165,14 @@ fold decides which side it shows. The Obi accessory folds from its own small
 square (a band with a cord of the other colour) and goes at the kimono's waist.
 `npm run check:kimono` covers both. See [the notes, scale and checks](docs/kimono/NOTES.md)
 and the [printable folding sheet](docs/kimono/kimono-folding-sheet.pdf).
+
+## Zori, folding fan and four classic papers
+
+Zori is a flat sandal from one small square, with a thong of the paper's other
+side brought round from the back layer by the kimono's collar fold at a shallower
+angle; pin two for a pair. Folding fan is an open sensu of eleven panels from five
+rigid pleats a side. Each has a colour choice at the first fold. The papers Seigaiha
+waves, Asanoha, Polka dot and Houndstooth each come with a chosen reverse.
+`npm run check:zori-sensu` covers the two pieces. See [the notes, scale and
+checks](docs/kimono-companions/NOTES.md) and the [printable folding
+sheet](docs/kimono-companions/zori-and-fan-folding-sheet.pdf).

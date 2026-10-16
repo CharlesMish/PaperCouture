@@ -1,0 +1,13 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "zori: design list, colour choice at the first fold (aria-pressed, URL), every step forward and back by the buttons, revisit from the finished piece, both colourways finished, Display front/angle/back.",
+    "sensu: design list, colour choice at the first fold (aria-pressed, URL), every step forward and back by the buttons, revisit from the finished piece, both colourways finished, Display front/angle/back.",
+    "The four papers (Seigaiha waves, Asanoha, Polka dot, Houndstooth) are in the curated group and draw on the finished fan.",
+    "Board: zori (8 cm) twice and the fan (7.5 cm) at their suggested sizes; pieces that overlap nothing rest at the same depth, and a piece moved over another sits above it.",
+    "Phone-sized 390 x 844 and 320 x 568 with emulated touch: the zori and the fan fold by tapping; no horizontal page scroll."
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false
+}
