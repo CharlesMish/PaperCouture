@@ -8,6 +8,7 @@ import type { BroochShape } from './framedBrooch';
 import type { PleatDepth } from './pleatedSkirt';
 import type { CoatSide } from './coatDress';
 import type { GownSide } from './gown';
+import type { KimonoSide } from './kimono';
 
 export interface GarmentOptions {
   broochShape: BroochShape;
@@ -22,11 +23,12 @@ export interface GarmentOptions {
   skirtLength: SkirtLength;
   coatSide: CoatSide;
   gownSide: GownSide;
+  kimonoSide: KimonoSide;
 }
 export const DEFAULT_OPTIONS: GarmentOptions = {
   broochShape: 'square', silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
   wrap: 'original', band: 'double', vestLength: 'short',
-  pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic', coatSide: 'reverse', gownSide: 'print',
+  pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic', coatSide: 'reverse', gownSide: 'print', kimonoSide: 'print',
 };
 export type DecisionId = keyof GarmentOptions;
 export interface FoldChoice { id: string; name: string }
@@ -90,6 +92,12 @@ const DECISIONS: Record<string, FoldDecision[]> = {
   gown: [{ id: 'gownSide', label: 'Gown colour', title: 'Choose which side of the paper the gown shows', before: 'hem', choices: [
     { id: 'print', name: 'Printed gown' }, { id: 'reverse', name: 'Reverse-colour gown' },
   ] }],
+  // The collar bands are folded twice and the body once, so they always show
+  // opposite sides. Both colourways start with the fold in half (behind and
+  // turned over, or up in front), so the choice is offered at the first fold.
+  kimono: [{ id: 'kimonoSide', label: 'Kimono colour', title: 'Choose which side of the paper the kimono shows', before: 'half', choices: [
+    { id: 'print', name: 'Printed kimono' }, { id: 'reverse', name: 'Reverse-colour kimono' },
+  ] }],
   vest: [{ id: 'vestLength', label: 'Body length', title: 'Choose the body length and hem', before: 'vest-shorten', choices: [
     { id: 'short', name: 'Short' }, { id: 'longline', name: 'Longline' }, { id: 'pointed', name: 'Tapered hem' },
   ] }],
@@ -113,7 +121,7 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
   while (i < a.ops.length && i < b.ops.length && signature(a.ops[i]) === signature(b.ops[i])) i++;
   return i;
 }
-const keys: Record<DecisionId, string> = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown' };
+const keys: Record<DecisionId, string> = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown', kimonoSide: 'kimono' };
 export function optionsToParams(options: GarmentOptions, params: URLSearchParams): void {
   for (const id of Object.keys(keys) as DecisionId[]) {
     if (options[id] === DEFAULT_OPTIONS[id]) params.delete(keys[id]);

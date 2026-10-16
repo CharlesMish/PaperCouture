@@ -9,6 +9,7 @@ const recommended: Readonly<Record<string, number>> = {
   'swing-coat': 20,
   'coat-dress': 20,
   gown: 20,
+  kimono: 20,
   clutch: 8,
   apron: 14,
   'boat-top': 16,

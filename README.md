@@ -155,3 +155,13 @@ at an empire height, a single cap sleeve and a contrast hem band. A Gown colour
 choice at the first fold decides which side the gown shows. `npm run check:gown`
 covers it. See [the notes, scale and checks](docs/gown/NOTES.md) and the
 [printable folding sheet](docs/gown/gown-folding-sheet.pdf).
+
+## Kimono and obi
+
+Kimono is the traditional paper kimono, from one square: square sleeves from one
+rigid squash, a collar of the paper's other side down the front from a point at
+the neck, and a body that narrows to the hem. A Kimono colour choice at the first
+fold decides which side it shows. The Obi accessory folds from its own small
+square (a band with a cord of the other colour) and goes at the kimono's waist.
+`npm run check:kimono` covers both. See [the notes, scale and checks](docs/kimono/NOTES.md)
+and the [printable folding sheet](docs/kimono/kimono-folding-sheet.pdf).

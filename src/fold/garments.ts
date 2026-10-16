@@ -16,8 +16,9 @@ import { buildSwingCoat } from './swingCoat';
 import { buildFitFlare } from './fitFlare';
 import { buildCoatDress, DEFAULT_COAT_DRESS } from './coatDress';
 import { buildGown, DEFAULT_GOWN } from './gown';
+import { buildKimono, DEFAULT_KIMONO, kimonoAnchors } from './kimono';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -31,6 +32,7 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
   { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
   { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
+  { id: 'kimono', name: 'Kimono', experiment: 'One square · the traditional paper kimono: square sleeves from one rigid squash, a collar of the other colour down the front; an obi folds from a separate small square' },
   { id: 'gown', name: 'One-shoulder gown', experiment: 'One square · floor-length column with a sash of the other colour from one shoulder, an empire waist from one rigid collapse and one cap sleeve; no armholes, neck opening or fastening' },
   { id: 'coat-dress', name: 'Coat-dress', experiment: 'One square · collar, fronts and short sleeves from one rigid shoulder collapse, waist from a second; no neck opening, armholes or fastening' },
   { id: 'swing-coat', name: 'Swing coat', experiment: 'One square · long front panels and folded facings over continuous lining, no through-opening or fastening' },
@@ -51,6 +53,7 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
     case 'coat-dress': return buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: options.coatSide });
+    case 'kimono': return buildKimono({ ...DEFAULT_KIMONO, side: options.kimonoSide });
     case 'gown': return buildGown({ ...DEFAULT_GOWN, side: options.gownSide });
     case 'swing-coat': return buildSwingCoat();
     case 'camp-shirt': return buildCampShirt();
@@ -77,6 +80,8 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
 /** Garment-specific points in the resting model, rather than generic body labels.
  * The skirt's waistband is asymmetric, and the vest has two narrow front panels. */
 export function attachmentAnchors(id: GarmentId, top: number, bottom: number, options: GarmentOptions = DEFAULT_OPTIONS): AttachmentAnchor[] {
+  // The kimono's one position is the waist, for the obi.
+  if (id === 'kimono') return kimonoAnchors({ ...DEFAULT_KIMONO, side: options.kimonoSide });
   // These new silhouettes have no reviewed attachment positions yet.
   if (garmentExperiment(id)) return [];
   if (id === 'skirt') return [

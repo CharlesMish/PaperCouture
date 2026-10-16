@@ -1,3 +1,25 @@
+# Paper Couture — kimono and obi (Claude, 2026-10-16)
+
+Branch `claude/kimono` from `claude/gown`, at Charlie's request in a Claude chat.
+One new design, `kimono` (Design list; experiment), and one new accessory, `obi`.
+Notes, evidence and the printable folding sheet: [docs/kimono/NOTES.md](docs/kimono/NOTES.md).
+
+- `src/fold/kimono.ts`: the traditional paper kimono (origami.me's model, from the
+  diagrams Charlie shared): six simple folds, then the squash as one rigid collapse
+  (four creases at each side point, rates 1 and sqrt(2)), shown from the collar side.
+- `src/fold/obi.ts`: a separate small square; `accessories.ts` places it at the waist only.
+- Engine: flap folds take `except` tags; collapse regions take `only`/`except`
+  (`mayMove` in `engine.ts`). Unfiltered folds and regions behave as before.
+- `garmentOptions.ts`: a `kimonoSide` decision at the first fold. `garments.ts`: the
+  kimono's waist anchor.
+- `scripts/hingeCheck.ts`: an optional bound for ordinary folds, 8 for every existing
+  design and 10 for the kimono's collar fold (4 paper layers there). Flagged for review.
+- Checks: `scripts/check-kimono.ts` (in `npm test`), `scripts/check-kimono-browser.cjs`
+  (CI: `.github/workflows/kimono.yml`); `check.ts` and `check-collection.ts` include
+  both colourways; the legacy design-list assertion lists 23 designs.
+
+Not tested on a real phone or in physical paper.
+
 # Paper Couture — one-shoulder gown (Claude, 2026-10-16)
 
 Branch `claude/gown` from `claude/coat-dress`, at Charlie's request in a Claude chat.
