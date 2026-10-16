@@ -17,8 +17,10 @@ import { buildFitFlare } from './fitFlare';
 import { buildCoatDress, DEFAULT_COAT_DRESS } from './coatDress';
 import { buildGown, DEFAULT_GOWN } from './gown';
 import { buildKimono, DEFAULT_KIMONO, kimonoAnchors } from './kimono';
+import { buildZori, DEFAULT_ZORI } from './zori';
+import { buildSensu, DEFAULT_SENSU } from './sensu';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono' | 'zori' | 'sensu';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -42,6 +44,8 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'capelet', name: 'Open-front capelet', experiment: 'One square · separate front panels over continuous lining, no through-opening or fastening' },
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
+  { id: 'zori', name: 'Zori', experiment: 'Small square · flat sandal with a thong of the other colour; zori are not left and right, so fold two the same for a pair' },
+  { id: 'sensu', name: 'Folding fan', experiment: 'Small square · open fan of eleven panels from five rigid pleats a side; flat, it does not close' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
@@ -54,6 +58,8 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
   switch (id) {
     case 'coat-dress': return buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: options.coatSide });
     case 'kimono': return buildKimono({ ...DEFAULT_KIMONO, side: options.kimonoSide });
+    case 'zori': return buildZori({ ...DEFAULT_ZORI, side: options.zoriSide });
+    case 'sensu': return buildSensu({ ...DEFAULT_SENSU, side: options.sensuSide });
     case 'gown': return buildGown({ ...DEFAULT_GOWN, side: options.gownSide });
     case 'swing-coat': return buildSwingCoat();
     case 'camp-shirt': return buildCampShirt();

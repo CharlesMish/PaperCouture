@@ -76,9 +76,9 @@ for (const garment of GARMENTS) {
 const valid: GarmentOptions = {
   broochShape: 'rectangle', silhouette: 'flare', sleeves: 'dropped', jacketLength: 'longer',
   wrap: 'opposite', band: 'single', vestLength: 'longline',
-  pleatDepth: 'deep', cuffs: 'turned', skirtLength: 'long', coatSide: 'print', gownSide: 'reverse', kimonoSide: 'reverse',
+  pleatDepth: 'deep', cuffs: 'turned', skirtLength: 'long', coatSide: 'print', gownSide: 'reverse', kimonoSide: 'reverse', zoriSide: 'reverse', sensuSide: 'reverse',
 };
-const keys = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown', kimonoSide: 'kimono' } as const;
+const keys = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown', kimonoSide: 'kimono', zoriSide: 'zori', sensuSide: 'sensu' } as const;
 const validParams = new URLSearchParams(Object.entries(keys).map(([id, key]) => [key, valid[id as keyof GarmentOptions]]));
 assert.deepEqual(optionsFromParams(validParams), valid, 'a valid multi-choice bookmark should retain all selections');
 for (const garment of GARMENTS) for (const decision of garmentDecisions(garment.id)) {
@@ -108,7 +108,7 @@ for (const raw of ['shape=%00&wrap=%F0%9F%93%84', 'sleeves=lifted%20&band=%ZZ', 
 }
 assert.deepEqual(optionsFromParams(new URLSearchParams('unknown=longline&garmentOptions=%7B%7D')), DEFAULT_OPTIONS, 'unknown query fields changed fold options');
 for (const invalid of [null, '', 'robe', 'trousers', 'sailor', 'constructor', '__proto__']) assert.equal(garmentIdFrom(invalid), 'dress', 'unknown or parked garment should open a usable default');
-assert.deepEqual(DEFAULT_OPTIONS, { broochShape: 'square', silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped', wrap: 'original', band: 'double', vestLength: 'short', pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic', coatSide: 'reverse', gownSide: 'print', kimonoSide: 'print' }, 'normalizing options mutated the default selections');
+assert.deepEqual(DEFAULT_OPTIONS, { broochShape: 'square', silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped', wrap: 'original', band: 'double', vestLength: 'short', pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic', coatSide: 'reverse', gownSide: 'print', kimonoSide: 'print', zoriSide: 'print', sensuSide: 'print' }, 'normalizing options mutated the default selections');
 console.log(`Collection integration: ${constructions} supported constructions, ${transitions} decision transitions, evaluated shared prefixes, preference retention and malformed URL recovery pass.`);
 
 for (const options of [DEFAULT_OPTIONS, valid]) {
