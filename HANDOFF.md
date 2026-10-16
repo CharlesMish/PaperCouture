@@ -1,3 +1,24 @@
+# Paper Couture — one-shoulder gown (Claude, 2026-10-16)
+
+Branch `claude/gown` from `claude/coat-dress`, at Charlie's request in a Claude chat.
+One new design, `gown` (Design list; experiment). Notes, evidence and the
+printable folding sheet: [docs/gown/NOTES.md](docs/gown/NOTES.md).
+
+- `src/fold/gown.ts`: hem band, corner tip, sash (the neckline), cupboard fold, a
+  tuck of one back panel, the fit-and-flare waist collapse at an empire height, and
+  a cap-sleeve flap. A full-skirted gown was not foldable with this waist; the
+  notes say why.
+- `garmentOptions.ts`: a `gownSide` decision (Printed gown / Reverse-colour gown)
+  at the first fold.
+- `scripts/hingeCheck.ts`: an optional rendered-level bound; 12 for every existing
+  design, 16 for the gown (its sash wraps from the top of the front stack to the
+  bottom of the back stack; 12 paper layers at most). Flagged for review.
+- Checks: `scripts/check-gown.ts` (in `npm test`), `scripts/check-gown-browser.cjs`
+  (CI: `.github/workflows/gown.yml`); `check.ts` and `check-collection.ts` include
+  both colourways; the legacy design-list assertion lists 22 designs.
+
+Not tested on a real phone or in physical paper.
+
 # Paper Couture — coat-dress (Claude, 2026-10-15)
 
 Branch `claude/coat-dress` from main `cedf65c`, at Charlie's request in a Claude chat.

@@ -145,3 +145,13 @@ flared skirt. A Coat colour choice before the shoulders decides which side of th
 paper the coat shows. `npm run check:coat-dress` covers it; `npm run fold-metrics`
 compares physical-risk measurements across designs. See [the notes, scale and
 checks](docs/coat-dress/NOTES.md) and the [printable folding sheet](docs/coat-dress/coat-dress-folding-sheet.pdf).
+
+## One-shoulder gown
+
+One-shoulder gown is one square folded into a floor-length column: a cupboard
+fold for length, one straight fold for an asymmetric neckline whose corner
+becomes a sash in the paper's other colour, the fit-and-flare's waist collapse
+at an empire height, a single cap sleeve and a contrast hem band. A Gown colour
+choice at the first fold decides which side the gown shows. `npm run check:gown`
+covers it. See [the notes, scale and checks](docs/gown/NOTES.md) and the
+[printable folding sheet](docs/gown/gown-folding-sheet.pdf).

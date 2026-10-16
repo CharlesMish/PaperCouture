@@ -1,0 +1,255 @@
+{
+  "design": "gown",
+  "startingSquareCm": 20,
+  "params": {
+    "bust": 0.3,
+    "waist": 0.27,
+    "waistY": 0.45,
+    "swivel": -5,
+    "edgeFold": 0.5,
+    "hem": 0.07,
+    "drapeLeft": 0.52,
+    "drapeTop": 0.25,
+    "sleeve": 54,
+    "side": "print"
+  },
+  "waist": {
+    "pleat": 0.05660147350601402,
+    "skirtFlareDeg": 9.978037334977204,
+    "bodiceNarrowingDeg": 3.122130462115705
+  },
+  "neckline": {
+    "sashFold": [
+      {
+        "x": -1,
+        "y": 0.52
+      },
+      {
+        "x": 0.25,
+        "y": 1
+      }
+    ],
+    "tipFold": [
+      {
+        "x": -1,
+        "y": 0.52
+      },
+      {
+        "x": -0.52,
+        "y": 1
+      }
+    ],
+    "sashEnd": {
+      "x": -0.32209939204640525,
+      "y": 0.48463383345418043
+    },
+    "riseDeg": 21.006789430771853
+  },
+  "worstCollapseLoopResidual": 1.0547118733938987e-15,
+  "samplesPerOperation": 161,
+  "colourways": {
+    "print": {
+      "operations": 9,
+      "facets": 40,
+      "finishedCm": {
+        "width": 9.75,
+        "height": 18.21
+      },
+      "layers": {
+        "max": 12,
+        "at": {
+          "x": -0.26,
+          "y": 0.338
+        },
+        "areaByCount": {
+          "1": 0.0108,
+          "2": 0.518,
+          "3": 0.0032,
+          "4": 0.3822,
+          "5": 0.0004,
+          "6": 0.0252,
+          "7": 0.0057,
+          "8": 0.034,
+          "9": 0.0007,
+          "10": 0.0017,
+          "11": 0.0057,
+          "12": 0.0122
+        }
+      },
+      "creases": 64,
+      "sharpestCreaseAngleDeg": 23.99,
+      "sharpestAt": {
+        "x": -1,
+        "y": 0.52
+      },
+      "shortestCreaseMm": 0.29,
+      "narrowestFacetMm": 2.43,
+      "maxHingeGap": 0.08800000000000006,
+      "hingeLimit": 0.088,
+      "maxEdgeLengthError": 1.1102230246251565e-15,
+      "minZ": 0.0014999999999999458,
+      "perOperation": [
+        {
+          "id": "hem",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "tip",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sash",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-1",
+          "maxHingeGap": 0.01650000000000014,
+          "hingeGapInLayers": 3.0000000000000258,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sides",
+          "maxHingeGap": 0.033,
+          "hingeGapInLayers": 6.000000000000001,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-2",
+          "maxHingeGap": 0.03300000000000021,
+          "hingeGapInLayers": 6.000000000000038,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "tuck",
+          "maxHingeGap": 0.03300000000000003,
+          "hingeGapInLayers": 6.000000000000005,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "waist",
+          "maxHingeGap": 0.08800000000000006,
+          "hingeGapInLayers": 16.000000000000014,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sleeve",
+          "maxHingeGap": 0.08800000000000002,
+          "hingeGapInLayers": 16.000000000000004,
+          "strictTrianglePiercings": 0
+        }
+      ],
+      "waistPleatMm": 5.66
+    },
+    "reverse": {
+      "operations": 10,
+      "facets": 40,
+      "finishedCm": {
+        "width": 9.75,
+        "height": 18.21
+      },
+      "layers": {
+        "max": 12,
+        "at": {
+          "x": -0.26,
+          "y": 0.338
+        },
+        "areaByCount": {
+          "1": 0.0108,
+          "2": 0.518,
+          "3": 0.0032,
+          "4": 0.3822,
+          "5": 0.0004,
+          "6": 0.0252,
+          "7": 0.0057,
+          "8": 0.034,
+          "9": 0.0007,
+          "10": 0.0017,
+          "11": 0.0057,
+          "12": 0.0122
+        }
+      },
+      "creases": 64,
+      "sharpestCreaseAngleDeg": 23.99,
+      "sharpestAt": {
+        "x": 1,
+        "y": 0.52
+      },
+      "shortestCreaseMm": 0.29,
+      "narrowestFacetMm": 2.43,
+      "maxHingeGap": 0.08800000000000006,
+      "hingeLimit": 0.088,
+      "maxEdgeLengthError": 8.881784197001252e-16,
+      "minZ": 0.0014999999999999458,
+      "perOperation": [
+        {
+          "id": "hem",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-0",
+          "maxHingeGap": 0.0055000000000002495,
+          "hingeGapInLayers": 1.0000000000000455,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "tip",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sash",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-1",
+          "maxHingeGap": 0.01650000000000018,
+          "hingeGapInLayers": 3.0000000000000333,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sides",
+          "maxHingeGap": 0.033,
+          "hingeGapInLayers": 6.000000000000001,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-2",
+          "maxHingeGap": 0.03300000000000019,
+          "hingeGapInLayers": 6.000000000000035,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "tuck",
+          "maxHingeGap": 0.03300000000000003,
+          "hingeGapInLayers": 6.000000000000005,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "waist",
+          "maxHingeGap": 0.08800000000000006,
+          "hingeGapInLayers": 16.000000000000014,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sleeve",
+          "maxHingeGap": 0.08800000000000002,
+          "hingeGapInLayers": 16.000000000000004,
+          "strictTrianglePiercings": 0
+        }
+      ],
+      "waistPleatMm": 5.66
+    }
+  },
+  "limits": "Thin rigid facets, sampled motion. Layer counts are paper layers stacked at a point, not rendering offsets. No paper thickness, springback, continuous-collision or physical-paper certification."
+}
