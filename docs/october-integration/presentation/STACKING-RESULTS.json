@@ -1,0 +1,102 @@
+{
+  "reviewedBase": "e49ffa9057f98931550caf9642d74e52639a8eb0",
+  "portedFrom": "5a7fd8e20eed56a2797480adfc77885a2eeb5eaf",
+  "node": "24.19.0",
+  "browser": "141.0.7390.37",
+  "softwareWebGL": true,
+  "realPhoneTested": false,
+  "typecheck": "passed",
+  "fullNumericalSuite": "passed",
+  "build": "passed",
+  "separatedTwelve": {
+    "beforeMinimumZ": [
+      -0.1,
+      -0.06180000028107315,
+      -0.02360000056214631,
+      0.014599999156780535,
+      0.05279999887570739,
+      0.09099999859463423,
+      0.12919999831356105,
+      0.1673999980324879,
+      0.20559999775141474,
+      0.24379999747034162,
+      0.2819999971892685,
+      0.32019999690819534
+    ],
+    "afterMinimumZ": [
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1,
+      -0.1
+    ],
+    "beforeExport": {
+      "sha256": "06366661dbcfebcaf9047fc94b039a5034001641347be6b4f3090249f8dcfd42",
+      "width": 2400,
+      "height": 2800
+    },
+    "afterExport": {
+      "sha256": "de8b11e026de1a3d386fa9ba77fce3da1a7f5f92f3b5ab4b815e314d249b727d",
+      "width": 2400,
+      "height": 2800
+    }
+  },
+  "browserGates": {
+    "check-board-stacking-browser": {
+      "passed": true,
+      "errors": [],
+      "checks": [
+        "Twelve separated real captures sit at board depth with surface-following pins; saved state is unchanged and reload exports the identical 2400\u00d72800 PNG.",
+        "Overlapping captures retain the .025 clearance; a third separated piece stays down; Bring forward and Undo update depth and pin occlusion and restore identical export pixels.",
+        "Move and tilt release a piece from its old stack; reset re-stacks it; Undo/reload preserve captures and restore depth and export exactly."
+      ]
+    },
+    "check-roomy-board": {
+      "passed": true,
+      "errors": [],
+      "checks": [
+        "Legacy five-piece record opens byte-exact; enlargement leaves captures and coordinates exact; Undo restores identical 1800\u00d72100 PNG.",
+        "Twelve actual captures; thirteenth blocked; no-loss refusal to shrink around outlying pieces; remove/Undo, exact reload and identical 2400\u00d72800 PNG.",
+        "A tilted mitten reaches the added right edge at 2.32 units without changing any capture; all-edge bounds inspected at each viewport.",
+        "1280/390/320 px: board aspect, camera/backing/bounds parity, initially reachable 44px size control; real touch cancel/commit/Undo on a mitten at both phone widths."
+      ]
+    },
+    "check-presentation-browser": {
+      "passed": true,
+      "errors": [],
+      "checks": [
+        "Legacy fixture opens without a write; surface and background Undo restore exact legacy state and 1800\u00d72100 PNG.",
+        "Undoing the cork change while placing a pin restores original state and exits the placement interaction.",
+        "Cork, brass pins, lighting and guides preserve captured pieces; explicit guide inclusion works; tilted automatic pins and styled PNG survive reload exactly.",
+        "Pin placement uses an actual paper triangle; cancel, place, reset and Undo preserve immutable captured geometry/materials.",
+        "Photograph is a transient clean view matching exported pixels; saving restores keyboard focus, and Escape returns to arranging without changing state.",
+        "Twelve-piece Roomy presentation retains all captures and reloads to an identical 2400\u00d72800 PNG.",
+        "Repeated cork, pin and guide replacement reaches stable GPU geometry/texture counts; captured pieces and final presentation state stay exact.",
+        "390/320px: essential size control stays initially visible; finishing controls and clean-photo actions fit and have unobscured centres. Browser auto-scroll establishes reachability, not natural touch discovery."
+      ]
+    },
+    "check-guide-browser": {
+      "passed": true,
+      "errors": [],
+      "checks": [
+        "Old records open without a write; default guide poses remain implicit and survive reload without schema migration.",
+        "Left, right and single guides move/scale independently; Off retains poses; Reset and Undo preserve the other guide and every garment record.",
+        "Excluded guides leave exports unchanged; white/black pins differ; custom guides persist and photograph/export content matches exactly.",
+        "A 150% guide and large pointer movement remain within Roomy; Standard clamps the rendered pose without rewriting it; Undo restores the larger-board view.",
+        "390/320px: full-board touch target moves only the selected guide; cancellation leaves save/history exact, commit and Undo work, keyboard nudges are an alternative, and controls are reachable."
+      ]
+    },
+    "check-board-review-browser": {
+      "passed": true,
+      "errors": [],
+      "checks": []
+    }
+  }
+}

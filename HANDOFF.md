@@ -1,3 +1,15 @@
+# Paper Couture — overlap stacking in the twelve-piece board
+
+Charlie authorized integrating Claude's bounding-box stacking change into
+`design/october-integration` / PR35. It is a narrow port from `5a7fd8e` onto
+`e49ffa9`: disjoint capture bounds rest at board depth; overlapping later
+captures retain the existing clearance. Pins, guides, twelve slots, saved
+captures and both formats remain. Saved data needs no migration, but rendered
+depth/shadows intentionally change. See
+[the integration and verification](docs/october-integration/presentation/BOARD-STACKING.md).
+The rest of Claude's garment/paper branch and fan corrections are separate.
+This does not merge PR35 into main or publish the separate website.
+
 # Paper Couture — Claude board-review repairs (owner review)
 
 Charlie supplied Claude's read-only review of `6284b4e` and authorized agreed
