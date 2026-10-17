@@ -1,0 +1,104 @@
+{
+  "checks": [
+    "Both 320/390 journeys start unfolded: touch-scroll papers, fold both hands, Back/refold, display controls, distinct full capture titles, pin, reload and identical PNG exports. At 320px both small thumbs require a 44px grip: cancel a real touch drag, then tap it to fold. Larger flaps at 390px use the normal Fold button.",
+    "Control rectangles, text ranges and centre hit targets checked; production assets only. Latency is a single-sample desktop sensitivity check, not real-phone performance."
+  ],
+  "journeys": [
+    {
+      "width": 320,
+      "height": 568,
+      "swipes": 10,
+      "hands": [
+        {
+          "hand": "left",
+          "steps": 9,
+          "thumbHandle": true
+        },
+        {
+          "hand": "right",
+          "steps": 9,
+          "thumbHandle": true
+        }
+      ],
+      "exports": [
+        "1156c97fdc38e8bad66425d154263c07c1ed2dfe00241a6a089102e3054b14cf",
+        "1156c97fdc38e8bad66425d154263c07c1ed2dfe00241a6a089102e3054b14cf"
+      ]
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "swipes": 7,
+      "hands": [
+        {
+          "hand": "left",
+          "steps": 9,
+          "thumbHandle": false
+        },
+        {
+          "hand": "right",
+          "steps": 9,
+          "thumbHandle": false
+        }
+      ],
+      "exports": [
+        "1156c97fdc38e8bad66425d154263c07c1ed2dfe00241a6a089102e3054b14cf",
+        "1156c97fdc38e8bad66425d154263c07c1ed2dfe00241a6a089102e3054b14cf"
+      ]
+    }
+  ],
+  "latency": [
+    {
+      "paper": "Crease bloom",
+      "cpuSlowdown": 1,
+      "warm": false,
+      "eventToTwoFramesMs": 409
+    },
+    {
+      "paper": "Crease bloom",
+      "cpuSlowdown": 1,
+      "warm": true,
+      "eventToTwoFramesMs": 66.10000000149012
+    },
+    {
+      "paper": "Marbled endpaper",
+      "cpuSlowdown": 1,
+      "warm": false,
+      "eventToTwoFramesMs": 466.59999999403954
+    },
+    {
+      "paper": "Marbled endpaper",
+      "cpuSlowdown": 1,
+      "warm": true,
+      "eventToTwoFramesMs": 35.399999998509884
+    },
+    {
+      "paper": "Crease bloom",
+      "cpuSlowdown": 4,
+      "warm": false,
+      "eventToTwoFramesMs": 1613.7000000029802
+    },
+    {
+      "paper": "Crease bloom",
+      "cpuSlowdown": 4,
+      "warm": true,
+      "eventToTwoFramesMs": 101
+    },
+    {
+      "paper": "Marbled endpaper",
+      "cpuSlowdown": 4,
+      "warm": false,
+      "eventToTwoFramesMs": 1880.1999999955297
+    },
+    {
+      "paper": "Marbled endpaper",
+      "cpuSlowdown": 4,
+      "warm": true,
+      "eventToTwoFramesMs": 23.5
+    }
+  ],
+  "errors": [],
+  "sourceRequests": [],
+  "physicalPhoneTested": false,
+  "physicalPaperTested": false
+}

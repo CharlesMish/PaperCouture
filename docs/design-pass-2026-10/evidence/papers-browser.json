@@ -1,0 +1,51 @@
+{
+  "base": "http://127.0.0.1:5627",
+  "result": [
+    {
+      "id": "riso-proof",
+      "ms": {
+        "front0": 4019,
+        "back0": 483,
+        "front1": 680,
+        "back1": 372,
+        "front2": 739,
+        "back2": 527,
+        "front3": 658,
+        "back3": 388
+      },
+      "deterministic": true,
+      "distinctFaces": true
+    },
+    {
+      "id": "crease-bloom",
+      "ms": {
+        "front0": 561,
+        "back0": 389,
+        "front1": 479,
+        "back1": 410,
+        "front2": 388,
+        "back2": 388,
+        "front3": 372,
+        "back3": 365
+      },
+      "deterministic": true,
+      "distinctFaces": true
+    },
+    {
+      "id": "marbled-endpaper",
+      "ms": {
+        "front0": 714,
+        "back0": 130,
+        "front1": 786,
+        "back1": 103,
+        "front2": 790,
+        "back2": 139,
+        "front3": 761,
+        "back3": 114
+      },
+      "deterministic": true,
+      "distinctFaces": true
+    }
+  ],
+  "note": "Headless Chromium with software WebGL; not a real phone."
+}

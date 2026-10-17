@@ -12,21 +12,23 @@
     "sheet-map": "node --import tsx scripts/sheet_map.ts",
     "crease-pattern": "node --import tsx scripts/crease_pattern.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
-    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat",
+    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat && npm run check:design-pass && npm run check:mittens",
     "check:collection": "node --import tsx scripts/check-collection.ts",
     "build:experiment": "tsc --noEmit -p experiments/fold-study && vite build --config vite.experiment.config.ts",
     "test:experiment": "node --import tsx scripts/check-fold-study.ts",
     "check:integrated": "node --import tsx scripts/check-integrated.ts",
     "check:positioning": "node --import tsx scripts/check-positioning.ts",
     "check:curation": "node --import tsx scripts/check-design-curation.ts",
-    "check:board": "node --import tsx scripts/check-board.ts",
+    "check:board": "node --import tsx scripts/check-board.ts && node --import tsx scripts/check-guide-geometry.ts",
     "check:sizing": "node --import tsx scripts/check-sizing.ts",
     "check:outfit-folds": "node --import tsx scripts/check-outfit-folds.ts",
     "check:companions": "node --import tsx scripts/check-companion-folds.ts && node --import tsx scripts/check-framed-brooch.ts && node --import tsx scripts/check-plum-seed.ts",
     "check:necktie": "node --import tsx scripts/check-necktie.ts",
     "check:camp-shirt": "node --import tsx scripts/check-camp-shirt.ts",
     "check:fit-flare": "node --import tsx scripts/check-fit-flare.ts && node --import tsx scripts/check-fit-flare-rendered.ts",
-    "check:swing-coat": "node --import tsx scripts/check-swing-coat.ts && node --import tsx scripts/check-swing-coat-rendered.ts"
+    "check:swing-coat": "node --import tsx scripts/check-swing-coat.ts && node --import tsx scripts/check-swing-coat-rendered.ts",
+    "check:design-pass": "node --import tsx scripts/check-design-pass.ts",
+    "check:mittens": "node --import tsx scripts/check-mitten.ts && node --import tsx scripts/check-mitten-rendered.ts"
   },
   "dependencies": {
     "three": "0.170.0"

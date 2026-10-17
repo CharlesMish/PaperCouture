@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { BOARD_KEY, BoardState, BoardStore, copyBoard, emptyBoard, MAX_PIECES, parseBoard } from '../src/board/model';
+import { BOARD_KEY, BoardState, BoardStore, copyBoard, defaultAppearance, emptyBoard, MAX_PIECES, parseBoard } from '../src/board/model';
 
 const paperIds = ['stripe-disc'];
 const sample: BoardState = { ...emptyBoard(), selected: 'a', items: [{ id: 'a', title: 'A pinned piece', x: 0, y: 0, tilt: 0, snapshot: {
@@ -10,13 +10,46 @@ const sample: BoardState = { ...emptyBoard(), selected: 'a', items: [{ id: 'a', 
 } }] };
 assert.deepEqual(parseBoard(JSON.stringify(sample), paperIds), sample);
 const full: BoardState = { ...sample, items: Array.from({ length: MAX_PIECES }, (_, n) => ({ ...sample.items[0], id: `piece-${n}` })), selected: 'piece-0' };
-assert.equal(MAX_PIECES, 5);
+assert.equal(MAX_PIECES, 12);
 assert.deepEqual(parseBoard(JSON.stringify(full), paperIds), full);
 assert.throws(() => parseBoard(JSON.stringify({ ...full, items: [...full.items, { ...sample.items[0], id: 'one-too-many' }] }), paperIds), /Unsupported board/);
+assert.deepEqual(parseBoard(JSON.stringify({ ...full, format: 'roomy' }), paperIds), { ...full, format: 'roomy' });
 const undo = copyBoard(sample); sample.items[0].x = .5;
 assert.equal(undo.items[0].x, 0); assert.equal(undo.items[0].snapshot, sample.items[0].snapshot);
+const finished = copyBoard(sample); finished.appearance = defaultAppearance(); finished.items[0].pin = { x: .2, y: .3 };
+assert.deepEqual(parseBoard(JSON.stringify(finished), paperIds), finished);
+const previous = copyBoard(finished); finished.appearance.surface = 'slate'; finished.items[0].pin.x = .7;
+assert.equal(previous.appearance?.surface, 'natural'); assert.equal(previous.items[0].pin?.x, .2);
+assert.equal(previous.items[0].snapshot, finished.items[0].snapshot);
+const guided = copyBoard(finished);
+guided.appearance!.guideTransforms = { one: { x: .2, y: -.3, scale: .75 }, right: { x: 1.1, y: .1, scale: 1.25 } };
+const guideUndo = copyBoard(guided);
+guided.appearance!.guideTransforms!.one!.x = .5;
+assert.equal(guideUndo.appearance!.guideTransforms!.one!.x, .2);
+assert.equal(guideUndo.items[0].snapshot, guided.items[0].snapshot);
+for (const pins of ['white', 'black'] as const) {
+  guided.appearance!.pins = pins;
+  assert.deepEqual(parseBoard(JSON.stringify(guided), paperIds), guided);
+}
+for (const guideTransforms of [
+  [], { unknown: { x: 0, y: 0, scale: 1 } }, { one: null },
+  { one: { x: 0, y: 0, scale: 0 } }, { one: { x: 0, y: 0, scale: 1.51 } },
+  { one: { x: '0', y: 0, scale: 1 } }, { one: { x: 0, y: null, scale: 1 } },
+]) assert.throws(() => parseBoard(JSON.stringify({ ...guided, appearance: { ...guided.appearance, guideTransforms } }), paperIds));
+for (const change of [
+  (s: any) => { s.appearance.surface = ['natural']; },
+  (s: any) => { s.appearance.pins = 'unrecognised'; },
+  (s: any) => { s.appearance.guide = 2; },
+  (s: any) => { s.appearance.lighting = 'infinite'; },
+  (s: any) => { s.appearance.guideInPhoto = 'false'; },
+  (s: any) => { s.items[0].pin.x = null; },
+  (s: any) => { s.items[0].pin.y = 9; },
+]) { const s = structuredClone(finished); change(s); assert.throws(() => parseBoard(JSON.stringify(s), paperIds)); }
 for (const corrupt of [
   (s: any) => { s.version = 2; },
+  (s: any) => { s.format = 'unknown'; },
+  (s: any) => { s.format = ['roomy']; },
+  (s: any) => { s.format = null; },
   (s: any) => { s.items = Array(MAX_PIECES + 1).fill(s.items[0]); },
   (s: any) => { s.selected = 'missing'; },
   (s: any) => { s.items[0].snapshot.geometries[0].position[0] = null; },

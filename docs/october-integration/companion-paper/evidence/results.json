@@ -1,0 +1,68 @@
+{
+  "errors": [],
+  "captures": [
+    "swing-coat-dusk-wash-front",
+    "swing-coat-dusk-wash-back",
+    "swing-coat-oat-linen-front",
+    "swing-coat-slate-grain-front",
+    "swing-coat-copper-fleck-front",
+    "camp-shirt-dusk-wash-front",
+    "camp-shirt-dusk-wash-back",
+    "camp-shirt-oat-linen-front",
+    "camp-shirt-slate-grain-front",
+    "camp-shirt-copper-fleck-front",
+    "pleats-dusk-wash-front",
+    "pleats-dusk-wash-back",
+    "pleats-oat-linen-front",
+    "pleats-slate-grain-front",
+    "pleats-copper-fleck-front",
+    "framed-brooch-dusk-wash-front",
+    "framed-brooch-dusk-wash-back",
+    "framed-brooch-oat-linen-front",
+    "framed-brooch-slate-grain-front",
+    "framed-brooch-copper-fleck-front",
+    "swing-coat-dusk-wash-turn-0",
+    "swing-coat-dusk-wash-turn-1",
+    "swing-coat-dusk-wash-turn-2",
+    "swing-coat-dusk-wash-turn-3"
+  ],
+  "checks": [
+    "39,601 material points per turn: actual front/back texture matrices retain matching scalar wash field within one 8-bit level at all four turns.",
+    "Actual grain-overlaid front and back repeat exactly, differ from each other, and ignore unsupported placement.",
+    "Actual unchanged WebGL renderer: matched coat/shirt/skirt/brooch front comparisons against Oat linen, Slate grain and Copper fleck; candidate reverse and all four coat turns captured."
+  ],
+  "registration": {
+    "turns": [
+      {
+        "q": 0,
+        "samples": 39601,
+        "largest": 1,
+        "mismatched": 0
+      },
+      {
+        "q": 1,
+        "samples": 39601,
+        "largest": 1,
+        "mismatched": 0
+      },
+      {
+        "q": 2,
+        "samples": 39601,
+        "largest": 1,
+        "mismatched": 0
+      },
+      {
+        "q": 3,
+        "samples": 39601,
+        "largest": 1,
+        "mismatched": 0
+      }
+    ],
+    "hashes": {
+      "front": "2510015587ab4871f33e25282ae3ebc35497d68db61ef168d3f1f7c39bc997fd",
+      "back": "a7793517a521681cd2b1d9e63936c5f0444fb92c4874a40881f31c647d5d99bc"
+    },
+    "fixedPlacement": true
+  },
+  "passed": true
+}

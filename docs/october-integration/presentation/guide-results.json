@@ -1,0 +1,255 @@
+{
+  "checks": [
+    "Old records open without a write; default guide poses remain implicit and survive reload without schema migration.",
+    "Left, right and single guides move/scale independently; Off retains poses; Reset and Undo preserve the other guide and every garment record.",
+    "Excluded guides leave exports unchanged; white/black pins differ; custom guides persist and photograph/export content matches exactly.",
+    "A 150% guide and large pointer movement remain within Roomy; Standard clamps the rendered pose without rewriting it; Undo restores the larger-board view.",
+    "390/320px: full-board touch target moves only the selected guide; cancellation leaves save/history exact, commit and Undo work, keyboard nudges are an alternative, and controls are reachable."
+  ],
+  "exports": {
+    "default-two-guides": {
+      "sha256": "6388bd984eb309afdc1fde429db32dce07e9c72a32eeac95eaa5fb8f6613be40",
+      "width": 1800,
+      "height": 2100
+    },
+    "guides-excluded": {
+      "sha256": "25b2e18f53d8fcad7eac496f9357639304e330e19ef1022ebb6cb3260df500a6",
+      "width": 1800,
+      "height": 2100
+    },
+    "moved-guides-excluded": {
+      "sha256": "25b2e18f53d8fcad7eac496f9357639304e330e19ef1022ebb6cb3260df500a6",
+      "width": 1800,
+      "height": 2100
+    },
+    "white-pins": {
+      "sha256": "83b23a3d99f9d4c1a12136d678131bbe0f968224b3e1d60ad1b855387b758087",
+      "width": 1800,
+      "height": 2100
+    },
+    "black-pins": {
+      "sha256": "a4ee8184b40cddbd182e3cd5a6629004f27269d43299ed251b66b136f15f8d18",
+      "width": 1800,
+      "height": 2100
+    },
+    "custom-guides-reloaded": {
+      "sha256": "a4ee8184b40cddbd182e3cd5a6629004f27269d43299ed251b66b136f15f8d18",
+      "width": 1800,
+      "height": 2100
+    },
+    "custom-guides-photograph": {
+      "sha256": "a4ee8184b40cddbd182e3cd5a6629004f27269d43299ed251b66b136f15f8d18",
+      "width": 1800,
+      "height": 2100
+    }
+  },
+  "mobile": [
+    {
+      "width": 390,
+      "height": 844,
+      "controls": [
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            488.40625,
+            302,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            87.546875,
+            657.34375,
+            256.453125,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            734.34375,
+            148,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            198,
+            734.34375,
+            148,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            770.34375,
+            148,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            198,
+            770.34375,
+            148,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            617.34375,
+            302,
+            44
+          ]
+        }
+      ],
+      "touchCancel": true,
+      "touchCommit": true,
+      "keyboardNudge": true
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "controls": [
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            438.203125,
+            232,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            87.546875,
+            438.609375,
+            186.453125,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            493.609375,
+            113,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            163,
+            493.609375,
+            113,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            438.609375,
+            113,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            163,
+            438.609375,
+            113,
+            44
+          ]
+        },
+        {
+          "fit": true,
+          "hit": true,
+          "disabled": false,
+          "box": [
+            44,
+            490.609375,
+            232,
+            44
+          ]
+        }
+      ],
+      "touchCancel": true,
+      "touchCommit": true,
+      "keyboardNudge": true
+    }
+  ],
+  "errors": [],
+  "sourceRequests": [],
+  "physicalPhoneTested": false,
+  "previousDefaultComparison": {
+    "commit": "606c420",
+    "sha256": "6388bd984eb309afdc1fde429db32dce07e9c72a32eeac95eaa5fb8f6613be40",
+    "matched": true
+  },
+  "standardClampedBounds": [
+    {
+      "min": [
+        -0.3261429423229265,
+        -2.02,
+        -0.135
+      ],
+      "max": [
+        1.72,
+        2.0172240139950413,
+        -0.135
+      ]
+    },
+    {
+      "min": [
+        -0.055444246917963125,
+        -1.6960094603896145,
+        -0.135
+      ],
+      "max": [
+        1.587444246917963,
+        1.545557266175747,
+        -0.135
+      ]
+    }
+  ],
+  "passed": true
+}

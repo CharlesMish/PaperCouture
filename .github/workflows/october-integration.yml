@@ -1,0 +1,96 @@
+name: October design integration
+on:
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck && npm test && npm run build
+      - uses: actions/checkout@v6
+        with:
+          ref: cedf65c8e71624b8d3cdbcd09f3422f21666dec3
+          path: .october-main
+      - uses: actions/checkout@v6
+        with:
+          ref: 3c448a9e9bc992e3fae91b42f83cb4e67d213787
+          path: .october-claude
+      - name: Preserve every published garment state and sampled pose
+        env:
+          BASELINE_DIR: .october-main
+          PRESERVATION_REPORT: .october-qa/published-geometry.json
+        run: |
+          mkdir -p .october-qa
+          node --import tsx scripts/check-published-geometry.ts
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Compare corrected papers with the frozen Claude proposal
+        env:
+          BASELINE_DIR: .october-claude
+          CAPTURE_DIR: .october-qa/preservation
+        run: node scripts/check-paper-preservation.cjs
+      - name: Draw and sample the new papers through their material transforms
+        env:
+          DEV_URL: http://127.0.0.1:5627
+          BASE_URL: http://127.0.0.1:5637
+          CAPTURE_DIR: .october-qa/browser
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 5627 --strictPort > /tmp/october-vite.log 2>&1 &
+          npm run preview -- --host 127.0.0.1 --port 5637 --strictPort > /tmp/october-preview.log 2>&1 &
+          for port in 5627 5637; do
+            for i in {1..30}; do curl -fsS http://127.0.0.1:$port/ > /dev/null && break; sleep 1; done
+            curl -fsS http://127.0.0.1:$port/ > /dev/null
+          done
+          node scripts/check-design-pass-browser.cjs
+          BASE_URL=http://127.0.0.1:5627 CAPTURE_DIR=.october-qa/dusk node docs/october-integration/companion-paper/check-dusk-wash.cjs
+          node scripts/check-october-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: october-integration-evidence
+          path: .october-qa/
+          include-hidden-files: true
+  phone-and-board:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci && npm run build
+      - run: npm install --no-save --package-lock=false playwright@1.62.1
+      - run: npx playwright install --with-deps chromium
+      - name: Phone journey and expanded pinboard
+        env:
+          BASE_URL: http://127.0.0.1:5637
+        run: |
+          npm run preview -- --host 127.0.0.1 --port 5637 --strictPort > /tmp/phone-preview.log 2>&1 &
+          for i in {1..30}; do curl -fsS "$BASE_URL/" > /dev/null && break; sleep 1; done
+          curl -fsS "$BASE_URL/" > /dev/null
+          CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
+          CAPTURE_DIR=.october-qa/roomy node scripts/check-roomy-board.cjs
+          CAPTURE_DIR=.october-qa/presentation node scripts/check-presentation-browser.cjs
+          CAPTURE_DIR=.october-qa/guides node scripts/check-guide-browser.cjs
+          CAPTURE_DIR=.october-qa/board-review node scripts/check-board-review-browser.cjs
+          CAPTURE_DIR=.october-qa/stacking node scripts/check-board-stacking-browser.cjs
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: phone-and-board-evidence
+          path: .october-qa/
+          include-hidden-files: true

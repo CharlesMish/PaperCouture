@@ -1,8 +1,9 @@
+import type { BoardFormat } from './layout';
 import type { StartingPaperSize } from '../fold/paperSize';
 
 /** Version one stores posed vertices, never a recipe that can refold a kept piece. */
 export const BOARD_KEY = 'paper-couture.pinboard.v1';
-export const MAX_PIECES = 5;
+export const MAX_PIECES = 12;
 export const MAX_SAVE_LENGTH = 2_000_000;
 export const BACKGROUNDS = { Linen: '#d3c8b5', Rose: '#c4a09f', Slate: '#59646a' };
 export type Background = keyof typeof BACKGROUNDS;
@@ -16,12 +17,25 @@ export interface FrozenPiece {
   materials: Surface[];
   parts: { geometry: number; material: number; matrix: number[]; kind: 'mesh' | 'lines' }[];
 }
-export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number; paperSize?: StartingPaperSize }
-export interface BoardState { version: 1; background: Background; selected: string | null; items: BoardItem[] }
+export type GuideId = 'one' | 'left' | 'right';
+export interface GuideTransform { x: number; y: number; scale: number }
+export interface BoardAppearance {
+  surface: 'natural' | 'rose' | 'slate' | 'linen';
+  pins: 'none' | 'brass' | 'pearl' | 'red' | 'white' | 'black';
+  guide: 'none' | 'one' | 'two';
+  lighting: 'soft' | 'clear' | 'warm';
+  guideInPhoto: boolean;
+  guideTransforms?: Partial<Record<GuideId, GuideTransform>>;
+}
+export const defaultAppearance = (): BoardAppearance => ({ surface: 'natural', pins: 'brass', guide: 'none', lighting: 'soft', guideInPhoto: false });
+export interface BoardItem { id: string; title: string; snapshot: FrozenPiece; x: number; y: number; tilt: number; paperSize?: StartingPaperSize; pin?: { x: number; y: number } }
+export interface BoardState { version: 1; format?: BoardFormat; background: Background; selected: string | null; items: BoardItem[]; appearance?: BoardAppearance }
 export const emptyBoard = (): BoardState => ({ version: 1, background: 'Linen', selected: null, items: [] });
 export function copyBoard(s: BoardState): BoardState {
   // Geometry and paper descriptions are immutable and may be shared by Undo states.
-  return { ...s, items: s.items.map(item => ({ ...item })) };
+  return { ...s, ...(s.appearance ? { appearance: { ...s.appearance,
+    ...(s.appearance.guideTransforms ? { guideTransforms: Object.fromEntries(Object.entries(s.appearance.guideTransforms).map(([id, pose]) => [id, { ...pose }])) } : {}) } } : {}),
+    items: s.items.map(item => ({ ...item, ...(item.pin ? { pin: { ...item.pin } } : {}) })) };
 }
 
 const numeric = (v: unknown, limit: number) => typeof v === 'number' && Number.isFinite(v) && Math.abs(v) <= limit;
@@ -33,13 +47,28 @@ const text = (v: unknown, max: number): v is string => typeof v === 'string' && 
 export function parseBoard(raw: string, paperIds: readonly string[]): BoardState {
   if (raw.length > MAX_SAVE_LENGTH) throw new Error('Board is too large');
   const s: unknown = JSON.parse(raw);
-  if (!record(s) || s.version !== 1 || typeof s.background !== 'string' || !Object.hasOwn(BACKGROUNDS, s.background)
+  if (!record(s) || s.version !== 1 || (s.format !== undefined && s.format !== 'standard' && s.format !== 'roomy') || typeof s.background !== 'string' || !Object.hasOwn(BACKGROUNDS, s.background)
     || !Array.isArray(s.items) || s.items.length > MAX_PIECES) throw new Error('Unsupported board');
   const ids = new Set<string>();
+  if (s.appearance !== undefined) {
+    const a = s.appearance;
+    if (!record(a) || typeof a.surface !== 'string' || !['natural', 'rose', 'slate', 'linen'].includes(a.surface)
+      || typeof a.pins !== 'string' || !['none', 'brass', 'pearl', 'red', 'white', 'black'].includes(a.pins)
+      || typeof a.guide !== 'string' || !['none', 'one', 'two'].includes(a.guide)
+      || typeof a.lighting !== 'string' || !['soft', 'clear', 'warm'].includes(a.lighting)
+      || typeof a.guideInPhoto !== 'boolean') throw new Error('Invalid board finish');
+    if (a.guideTransforms !== undefined) {
+      const poses = a.guideTransforms;
+      if (!record(poses) || Object.keys(poses).some(id => !['one', 'left', 'right'].includes(id))) throw new Error('Invalid figure guides');
+      for (const pose of Object.values(poses)) if (!record(pose) || !numeric(pose.x, 4) || !numeric(pose.y, 4)
+        || !numeric(pose.scale, 1.5) || Number(pose.scale) < .5) throw new Error('Invalid figure guide position');
+    }
+  }
   for (const item of s.items) {
     if (!record(item) || !text(item.id, 80) || ids.has(item.id) || !text(item.title, 180)
       || !numeric(item.x, 4) || !numeric(item.y, 4) || !numeric(item.tilt, 12) || !record(item.snapshot)) throw new Error('Invalid piece');
     ids.add(item.id);
+    if (item.pin !== undefined && (!record(item.pin) || !numeric(item.pin.x, 8) || !numeric(item.pin.y, 8))) throw new Error('Invalid pin position');
     // Descriptive only: the scale is already baked into snapshot matrices. Never
     // infer this field for legacy records or apply it again when restoring.
     if (item.paperSize !== undefined) {

@@ -1,0 +1,253 @@
+{
+  "checks": [
+    "Legacy fixture opens without a write; surface and background Undo restore exact legacy state and 1800×2100 PNG.",
+    "Undoing the cork change while placing a pin restores original state and exits the placement interaction.",
+    "Cork, brass pins, lighting and guides preserve captured pieces; explicit guide inclusion works; tilted automatic pins and styled PNG survive reload exactly.",
+    "Pin placement uses an actual paper triangle; cancel, place, reset and Undo preserve immutable captured geometry/materials.",
+    "Photograph is a transient clean view matching exported pixels; saving restores keyboard focus, and Escape returns to arranging without changing state.",
+    "Twelve-piece Roomy presentation retains all captures and reloads to an identical 2400×2800 PNG.",
+    "Repeated cork, pin and guide replacement reaches stable GPU geometry/texture counts; captured pieces and final presentation state stay exact.",
+    "390/320px: essential size control stays initially visible; finishing controls and clean-photo actions fit and have unobscured centres. Browser auto-scroll establishes reachability, not natural touch discovery."
+  ],
+  "exports": {
+    "legacy": {
+      "sha256": "9a83e196ff58de57caa730cf3851f66c14e6d846c9e53bc7212a34bf6e93e992",
+      "width": 1800,
+      "height": 2100
+    },
+    "cork": {
+      "sha256": "25b2e18f53d8fcad7eac496f9357639304e330e19ef1022ebb6cb3260df500a6",
+      "width": 1800,
+      "height": 2100
+    },
+    "legacy-after-appearance-undo": {
+      "sha256": "9a83e196ff58de57caa730cf3851f66c14e6d846c9e53bc7212a34bf6e93e992",
+      "width": 1800,
+      "height": 2100
+    },
+    "legacy-other-background": {
+      "sha256": "7801a30bce8800cab2687c5a96eb30a7884c40fcbe14479ee5b3769f65a2f0fe",
+      "width": 1800,
+      "height": 2100
+    },
+    "legacy-after-background-undo": {
+      "sha256": "9a83e196ff58de57caa730cf3851f66c14e6d846c9e53bc7212a34bf6e93e992",
+      "width": 1800,
+      "height": 2100
+    },
+    "styled-with-guide-excluded": {
+      "sha256": "25b2e18f53d8fcad7eac496f9357639304e330e19ef1022ebb6cb3260df500a6",
+      "width": 1800,
+      "height": 2100
+    },
+    "styled-no-guide": {
+      "sha256": "25b2e18f53d8fcad7eac496f9357639304e330e19ef1022ebb6cb3260df500a6",
+      "width": 1800,
+      "height": 2100
+    },
+    "styled-guide-included": {
+      "sha256": "6388bd984eb309afdc1fde429db32dce07e9c72a32eeac95eaa5fb8f6613be40",
+      "width": 1800,
+      "height": 2100
+    },
+    "styled-tilted": {
+      "sha256": "810b615b3f8e953692f9d2c5fca6a681dea3700a12ffa70b91b13cce44a72672",
+      "width": 1800,
+      "height": 2100
+    },
+    "styled-reloaded": {
+      "sha256": "810b615b3f8e953692f9d2c5fca6a681dea3700a12ffa70b91b13cce44a72672",
+      "width": 1800,
+      "height": 2100
+    },
+    "arranging-photo-output": {
+      "sha256": "70ad9c2b1b754c1c0d1c9051dbbbb4de9e0f38e4f9026f04dac06451b354ba4f",
+      "width": 1800,
+      "height": 2100
+    },
+    "photograph-output": {
+      "sha256": "70ad9c2b1b754c1c0d1c9051dbbbb4de9e0f38e4f9026f04dac06451b354ba4f",
+      "width": 1800,
+      "height": 2100
+    },
+    "twelve-piece-presentation": {
+      "sha256": "76cade96a04321c13a4b36905f6d9f502817152fd641fb41961784318a5e989c",
+      "width": 2400,
+      "height": 2800
+    },
+    "twelve-piece-reloaded": {
+      "sha256": "76cade96a04321c13a4b36905f6d9f502817152fd641fb41961784318a5e989c",
+      "width": 2400,
+      "height": 2800
+    }
+  },
+  "layouts": [
+    {
+      "width": 390,
+      "height": 844,
+      "initial": {
+        "overflow": false,
+        "sizeVisible": true
+      },
+      "controls": [
+        {
+          "label": "Board surface",
+          "box": [
+            44,
+            617.40625,
+            302,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Pin style",
+          "box": [
+            44,
+            689.40625,
+            302,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Figure guide",
+          "box": [
+            44,
+            770.40625,
+            302,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Board lighting",
+          "box": [
+            44,
+            616.8125,
+            302,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Include guide in photograph",
+          "box": [
+            242.28125,
+            544.8125,
+            22,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "initial": {
+        "overflow": false,
+        "sizeVisible": true
+      },
+      "controls": [
+        {
+          "label": "Board surface",
+          "box": [
+            44,
+            438.203125,
+            232,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Pin style",
+          "box": [
+            44,
+            494.203125,
+            232,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Figure guide",
+          "box": [
+            44,
+            438.203125,
+            232,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Board lighting",
+          "box": [
+            44,
+            438.078125,
+            232,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        },
+        {
+          "label": "Include guide in photograph",
+          "box": [
+            242.28125,
+            382.078125,
+            22,
+            44
+          ],
+          "fit": true,
+          "centre": true,
+          "disabled": false
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "sourceRequests": [],
+  "physicalPhoneTested": false,
+  "pinAnchor": {
+    "x": -0.0866665913702942,
+    "y": 0.0679999732688139
+  },
+  "fullBoardFixture": ".october-qa/roomy/twelve-piece.json",
+  "resources": [
+    {
+      "geometries": 80,
+      "textures": 26
+    },
+    {
+      "geometries": 80,
+      "textures": 26
+    },
+    {
+      "geometries": 80,
+      "textures": 26
+    },
+    {
+      "geometries": 80,
+      "textures": 26
+    }
+  ],
+  "passed": true
+}

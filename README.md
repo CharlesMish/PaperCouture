@@ -90,9 +90,13 @@ browser verification used a separate audit harness, not these Python scripts.
 
 ## Print placement and pinboard candidate
 
+Use **Finish & photograph** on the board for cork or linen, optional pins (including slim white/black), independently movable/scalable flat outfit guides and a clean photograph view. See [the presentation pass](docs/october-integration/presentation/NOTES.md).
+
+See [the 12-piece / Roomy follow-up](docs/october-integration/roomy-board/NOTES.md) for current board behavior, mobile corrections and checks.
+
 Corner bloom and Plum scatter support bounded artwork sliding; Seed dashes has
 verified half-cell positions. Fold any current piece, enter Display and use
-Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to five independently arranged pieces. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
+Pinboard to explicitly pin that piece with its attached accessory. Return to folding, make another, and keep up to twelve independently arranged pieces. Choose Standard or Roomy in Board size; Roomy adds about 78% arranging area without resizing your paper. Standard remains the default. The board persists in this browser and exports the visible composite. See [the owner workflow and save limits](docs/multi-piece-board/NOTES.md) and
 [behavior, limits and checks](docs/print-position-pinboard/NOTES.md).
 
 ## Outfit proportions and collection draft
@@ -101,7 +105,7 @@ The pinboard offers an explicit starting-square size for each new capture. Sugge
 make the clutch and apron fit beside garments; earlier captures keep their exact saved size.
 Boat-neck top, Cross-wrap top and Folded hat are new experimental intact-square silhouettes.
 Oat linen and Slate grain add quiet companions; Ginkgo pairs is a positionable paper study.
-See [sizes, comparisons, five-piece limits and verification](docs/outfit-collection/NOTES.md)
+See [earlier sizes, comparisons and verification](docs/outfit-collection/NOTES.md)
 and the [portable brainstorming brief](docs/outfit-papers/COMMISSION-BRIEF.md).
 
 ## Design and curation draft
@@ -135,3 +139,19 @@ Swing coat adds a long open-front silhouette with folded facings and a broad
 shawl-like shoulder yoke. Reed study, Broken twill and Copper fleck form a small
 coordinated paper set. See [illustrated selection and checks](docs/swing-coat/NOTES.md).
 The coat remains an experimental flat silhouette with continuous lining.
+
+## October integration candidate
+
+Riso proof, Crease bloom and Marbled endpaper from Claude’s October proposal
+remain Experimental after review and corrections. Dusk wash adds a quiet broad
+colour field. The recovered Folded mitten pair uses a retained top fold for a
+shorter palm: one intact 6 cm square per hand, approximately 3.85 × 4.50 cm finished
+after the [reviewed cuff refinement](docs/october-integration/thumb-followup/NOTES.md).
+These are flat ornaments with a low wrist-root thumb and no hand opening.
+The original tall mitten and beret remain studies.
+
+See [actual comparisons, decisions, test results and physical limits](docs/october-integration/NOTES.md).
+There are now 22 main design entries, six optional accessories and 33 visible
+papers (13 curated, 20 Experimental); defaults and earlier IDs are preserved.
+Source integration is prepared for review. Nothing is merged or published to
+the separate website repository.

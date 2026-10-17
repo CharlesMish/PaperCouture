@@ -47,9 +47,10 @@ fs.mkdirSync(out, { recursive: true });
     const response = await page.goto(baseline); assert(response.ok()); await ready(); const old = await signature();
     assert.equal(old.registry.length, 26); assert.equal(Object.keys(old.faces).length, 52);
     for (const group of ['faces', 'placements']) for (const [key, hash] of Object.entries(old[group])) assert.equal(current[group][key], hash, group + ': ' + key);
-    // Later reviewed collections add these five papers after frozen PR24.
+    // Later reviewed collections add these five papers after frozen PR24, and
+    // the 2026-10 integration four more (experimental, fixed placement).
     // Keep every old raster, metadata and ordering assertion exact.
-    const added = ['broken-twill', 'copper-fleck', 'plum-seed', 'reed-study', 'sunray-pleats'];
+    const added = ['broken-twill', 'copper-fleck', 'crease-bloom', 'dusk-wash', 'marbled-endpaper', 'plum-seed', 'reed-study', 'riso-proof', 'sunray-pleats'];
     assert.deepEqual(current.registry.filter(p => !added.includes(p.id)), old.registry);
     assert.deepEqual(current.registry.filter(p => !old.registry.some(q => q.id === p.id)).map(p => p.id).sort(), added);
     assert.deepEqual(current.registry.find(p => p.id === 'sunray-pleats'), { id: 'sunray-pleats', name: 'Sunray pleats', hidden: false, curation: 'experimental' });

@@ -1,3 +1,137 @@
+# Paper Couture — overlap stacking in the twelve-piece board
+
+Charlie authorized integrating Claude's bounding-box stacking change into
+`design/october-integration` / PR35. It is a narrow port from `5a7fd8e` onto
+`e49ffa9`: disjoint capture bounds rest at board depth; overlapping later
+captures retain the existing clearance. Pins, guides, twelve slots, saved
+captures and both formats remain. Saved data needs no migration, but rendered
+depth/shadows intentionally change. See
+[the integration and verification](docs/october-integration/presentation/BOARD-STACKING.md).
+The rest of Claude's garment/paper branch and fan corrections are separate.
+This does not merge PR35 into main or publish the separate website.
+
+# Paper Couture — Claude board-review repairs (owner review)
+
+Charlie supplied Claude's read-only review of `6284b4e` and authorized agreed
+repairs. Primary board buttons keep their accent fill on hover/touch hover.
+Adjust guides outlines the chosen figure even outside Move mode; selecting or
+editing paper returns focus to it. Resizing a figure preserves its original
+stroke weight in board units, including correct movement bounds. Default 100%
+guide appearance is retained. Garments, papers, pins and lighting are unchanged.
+
+Read [the review decisions and verification](docs/october-integration/presentation/REVIEW-FOLLOWUP.md).
+All 17 jobs on the reviewed predecessor passed; check the new head separately.
+PR35 remains the review destination. Nothing is merged or deployed; keep the
+separate website untouched. Real-phone/Safari and physical-paper limits remain.
+
+# Paper Couture — adjustable guides and neutral pins (owner review)
+
+Charlie approved the corkboard direction and requested slim white/black pins,
+movable/scalable guides, and a packet for Claude's independent review. This
+follow-up starts at `606c420`, preserving the board, garment captures and paper
+art. Each single/paired guide now has independent saved placement and uniform
+size, with a separate Move guide mode, keyboard/buttons, Reset and Undo. Off
+preserves adjustments. Scale/movement stay within the board; switching board
+formats fits the rendered guide without rewriting the saved choice.
+
+[Current behavior and evidence](docs/october-integration/presentation/NOTES.md)
+· [Claude review brief](docs/october-integration/presentation/CLAUDE-REVIEW.md).
+The source PR35 remains the review destination. Nothing is merged or deployed;
+keep the separate website untouched. Check CI on the actual new head.
+
+# Paper Couture — corkboard finishing pass (owner review)
+
+Charlie requested a corkboard feel, visible/placeable pins, optional flat figure
+guides and a photograph view. The finishing drawer adds three cork colors and
+linen, three pin styles, one/two guides with explicit photograph inclusion, and
+three bounded lighting choices. Twelve slots and both board sizes are retained.
+Existing saves keep their old appearance until a surface is chosen. No garment,
+paper artwork, sizing or fold-engine changes; decor stays outside frozen captures.
+
+Read [the presentation notes and actual comparison](docs/october-integration/presentation/NOTES.md).
+Source PR35 is the review destination. Do not merge or publish without Charlie's
+review; the separate website repository is untouched. Prior `87a089d` had all
+eight GitHub workflows green. New-head results must be checked independently.
+
+# Paper Couture — more pinboard room (owner review)
+
+Charlie asked for further preparation and more board space, then increased the
+requested capacity to twelve to accommodate two wardrobe sets. The October review
+branch now supports twelve independent captures and an optional Roomy board
+(4.8 × 5.6 versus Standard 3.6 × 4.2; about 78% more area). Standard remains the
+default. Captured sizes, coordinates, artwork and fold geometry are unchanged.
+Shrinking is refused if any piece would lie outside Standard; no automatic moving
+or scaling. Undo restores board format. Existing saves need no migration.
+
+The previous `753b8e6` CI did not all pass: two composition workflows caught the
+mobile starting-square control below the initial tools viewport; the October
+45-minute job exhausted its time during the phone gate after the 128-view gallery
+passed. The redundant capacity paragraph is replaced by a header count, preserving
+full-width controls and paper preview size. Phone and Roomy checks have their own
+CI job. See [implementation, evidence and limits](docs/october-integration/roomy-board/NOTES.md).
+
+Keep source and website separate. Nothing merged or published. Physical-paper,
+real-phone/Safari and first-draw performance work remain outstanding.
+
+# Paper Couture — external-review follow-up
+
+Charlie asked to complete the follow-up work after Claude/Grok's reviews of
+PR35 at `ceb324d`. The candidate now uses the independently compared `.25` cuff
+and `.20` thumb hinge, preserving the nine operations and top at `.75`. The
+finished 6 cm-square ornament is approximately 3.85 × 4.50 cm. Short Left/Right
+mitten titles preserve handedness in capture controls. See the
+[thumb comparison](docs/october-integration/thumb-followup/NOTES.md) and
+[mobile follow-up](docs/october-integration/followup/NOTES.md).
+
+Display controls wrap on narrow screens and board selects use the available
+width. Phone-width execution exposed foreground paper disappearing behind fixed
+fog when the fitting camera retreats; `Stage.render` now keeps background haze
+beyond the paper. This is a concrete visibility correction, not a fold-engine
+change. The new production phone gate starts unfolded at 320/390 px and exercises
+touch swatch scrolling, folding, small-flap grips, readable controls, pinning,
+reload and export. Prior evidence below describes the earlier candidate.
+
+Keep all four papers Experimental, their artwork unchanged, and the beret parked.
+No physical-paper or real-phone/Safari trial has occurred. The separate website
+repository is untouched; no merge or publication is authorized by this follow-up.
+
+# Paper Couture — October integration for owner review
+
+Branch `design/october-integration` starts from current main `cedf65c` and retains
+Claude’s submitted `3c448a9`. Charlie authorized preparing full integration,
+including critical fixes and a mitten recovery; **merge and publication still
+require review**. The separate `cmish.dev` website repository is untouched.
+
+Keep the four new papers Experimental: corrected Riso proof, crease-aligned
+Crease bloom, Marbled endpaper and the new quiet Dusk wash. Bloom/Marble cache
+their fixed rasters without changing pixels; Riso’s front intentionally changes
+where invalid fractional-power arithmetic previously omitted dots. Both recovered
+mitten hands are registered as flat ornaments, each suggested at a 6 cm starting
+square. They use the retained top at y=.75, not the rejected deeper .65 turn.
+The low wrist-root thumb has no hand opening. Synthetic connector intersections
+remain documented separately from sampled material-facet checks. Beret remains
+an unregistered study. No shared fold engine or renderer changes were made.
+
+Read [the integration review and actual comparisons](docs/october-integration/NOTES.md),
+[mitten reasoning and limits](docs/october-integration/mitten/NOTES.md), and
+[Dusk wash comparison](docs/october-integration/companion-paper/NOTES.md).
+The new exact-head CI workflow adds frozen-main geometry preservation,
+frozen-Claude paper preservation, drawing-level material correspondence and
+production browser/pinboard checks. Use Node 24, including the new
+`npm run check:mittens`; numerical/browser success is not a physical-paper trial.
+Historical permissions below apply only to their explicitly named candidates.
+
+# Paper Couture — 2026-10 design pass (draft, not merged or published)
+
+Draft branch `claude/stoic-fermi-oopgag` on main `cedf65c`. Adds three experimental
+papers (Riso proof, Crease bloom, Marbled endpaper) and two unregistered origami
+studies (mitten pair, beret); refreshes the commission brief's inventory. No garment,
+existing paper, default, capture or geometry changes. Crease bloom is drawn on the
+Swing coat's own creases (`src/papers/coatMarks.ts`, checked against the
+construction). See [notes, comparisons, limits and recommendations](docs/design-pass-2026-10/NOTES.md).
+Tested on Node 22 in a cloud container with headless Chromium; no real phone or
+physical paper. No push to main, merge or deployment is authorized.
+
 # Paper Couture — authorized Swing coat publication
 
 Charlie approved publication of reviewed candidate `932b1e216f5752691cce398dc1dffab77bde84a1`

@@ -1,0 +1,36 @@
+{
+  "renders": 16,
+  "items": [
+    {
+      "title": "Swing coat · 20 cm square",
+      "paperSize": {
+        "sideCm": 20
+      }
+    },
+    {
+      "title": "Baseline mitten left · 6 cm",
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Baseline mitten right · 6 cm",
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Proposed mitten left · 6 cm",
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Proposed mitten right · 6 cm",
+      "paperSize": {
+        "sideCm": 6
+      }
+    }
+  ],
+  "errors": []
+}

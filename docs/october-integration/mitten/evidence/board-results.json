@@ -1,0 +1,48 @@
+{
+  "items": [
+    {
+      "title": "Swing coat · 20 cm square",
+      "x": 0,
+      "y": 0,
+      "paperSize": {
+        "sideCm": 20
+      }
+    },
+    {
+      "title": "Original mitten left · 6 cm",
+      "x": -1.16,
+      "y": 0.25,
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Original mitten right · 6 cm",
+      "x": -0.7,
+      "y": 0.25,
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Recovered mitten left · 6 cm",
+      "x": 0.75,
+      "y": 0.25,
+      "paperSize": {
+        "sideCm": 6
+      }
+    },
+    {
+      "title": "Recovered mitten right · 6 cm",
+      "x": 1.21,
+      "y": 0.25,
+      "paperSize": {
+        "sideCm": 6
+      }
+    }
+  ],
+  "phoneWidth": 390,
+  "documentOverflow": false,
+  "restoredPieces": 5,
+  "errors": []
+}

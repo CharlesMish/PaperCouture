@@ -1,3 +1,4 @@
+const checkCapacity = require('./board-capacity.cjs');
 // Folded necktie: real-app evidence on a compiled build, fresh browser contexts
 // only (never a user's profile or storage). Optional BASELINE_URL serves the
 // frozen PR25 build to prove it reads a board containing the new capture.
@@ -135,7 +136,7 @@ fs.mkdirSync(out, { recursive: true });
         if (p.offset) { await a.setPrint(p.turn, p.offset); recipe = { id: p.paper, turns: p.turn, position: p.offset }; }
         await a.capture(p.cm, recipe); await a.moveTo(p.x, p.y);
       }
-      const full = await a.state(); assert.equal(full.items.length, 5); assert(await a.btn('Board full · five pieces').isDisabled());
+      const full = await a.state(); assert.equal(full.items.length, 5); await checkCapacity(a.page);
       for (const [w, h] of [[1280, 900], [390, 844], [320, 568]]) {
         await a.page.setViewportSize({ width: w, height: h }); await a.page.locator('.board-tools').evaluate(e => { e.scrollTop = 0; }); await a.page.waitForTimeout(200);
         const m = await a.metrics(); assert(!m.overflow, `no horizontal overflow at ${w}`); assert(m.contained, `board canvas inside its dialog at ${w}`);

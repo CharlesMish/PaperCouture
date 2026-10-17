@@ -14,8 +14,9 @@ import { buildNecktie } from './necktie';
 import { buildCampShirt } from './campShirt';
 import { buildSwingCoat } from './swingCoat';
 import { buildFitFlare } from './fitFlare';
+import { buildMitten } from './mitten';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'mitten-left' | 'mitten-right';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -37,6 +38,8 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
+  { id: 'mitten-left', name: 'Left mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
+  { id: 'mitten-right', name: 'Right mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
 export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : id === 'necktie' ? Math.PI / 4 : 0; }
@@ -46,6 +49,8 @@ export function garmentIdFrom(value: string | null): GarmentId {
 export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOptions = DEFAULT_OPTIONS) {
   const options = typeof selection === 'string' ? { ...DEFAULT_OPTIONS, silhouette: selection } : selection;
   switch (id) {
+    case 'mitten-left': return buildMitten('left');
+    case 'mitten-right': return buildMitten('right');
     case 'swing-coat': return buildSwingCoat();
     case 'camp-shirt': return buildCampShirt();
     case 'fit-flare': return buildFitFlare();

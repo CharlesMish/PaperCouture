@@ -157,7 +157,7 @@ button:focus-visible {
   background: var(--accent);
   color: #fff;
 }
-.btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.btn-primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.08); }
 
 @media (max-width: 520px) {
   .dock { padding: 9px 10px 10px; border-radius: 16px; }
@@ -312,9 +312,12 @@ button:focus-visible {
 
 .display-tools {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   align-items: center;
 }
+.display-tools > .btn { flex: 0 0 auto; white-space: nowrap; }
+.display-tools > .segmented { flex-basis: 160px; }
 
 .segmented {
   display: flex;
@@ -345,6 +348,10 @@ button:focus-visible {
   .display-tools { gap: 6px; }
   .display-tools .btn { min-width: 0; padding: 0 11px; font-size: 0.88rem; }
   .seg { font-size: 0.86rem; }
+}
+@media (max-width: 359px) {
+  .display-tools > .segmented { flex-basis: 100%; }
+  .display-tools > .btn { flex: 1 0 auto; }
 }
 
 /* Garment choice and the optional second sheet share one compact workbench. */
@@ -446,6 +453,8 @@ button:focus-visible {
   .board-body { grid-template-columns: 1fr; gap: 12px; }
   .editor-dialog { padding: 14px; }
   .board-tools { gap: 6px; }
+  .board-tools label { flex-wrap: wrap; gap: 4px 12px; }
+  .board-tools select { width: 100%; max-width: none; }
 }
 @media (max-height: 540px) and (min-width: 720px) {
   .print-dialog { width: 680px; display: grid; grid-template-columns: 220px 1fr; gap: 8px 20px; align-items: center; }
@@ -472,3 +481,28 @@ button:focus-visible {
   .pinboard-dialog .board-preview { width: min(100%, calc((100dvh - 250px) * var(--board-aspect))); align-self: start; }
   .pinboard-dialog .board-preview p { display: none; }
 }
+
+/* A finishing drawer keeps capture and square size easy to reach on a phone. */
+.board-finish { margin: 4px 0; border: 1px solid var(--rule); border-radius: 10px; }
+.board-finish summary { padding: 12px; min-height: 44px; box-sizing: border-box; cursor: pointer; font-size: .9rem; }
+.board-finish-controls { display: flex; flex-direction: column; gap: 8px; padding: 0 10px 12px; }
+.board-tools .board-check { flex-wrap: nowrap; justify-content: flex-start; }
+.board-tools .board-check input { flex: 0 0 22px; width: 22px; height: 44px; margin: 0; }
+.board-tools label[hidden] { display: none; }
+.pinboard-canvas.placing-pin { cursor: crosshair; }
+.board-photo-bar { display: none; }
+.pinboard-dialog.board-photograph { width: 1050px; }
+.board-photograph .board-tools, .board-photograph .board-preview > p { display: none; }
+.board-photograph .board-body { display: flex; align-items: center; justify-content: center; }
+.board-photograph .board-preview { width: min(100%, calc(min(716px, 100dvh - 168px) * var(--board-aspect))); }
+.board-photograph .pinboard-canvas { cursor: default; }
+.board-photograph .board-photo-bar { display: flex; gap: 8px; justify-content: center; margin-top: 12px; }
+.board-photo-bar .btn { min-height: 44px; flex: 1; }
+@media (max-width: 719px) {
+  .board-photograph .board-preview { width: min(100%, calc((100dvh - 164px) * var(--board-aspect))); align-self: center; }
+  .board-photo-bar .btn { padding: 8px; font-size: .85rem; }
+}
+.board-guide-adjust { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+.board-guide-adjust[hidden] { display: none; }
+.board-guide-adjust .board-finish-controls { padding: 0 0 10px; }
+.pinboard-canvas.moving-guide { cursor: move; }
