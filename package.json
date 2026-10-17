@@ -28,7 +28,9 @@
     "check:fit-flare": "node --import tsx scripts/check-fit-flare.ts && node --import tsx scripts/check-fit-flare-rendered.ts",
     "check:swing-coat": "node --import tsx scripts/check-swing-coat.ts && node --import tsx scripts/check-swing-coat-rendered.ts",
     "check:design-pass": "node --import tsx scripts/check-design-pass.ts",
-    "check:mittens": "node --import tsx scripts/check-mitten.ts && node --import tsx scripts/check-mitten-rendered.ts"
+    "check:mittens": "node --import tsx scripts/check-mitten.ts && node --import tsx scripts/check-mitten-rendered.ts",
+    "previews": "node --import tsx scripts/design-previews.ts",
+    "check:previews": "node --import tsx scripts/design-previews.ts --check"
   },
   "dependencies": {
     "three": "0.170.0"

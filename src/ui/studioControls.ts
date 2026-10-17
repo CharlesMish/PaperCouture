@@ -1,4 +1,6 @@
-import { GARMENTS, GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
+import { DesignPicker } from './designPicker';
+import { BROWSE_GARMENTS } from './designOrder';
+import { GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
 import type { DecisionId, FoldDecision } from '../fold/garmentOptions';
 export type { GarmentId };
 export type PinPosition = AttachmentPosition;
@@ -6,6 +8,7 @@ import { ACCESSORIES, AccessoryId } from '../fold/accessories';
 export type { AccessoryId };
 export class StudioControls {
   readonly root = document.createElement('section');
+  private designPicker: DesignPicker;
   private design = document.createElement('select');
   private accessory = document.createElement('select');
   private accessoryLabel = document.createElement('label');
@@ -33,11 +36,12 @@ export class StudioControls {
     onReturn(): void; onPosition(position: PinPosition): void; onRevisit(id: DecisionId): void;
     onCentre(): void; onCentreToggle(): void;
   }) {
+    this.designPicker = new DesignPicker(parent, h.onDesign);
     this.root.className = 'studio-controls';
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
-    for (const garment of GARMENTS) this.design.append(new Option(garment.name, garment.id));
+    for (const garment of BROWSE_GARMENTS) this.design.append(new Option(garment.name, garment.id));
     this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
@@ -63,7 +67,7 @@ export class StudioControls {
     this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
     this.centreToggle.textContent = 'Show folded centre';
     this.centreControls.append(this.centreEdit, this.centreToggle);
-    this.root.append(label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
+    this.root.append(this.designPicker.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
     parent.append(this.root);
   }
   renderCentre(available: boolean, complete: boolean, shown: boolean, editing: boolean) {
@@ -85,6 +89,7 @@ export class StudioControls {
       this.displaced ??= this.accessory.value as AccessoryId;
       this.accessory.value = available[0];
     }
+    this.designPicker.render(id, accessoryMode);
     this.design.value = id; this.design.disabled = accessoryMode;
     this.kept = { id: activeAccessory, attached };
     this.edit.textContent = this.actionLabel();
