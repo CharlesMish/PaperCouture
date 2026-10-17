@@ -1,3 +1,10 @@
+# Visual piece chooser and website update
+
+Charlie requested visual browsing, recent designs first, and completion of the
+website update. See [chooser notes](docs/design-picker/NOTES.md). This request
+supersedes earlier historical instructions to leave the website untouched.
+The gallery changes presentation only; Claude’s unmerged fold work stays separate.
+
 # Paper Couture — overlap stacking in the twelve-piece board
 
 Charlie authorized integrating Claude's bounding-box stacking change into

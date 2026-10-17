@@ -27,6 +27,10 @@ npm run preview
 Production preview normally uses http://localhost:4173/. The static build is in `dist/`
 and uses relative asset paths. Serve it over HTTP; do not double-click index.html.
 
+Use **Browse pieces** to see finished shape previews before choosing a design.
+Recent collection highlights lead the gallery and the compact name selector.
+See [the visual chooser](docs/design-picker/NOTES.md).
+
 ## Garments and optional accessories
 
 Choose Dress, Box jacket, Wrap skirt, Lapel vest or Pleated skirt from Design. After folding the garment, optionally

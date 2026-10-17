@@ -82,6 +82,8 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 5637 --strictPort > /tmp/phone-preview.log 2>&1 &
           for i in {1..30}; do curl -fsS "$BASE_URL/" > /dev/null && break; sleep 1; done
           curl -fsS "$BASE_URL/" > /dev/null
+          npm run check:previews
+          CAPTURE_DIR=.october-qa/chooser node scripts/check-design-picker-browser.cjs
           CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
           CAPTURE_DIR=.october-qa/roomy node scripts/check-roomy-board.cjs
           CAPTURE_DIR=.october-qa/presentation node scripts/check-presentation-browser.cjs
