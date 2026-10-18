@@ -143,7 +143,7 @@ def instructions_page(c):
     ang = ", ".join(f"{a:g}" for a in reversed(s["innerFromMiddleDeg"][:-1]))
     for i, t in enumerate([
         "Print side up. Fold the bottom edge up behind to meet the top edge. The middle of the fold is the rivet.",
-        f"Fold each top corner behind along a line {pct(s['round'])} in from the corner along the top and the same down the side.",
+        f"Fold each top corner behind along a line {pct(s['cornerOffset'])} in from the corner along the top and the same down the side.",
         f"Pleat from the outside in. On each side, from the rivet: valley-fold along the line {s['innerFromMiddleDeg'][-1]:g} degrees from "
         f"the middle and mountain-fold {s['tuckDeg']:g} degrees further out, so the outer paper slides in over a narrow tuck. "
         f"Then the same at {ang} degrees, working inward. Press flat.",
@@ -152,12 +152,13 @@ def instructions_page(c):
     head("What paper has to cope with")
     zm, sm = z["metrics"], s["metrics"]
     para(f"The zori: {z['finishedMm']['length']} x {z['finishedMm']['width']} mm from an {z['squareCm']:g} cm square, the thong "
-         f"{z['finishedMm']['thong']} mm wide. Up to {zm['layers']['max']} layers, at the heel corners; 8 over half the sole. "
+         f"{z['finishedMm']['thong']} mm wide. Up to {zm['layers']['max']} layers in small patches, mostly where the heel is rounded; 8 over half the sole. "
          f"Sharpest angle {zm['sharpestCreaseAngleDeg']:.0f} degrees, nothing narrower than {zm['narrowestFacetMm']} mm. Thin paper "
          "(kami or thinner) helps at the heel.", 8.5)
     para(f"The fan: {sm['finishedCm']['width']} x {sm['finishedCm']['height']} cm from a {s['squareCm']:g} cm square. Up to "
-         f"{sm['layers']['max']} layers. The tucks are {s['tuckDeg']:g} degree wedges meeting at the rivet (about "
-         f"{s['tuckDeg'] * 2 * s['squareCm'] * 5 * 3.14159 / 180:.1f} mm wide at the edge): pre-crease them; the rivet is "
+         f"{sm['layers']['max']} layers. The two creases of each tuck are {s['tuckDeg']:g} degrees apart, about "
+         f"{s['tuckWidthAtEdgeMm']} mm apart at the edge and closing to nothing at the rivet: "
+         f"pre-crease them; the rivet is "
          "where all of them meet, so hold it flat while you collapse each pair. Nothing locks: press the fan under a book.", 8.5)
     para("Both patterns pass the app's flat-foldability and rigid-motion checks. Neither has been folded in paper yet.", 8.5)
     head("If you fold them")

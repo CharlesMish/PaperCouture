@@ -331,8 +331,8 @@
         "shortestCreaseMm": 1.83,
         "narrowestFacetMm": 1.49,
         "panels": 11,
-        "tuckAtRimMm": 3.67,
-        "panelAtRimMm": 7.38
+        "tuckWidthAtEdgeMm": 1.83,
+        "panelWidthAtEdgeMm": 7.37
       },
       "reverse": {
         "operations": 7,
@@ -413,8 +413,8 @@
         "shortestCreaseMm": 1.83,
         "narrowestFacetMm": 1.49,
         "panels": 11,
-        "tuckAtRimMm": 3.67,
-        "panelAtRimMm": 7.38
+        "tuckWidthAtEdgeMm": 1.83,
+        "panelWidthAtEdgeMm": 7.37
       }
     }
   },

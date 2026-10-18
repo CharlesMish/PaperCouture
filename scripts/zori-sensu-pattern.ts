@@ -24,7 +24,11 @@ const data = {
   sensu: {
     squareCm: scm, params: DEFAULT_SENSU, metrics: foldMetrics(buildSensu(), scm),
     tuckDeg: deg(sg.tuck), panelDeg: deg(sg.panel), innerFromMiddleDeg: sg.inner.map((a) => +(90 - deg(a)).toFixed(2)),
-    round: +(sg.round / 2).toFixed(4),
+    /** the corner creases' distance in from the corner along each edge, as a fraction of the side */
+    cornerOffset: +sg.cornerOffset.toFixed(4),
+    /** the width between a tuck's two creases at the leaf's edge (one radius, half the side), in mm */
+    tuckWidthAtEdgeMm: +(scm * 5 * Math.sin(sg.tuck)).toFixed(2),
+    panelWidthAtEdgeMm: +(scm * 5 * 2 * Math.sin(sg.panel / 2)).toFixed(2),
     creases: creasePattern(buildSensu()).map((k) => ({ a: pick(k.a), b: pick(k.b), mv: k.mv })),
   },
 };

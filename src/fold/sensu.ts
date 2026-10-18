@@ -55,9 +55,14 @@ export function sensuGeometry(p: SensuParams = DEFAULT_SENSU) {
   // out each time; in the paper every pleat further in has also used two tucks.
   const inner: number[] = [];
   for (let k = 0; k < n; k++) inner.push(Math.PI / 2 - panel / 2 - tuck - k * (panel + 2 * tuck));
-  /** where the round-off folds cut the corners: x + y = sqrt 2 (and its mirror) */
+  /** where the round-off folds cross the edges, in sheet coordinates: the crease
+   *  runs from (round, 1) to (1, round), the line x + y = sqrt 2 (and its mirror) */
   const round = Math.SQRT2 - 1;
-  return { n, half, tuck, panel, inner, round };
+  /** the same crease measured for a folder: its distance in from the corner along
+   *  each edge, as a fraction of the square's side ((1 - round) / 2, about 29.3%).
+   *  Kept apart from `round`, a coordinate, so the two are never confused again. */
+  const cornerOffset = (1 - round) / 2;
+  return { n, half, tuck, panel, inner, round, cornerOffset };
 }
 
 /** Pleat k: on each side, a wedge folds over along its inner crease and the rest of the side folds back along the next. */
@@ -100,7 +105,7 @@ export function buildSensu(p: SensuParams = DEFAULT_SENSU): Construction {
     },
     {
       kind: 'fold', id: 'sensu-round', title: 'Fold the top corners behind',
-      hint: `All layers. Fold each top corner behind along a line from ${(r * 50).toFixed(1)}% of the square in from the corner along the top to the same distance down the side. The outline is now half an octagon round the rivet.`,
+      hint: `All layers. Fold each top corner behind along a line from ${(g.cornerOffset * 100).toFixed(1)}% of the square in from the corner along the top to the same distance down the side. The outline is now half an octagon round the rivet.`,
       folds: [
         { name: 'sensu-round-right', a: v2(r, 1), b: v2(1, r), moving: v2(0.99, 0.99), sense: 'mountain' },
         { name: 'sensu-round-left', a: v2(-1, r), b: v2(-r, 1), moving: v2(-0.99, 0.99), sense: 'mountain' },

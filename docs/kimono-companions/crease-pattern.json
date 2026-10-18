@@ -1092,7 +1092,9 @@
    59.05,
    75.93
   ],
-  "round": 0.2071,
+  "cornerOffset": 0.2929,
+  "tuckWidthAtEdgeMm": 1.83,
+  "panelWidthAtEdgeMm": 7.37,
   "creases": [
    {
     "a": {

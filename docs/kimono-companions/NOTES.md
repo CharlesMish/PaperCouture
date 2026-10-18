@@ -120,12 +120,20 @@ a size that can still be folded. The board pins anything at another size.
 | fan (7.5 cm) | 12 | 2.8° | 1.83 mm | 1.49 mm |
 | kimono (20 cm) | 12 | 45° | 15 mm | 15 mm |
 
-- **Zori.** The 16 layers are at the heel corners (3% of the sole), where the
-  rounding folds go through 8. Half the sole has 8 layers. No crease folds through
-  more than 8 paper layers (asserted). Thin paper helps at the heel.
+- **Zori.** Up to 16 layers, in small patches: 3.2% of the sampled sole, mostly
+  where the heel rounding folds through 8 layers. Half the sole has 8. No crease
+  folds through more than 8 paper layers (asserted). Thin paper helps at the heel.
+  Astra's review measured two variants: half-size heel rounding leaves 16-layer
+  patches over 1.4% (and narrows the smallest facet from 2.4 to 1.56 mm), and
+  rounding only the toe still leaves 0.8%. Neither makes it an 8-layer object, and
+  a smaller fold is not necessarily easier to make; fold the 16 cm practice
+  pattern first, then decide.
 - **Fan.** The 2.8 degree angle is the tucks themselves, wedges that meet at the
   rivet: that is what a pleated fan is, and it is why the folding sheet says to
-  pre-crease. Each tuck is 3.7 mm wide at the edge and each panel 7.4 mm.
+  pre-crease. A tuck's two creases are 1.83 mm apart at the edge and close to
+  nothing at the rivet (0.24 mm at 5 mm from it). Each panel is 7.4 mm wide at the
+  edge. (An earlier version said 3.7 mm: that was the angle a pleat takes up, twice
+  the tuck, not the width between its creases.)
 
 Nothing locks in either. `check-zori-sensu.ts` bounds these by what the collection
 already asks of paper (or states why not), not by a proof.
@@ -153,9 +161,43 @@ guidance only, and easy to move back to Experiments.
 
 Until now each pinned piece sat above every piece pinned before it, overlapping or
 not. The fourth piece of an outfit floated several thicknesses up and cast a shadow
-well away from itself (the zori and fan made it obvious). Now a piece stacks only
-above earlier pieces it overlaps. Pieces that overlap still occupy disjoint depths,
-as before (the board check and the new browser check assert both).
+well away from itself (the zori and fan made it obvious). Now a piece stacks above
+an earlier piece only where their rectangular XY bounding boxes overlap; otherwise
+it rests on the board. This is conservative: empty corners of a fan's box, or a
+tilted piece's, can still lift a piece whose paper overlaps nothing. Overlapping
+pieces still occupy disjoint depths.
+
+Astra integrated this into main's twelve-piece corkboard (commit 8721e1b, merged
+with PR #35), with its own browser check (`check-board-stacking-browser.cjs`). The
+copy on this branch is the older five-piece board; main's is the one to keep.
+
+## Review (Astra, 2026-10-16) and corrections
+
+Astra reviewed this branch at 5a7fd8e and found two errors in the fan's written
+instructions, both now corrected. The geometry and crease diagrams were right.
+
+- **The corner folds** cross each edge 29.3% of the side in from the corner
+  ((1 - r) / 2, with the crease from (r, 1) to (1, r), r = sqrt 2 - 1). The hint
+  and the sheet said 20.7%, which is the crossing's coordinate, not its distance
+  from the corner. That is 22.0 mm on a 7.5 cm square, not 15.5 mm.
+- **The tuck width** is 1.83 mm at the edge, not 3.7 mm (above).
+
+`check-zori-sensu.ts` now reads every measurement written in the zori's and the
+fan's step hints and in the folding sheet's data back from the text and compares
+it with the crease coordinates it describes (the band, corner drop, sole width,
+toe, rounding, the fan's corner offset, every pleat's angles and the tuck width).
+Reintroducing the corner error fails it. The folding sheet is regenerated.
+
+Her review also notes:
+
+- the renderer's 19-level allowance for the zori is not evidence of physical
+  foldability; with the artificial layer offsets removed the shared edges coincide
+  and nothing crosses, so the gaps are rendering offsets;
+- the rendered hinge strips (not the facets) cross in places during motion, as
+  elsewhere in the collection;
+- nothing retains the zori's toe fold or the fan's pleats;
+- the fan in the obi is a composition, not a verified tuck;
+- multi-accessory support should wait.
 
 ## Verification
 
