@@ -1,0 +1,227 @@
+{
+  "design": "kimono",
+  "startingSquareCm": 20,
+  "params": {
+    "band": 0.15,
+    "side": "print"
+  },
+  "geometry": {
+    "band": 0.15,
+    "top": 0.85,
+    "sideY": 0.35,
+    "shoulderY": 0.7,
+    "halfWidth": 0.5
+  },
+  "squash": {
+    "signs": [
+      -1,
+      -1,
+      1,
+      1
+    ],
+    "rates": {
+      "lift": 1,
+      "sleeveFold": 1,
+      "hinge": 1.4142135623730951,
+      "shoulder": 1.4142135623730951
+    },
+    "worstLoopResidual": 8.881784197001252e-16
+  },
+  "samplesPerOperation": 161,
+  "colourways": {
+    "print": {
+      "operations": 8,
+      "facets": 26,
+      "finishedCm": {
+        "width": 10,
+        "height": 10
+      },
+      "layers": {
+        "max": 12,
+        "at": {
+          "x": -0.497,
+          "y": 0.353
+        },
+        "areaByCount": {
+          "2": 0.0336,
+          "4": 0.3784,
+          "6": 0.1981,
+          "8": 0.2224,
+          "10": 0.1622,
+          "12": 0.0054
+        }
+      },
+      "creases": 29,
+      "sharpestCreaseAngleDeg": 45,
+      "sharpestAt": {
+        "x": -1,
+        "y": -0.85
+      },
+      "shortestCreaseMm": 15,
+      "narrowestFacetMm": 15,
+      "maxHingeGap": 0.0557199313923947,
+      "hingeLimit": {
+        "folds": 0.05499999999999999,
+        "collapse": 0.066
+      },
+      "collarCreaseLayers": 4,
+      "maxEdgeLengthError": 8.881784197001252e-16,
+      "minZ": 0.0014999999999999996,
+      "maxEndJump": 1.5817252072427036e-11,
+      "perOperation": [
+        {
+          "id": "half",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-0",
+          "maxHingeGap": 0.0055000000000002495,
+          "hingeGapInLayers": 1.0000000000000455,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "corners",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "band-front",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-1",
+          "maxHingeGap": 0.016500000000000205,
+          "hingeGapInLayers": 3.0000000000000377,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "band-back",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "collar",
+          "maxHingeGap": 0.05499999999999999,
+          "hingeGapInLayers": 10,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sleeves",
+          "maxHingeGap": 0.0557199313923947,
+          "hingeGapInLayers": 10.130896616799037,
+          "strictTrianglePiercings": 0
+        }
+      ],
+      "collarBandMm": 15,
+      "sleeveMm": 35
+    },
+    "reverse": {
+      "operations": 7,
+      "facets": 26,
+      "finishedCm": {
+        "width": 10,
+        "height": 10
+      },
+      "layers": {
+        "max": 12,
+        "at": {
+          "x": -0.497,
+          "y": 0.353
+        },
+        "areaByCount": {
+          "2": 0.0336,
+          "4": 0.3784,
+          "6": 0.1981,
+          "8": 0.2224,
+          "10": 0.1622,
+          "12": 0.0054
+        }
+      },
+      "creases": 29,
+      "sharpestCreaseAngleDeg": 45,
+      "sharpestAt": {
+        "x": -1,
+        "y": -0.85
+      },
+      "shortestCreaseMm": 15,
+      "narrowestFacetMm": 15,
+      "maxHingeGap": 0.055719931392394756,
+      "hingeLimit": {
+        "folds": 0.05499999999999999,
+        "collapse": 0.066
+      },
+      "collarCreaseLayers": 4,
+      "maxEdgeLengthError": 8.881784197001252e-16,
+      "minZ": 0.0014999999999999996,
+      "maxEndJump": 1.5817252072427036e-11,
+      "perOperation": [
+        {
+          "id": "half",
+          "maxHingeGap": 0.0055,
+          "hingeGapInLayers": 1,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "corners",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "band-front",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "turn-1",
+          "maxHingeGap": 0.016500000000000205,
+          "hingeGapInLayers": 3.0000000000000377,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "band-back",
+          "maxHingeGap": 0.0165,
+          "hingeGapInLayers": 3.0000000000000004,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "collar",
+          "maxHingeGap": 0.05499999999999999,
+          "hingeGapInLayers": 10,
+          "strictTrianglePiercings": 0
+        },
+        {
+          "id": "sleeves",
+          "maxHingeGap": 0.055719931392394756,
+          "hingeGapInLayers": 10.130896616799047,
+          "strictTrianglePiercings": 0
+        }
+      ],
+      "collarBandMm": 15,
+      "sleeveMm": 35
+    }
+  },
+  "obi": {
+    "squareCm": 6.6,
+    "finishedCm": {
+      "width": 6.6,
+      "height": 1.65
+    },
+    "layers": 5,
+    "cordMm": 3.96,
+    "narrowestFacetMm": 1.98,
+    "placement": {
+      "y": 0.26999999999999996,
+      "from": 0.18749999999999994,
+      "to": 0.3525
+    }
+  },
+  "limits": "Thin rigid facets, sampled motion. Layer counts are paper layers stacked at a point, not rendering offsets. No paper thickness, springback, continuous-collision or physical-paper certification."
+}

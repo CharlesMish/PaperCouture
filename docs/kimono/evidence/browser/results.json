@@ -1,0 +1,12 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "Design list, kimono colour choice at the first fold (aria-pressed, URL), forward/back by the buttons, revisit from the finished piece, both colourways finished.",
+    "Obi folded from its own square in four steps with its own paper (Plum seed), attached at the waist, the only position offered.",
+    "Display front/angle/back; board capture at the suggested 20 cm with exact live geometry.",
+    "Phone-sized 390 x 844 and 320 x 568 with emulated touch: eight taps fold the default kimono; no horizontal page scroll."
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false
+}

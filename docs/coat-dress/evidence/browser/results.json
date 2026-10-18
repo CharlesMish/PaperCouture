@@ -1,0 +1,11 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "Design list, coat colour choice at the shoulder fold (thumbnails, aria-pressed, URL), forward/back by the buttons, revisit from the finished piece, both colourways finished.",
+    "Display front/angle/back; board capture at the suggested 20 cm with exact live geometry.",
+    "Phone-sized 390 x 844 and 320 x 568 with emulated touch: four taps fold the default coat; no horizontal page scroll."
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false
+}

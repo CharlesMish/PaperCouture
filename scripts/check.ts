@@ -24,6 +24,11 @@ import { buildNeckerchief } from '../src/fold/neckerchief';
 import { buildPocketSquare } from '../src/fold/pocketSquare';
 import { buildTulip } from '../src/fold/tulip';
 import { buildFitFlare } from '../src/fold/fitFlare';
+import { buildCoatDress, DEFAULT_COAT_DRESS } from '../src/fold/coatDress';
+import { buildGown, DEFAULT_GOWN } from '../src/fold/gown';
+import { buildKimono, DEFAULT_KIMONO } from '../src/fold/kimono';
+import { buildZori, DEFAULT_ZORI, ZORI_FOLD_LEVELS } from '../src/fold/zori';
+import { buildSensu, DEFAULT_SENSU } from '../src/fold/sensu';
 import { collapseAngles, loopResidual } from '../src/fold/collapse';
 import { creasePattern, vertexProblems } from './crease_pattern';
 import { COLLAR_Y, SIDE_APEX_Y, SIDE_HALF_ANGLE } from '../src/papers/dressMarks';
@@ -43,7 +48,15 @@ for (const construction of [buildDress(), buildSilhouette('straight'), buildSilh
   // PR #14
   buildLapelVest('pointed'),
   // fit-and-flare: the waist is a collapse step (src/fold/collapse.ts)
-  buildFitFlare()]) {
+  buildFitFlare(),
+  // coat-dress: a rigid shoulder collapse, then the fit-and-flare waist (src/fold/coatDress.ts)
+  buildCoatDress(), buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: 'print' }),
+  // one-shoulder gown: sash and tip folds, cupboard fold, empire-waist collapse, a cap-sleeve flap (src/fold/gown.ts)
+  buildGown(), buildGown({ ...DEFAULT_GOWN, side: 'reverse' }),
+  // kimono: simple folds, then one rigid squash with layer-filtered regions (src/fold/kimono.ts)
+  buildKimono(), buildKimono({ ...DEFAULT_KIMONO, side: 'reverse' }),
+  // zori (simple folds) and the folding fan (one two-crease pleat collapse a side per step)
+  buildZori(), buildZori({ ...DEFAULT_ZORI, side: 'reverse' }), buildSensu(), buildSensu({ ...DEFAULT_SENSU, side: 'reverse' })]) {
 const tl = buildTimeline(construction.ops);
 
 tl.states.forEach((s, i) => errors.push(...checkState(s, `state ${i}`)));
@@ -92,7 +105,7 @@ let worstGap = 0;
 let worstExcess = 0;
 let lowestZ = Infinity;
 for (const op of tl.ops) {
-  errors.push(...hingeProblems(op));
+  errors.push(...hingeProblems(op, 21, construction.name.startsWith('One-shoulder gown') ? 16 : 12, construction.name.startsWith('Kimono') ? 10 : construction.name.startsWith('Zori') ? ZORI_FOLD_LEVELS : 8));
   const frames = Array.from({ length: 21 }, (_, s) => evaluateFrame(op, s / 20));
   for (const h of op.hinges) {
     for (const m of [h.m0, h.m1]) {

@@ -14,6 +14,7 @@ import {
   computeLevels,
   findAdjacency,
   findRawEdges,
+  mayMove,
   modelPoly,
   sideOf,
   specLine,
@@ -116,7 +117,7 @@ export function buildTimeline(ops: Op[]): Timeline {
         const line = specLine(spec);
         lines.push(line);
         // preview geometry is taken from the state this spec applies to
-        const candidates = cur.facets.filter((f) => (spec.only ? f.tags.includes(spec.only) : true));
+        const candidates = cur.facets.filter((f) => mayMove(spec, f));
         let t0 = Infinity;
         let t1 = -Infinity;
         for (const f of candidates) {

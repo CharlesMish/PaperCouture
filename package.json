@@ -12,7 +12,7 @@
     "sheet-map": "node --import tsx scripts/sheet_map.ts",
     "crease-pattern": "node --import tsx scripts/crease_pattern.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
-    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat && npm run check:design-pass && npm run check:mittens",
+    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat && npm run check:design-pass && npm run check:mittens && npm run check:coat-dress && npm run check:gown && npm run check:kimono && npm run check:zori-sensu && npm run check:previews",
     "check:collection": "node --import tsx scripts/check-collection.ts",
     "build:experiment": "tsc --noEmit -p experiments/fold-study && vite build --config vite.experiment.config.ts",
     "test:experiment": "node --import tsx scripts/check-fold-study.ts",
@@ -30,7 +30,16 @@
     "check:design-pass": "node --import tsx scripts/check-design-pass.ts",
     "check:mittens": "node --import tsx scripts/check-mitten.ts && node --import tsx scripts/check-mitten-rendered.ts",
     "previews": "node --import tsx scripts/design-previews.ts",
-    "check:previews": "node --import tsx scripts/design-previews.ts --check"
+    "check:previews": "node --import tsx scripts/design-previews.ts --check",
+    "check:coat-dress": "node --import tsx scripts/check-coat-dress.ts",
+    "check:gown": "node --import tsx scripts/check-gown.ts",
+    "check:kimono": "node --import tsx scripts/check-kimono.ts",
+    "fold-metrics": "node --import tsx scripts/foldMetrics.ts",
+    "coat-dress-pattern": "node --import tsx scripts/coat-dress-pattern.ts",
+    "gown-pattern": "node --import tsx scripts/gown-pattern.ts",
+    "kimono-pattern": "node --import tsx scripts/kimono-pattern.ts",
+    "check:zori-sensu": "node --import tsx scripts/check-zori-sensu.ts",
+    "zori-sensu-pattern": "node --import tsx scripts/zori-sensu-pattern.ts"
   },
   "dependencies": {
     "three": "0.170.0"

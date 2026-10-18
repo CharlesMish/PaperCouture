@@ -33,3 +33,6 @@ docs/*/tiles/
 .october-claude/
 docs/swing-coat/evidence/browser/*.png
 docs/swing-coat/evidence/papers/*.png
+
+.coat-dress-qa/
+docs/coat-dress/evidence/browser/*.png

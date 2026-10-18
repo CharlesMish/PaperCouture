@@ -1,0 +1,423 @@
+{
+  "zori": {
+    "startingSquareCm": 8,
+    "params": {
+      "band": 0.06,
+      "cornerSlope": 0.56,
+      "halfWidth": 0.25,
+      "toe": 0.26,
+      "toeRound": 0.14,
+      "heelRound": 0.11,
+      "side": "print"
+    },
+    "finished": {
+      "lengthMm": 44,
+      "widthMm": 20,
+      "thongMm": 2.4
+    },
+    "thong": {
+      "fromVerticalDeg": 31.5,
+      "pointFromToe": 0.236,
+      "meetsSidesFromHeel": 0.393
+    },
+    "colourways": {
+      "print": {
+        "operations": 8,
+        "facets": 54,
+        "maxHingeGap": 0.10450000000000018,
+        "maxEdgeLengthError": 7.771561172376096e-16,
+        "minZ": 0.0015,
+        "maxEndJump": 1.1993036065350847e-11,
+        "perOperation": [
+          {
+            "id": "zori-band",
+            "maxHingeGap": 0.005499999999999998,
+            "hingeGapInLevels": 1,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-half",
+            "maxHingeGap": 0.016500000000000004,
+            "hingeGapInLevels": 3,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-thong",
+            "maxHingeGap": 0.0385,
+            "hingeGapInLevels": 7,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-turn-back",
+            "maxHingeGap": 0.038500000000000194,
+            "hingeGapInLevels": 7,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-sides",
+            "maxHingeGap": 0.06600000000000002,
+            "hingeGapInLevels": 12,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-toe",
+            "maxHingeGap": 0.066,
+            "hingeGapInLevels": 12,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-round",
+            "maxHingeGap": 0.10450000000000004,
+            "hingeGapInLevels": 19,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-reveal",
+            "maxHingeGap": 0.10450000000000018,
+            "hingeGapInLevels": 19,
+            "strictTrianglePiercings": 0
+          }
+        ],
+        "finishedCm": {
+          "width": 2,
+          "height": 4.4
+        },
+        "layers": {
+          "max": 16,
+          "at": {
+            "x": -0.643,
+            "y": 0.102
+          },
+          "areaByCount": {
+            "4": 0.2421,
+            "6": 0.0646,
+            "8": 0.4841,
+            "10": 0.1052,
+            "12": 0.0371,
+            "14": 0.0346,
+            "16": 0.0322
+          }
+        },
+        "creases": 90,
+        "sharpestCreaseAngleDeg": 29.25,
+        "sharpestAt": {
+          "x": 0.5,
+          "y": 0.94
+        },
+        "shortestCreaseMm": 0.86,
+        "narrowestFacetMm": 2.4,
+        "creaseLayers": {
+          "zori-band": 1,
+          "zori-half": 2,
+          "zori-thong-left": 4,
+          "zori-thong-right": 4,
+          "zori-side-left": 6,
+          "zori-side-right": 6,
+          "zori-toe": 4,
+          "zori-toe-left": 4,
+          "zori-toe-right": 4,
+          "zori-heel-left": 8,
+          "zori-heel-right": 8
+        },
+        "hingeLimit": {
+          "folds": 0.1045
+        }
+      },
+      "reverse": {
+        "operations": 9,
+        "facets": 54,
+        "maxHingeGap": 0.1045000000000002,
+        "maxEdgeLengthError": 7.771561172376096e-16,
+        "minZ": 0.0015,
+        "maxEndJump": 1.5817015878634874e-11,
+        "perOperation": [
+          {
+            "id": "zori-band",
+            "maxHingeGap": 0.005499999999999999,
+            "hingeGapInLevels": 1,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-turn",
+            "maxHingeGap": 0.0055000000000002495,
+            "hingeGapInLevels": 1,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-half",
+            "maxHingeGap": 0.016500000000000004,
+            "hingeGapInLevels": 3,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-thong",
+            "maxHingeGap": 0.0385,
+            "hingeGapInLevels": 7,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-turn-back",
+            "maxHingeGap": 0.038500000000000194,
+            "hingeGapInLevels": 7,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-sides",
+            "maxHingeGap": 0.06600000000000002,
+            "hingeGapInLevels": 12,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-toe",
+            "maxHingeGap": 0.066,
+            "hingeGapInLevels": 12,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-round",
+            "maxHingeGap": 0.10450000000000004,
+            "hingeGapInLevels": 19,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "zori-reveal",
+            "maxHingeGap": 0.1045000000000002,
+            "hingeGapInLevels": 19,
+            "strictTrianglePiercings": 0
+          }
+        ],
+        "finishedCm": {
+          "width": 2,
+          "height": 4.4
+        },
+        "layers": {
+          "max": 16,
+          "at": {
+            "x": -0.643,
+            "y": 0.102
+          },
+          "areaByCount": {
+            "4": 0.2421,
+            "6": 0.0646,
+            "8": 0.4841,
+            "10": 0.1052,
+            "12": 0.0371,
+            "14": 0.0346,
+            "16": 0.0322
+          }
+        },
+        "creases": 90,
+        "sharpestCreaseAngleDeg": 29.25,
+        "sharpestAt": {
+          "x": -0.5,
+          "y": 0.94
+        },
+        "shortestCreaseMm": 0.86,
+        "narrowestFacetMm": 2.4,
+        "creaseLayers": {
+          "zori-band": 1,
+          "zori-half": 2,
+          "zori-thong-left": 4,
+          "zori-thong-right": 4,
+          "zori-side-left": 6,
+          "zori-side-right": 6,
+          "zori-toe": 4,
+          "zori-toe-left": 4,
+          "zori-toe-right": 4,
+          "zori-heel-left": 8,
+          "zori-heel-right": 8
+        },
+        "hingeLimit": {
+          "folds": 0.1045
+        }
+      }
+    }
+  },
+  "sensu": {
+    "startingSquareCm": 7.5,
+    "params": {
+      "pleats": 5,
+      "halfSpread": 62,
+      "side": "print"
+    },
+    "geometry": {
+      "tuckDeg": 2.8,
+      "panelDeg": 11.273,
+      "innerCreaseDeg": [
+        81.564,
+        64.691,
+        47.818,
+        30.945,
+        14.073
+      ]
+    },
+    "colourways": {
+      "print": {
+        "operations": 7,
+        "facets": 70,
+        "maxHingeGap": 0.049499999999999995,
+        "maxEdgeLengthError": 1.3322676295501878e-15,
+        "minZ": 0.0014999999999999458,
+        "maxEndJump": 9.852583544043888e-12,
+        "perOperation": [
+          {
+            "id": "sensu-half",
+            "maxHingeGap": 0.0055,
+            "hingeGapInLevels": 1,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-round",
+            "maxHingeGap": 0.0165,
+            "hingeGapInLevels": 3,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-1",
+            "maxHingeGap": 0.027155564260749127,
+            "hingeGapInLevels": 4.94,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-2",
+            "maxHingeGap": 0.041967267242439044,
+            "hingeGapInLevels": 7.63,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-3",
+            "maxHingeGap": 0.043742030135995764,
+            "hingeGapInLevels": 7.95,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-4",
+            "maxHingeGap": 0.04374203013599581,
+            "hingeGapInLevels": 7.95,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-5",
+            "maxHingeGap": 0.049499999999999995,
+            "hingeGapInLevels": 9,
+            "strictTrianglePiercings": 0
+          }
+        ],
+        "finishedCm": {
+          "width": 6.62,
+          "height": 3.88
+        },
+        "layers": {
+          "max": 12,
+          "at": {
+            "x": 0.32,
+            "y": 0.533
+          },
+          "areaByCount": {
+            "2": 0.6307,
+            "4": 0.1462,
+            "6": 0.1585,
+            "8": 0.013,
+            "10": 0.0157,
+            "12": 0.036
+          }
+        },
+        "creases": 94,
+        "sharpestCreaseAngleDeg": 2.8,
+        "sharpestAt": {
+          "x": 0,
+          "y": 0
+        },
+        "shortestCreaseMm": 1.83,
+        "narrowestFacetMm": 1.49,
+        "panels": 11,
+        "tuckWidthAtEdgeMm": 1.83,
+        "panelWidthAtEdgeMm": 7.37
+      },
+      "reverse": {
+        "operations": 7,
+        "facets": 70,
+        "maxHingeGap": 0.049499999999999995,
+        "maxEdgeLengthError": 1.3322676295501878e-15,
+        "minZ": 0.0014999999999999458,
+        "maxEndJump": 9.852583544043888e-12,
+        "perOperation": [
+          {
+            "id": "sensu-half",
+            "maxHingeGap": 0.0055,
+            "hingeGapInLevels": 1,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-round",
+            "maxHingeGap": 0.0165,
+            "hingeGapInLevels": 3,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-1",
+            "maxHingeGap": 0.02715556426074914,
+            "hingeGapInLevels": 4.94,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-2",
+            "maxHingeGap": 0.041967267242438995,
+            "hingeGapInLevels": 7.63,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-3",
+            "maxHingeGap": 0.04384736422925508,
+            "hingeGapInLevels": 7.97,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-4",
+            "maxHingeGap": 0.04384736422925508,
+            "hingeGapInLevels": 7.97,
+            "strictTrianglePiercings": 0
+          },
+          {
+            "id": "sensu-pleat-5",
+            "maxHingeGap": 0.049499999999999995,
+            "hingeGapInLevels": 9,
+            "strictTrianglePiercings": 0
+          }
+        ],
+        "finishedCm": {
+          "width": 6.62,
+          "height": 3.88
+        },
+        "layers": {
+          "max": 12,
+          "at": {
+            "x": 0.32,
+            "y": 0.533
+          },
+          "areaByCount": {
+            "2": 0.6307,
+            "4": 0.1462,
+            "6": 0.1585,
+            "8": 0.013,
+            "10": 0.0157,
+            "12": 0.036
+          }
+        },
+        "creases": 94,
+        "sharpestCreaseAngleDeg": 2.8,
+        "sharpestAt": {
+          "x": 0,
+          "y": 0
+        },
+        "shortestCreaseMm": 1.83,
+        "narrowestFacetMm": 1.49,
+        "panels": 11,
+        "tuckWidthAtEdgeMm": 1.83,
+        "panelWidthAtEdgeMm": 7.37
+      }
+    }
+  },
+  "samplesPerOperation": 161,
+  "limits": "Thin rigid facets, sampled motion. Layer counts are paper layers stacked at a point, not rendering offsets. No paper thickness, springback, continuous-collision or physical-paper certification."
+}

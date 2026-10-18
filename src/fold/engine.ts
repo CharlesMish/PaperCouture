@@ -59,6 +59,15 @@ export interface FoldSpec {
   sense: FoldSense;
   /** If set, only facets carrying this tag may move (a flap fold, not all layers). */
   only?: string;
+  /** If set, facets carrying any of these tags never move (the rest of the stack folds). */
+  except?: string[];
+}
+
+/** Whether a fold spec may move this facet (its `only` and `except` filters). */
+export function mayMove(spec: Pick<FoldSpec, 'only' | 'except'>, f: Pick<Facet, 'tags'>): boolean {
+  if (spec.only && !f.tags.includes(spec.only)) return false;
+  if (spec.except && spec.except.some((t) => f.tags.includes(t))) return false;
+  return true;
 }
 
 export type Op =
@@ -131,7 +140,7 @@ export function applyFold(state: SheetState, spec: FoldSpec): FoldResult {
   const pieces: { f: Facet; moving: boolean }[] = [];
 
   for (const f of state.facets) {
-    const candidate = spec.only ? f.tags.includes(spec.only) : true;
+    const candidate = mayMove(spec, f);
     const s = (m: Vec2) => sideOf(line, applyAffine(f.T, m));
     if (!candidate) {
       const g = { ...f, tags: f.tags.slice() };
@@ -177,7 +186,7 @@ export function applyFold(state: SheetState, spec: FoldSpec): FoldResult {
 
   // 2. Layer order: a valley flap must be above every static layer it overlaps on
   //    its own side (it lifts off the top); a mountain flap must be below.
-  if (spec.only) {
+  if (spec.only || spec.except) {
     for (const m of moving) {
       const mp = modelPoly(m);
       for (const s of staticF) {

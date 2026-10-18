@@ -15,7 +15,7 @@
 // The end state is exact (each body's map is a product of reflections). The
 // stacking order is read from the rigid motion just before it lands flat.
 
-import { Facet, FoldError, SheetState, modelPoly } from './engine';
+import { Facet, FoldError, SheetState, mayMove, modelPoly } from './engine';
 import {
   Affine2,
   IDENTITY,
@@ -46,6 +46,11 @@ export interface CollapseRegion {
   tag: string;
   body: string;
   where: HalfPlane[];
+  /** Optional layer filters, as on a flap fold: only paper carrying `only`, and none
+   *  carrying a tag in `except`, belongs to this region. Lets one step move one layer
+   *  and leave another lying in the same place (a squash). */
+  only?: string;
+  except?: string[];
 }
 
 export interface CollapseCrease {
@@ -319,6 +324,7 @@ export function applyCollapse(state: SheetState, spec: CollapseSpec): CollapseRe
   for (const f of state.facets) {
     let area = 0;
     for (const r of spec.regions) {
+      if (!mayMove(r, f)) continue;
       let poly: Vec2[] | null = f.poly;
       for (const h of r.where) {
         const s = sideOfPlane(h);
