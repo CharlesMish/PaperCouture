@@ -20,9 +20,9 @@ fs.mkdirSync(out, { recursive: true });
    const open = page.getByRole('button', { name: 'Browse pieces', exact: true });
    await open.click();
    const dialog = page.getByRole('dialog', { name: 'Choose a piece to fold' });
-   await page.waitForFunction(() => document.querySelectorAll('.design-card svg').length === 22);
-   assert.equal(await dialog.locator('.design-card').count(), 22);
-   assert.deepEqual(await dialog.locator('.design-card').evaluateAll(cs => cs.slice(0,4).map(c => c.dataset.design)), ['swing-coat','fit-flare','camp-shirt','capelet']);
+   await page.waitForFunction(() => document.querySelectorAll('.design-card svg').length === 27);
+   assert.equal(await dialog.locator('.design-card').count(), 27);
+   assert.deepEqual(await dialog.locator('.design-card').evaluateAll(cs => cs.slice(0,4).map(c => c.dataset.design)), ['kimono','coat-dress','gown','sensu']);
    const bounds = await dialog.boundingBox(); assert(bounds.x >= 0 && bounds.x + bounds.width <= width + 1);
    assert(await dialog.evaluate(el => el.scrollWidth <= el.clientWidth));
    await page.keyboard.press('ArrowRight'); await page.keyboard.press('ArrowLeft');
@@ -41,7 +41,7 @@ fs.mkdirSync(out, { recursive: true });
    await page.screenshot({ path: `${out}/workspace-${width}.png` });
   }
   assert.deepEqual(errors, []);
-  fs.writeFileSync(`${out}/results.json`, JSON.stringify({ browser: browser.version(), widths: [1280,390,320], previews:22, errors, passed:true }, null,2));
-  console.log('Design chooser passed: 22 previews, ordering, phone bounds, modal keys/focus, progress and URL preservation');
+  fs.writeFileSync(`${out}/results.json`, JSON.stringify({ browser: browser.version(), widths: [1280,390,320], previews:27, errors, passed:true }, null,2));
+  console.log('Design chooser passed: 27 previews, ordering, phone bounds, modal keys/focus, progress and URL preservation');
  } finally { await browser.close(); }
 })().catch(e => { console.error(e); process.exitCode=1; });

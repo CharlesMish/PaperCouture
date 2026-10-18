@@ -1,3 +1,15 @@
+# Five-design integration — October 18, 2026
+
+Charlie authorized bringing Claude’s corrected companion branch onto main and
+keeping the served website current. The combined registry retains the mitten
+pair, twelve-piece corkboard, appearance controls and visual chooser. The five
+new designs lead the chooser and have geometry-generated previews. There are
+27 designs, seven accessories and 37 visible papers (17 curated).
+The attached corrected folding PDF is byte-identical to the branch copy.
+The fan’s written corner offset and tuck width are corrected; physical folding
+remains untested. Use the 16 cm zori and 15 cm fan practice sheets first.
+Historical publishing restrictions below are superseded by this request.
+
 # Visual piece chooser and website update
 
 Charlie requested visual browsing, recent designs first, and completion of the
@@ -138,6 +150,93 @@ Swing coat's own creases (`src/papers/coatMarks.ts`, checked against the
 construction). See [notes, comparisons, limits and recommendations](docs/design-pass-2026-10/NOTES.md).
 Tested on Node 22 in a cloud container with headless Chromium; no real phone or
 physical paper. No push to main, merge or deployment is authorized.
+# Paper Couture — zori, folding fan and four papers (Claude, 2026-10-16)
+
+Branch `claude/kimono-companions` from `claude/kimono`, at Charlie's request in a
+Claude chat. Two new board designs, `zori` and `sensu` (Design list; experiments),
+and four papers. Notes, evidence and the printable folding sheet:
+[docs/kimono-companions/NOTES.md](docs/kimono-companions/NOTES.md).
+
+- `src/fold/zori.ts`: band, fold in half, both top corners down (the back layer's
+  band comes round as the thong), then from the back the sides, the toe and the
+  rounding. One design; a pair is two of it.
+- `src/fold/sensu.ts`: fold in half, round the corners, then five pleat steps, each
+  one rigid two-crease collapse a side through the rivet, outermost first.
+- `src/papers/classicSuite.ts`: Seigaiha waves, Asanoha, Polka dot, Houndstooth,
+  added to the curated set.
+- `garmentOptions.ts`: `zoriSide` and `sensuSide` decisions at the first fold.
+- `src/ui/pinboard.ts`: a pinned piece stacks only above earlier pieces it overlaps
+  (it used to sit above all of them, floating later pieces and their shadows).
+- `scripts/check.ts`: a 19-level fold allowance for the zori (8 paper layers at most
+  per crease). Flagged for review.
+- Checks: `scripts/check-zori-sensu.ts` (in `npm test`),
+  `scripts/check-zori-sensu-browser.cjs` (CI: `.github/workflows/kimono-companions.yml`);
+  `check.ts` and `check-collection.ts` include both colourways; the legacy
+  design-list assertion lists 25 designs and the accessory list the obi.
+
+Not tested on a real phone or in physical paper.
+
+# Paper Couture — kimono and obi (Claude, 2026-10-16)
+
+Branch `claude/kimono` from `claude/gown`, at Charlie's request in a Claude chat.
+One new design, `kimono` (Design list; experiment), and one new accessory, `obi`.
+Notes, evidence and the printable folding sheet: [docs/kimono/NOTES.md](docs/kimono/NOTES.md).
+
+- `src/fold/kimono.ts`: the traditional paper kimono (origami.me's model, from the
+  diagrams Charlie shared): six simple folds, then the squash as one rigid collapse
+  (four creases at each side point, rates 1 and sqrt(2)), shown from the collar side.
+- `src/fold/obi.ts`: a separate small square; `accessories.ts` places it at the waist only.
+- Engine: flap folds take `except` tags; collapse regions take `only`/`except`
+  (`mayMove` in `engine.ts`). Unfiltered folds and regions behave as before.
+- `garmentOptions.ts`: a `kimonoSide` decision at the first fold. `garments.ts`: the
+  kimono's waist anchor.
+- `scripts/hingeCheck.ts`: an optional bound for ordinary folds, 8 for every existing
+  design and 10 for the kimono's collar fold (4 paper layers there). Flagged for review.
+- Checks: `scripts/check-kimono.ts` (in `npm test`), `scripts/check-kimono-browser.cjs`
+  (CI: `.github/workflows/kimono.yml`); `check.ts` and `check-collection.ts` include
+  both colourways; the legacy design-list assertion lists 23 designs.
+
+Not tested on a real phone or in physical paper.
+
+# Paper Couture — one-shoulder gown (Claude, 2026-10-16)
+
+Branch `claude/gown` from `claude/coat-dress`, at Charlie's request in a Claude chat.
+One new design, `gown` (Design list; experiment). Notes, evidence and the
+printable folding sheet: [docs/gown/NOTES.md](docs/gown/NOTES.md).
+
+- `src/fold/gown.ts`: hem band, corner tip, sash (the neckline), cupboard fold, a
+  tuck of one back panel, the fit-and-flare waist collapse at an empire height, and
+  a cap-sleeve flap. A full-skirted gown was not foldable with this waist; the
+  notes say why.
+- `garmentOptions.ts`: a `gownSide` decision (Printed gown / Reverse-colour gown)
+  at the first fold.
+- `scripts/hingeCheck.ts`: an optional rendered-level bound; 12 for every existing
+  design, 16 for the gown (its sash wraps from the top of the front stack to the
+  bottom of the back stack; 12 paper layers at most). Flagged for review.
+- Checks: `scripts/check-gown.ts` (in `npm test`), `scripts/check-gown-browser.cjs`
+  (CI: `.github/workflows/gown.yml`); `check.ts` and `check-collection.ts` include
+  both colourways; the legacy design-list assertion lists 22 designs.
+
+Not tested on a real phone or in physical paper.
+
+# Paper Couture — coat-dress (Claude, 2026-10-15)
+
+Branch `claude/coat-dress` from main `cedf65c`, at Charlie's request in a Claude chat.
+One new design, `coat-dress` (Design list; experiment). Notes, evidence and the
+printable folding sheet: [docs/coat-dress/NOTES.md](docs/coat-dress/NOTES.md).
+
+- `src/fold/coatDress.ts`: one rigid shoulder collapse (a degree-4 vertex at each
+  shoulder; closed-form fold rates) gives the fronts, collar, back yoke and short
+  sleeves; the fit-and-flare waist is solved against a leaning side seam.
+- `garmentOptions.ts`: a `coatSide` decision (Reverse-colour coat / Printed coat)
+  before the shoulders. `sharedFoldPrefix` now compares collapse steps by their
+  whole spec, so two collapses sharing an id are not treated as already folded.
+- Checks: `scripts/check-coat-dress.ts` (in `npm test`), `scripts/check-coat-dress-browser.cjs`
+  (CI: `.github/workflows/coat-dress.yml`), `scripts/foldMetrics.ts` (`npm run fold-metrics`),
+  `check.ts` and `check-collection.ts` include both colourways; the legacy design-list
+  assertion in `check-fit-flare-browser.cjs` lists 21 designs.
+
+Not tested on a real phone or in physical paper.
 
 # Paper Couture — authorized Swing coat publication
 

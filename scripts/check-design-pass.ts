@@ -41,10 +41,13 @@ assert(Math.abs(turns['swing-coat'] - 0.07) < 1e-9 && Math.abs(turns['camp-shirt
 assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 
 // --- Registry: four additions at the end of the experimental list, and
-// every earlier paper keeps its id, position and curation.
+// every earlier paper keeps its id, relative order and curation.
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
 const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
-assert.deepEqual(PAPERS.map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
+const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
+assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
+assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
+for (const id of CLASSIC) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated');
 assert.equal(new Set(PAPERS.map(p => p.id)).size, PAPERS.length);
 for (const id of ADDED) {
   const p = PAPERS.find(q => q.id === id)!;
@@ -52,7 +55,7 @@ for (const id of ADDED) {
   assert.equal(p.placement, undefined, `${id}: fixed placement; sliding has not been verified`);
   assert(p.placementNote && p.note && !p.hidden);
 }
-assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 13);
+assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 17);
 
 // --- Origami studies.
 const studies: Record<string, unknown> = {};

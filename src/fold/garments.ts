@@ -16,7 +16,13 @@ import { buildSwingCoat } from './swingCoat';
 import { buildFitFlare } from './fitFlare';
 import { buildMitten } from './mitten';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'mitten-left' | 'mitten-right';
+import { buildCoatDress, DEFAULT_COAT_DRESS } from './coatDress';
+import { buildGown, DEFAULT_GOWN } from './gown';
+import { buildKimono, DEFAULT_KIMONO, kimonoAnchors } from './kimono';
+import { buildZori, DEFAULT_ZORI } from './zori';
+import { buildSensu, DEFAULT_SENSU } from './sensu';
+
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono' | 'zori' | 'sensu' | 'mitten-left' | 'mitten-right';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -30,6 +36,9 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boat-top', name: 'Boat-neck top', experiment: 'One square · short top silhouette, no neck opening or armholes' },
   { id: 'wrap-top', name: 'Cross-wrap top', experiment: 'One square · crossed panels on continuous backing, no locking closure' },
   { id: 'hat', name: 'Folded hat', experiment: 'One square · separate flat crown and brim silhouette, not an opened wearable hat' },
+  { id: 'kimono', name: 'Kimono', experiment: 'One square · the traditional paper kimono: square sleeves from one rigid squash, a collar of the other colour down the front; an obi folds from a separate small square' },
+  { id: 'gown', name: 'One-shoulder gown', experiment: 'One square · floor-length column with a sash of the other colour from one shoulder, an empire waist from one rigid collapse and one cap sleeve; no armholes, neck opening or fastening' },
+  { id: 'coat-dress', name: 'Coat-dress', experiment: 'One square · collar, fronts and short sleeves from one rigid shoulder collapse, waist from a second; no neck opening, armholes or fastening' },
   { id: 'swing-coat', name: 'Swing coat', experiment: 'One square · long front panels and folded facings over continuous lining, no through-opening or fastening' },
   { id: 'fit-flare', name: 'Fit-and-flare dress', experiment: 'One square · nipped waist from a pleat and hidden gussets folded in one rigid move; sleeveless, no armholes or neck opening' },
   { id: 'camp-shirt', name: 'Camp-collar shirt', experiment: 'One square · folded collar and cuffs on a flat shirt, no neck opening or locking tuck' },
@@ -37,6 +46,8 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'capelet', name: 'Open-front capelet', experiment: 'One square · separate front panels over continuous lining, no through-opening or fastening' },
   { id: 'boot-left', name: 'Ankle boot · toe left', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
+  { id: 'zori', name: 'Zori', experiment: 'Small square · flat sandal with a thong of the other colour; zori are not left and right, so fold two the same for a pair' },
+  { id: 'sensu', name: 'Folding fan', experiment: 'Small square · open fan of eleven panels from five rigid pleats a side; flat, it does not close' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
   { id: 'mitten-left', name: 'Left mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
   { id: 'mitten-right', name: 'Right mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
@@ -51,6 +62,11 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
   switch (id) {
     case 'mitten-left': return buildMitten('left');
     case 'mitten-right': return buildMitten('right');
+    case 'coat-dress': return buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: options.coatSide });
+    case 'kimono': return buildKimono({ ...DEFAULT_KIMONO, side: options.kimonoSide });
+    case 'zori': return buildZori({ ...DEFAULT_ZORI, side: options.zoriSide });
+    case 'sensu': return buildSensu({ ...DEFAULT_SENSU, side: options.sensuSide });
+    case 'gown': return buildGown({ ...DEFAULT_GOWN, side: options.gownSide });
     case 'swing-coat': return buildSwingCoat();
     case 'camp-shirt': return buildCampShirt();
     case 'fit-flare': return buildFitFlare();
@@ -76,6 +92,8 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
 /** Garment-specific points in the resting model, rather than generic body labels.
  * The skirt's waistband is asymmetric, and the vest has two narrow front panels. */
 export function attachmentAnchors(id: GarmentId, top: number, bottom: number, options: GarmentOptions = DEFAULT_OPTIONS): AttachmentAnchor[] {
+  // The kimono's one position is the waist, for the obi.
+  if (id === 'kimono') return kimonoAnchors({ ...DEFAULT_KIMONO, side: options.kimonoSide });
   // These new silhouettes have no reviewed attachment positions yet.
   if (garmentExperiment(id)) return [];
   if (id === 'skirt') return [

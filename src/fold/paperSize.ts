@@ -7,6 +7,9 @@ export const REFERENCE_SQUARE_CM = 20;
  * Extra folds would change both the silhouette and which ink remains visible. */
 const recommended: Readonly<Record<string, number>> = {
   'swing-coat': 20,
+  'coat-dress': 20,
+  gown: 20,
+  kimono: 20,
   clutch: 8,
   apron: 14,
   'boat-top': 16,
@@ -17,6 +20,8 @@ const recommended: Readonly<Record<string, number>> = {
   'camp-shirt': 18,
   'boot-left': 8,
   'boot-right': 8,
+  zori: 8,
+  sensu: 7.5,
   'framed-brooch': 4.5,
   'mitten-left': 6,
   'mitten-right': 6,

@@ -155,7 +155,47 @@ These are flat ornaments with a low wrist-root thumb and no hand opening.
 The original tall mitten and beret remain studies.
 
 See [actual comparisons, decisions, test results and physical limits](docs/october-integration/NOTES.md).
-There are now 22 main design entries, six optional accessories and 33 visible
-papers (13 curated, 20 Experimental); defaults and earlier IDs are preserved.
-Source integration is prepared for review. Nothing is merged or published to
-the separate website repository.
+The combined collection has 27 main design entries, seven optional accessories
+and 37 visible papers (17 curated, 20 Experimental). Defaults and earlier IDs
+are preserved. The twelve-piece corkboard and visual chooser are retained, with
+folded previews for all five additions.
+## Coat-dress
+
+Coat-dress is one square folded in two rigid collapses: a sailor collar in front
+that becomes a square cape across the back, fronts that meet under the collar and
+open over an underskirt, short sleeves under the collar, a pleated waist and a
+flared skirt. A Coat colour choice before the shoulders decides which side of the
+paper the coat shows. `npm run check:coat-dress` covers it; `npm run fold-metrics`
+compares physical-risk measurements across designs. See [the notes, scale and
+checks](docs/coat-dress/NOTES.md) and the [printable folding sheet](docs/coat-dress/coat-dress-folding-sheet.pdf).
+
+## One-shoulder gown
+
+One-shoulder gown is one square folded into a floor-length column: a cupboard
+fold for length, one straight fold for an asymmetric neckline whose corner
+becomes a sash in the paper's other colour, the fit-and-flare's waist collapse
+at an empire height, a single cap sleeve and a contrast hem band. A Gown colour
+choice at the first fold decides which side the gown shows. `npm run check:gown`
+covers it. See [the notes, scale and checks](docs/gown/NOTES.md) and the
+[printable folding sheet](docs/gown/gown-folding-sheet.pdf).
+
+## Kimono and obi
+
+Kimono is the traditional paper kimono, from one square: square sleeves from one
+rigid squash, a collar of the paper's other side down the front from a point at
+the neck, and a body that narrows to the hem. A Kimono colour choice at the first
+fold decides which side it shows. The Obi accessory folds from its own small
+square (a band with a cord of the other colour) and goes at the kimono's waist.
+`npm run check:kimono` covers both. See [the notes, scale and checks](docs/kimono/NOTES.md)
+and the [printable folding sheet](docs/kimono/kimono-folding-sheet.pdf).
+
+## Zori, folding fan and four classic papers
+
+Zori is a flat sandal from one small square, with a thong of the paper's other
+side brought round from the back layer by the kimono's collar fold at a shallower
+angle; pin two for a pair. Folding fan is an open sensu of eleven panels from five
+rigid pleats a side. Each has a colour choice at the first fold. The papers Seigaiha
+waves, Asanoha, Polka dot and Houndstooth each come with a chosen reverse.
+`npm run check:zori-sensu` covers the two pieces. See [the notes, scale and
+checks](docs/kimono-companions/NOTES.md) and the [printable folding
+sheet](docs/kimono-companions/zori-and-fan-folding-sheet.pdf).

@@ -6,8 +6,9 @@ import { buildNeckerchief, NECKERCHIEF_POSITIONS, NECKERCHIEF_SCALE } from './ne
 import { buildPocketSquare, POCKET_POSITIONS, POCKET_SCALE } from './pocketSquare';
 import { buildTulip, TULIP_LIFT, TULIP_POSITIONS, TULIP_SCALE } from './tulip';
 import { buildFoldedSash, SASH_POSITIONS, SASH_SCALE, SASH_LIFT } from './foldedSash';
+import { buildObi, OBI_POSITIONS, OBI_SCALE } from './obi';
 
-export type AccessoryId = 'pin' | 'bow' | 'kerchief' | 'pocket' | 'tulip' | 'sash';
+export type AccessoryId = 'pin' | 'bow' | 'kerchief' | 'pocket' | 'tulip' | 'sash' | 'obi';
 
 /** One placed component of an accessory, in the accessory group's units. */
 /** angle and offset/lift (x/y, in the piece's own units, after turning) place
@@ -33,6 +34,8 @@ export const ACCESSORIES: {
   { id: 'tulip', name: 'Folded tulip', build: buildTulip, pieces: [{ angle: -3 * Math.PI / 4, offset: 0, scale: TULIP_SCALE, lift: TULIP_LIFT }], positions: TULIP_POSITIONS },
   { id: 'sash', name: 'Folded sash', build: buildFoldedSash, pieces: [{ angle: 0, offset: 0, scale: SASH_SCALE, lift: SASH_LIFT }], positions: SASH_POSITIONS,
     experiment: 'Separate square · placed at the waist, no tie or lock' },
+  { id: 'obi', name: 'Obi', build: buildObi, pieces: [{ angle: 0, offset: 0, scale: OBI_SCALE }], positions: OBI_POSITIONS,
+    experiment: 'Separate small square · a band with a cord across it, placed at the waist; not tied, no bow behind' },
 ];
 export function findAccessory(id: AccessoryId) { return ACCESSORIES.find(a => a.id === id)!; }
 /** The garment positions an accessory may use. Empty means it cannot be placed. */
