@@ -50,14 +50,19 @@ fs.mkdirSync(out, { recursive: true });
     // Later reviewed collections add these five papers after frozen PR24, and
     // the October integration adds four experimental papers and four curated classics.
     // Keep every old raster, metadata and ordering assertion exact.
-    const added = ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha', 'broken-twill', 'copper-fleck', 'crease-bloom', 'dusk-wash', 'marbled-endpaper', 'plum-seed', 'reed-study', 'riso-proof', 'sunray-pleats'].sort();
-    assert.deepEqual(current.registry.filter(p => !added.includes(p.id)), old.registry);
+    const added = ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha', 'kami-indigo', 'kami-vermilion', 'broken-twill', 'copper-fleck', 'crease-bloom', 'dusk-wash', 'marbled-endpaper', 'plum-seed', 'reed-study', 'riso-proof', 'sunray-pleats'].sort();
+    // The wardrobe-gaps pass promotes one PR24 paper, Woven checks, to curated (an
+    // editorial change); its faces, placement and order are unchanged.
+    const promoted = ['woven-checks'];
+    const frozen = (p) => promoted.includes(p.id) ? { ...p, curation: 'experimental' } : p;
+    assert.deepEqual(current.registry.filter(p => !added.includes(p.id)).map(frozen), old.registry);
+    for (const id of promoted) assert.equal(current.registry.find(p => p.id === id).curation, 'curated');
     assert.deepEqual(current.registry.filter(p => !old.registry.some(q => q.id === p.id)).map(p => p.id).sort(), added);
     assert.deepEqual(current.registry.find(p => p.id === 'sunray-pleats'), { id: 'sunray-pleats', name: 'Sunray pleats', hidden: false, curation: 'experimental' });
     for (const [id, name, curation] of [['broken-twill', 'Broken twill', 'curated'], ['copper-fleck', 'Copper fleck', 'curated'], ['reed-study', 'Reed study', 'experimental']]) {
       assert.deepEqual(current.registry.find(p => p.id === id), { id, name, hidden: false, curation });
     }
-    for (const id of ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha']) {
+    for (const id of ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha', 'kami-vermilion', 'kami-indigo', 'marbled-endpaper']) {
       const paper = current.registry.find(p => p.id === id);
       assert(paper && !paper.hidden && paper.curation === 'curated', `${id}: visible curated addition`);
     }

@@ -32,7 +32,7 @@ import { risoProof } from './risoProof';
 import { creaseBloom } from './creaseBloom';
 import { marbledEndpaper } from './marbledEndpaper';
 import { duskWash } from './duskWash';
-import { seigaiha, asanoha, polkaDot, houndstooth } from './classicSuite';
+import { seigaiha, asanoha, polkaDot, houndstooth, kamiVermilion, kamiIndigo } from './classicSuite';
 
 export type { PaperDesign } from './types';
 
@@ -60,6 +60,9 @@ export const PAPERS: PaperDesign[] = [
   asanoha,
   polkaDot,
   houndstooth,
+  // Plain two-sided kami, the paper most folders use.
+  kamiVermilion,
+  kamiIndigo,
   // More placement-dependent and bolder alternatives, in the same scroller.
   reedStudy,
   arcStudy,
@@ -84,7 +87,7 @@ export const PAPERS: PaperDesign[] = [
   marbledEndpaper,
   duskWash,
   diagnosticPaper,
-].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'seigaiha', 'asanoha', 'polka-dot', 'houndstooth'].includes(p.id) ? 'curated' : 'experimental' }));
+].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'seigaiha', 'asanoha', 'polka-dot', 'houndstooth', 'kami-vermilion', 'kami-indigo', 'marbled-endpaper', 'woven-checks'].includes(p.id) ? 'curated' : 'experimental' }));
 
 export const DEFAULT_PAPER_ID = 'stripe-disc';
 

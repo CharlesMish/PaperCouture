@@ -45,17 +45,22 @@ assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
 const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
 const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
-assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
+// the wardrobe-gaps pass adds the plain kami pair after the classic suite, and
+// promotes marbled-endpaper (added here) and woven-checks to curated
+const KAMI = ['kami-vermilion', 'kami-indigo'], PROMOTED = ['marbled-endpaper', 'woven-checks'];
+assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id) && !KAMI.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
+assert.deepEqual(PAPERS.map(p => p.id).slice(PAPERS.findIndex(p => p.id === 'houndstooth') + 1, PAPERS.findIndex(p => p.id === 'houndstooth') + 3), KAMI);
+for (const id of [...KAMI, ...PROMOTED]) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated', `${id} is curated`);
 assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
 for (const id of CLASSIC) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated');
 assert.equal(new Set(PAPERS.map(p => p.id)).size, PAPERS.length);
 for (const id of ADDED) {
   const p = PAPERS.find(q => q.id === id)!;
-  assert.equal(p.curation, 'experimental');
+  assert.equal(p.curation, PROMOTED.includes(id) ? 'curated' : 'experimental');
   assert.equal(p.placement, undefined, `${id}: fixed placement; sliding has not been verified`);
   assert(p.placementNote && p.note && !p.hidden);
 }
-assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 17);
+assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 17 + KAMI.length + PROMOTED.length);
 
 // --- Origami studies.
 const studies: Record<string, unknown> = {};

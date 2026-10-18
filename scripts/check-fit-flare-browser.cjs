@@ -18,8 +18,8 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
   const designs=p.getByLabel('Garment design'),accessories=p.getByLabel('Accessory type');
   assert.equal(await designs.locator('optgroup').count(),0);assert.equal(await accessories.locator('optgroup').count(),0);
   const ids=await designs.locator('option').evaluateAll(xs=>xs.map(x=>x.value));
-  assert.deepEqual([...ids].sort(), ["apron", "boat-top", "boot-left", "boot-right", "camp-shirt", "capelet", "clutch", "coat-dress", "dress", "fit-flare", "framed-brooch", "gown", "hat", "jacket", "kimono", "mitten-left", "mitten-right", "necktie", "pleats", "sensu", "skirt", "swing-coat", "tabard", "tunic", "vest", "wrap-top", "zori"]);
-  assert.equal(new Set(ids).size,27);
+  assert.deepEqual([...ids].sort(), ["apron", "boat-top", "boot-left", "boot-right", "camp-shirt", "capelet", "cloche", "clutch", "coat-dress", "dress", "fit-flare", "framed-brooch", "gown", "hat", "jacket", "kimono", "kinchaku", "mitten-left", "mitten-right", "necktie", "pleats", "sensu", "shell-top", "skirt", "swing-coat", "tabard", "trousers", "tunic", "vest", "wrap-top", "zori"]);
+  assert.equal(new Set(ids).size,31);
   assert.deepEqual(await accessories.locator("option").evaluateAll(xs=>xs.map(x=>x.value)),["pin","bow","kerchief","pocket","tulip","sash","obi"]);
   assert.match(await p.locator('.studio-note').innerText(),/no armholes or neck opening/);
   assert(!/Experimental/.test(await p.locator('.studio-note').innerText()));

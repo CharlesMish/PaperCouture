@@ -199,3 +199,18 @@ waves, Asanoha, Polka dot and Houndstooth each come with a chosen reverse.
 `npm run check:zori-sensu` covers the two pieces. See [the notes, scale and
 checks](docs/kimono-companions/NOTES.md) and the [printable folding
 sheet](docs/kimono-companions/zori-and-fan-folding-sheet.pdf).
+
+## Trousers, cloche, shell top, kinchaku and plain kami
+
+Trousers are wide-leg trousers from one square: a long strip that runs up one leg,
+turns across the waist with square corners and down the other leg, the second turn
+set a few degrees off 45 so the legs part below the crotch, with a stripe of the
+other side down each outer seam. Cloche is a bell-shaped hat with a ribbon of the
+other side. Shell top is a sleeveless top with a neckband and a hem band. Kinchaku
+pouch is a drawstring pouch whose gathered neck is the fit-and-flare's waist move.
+The first three have a colour choice at the first fold. Kami vermilion and Kami
+indigo are plain two-sided papers; Marbled endpaper and Woven checks are now
+curated. The folded hat, boat-neck top, bib apron, one-shoulder tunic and pointed
+tabard are retired from browsing but still open by link. `npm run
+check:wardrobe-gaps` covers the new pieces. See [the notes, scale and
+checks](docs/wardrobe-gaps/NOTES.md).

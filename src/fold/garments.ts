@@ -21,8 +21,12 @@ import { buildGown, DEFAULT_GOWN } from './gown';
 import { buildKimono, DEFAULT_KIMONO, kimonoAnchors } from './kimono';
 import { buildZori, DEFAULT_ZORI } from './zori';
 import { buildSensu, DEFAULT_SENSU } from './sensu';
+import { buildShellTop, DEFAULT_SHELL } from './shellTop';
+import { buildCloche, DEFAULT_CLOCHE } from './cloche';
+import { buildKinchaku } from './kinchaku';
+import { buildTrousers, DEFAULT_TROUSERS, trousersGeometry } from './trousers';
 
-export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono' | 'zori' | 'sensu' | 'mitten-left' | 'mitten-right';
+export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono' | 'zori' | 'sensu' | 'shell-top' | 'cloche' | 'kinchaku' | 'trousers' | 'mitten-left' | 'mitten-right';
 export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
 export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
@@ -48,12 +52,16 @@ export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = 
   { id: 'boot-right', name: 'Ankle boot · toe right', experiment: 'One square · flat boot silhouette; pin the other direction separately for a pair' },
   { id: 'zori', name: 'Zori', experiment: 'Small square · flat sandal with a thong of the other colour; zori are not left and right, so fold two the same for a pair' },
   { id: 'sensu', name: 'Folding fan', experiment: 'Small square · open fan of eleven panels from five rigid pleats a side; flat, it does not close' },
+  { id: 'trousers', name: 'Trousers', experiment: 'One square · wide-leg trousers with a stripe of the other colour down each side; hips joined to the crotch, an empty gap below' },
+  { id: 'cloche', name: 'Cloche', experiment: 'Small square · bell-shaped hat with a ribbon of the other colour round a rounded crown; a flat front view, not an opened hat' },
+  { id: 'kinchaku', name: 'Kinchaku pouch', experiment: 'Small square · drawstring pouch with a gathered neck from the fit-and-flare\'s rigid waist move, and a rim of the other colour; flat, it does not open' },
+  { id: 'shell-top', name: 'Shell top', experiment: 'One square · sleeveless shell with a neckband and hem band of the other colour and sloping shoulders; a hidden pleat sets the length; no neck opening or armholes' },
   { id: 'framed-brooch', name: 'Framed brooch', experiment: 'Small intact square · printed centre and folded border, no opening or fastening' },
   { id: 'mitten-left', name: 'Left mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
   { id: 'mitten-right', name: 'Right mitten', experiment: 'Small intact square · flat ornament with a low wrist-root thumb, no hand opening; pin each hand separately for a pair' },
 ];
 export function garmentExperiment(id: GarmentId) { return GARMENTS.find(g => g.id === id)?.experiment; }
-export function garmentDisplayAngle(id: GarmentId) { return id === 'clutch' ? -Math.PI / 4 : id === 'necktie' ? Math.PI / 4 : 0; }
+export function garmentDisplayAngle(id: GarmentId) { return id === 'trousers' ? trousersGeometry().displayAngle : id === 'clutch' ? -Math.PI / 4 : id === 'necktie' ? Math.PI / 4 : 0; }
 export function garmentIdFrom(value: string | null): GarmentId {
   return GARMENTS.find(g => g.id === value)?.id ?? 'dress';
 }
@@ -64,6 +72,10 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
     case 'mitten-right': return buildMitten('right');
     case 'coat-dress': return buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: options.coatSide });
     case 'kimono': return buildKimono({ ...DEFAULT_KIMONO, side: options.kimonoSide });
+    case 'trousers': return buildTrousers({ ...DEFAULT_TROUSERS, side: options.trousersSide });
+    case 'kinchaku': return buildKinchaku();
+    case 'cloche': return buildCloche({ ...DEFAULT_CLOCHE, side: options.clocheSide });
+    case 'shell-top': return buildShellTop({ ...DEFAULT_SHELL, side: options.shellSide });
     case 'zori': return buildZori({ ...DEFAULT_ZORI, side: options.zoriSide });
     case 'sensu': return buildSensu({ ...DEFAULT_SENSU, side: options.sensuSide });
     case 'gown': return buildGown({ ...DEFAULT_GOWN, side: options.gownSide });

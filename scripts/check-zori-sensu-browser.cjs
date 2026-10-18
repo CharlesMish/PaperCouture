@@ -43,7 +43,7 @@ const PAPERS = ['Seigaiha waves', 'Asanoha', 'Polka dot', 'Houndstooth'];
     for (const p of PIECES) {
       await load(`design=${p.id}&paper=seigaiha&step=0`);
       const ids = await page.getByLabel('Garment design').locator('option').evaluateAll((xs) => xs.map((x) => x.value));
-      assert.equal(new Set(ids).size, 27);
+      assert.equal(new Set(ids).size, 31);
       for (const id of ['boot-right', 'zori', 'sensu', 'mitten-left', 'mitten-right']) assert(ids.includes(id), `${id} remains selectable`);
       assert.equal(await page.getByLabel('Garment design').inputValue(), p.id);
       assert.match(await page.locator('.studio-note').innerText(), p.note);

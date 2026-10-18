@@ -1,5 +1,5 @@
 import { DesignPicker } from './designPicker';
-import { BROWSE_GARMENTS } from './designOrder';
+import { ALL_GARMENTS_IN_ORDER, RETIRED_DESIGNS } from './designOrder';
 import { GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
 import type { DecisionId, FoldDecision } from '../fold/garmentOptions';
 export type { GarmentId };
@@ -41,7 +41,12 @@ export class StudioControls {
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
-    for (const garment of BROWSE_GARMENTS) this.design.append(new Option(garment.name, garment.id));
+    for (const garment of ALL_GARMENTS_IN_ORDER) {
+      const option = new Option(garment.name, garment.id);
+      // retired designs stay selectable by link but are not offered in the list
+      if (RETIRED_DESIGNS.includes(garment.id)) option.hidden = true;
+      this.design.append(option);
+    }
     this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';

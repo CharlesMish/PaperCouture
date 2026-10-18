@@ -31,7 +31,11 @@ export class PaperPicker {
     row.setAttribute('role', 'radiogroup');
     row.setAttribute('aria-label', 'Paper');
     let lastGroup: PaperDesign['curation'];
-    for (const p of papers.filter((q) => !q.hidden)) {
+    // Curated papers first, each group in registry order (the registry order itself
+    // is frozen by the paper parity checks, and a paper can be promoted in place).
+    const visible = papers.filter((q) => !q.hidden);
+    const shown = [...visible.filter((q) => q.curation !== 'experimental'), ...visible.filter((q) => q.curation === 'experimental')];
+    for (const p of shown) {
       if (p.curation && p.curation !== lastGroup) {
         const marker = document.createElement('span');
         marker.className = 'paper-group-label';

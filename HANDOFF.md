@@ -1,3 +1,30 @@
+# Paper Couture — wardrobe gaps (Claude, 2026-10-18)
+
+Branch `claude/wardrobe-gaps` from main (`f33415b`), at Charlie's request in a
+Claude chat, after a review of the collection. Not merged. Notes and evidence:
+[docs/wardrobe-gaps/NOTES.md](docs/wardrobe-gaps/NOTES.md).
+
+- New designs: `trousers` (`src/fold/trousers.ts`), `cloche` (`cloche.ts`),
+  `shell-top` (`shellTop.ts`), `kinchaku` (`kinchaku.ts`, built on `buildFitFlare`).
+  Colour decisions `trousersSide`, `clocheSide`, `shellSide` at the first fold.
+- Retired from browsing (`RETIRED_DESIGNS` in `src/ui/designOrder.ts`): `tunic`,
+  `tabard`, `hat`, `boat-top`, `apron`. Still in the registry, the checks and the
+  Design list as hidden options, so links and saved boards keep working. The apron
+  has no replacement (three attempts in the notes).
+- Papers: `kami-vermilion`, `kami-indigo` (`classicSuite.ts`) curated after
+  houndstooth; `marbled-endpaper` and `woven-checks` promoted to curated. None
+  retired. `paperPicker.ts` lists curated before experiments.
+- `scripts/hingeCheck.ts`: an optional per-operation level bound; each new piece's
+  `*_LEVELS` lists its measured gaps (trousers to 31, cloche to 38, shell top 11,
+  kinchaku 13). Flagged for review: the cloche's Angle and Back views show the thick
+  sides as a fanned edge.
+- Checks: `scripts/check-wardrobe-gaps.ts` (in `npm test`),
+  `scripts/check-wardrobe-gaps-browser.cjs` (CI: `.github/workflows/wardrobe-gaps.yml`);
+  `check.ts`, `check-collection.ts`, `check-design-pass.ts` and the design-picker,
+  fit-and-flare and zori/fan browser checks are updated (31 designs, 26 browsable).
+
+Not tested on a real phone or in physical paper.
+
 # Five-design integration — October 18, 2026
 
 Charlie authorized bringing Claude’s corrected companion branch onto main and

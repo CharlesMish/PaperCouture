@@ -128,3 +128,22 @@ export const houndstooth: PaperDesign = {
   },
   drawBack(ctx, S) { washi(ctx, S, CAMEL, '#c9a072', 4404); },
 };
+
+// --- Plain kami: one solid colour on the front, white on the back, as most
+// origami paper is sold. No print to read, so every fold shows only as the
+// change between the two sides: the clearest way to judge a construction.
+const KAMI_WHITE = '#f4f0e6';
+export const kamiVermilion: PaperDesign = {
+  id: 'kami-vermilion', name: 'Kami vermilion',
+  note: 'Plain kami: solid vermilion, white reverse; every fold reads as colour',
+  reverse: KAMI_WHITE,
+  drawFront(ctx, S) { solid(ctx, S, '#c9432f'); },
+  drawBack(ctx, S) { solid(ctx, S, KAMI_WHITE); },
+};
+export const kamiIndigo: PaperDesign = {
+  id: 'kami-indigo', name: 'Kami indigo',
+  note: 'Plain kami: solid indigo, white reverse; every fold reads as colour',
+  reverse: KAMI_WHITE,
+  drawFront(ctx, S) { solid(ctx, S, '#2c3e66'); },
+  drawBack(ctx, S) { solid(ctx, S, KAMI_WHITE); },
+};

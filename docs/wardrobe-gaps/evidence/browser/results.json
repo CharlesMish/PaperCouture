@@ -1,0 +1,16 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "Chooser lists the four new pieces and none of the retired (tunic, tabard, hat, boat-top, apron); the name selector keeps all 31 with the retired hidden; each retired design still opens by link.",
+    "trousers: design list and note, colour choice at the first fold (aria-pressed, URL), both colourways finished, revisit from the finished piece, every step forward and back by the buttons, Display front/angle/back.",
+    "cloche: design list and note, colour choice at the first fold (aria-pressed, URL), both colourways finished, revisit from the finished piece, every step forward and back by the buttons, Display front/angle/back.",
+    "shell-top: design list and note, colour choice at the first fold (aria-pressed, URL), both colourways finished, revisit from the finished piece, every step forward and back by the buttons, Display front/angle/back.",
+    "kinchaku: design list and note, no colour choice, every step forward and back by the buttons, Display front/angle/back.",
+    "The four papers (Kami vermilion, Kami indigo, Marbled endpaper, Woven checks) are in the curated group and draw on the finished shell top.",
+    "Board: suggested sizes trousers 20 cm, shell top 10 cm, cloche and kinchaku 10 cm; an outfit pinned with the cloche and pouch at 8 cm.",
+    "Phone-sized 390 x 844 and 320 x 568 with emulated touch: all four pieces fold by tapping; no horizontal page scroll."
+  ],
+  "errors": [],
+  "physicalPaperTested": false,
+  "physicalPhoneTested": false
+}

@@ -11,7 +11,10 @@ import type { GownSide } from './gown';
 import type { KimonoSide } from './kimono';
 import type { ZoriSide } from './zori';
 import type { SensuSide } from './sensu';
+import type { TrousersSide } from './trousers';
 
+import type { ClocheSide } from './cloche';
+import type { ShellSide } from './shellTop';
 export interface GarmentOptions {
   broochShape: BroochShape;
   silhouette: SilhouetteId;
@@ -28,12 +31,15 @@ export interface GarmentOptions {
   kimonoSide: KimonoSide;
   zoriSide: ZoriSide;
   sensuSide: SensuSide;
+  trousersSide: TrousersSide;
+  clocheSide: ClocheSide;
+  shellSide: ShellSide;
 }
 export const DEFAULT_OPTIONS: GarmentOptions = {
   broochShape: 'square', silhouette: 'classic', sleeves: 'classic', jacketLength: 'cropped',
   wrap: 'original', band: 'double', vestLength: 'short',
   pleatDepth: 'classic', cuffs: 'plain', skirtLength: 'classic', coatSide: 'reverse', gownSide: 'print', kimonoSide: 'print',
-  zoriSide: 'print', sensuSide: 'print',
+  zoriSide: 'print', sensuSide: 'print', trousersSide: 'print', clocheSide: 'print', shellSide: 'print',
 };
 export type DecisionId = keyof GarmentOptions;
 export interface FoldChoice { id: string; name: string }
@@ -109,6 +115,18 @@ const DECISIONS: Record<string, FoldDecision[]> = {
   zori: [{ id: 'zoriSide', label: 'Zori colour', title: 'Choose which side of the paper the sole shows', before: 'zori-band', choices: [
     { id: 'print', name: 'Printed sole' }, { id: 'reverse', name: 'Reverse-colour sole' },
   ] }],
+  // The trousers' legs and the stripe, the cloche and its ribbon, the shell top and
+  // its bands always show opposite sides: the choice folds the first step the other
+  // way (with a turn added or skipped where needed) and nothing after it changes.
+  trousers: [{ id: 'trousersSide', label: 'Trousers colour', title: 'Choose which side of the paper the trousers show', before: 'tr-sides', choices: [
+    { id: 'print', name: 'Printed trousers' }, { id: 'reverse', name: 'Reverse-colour trousers' },
+  ] }],
+  cloche: [{ id: 'clocheSide', label: 'Cloche colour', title: 'Choose which side of the paper the cloche shows', before: 'cl-bands', choices: [
+    { id: 'print', name: 'Printed cloche' }, { id: 'reverse', name: 'Reverse-colour cloche' },
+  ] }],
+  'shell-top': [{ id: 'shellSide', label: 'Shell top colour', title: 'Choose which side of the paper the top shows', before: 'sh-bands', choices: [
+    { id: 'print', name: 'Printed top' }, { id: 'reverse', name: 'Reverse-colour top' },
+  ] }],
   // The fan shows whichever side faces out after the fold in half.
   sensu: [{ id: 'sensuSide', label: 'Fan colour', title: 'Choose which side of the paper the fan shows', before: 'sensu-half', choices: [
     { id: 'print', name: 'Printed fan' }, { id: 'reverse', name: 'Reverse-colour fan' },
@@ -136,7 +154,7 @@ export function sharedFoldPrefix(a: Construction, b: Construction): number {
   while (i < a.ops.length && i < b.ops.length && signature(a.ops[i]) === signature(b.ops[i])) i++;
   return i;
 }
-const keys: Record<DecisionId, string> = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown', kimonoSide: 'kimono', zoriSide: 'zori', sensuSide: 'sensu' };
+const keys: Record<DecisionId, string> = { broochShape: 'broochShape', silhouette: 'shape', sleeves: 'sleeves', jacketLength: 'jacketLength', wrap: 'wrap', band: 'band', vestLength: 'vestLength', pleatDepth: 'pleats', cuffs: 'cuffs', skirtLength: 'skirtLength', coatSide: 'coat', gownSide: 'gown', kimonoSide: 'kimono', zoriSide: 'zori', sensuSide: 'sensu', trousersSide: 'trousers', clocheSide: 'cloche', shellSide: 'shell-top' };
 export function optionsToParams(options: GarmentOptions, params: URLSearchParams): void {
   for (const id of Object.keys(keys) as DecisionId[]) {
     if (options[id] === DEFAULT_OPTIONS[id]) params.delete(keys[id]);
