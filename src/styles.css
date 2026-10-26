@@ -360,6 +360,10 @@ button:focus-visible {
   display: flex; gap: 8px 12px; flex-wrap: wrap; align-items: center;
   padding: 8px 12px; width: fit-content; max-width: calc(100% - 144px);
   border-radius: 12px; background: var(--panel); font-size: .8rem;
+  /* Curator 2026-10-26: same lift as the step dock so both panels read as one family. */
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset, 0 8px 24px rgba(52, 44, 34, 0.14);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .studio-controls label { display: inline-flex; gap: 6px; align-items: center; }
 .studio-controls select, .studio-button {
