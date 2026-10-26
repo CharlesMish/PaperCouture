@@ -256,6 +256,11 @@ button:focus-visible {
   line-height: 1.3;
   text-align: center;
   color: var(--ink);
+  /* Curator 2026-10-26: a small paper-coloured pill keeps the sheet name legible on the table texture. */
+  align-self: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--panel);
 }
 
 .rotate {
