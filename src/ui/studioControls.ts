@@ -21,6 +21,8 @@ export class StudioControls {
   private position = document.createElement('select');
   private positionLabel = document.createElement('label');
   private note = document.createElement('span');
+  /** Short screens keep a piece's construction notes behind this. */
+  private noteToggle = document.createElement('button');
   private centreControls = document.createElement('span');
   private centreEdit = document.createElement('button');
   private centreToggle = document.createElement('button');
@@ -35,6 +37,8 @@ export class StudioControls {
     onDesign(id: GarmentId): void; onEdit(id: AccessoryId): void; onRemove(): void;
     onReturn(): void; onPosition(position: PinPosition): void; onRevisit(id: DecisionId): void;
     onCentre(): void; onCentreToggle(): void;
+    /** The short-screen piece notes were opened (the page closes other disclosures). */
+    onNotesOpen?(): void;
   }) {
     this.designPicker = new DesignPicker(parent, h.onDesign);
     this.root.className = 'studio-controls';
@@ -62,13 +66,33 @@ export class StudioControls {
     this.position.onchange = () => h.onPosition(this.position.value as PinPosition);
     this.positionLabel.append(this.position);
     this.note.className = 'studio-note';
+    this.note.id = 'piece-notes';
+    this.noteToggle.type = 'button';
+    this.noteToggle.className = 'studio-button note-toggle';
+    this.noteToggle.textContent = 'Piece notes';
+    this.noteToggle.setAttribute('aria-controls', this.note.id);
+    this.noteToggle.setAttribute('aria-expanded', 'false');
+    this.noteToggle.onclick = () => {
+      const open = !this.root.classList.contains('notes-open');
+      this.setNotesOpen(open);
+      if (open) h.onNotesOpen?.();
+    };
     this.centreControls.className = 'centre-controls';
     this.centreEdit.className = this.centreToggle.className = 'studio-button';
     this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
     this.centreToggle.textContent = 'Show folded centre';
     this.centreControls.append(this.centreEdit, this.centreToggle);
-    this.root.append(this.designPicker.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
+    this.root.append(this.designPicker.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.noteToggle, this.note);
     parent.append(this.root);
+  }
+  /** On a cramped screen the construction notes sit behind "Piece notes". */
+  setCompactNotes(on: boolean): void {
+    this.root.classList.toggle('compact-notes', on);
+  }
+  /** Open or close the construction notes when they are compact (otherwise they always show). */
+  setNotesOpen(open: boolean): void {
+    this.root.classList.toggle('notes-open', open);
+    this.noteToggle.setAttribute('aria-expanded', String(open));
   }
   renderCentre(available: boolean, complete: boolean, shown: boolean, editing: boolean) {
     this.centreControls.hidden = !available;
@@ -120,10 +144,16 @@ export class StudioControls {
     const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;
     if (accessoryExperiment && (accessoryMode || attached && !experiment)) this.note.textContent = accessoryExperiment;
     this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode || !!accessoryExperiment && (accessoryMode || attached));
+    this.noteToggle.hidden = !this.note.classList.contains('experiment-note');
   }
   /** Edit reopens the attached piece with its progress; Fold starts a new square of another type. */
   private actionLabel(): string {
     return this.kept.attached && this.accessory.value === this.kept.id ? 'Edit accessory' : 'Fold accessory';
   }
-  topInset(): number { return this.root.getBoundingClientRect().bottom + 10; }
+  topInset(): number {
+    // opened short-screen notes lie over the paper; the paper keeps its framing
+    const overlay = this.root.classList.contains('notes-open') && this.root.classList.contains('compact-notes')
+      ? this.note.getBoundingClientRect().height : 0;
+    return this.root.getBoundingClientRect().bottom - overlay + 10;
+  }
 }

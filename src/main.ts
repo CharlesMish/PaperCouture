@@ -19,9 +19,12 @@ import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
 import { LapelEdges } from './render/lapelEdges';
 import { FoldGuides } from './render/guides';
+import { HiddenPaperOverlay } from './render/hiddenPaper';
+import { HIDDEN_FOLD, movingVisibility, type Visibility } from './fold/visibility';
 import { Stage } from './render/stage';
 import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
 import { WorkshopPanel } from './ui/workshopPanel';
+import { showStartupFailure, watchContextLoss } from './ui/startupFailure';
 import { DisplayPanel } from './ui/displayPanel';
 import { PaperPicker } from './ui/paperPicker';
 import { PrintPositionPanel } from './ui/printPositionPanel';
@@ -32,6 +35,10 @@ import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } fro
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ready = false;
+/** The step whose moving paper is highlighted; stays set through Back and Fold, so a step can be replayed. */
+let inspectingOp: number | null = null;
+let lastInspect: 'off' | 'offered' | 'showing' = 'off';
+let visibilityCache: { anim: OpAnim; eye: string; v: Visibility } | null = null;
 const designProgress = new Map<GarmentId, number>();
 function syncUrl() {
   if (!ready || accessoryMode) return;
@@ -91,7 +98,17 @@ settlePosition();
 // ---- scene
 const app = document.getElementById('app')!;
 const canvas = document.getElementById('stage') as HTMLCanvasElement;
-const stage = new Stage(canvas);
+function startStage(): Stage {
+  try {
+    return new Stage(canvas);
+  } catch (error) {
+    // No WebGL: say so, offer to retry, show the finished pieces flat; stop here.
+    showStartupFailure(app, error);
+    throw error;
+  }
+}
+const stage = startStage();
+watchContextLoss(app, canvas);
 
 const frontMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
 const backMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
@@ -99,7 +116,8 @@ const sheet = new SheetView(frontMat, backMat);
 const guides = new FoldGuides();
 const lapelEdges = new LapelEdges();
 stage.modelRoot.add(lapelEdges.lines);
-stage.modelRoot.add(sheet.group, guides.group);
+const hiddenPaper = new HiddenPaperOverlay();
+stage.modelRoot.add(sheet.group, guides.group, hiddenPaper.group);
 const pinFront = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinBack = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinSheet = new SheetView(pinFront, pinBack);
@@ -285,6 +303,12 @@ const workshopPanel = new WorkshopPanel(app, {
   onBack: () => controller.prev(),
   onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
   onReset: () => { cancelDrag(); controller.reset(); },
+  onHintOpen: () => studio.setNotesOpen(false),
+  onInspect: () => {
+    const a = controller.activeOp;
+    inspectingOp = a !== null && inspectingOp !== a ? a : null;
+    refreshWorkshopPanel();
+  },
 });
 
 const displayPanel = new DisplayPanel(app, {
@@ -320,6 +344,7 @@ function refreshWorkshopPanel() {
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
+    inspect: (lastInspect = inspectState()),
   });
   syncUrl();
 }
@@ -335,6 +360,7 @@ const studio = new StudioControls(app, {
   onPosition: (p) => { pinPosition = p; refreshWorkshopPanel(); },
   onCentre: editCentre,
   onCentreToggle: () => { centreAttached = !centreAttached; refreshWorkshopPanel(); layout(); },
+  onNotesOpen: () => workshopPanel.setHintOpen(false),
 });
 studio.root.append(pinboard.launcher);
 let unsubscribeController = controller.onChange(refreshWorkshopPanel);
@@ -367,6 +393,7 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   cancelDrag();
   unsubscribeController();
   construction = next; timeline = nextTimeline; ops = timeline.ops; lastOp = ops[ops.length - 1];
+  inspectingOp = null; visibilityCache = null;
   controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : ops[i].op.kind === 'collapse' ? 2.6 : 1.15) * (reducedMotion ? 0.6 : 1));
   unsubscribeController = controller.onChange(refreshWorkshopPanel);
   frame = undefined;
@@ -483,6 +510,9 @@ function insets() {
 }
 
 function layout() {
+  // a cramped screen keeps instructions and construction notes one tap away
+  studio.setCompactNotes(workshopPanel.fit());
+  workshopPanel.setHintRoom(Math.max(studio.root.getBoundingClientRect().bottom, picker.insets().top));
   stage.resize();
   stage.setInsets(insets());
   workCamPos = stage.framePose(WORK_TARGET, 1.3, 1.08, WORK_DIR);
@@ -497,6 +527,8 @@ function layout() {
   }
   lastDisplayFit = fit;
   if (view.inWorkshop) stage.placeCamera(workCamPos, WORK_TARGET);
+  // whether a step's paper is hidden depends on where the camera ended up
+  if (ready && inspectState() !== lastInspect) refreshWorkshopPanel();
 }
 new ResizeObserver(layout).observe(app);
 new ResizeObserver(layout).observe(studio.root);
@@ -517,11 +549,32 @@ window.addEventListener('keydown', (e) => {
 
 const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => controller.next());
 
+// ---- hidden folds: "See this fold" and grips on paper under other layers
+/** How much of a pending step's moving paper the workshop camera sees, at the waiting pose. */
+function pendingVisibility(anim: OpAnim): Visibility | null {
+  if (anim.op.kind === 'turn' || !view.inWorkshop) return null;
+  stage.modelRoot.updateMatrixWorld();
+  const eye = stage.modelRoot.worldToLocal(stage.camera.position.clone());
+  const key = eye.toArray().map(n => n.toFixed(2)).join(',');
+  if (visibilityCache?.anim !== anim || visibilityCache.eye !== key) {
+    visibilityCache = { anim, eye: key, v: movingVisibility(anim, evaluateFrame(anim, pendingT(anim)), [eye.x, eye.y, eye.z]) };
+  }
+  return visibilityCache.v;
+}
+function inspectState(): 'off' | 'offered' | 'showing' {
+  const a = controller.activeOp;
+  if (!ready || a === null) return 'off';
+  if (inspectingOp === a) return 'showing';
+  const v = pendingVisibility(ops[a]);
+  return v && v.fraction < HIDDEN_FOLD ? 'offered' : 'off';
+}
+
 // ---- pose evaluation
 const PEEK_FOLD = 8; // degrees the pending flap lifts while waiting
 const PEEK_TURN = 4;
 const PEEK_COLLAPSE = 0; // the tint shows what moves; a peek would lift the paper over the guides
 const tForAngle = (deg: number) => Math.acos(1 - 2 * (deg / 180)) / Math.PI;
+const pendingT = (a: OpAnim) => tForAngle(a.op.kind === 'turn' ? PEEK_TURN : a.op.kind === 'collapse' ? PEEK_COLLAPSE : PEEK_FOLD);
 let frame: Mat34 | undefined;
 const movingPieces = (a: OpAnim) => new Set(a.pieces.filter((p) => p.spec >= 0).map((p) => p.index));
 const ease = (t: number) => 0.5 - 0.5 * Math.cos(Math.PI * t);
@@ -558,7 +611,7 @@ function draw() {
   const anim = ops[pose.op];
   sheet.setAnim(anim);
   const workshop = view.inWorkshop;
-  const t = pose.pending && workshop ? tForAngle(anim.op.kind === 'turn' ? PEEK_TURN : anim.op.kind === 'collapse' ? PEEK_COLLAPSE : PEEK_FOLD) : pose.t;
+  const t = pose.pending && workshop ? pendingT(anim) : pose.t;
   frame = evaluateFrame(anim, t, frame);
   sheet.pose(frame);
   const lapels = new Set(timeline.states[pose.op + 1].facets.filter(f => f.tags.some(t => t.startsWith('vest-lapel-'))).map(f => f.id));
@@ -569,6 +622,8 @@ function draw() {
     guides.show(anim, anim.maxPreZ + LAYER_GAP);
     guides.group.position.z = frameLift(anim); // stay with paper that rises off the table
   } else guides.hide();
+  if (workshop && inspectingOp === pose.op && anim.op.kind !== 'turn' && (pose.pending || controller.moving || controller.isScrubbing)) hiddenPaper.show(anim, frame);
+  else hiddenPaper.hide();
   updateFoldHandles(anim, frame, preview);
   stage.render();
 }
@@ -618,6 +673,15 @@ function foldDirection(anim: OpAnim, spec: number): THREE.Vector2 {
 }
 function updateFoldHandles(anim: OpAnim, M: Mat34, preview: boolean) {
   const targets: FoldTarget[] = [];
+  // paper under other layers gets a grip of its own, one per moving part
+  const hidden = preview && !controller.isScrubbing ? pendingVisibility(anim) : null;
+  if (hidden) for (const [spec, g] of hidden.groups) {
+    if (g.fraction >= HIDDEN_FOLD) continue;
+    // the anchor was measured at the waiting pose, which is the pose shown while previewing
+    const screen = toScreen(new THREE.Vector3(...g.anchor));
+    const vector = foldDirection(anim, spec);
+    targets.push({ piece: g.piece, x: screen.x, y: screen.y, vx: vector.x, vy: vector.y, label: anim.op.kind === 'collapse' ? 'Move the hidden paper' : 'Fold the hidden paper' });
+  }
   if (preview && anim.op.kind === 'fold') {
     for (const piece of anim.pieces) {
       if (piece.spec < 0) continue;
@@ -672,7 +736,7 @@ if (params.get('view') === 'display' && controller.finished) {
   displayCam.setEnabled(true);
 }
 ready = true;
-syncUrl();
+refreshWorkshopPanel(); // offers "See this fold" now the camera is placed
 
 // ---- loop
 let last = performance.now();
@@ -721,6 +785,8 @@ Object.assign(window, {
     get pinPrintPosition() { return { ...pinPrintPosition }; },
     get centrePrintPosition() { return { ...centrePrintPosition }; },
     sheet,
+    hiddenPaper,
+    get inspectingOp() { return inspectingOp; },
     pinboard,
     pinSheet,
     view,

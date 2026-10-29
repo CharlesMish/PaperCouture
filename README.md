@@ -199,3 +199,12 @@ waves, Asanoha, Polka dot and Houndstooth each come with a chosen reverse.
 `npm run check:zori-sensu` covers the two pieces. See [the notes, scale and
 checks](docs/kimono-companions/NOTES.md) and the [printable folding
 sheet](docs/kimono-companions/zori-and-fan-folding-sheet.pdf).
+
+## Seeing hidden folds, short screens, no WebGL
+
+When most of the paper a step moves is under other layers (the kimono's sleeves,
+the gown's cap sleeve), the step offers **See this fold**: the moving paper is drawn
+through the layers above it while you fold, go back and fold again, and it gets a
+grip of its own. On short screens the step title stays and the full instructions
+open with **Instructions**. If the browser cannot start the 3D table, the page says
+so and shows the finished pieces flat. See [the notes](docs/usability-pass/NOTES.md).

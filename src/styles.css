@@ -137,6 +137,21 @@ button:focus-visible {
   color: var(--ink-soft);
 }
 
+/* Instructions (short screens only) and "See this fold" (only when a step's paper is hidden). */
+.caption-tools { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.caption-tools:not(:has(> :not([hidden]))) { display: none; }
+.caption-tool {
+  min-height: 32px; padding: 3px 11px; border-radius: 999px;
+  border: 1px solid var(--rule); background: transparent; color: var(--ink);
+  font-size: 0.8rem; font-weight: 600;
+}
+.caption-tool:hover { background: rgba(46, 42, 37, 0.05); }
+.caption-tool:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.inspect-toggle { border-color: #c4672c; color: #8f461b; }
+.inspect-toggle[aria-pressed='true'] { background: #c4672c; color: #fff; border-color: transparent; }
+.hint-toggle { display: none; }
+.inspect-note { padding-top: 3px; font-size: 0.78rem; line-height: 1.3; color: #8f461b; }
+
 .btn {
   min-width: 76px;
   min-height: 44px;
@@ -377,7 +392,8 @@ button:focus-visible {
 }
 @media (max-height: 540px) {
   .studio-note { display: none; }
-  .step-hint { display: none; }
+  /* the display panel's one-line hint */
+  .display-dock .step-hint { display: none; }
   .display-head { margin-bottom: 5px; }
 }
 
@@ -407,12 +423,33 @@ button:focus-visible {
 }
 .fold-handle span { display: block; font-size: 25px; line-height: 1; }
 .fold-handle:active { cursor: grabbing; background: #fff; }
+/* Grips stay above the panels, so one over a panel's edge can still be reached;
+   they step aside while opened instructions or piece notes lie over the paper. */
+#app:has(.dock.compact.hint-open:not([hidden])) .fold-handles,
+#app:has(.compact-notes.notes-open) .fold-handles { visibility: hidden; }
+/* a grip on paper that lies under other layers */
+.fold-handle.hidden-paper { border: 2px solid #c4672c; color: #8f461b; }
 
-/* Experimental limits stay visible even on a short phone screen. */
+/* A compact dock (a short screen, or instructions that would crowd the paper):
+   the step title stays as the action cue; the full instructions are one tap
+   away and lie over the paper while open. */
+.dock.compact .step-hint { display: none; }
+.dock.compact.hint-open .step-hint { display: block; overflow-y: auto; overscroll-behavior: contain; }
+.dock.compact .hint-toggle { display: inline-block; }
+.hint-toggle[aria-expanded='true'] { background: rgba(255, 255, 255, 0.65); border-color: var(--ink); }
+.dock.compact .inspect-note { display: none; }
+.dock.compact.hint-open .inspect-note:not([hidden]) { display: block; }
+
+/* A piece's construction notes: shown where there is room; with a compact dock
+   they sit behind "Piece notes", so the folding instructions keep the space. */
 .studio-note.experiment-note { display: block; max-width: 420px; }
+.note-toggle { display: none; }
+.compact-notes .note-toggle:not([hidden]) { display: inline-flex; align-items: center; }
+.note-toggle[aria-expanded='true'] { background: rgba(255, 255, 255, .65); border-color: var(--ink); }
+.compact-notes .studio-note.experiment-note { display: none; }
+.compact-notes.notes-open .studio-note.experiment-note { display: block; flex: 1 1 100%; max-width: none; font-size: .73rem; }
 @media (max-height: 540px) and (min-width: 720px) {
-  .studio-controls:has(.experiment-note) { flex-wrap: wrap; overflow-x: visible; }
-  .studio-note.experiment-note { flex: 1 1 240px; min-width: 0; font-size: .73rem; }
+  .studio-controls.notes-open { flex-wrap: wrap; overflow-x: visible; }
 }
 
 /* Print and pinboard editors use native modal focus/inert behavior. */
@@ -531,3 +568,22 @@ button:focus-visible {
   .design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .design-thumbnail { height: 104px; }
 }
+
+/* The folding table could not start (no WebGL), and a lost graphics context. */
+.startup-failure {
+  position: absolute; inset: 64px 12px 12px; overflow-y: auto; box-sizing: border-box;
+  max-width: 760px; margin: 0 auto; padding: 22px; border-radius: 18px;
+  background: #f6f2e9; color: var(--ink); border: 1px solid var(--rule);
+}
+.startup-failure h2 { margin: 0 0 8px; font-size: 1.3rem; font-weight: 600; }
+.startup-failure p { margin: 0 0 10px; font-size: .92rem; line-height: 1.45; max-width: 60ch; }
+.startup-failure .btn { margin: 4px 0 8px; }
+.startup-failure .btn:focus-visible { outline: 3px solid #465d57; outline-offset: 3px; }
+.startup-failure-detail { color: var(--ink-soft); font-size: .78rem !important; }
+.startup-gallery { list-style: none; padding: 0; }
+.context-lost {
+  position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%); z-index: 5;
+  display: flex; gap: 10px; align-items: center; width: min(520px, calc(100vw - 24px)); box-sizing: border-box;
+  padding: 10px 12px; border-radius: 12px; background: var(--panel); box-shadow: 0 6px 20px rgba(52, 44, 34, .2);
+}
+.context-lost p { margin: 0; font-size: .85rem; line-height: 1.35; }

@@ -1,3 +1,31 @@
+# Paper Couture — usability pass after Astra's review (Claude, 2026-10-29)
+
+Branch `claude/usability-pass` from main (`f33415b`), at Charlie's request in a
+Claude chat, addressing the three findings of Astra's 28 October review. Not
+merged. Independent of `claude/wardrobe-gaps`. Notes:
+[docs/usability-pass/NOTES.md](docs/usability-pass/NOTES.md).
+
+- Hidden folds: `src/fold/visibility.ts` measures how much of a step's moving paper
+  the camera sees. Below 25%, the dock offers **See this fold**
+  (`src/render/hiddenPaper.ts`, a labelled overlay; the camera and the paper are
+  unchanged). It stays on through Fold and Back, for replay. Hidden paper gets
+  labelled grips, collapses included (`main.ts` `updateFoldHandles`); grips hide
+  while opened instructions or notes lie over the paper.
+- Short screens: a measured compact dock (540 px tall or less, or a dock over 40%
+  of the screen) with an **Instructions** disclosure that overlays the paper, and
+  **Piece notes** for the construction notes (`workshopPanel.ts`,
+  `studioControls.ts`, `styles.css`).
+- No WebGL: `src/ui/startupFailure.ts`. An alert with Try again and the finished
+  pieces drawn flat; a notice while the graphics context is lost.
+- Checks: `scripts/check-usability.ts` (in `npm test`; it records the five steps
+  offered the highlight), `scripts/check-usability-browser.cjs` (CI:
+  `.github/workflows/usability.yml`), and `check-integrated-browser.cjs` updated
+  for Piece notes. When `claude/wardrobe-gaps` is merged too, rerun
+  `check-usability.ts` and add any of its steps that come out hidden to the
+  recorded list.
+
+Not tested on a real phone or in mobile Safari.
+
 # Five-design integration — October 18, 2026
 
 Charlie authorized bringing Claude’s corrected companion branch onto main and

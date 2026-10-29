@@ -36,7 +36,9 @@ for(const size of [{width:390,height:844},{width:844,height:390}]){
  await p.setViewportSize(size);
  for(const id of ['apron','clutch','tunic']){
   await p.getByLabel('Garment design').selectOption(id);await settle();await finish();await p.getByRole('radio',{name:'Pinstripe and lining',exact:true}).click();await btn('Display').click();await settle();await btn('Front').click();await settle();await shot(`${id}-${size.width}-front`);
-  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),size.width);assert(await p.locator('.experiment-note').isVisible());
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),size.width);
+  // a short screen keeps the construction notes one tap away (Piece notes)
+  const notes=p.getByRole('button',{name:'Piece notes',exact:true});if(size.height<=540){assert(!(await p.locator('.experiment-note').isVisible()));await notes.click();}assert(await p.locator('.experiment-note').isVisible());if(size.height<=540)await notes.click();
   const free=await p.evaluate(()=>{const a=document.querySelector('.studio-controls').getBoundingClientRect(),b=document.querySelector('.display-dock').getBoundingClientRect();return b.top-a.bottom});assert(free>80,`no usable display area: ${free}`);
   await btn('Back').click();await settle();await shot(`${id}-${size.width}-back`);
  }

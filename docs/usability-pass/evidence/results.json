@@ -1,0 +1,15 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "kimono step 8: See this fold offered; highlight on without moving camera or paper; kept through Fold and Back; labelled 44 px grips in view; dragging a grip folds the step.",
+    "gown step 9: See this fold offered; highlight on without moving camera or paper; kept through Fold and Back; labelled 44 px grips in view; dragging a grip folds the step.",
+    "fit-flare step 6: See this fold offered; highlight on without moving camera or paper; kept through Fold and Back; labelled 44 px grips in view; dragging a grip folds the step.",
+    "844x390: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.",
+    "390x844: instructions and notes shown; dock and top controls apart; no horizontal scroll.",
+    "320x568: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.",
+    "No WebGL: a readable alert, Try again, and 27 finished pieces drawn flat; no empty table.",
+    "A lost graphics context shows a notice with Reload; it goes away when the context returns."
+  ],
+  "errors": [],
+  "physicalPhoneTested": false
+}
