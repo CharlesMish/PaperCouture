@@ -38,6 +38,7 @@ all screens).
   or a touch cancel), the camera never moves.
 - The dock is re-laid out as soon as its text changes, not a frame later, so the
   framing follows a change in the dock's height in the same frame.
+- Twenty of the 27 designs come closer at some step.
 
 **Astra's second review found the first version wrong here.** It blended toward the
 next frame from 60% of a drag, so on a non-final step the paper tightened and
@@ -124,6 +125,7 @@ and the rest are from the earlier run of this branch:
   framed brooch, gown, kimono, outfit production, roomy board, swing coat (both),
   zori and fan, board and sizing (the last two on the dev server, which they import
   from).
+
 **Still outstanding, not green:**
 - **October** passed its three UI checks, then ran out of a 25-minute local limit
   while rendering every paper. It has not completed anywhere.
