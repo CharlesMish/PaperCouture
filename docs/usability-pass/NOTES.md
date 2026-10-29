@@ -7,7 +7,7 @@ constructions, material coordinates, saved captures and the camera are unchanged
 ![Kimono step 8: offered, then highlighted](evidence/hidden-folds.jpg)
 
 Short screens: [landscape](evidence/short-screens-landscape.jpg),
-[portrait](evidence/short-screens-portrait.jpg) · [no WebGL and a lost
+[portrait](evidence/short-screens-portrait.jpg), [highlight and instructions together](evidence/combined-small.jpg) · [no WebGL and a lost
 context](evidence/no-webgl.jpg) · [browser check results](evidence/results.json)
 
 ## 1. Folds that happen out of sight
@@ -69,7 +69,11 @@ cover the paper.
   changes, so the dock does not switch back and forth between steps.
 - Opened, the instructions lie over the paper, held between the top controls and
   the screen edge, and scroll if they are longer. The paper keeps its framing
-  instead of shrinking into what is left.
+  instead of shrinking into what is left. The highlight's one-line note opens with
+  them and is counted in that room. When less than about 72 px is left below the
+  top controls (a small phone on its side, or 320 × 568 with the highlight on), the
+  open dock covers the controls while it is read, then gives the space back when
+  closed.
 - With a compact dock, the piece's construction notes sit behind **Piece notes**.
   The two close each other, so they never stack.
 - At 390 × 844 nothing changes: instructions and notes show as before.
@@ -83,8 +87,11 @@ not offered), the renderer threw at startup and the page showed only its title.
 happens, and what to try. It has a **Try again** button and the finished pieces
 drawn flat (the chooser's previews). The underlying error still goes to the
 console. While the app is running, a lost graphics context shows a notice with
-**Reload**, and the notice goes away when the context returns. Progress is in the
-address, so a reload keeps the step.
+**Reload**, and the notice goes away when the context returns. It says only what a
+reload really keeps. The address holds the piece, its options, paper and step, and
+the board is saved in the browser. An accessory being folded or attached is held in
+memory only, so in those states the notice says it would be lost. (Astra caught the
+first version promising that all progress was in the address.)
 
 ## Checks
 
@@ -102,10 +109,18 @@ address, so a reload keeps the step.
     the top controls and the screen edge; the two disclosures close each other;
     Fold works; no horizontal scroll. 390 × 844: everything shows, and the dock and
     top controls stay apart.
+  - Both together at 320 × 568: See this fold and Instructions open. The
+    instructions and the highlight's note are uncovered and on screen, and every
+    dock control is on screen and is what a tap at its centre reaches. This holds
+    through Fold and Back (both stay open) and after rotating to 568 × 320 and back.
   - No WebGL: an alert, Try again, and 27 finished pieces.
-  - A lost context: the notice appears and goes again.
+  - A lost context: the notice appears and goes again. On the piece it promises the
+    piece, paper and step; while folding an accessory, and with one attached, it
+    says the accessory is not kept. A reload then keeps exactly the piece, paper
+    and step.
 - `check-integrated-browser.cjs` opens Piece notes at 844 × 390 before reading the
-  note.
+  note. (That check is stale on main: its first assertion still expects the original
+  nine designs. It is not in CI, so it was left as it is.)
 - Existing browser checks rerun on the build: design picker, camp-collar shirt,
   phone journey, kimono and gown all pass. The phone journey caught one regression
   on the way: I had moved the grips under the panels, which covered the mitten's
@@ -117,7 +132,8 @@ address, so a reload keeps the step.
 - **A curated first project and a newcomer test on a real phone**, from Astra's
   proposal. These need Charlie's choice of project and a person to watch. See the
   reply in the chat.
-- **The paper is small in phone landscape.** At 844 × 390 the top controls and the
-  dock leave a thin band for the table. That predates this pass and needs a
-  different landscape layout, not a tweak.
+- **The paper is small on phones.** At 844 × 390 and 568 × 320 the top controls and
+  the dock leave a thin band for the table, and at 320 × 568 a grip can nearly
+  cover the whole piece. That predates this pass and is the follow-up
+  (`claude/phone-layout`).
 - **Not tested on a real phone or in mobile Safari.** No physical paper.

@@ -439,6 +439,8 @@ button:focus-visible {
 .hint-toggle[aria-expanded='true'] { background: rgba(255, 255, 255, 0.65); border-color: var(--ink); }
 .dock.compact .inspect-note { display: none; }
 .dock.compact.hint-open .inspect-note:not([hidden]) { display: block; }
+/* not enough room below the top controls: the open dock covers them while it is read */
+.dock.compact.hint-open.over-controls { z-index: 6; background: #f3eee6; }
 
 /* A piece's construction notes: shown where there is room; with a compact dock
    they sit behind "Piece notes", so the folding instructions keep the space. */

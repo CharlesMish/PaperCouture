@@ -45,14 +45,18 @@ export function showStartupFailure(app: HTMLElement, error: unknown): HTMLElemen
   return panel;
 }
 
-/** A notice while the graphics context is lost; it goes away when the context returns. */
-export function watchContextLoss(app: HTMLElement, canvas: HTMLCanvasElement): void {
+/**
+ * A notice while the graphics context is lost; it goes away when the context
+ * returns. `reloadKeeps` says, at that moment, what a reload would keep: only the
+ * piece in the address is restored, not an accessory being folded or attached.
+ */
+export function watchContextLoss(app: HTMLElement, canvas: HTMLCanvasElement, reloadKeeps: () => string): void {
   let notice: HTMLElement | null = null;
   canvas.addEventListener('webglcontextlost', () => {
     if (notice) return;
     notice = el('div', 'context-lost');
     notice.setAttribute('role', 'status');
-    const text = el('p', undefined, 'The 3D view was interrupted by the graphics system. It usually comes back on its own; your folding progress is kept in the address.');
+    const text = el('p', undefined, `The 3D view was interrupted by the graphics system. It usually comes back on its own. ${reloadKeeps()}`);
     const reload = el('button', 'btn btn-quiet', 'Reload');
     reload.type = 'button';
     reload.onclick = () => location.reload();

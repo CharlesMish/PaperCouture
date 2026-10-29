@@ -108,7 +108,15 @@ function startStage(): Stage {
   }
 }
 const stage = startStage();
-watchContextLoss(app, canvas);
+// The address holds only the main piece (syncUrl skips accessory mode), so say
+// exactly what a reload keeps.
+watchContextLoss(app, canvas, () => {
+  const full = savedGarment?.construction.name ?? construction.name;
+  const name = full.charAt(0).toLowerCase() + full.slice(1);
+  if (accessoryMode) return `Reloading keeps the ${name} and its step, but not the accessory you are folding: that starts again.`;
+  if (attached) return `Reloading keeps the ${name} and its step, but not the attached accessory: it would need folding again.`;
+  return `Reloading keeps the ${name}, its paper and its step.`;
+});
 
 const frontMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
 const backMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });

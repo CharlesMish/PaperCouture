@@ -7,8 +7,10 @@
     "844x390: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.",
     "390x844: instructions and notes shown; dock and top controls apart; no horizontal scroll.",
     "320x568: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.",
+    "320x568 with See this fold and Instructions both open: instructions and the highlight note clear of the top controls (at 568x320, with no room, the open dock covers them), every dock control on screen and reachable; Fold and Back keep both; rotation to 568x320 and back keeps the same.",
     "No WebGL: a readable alert, Try again, and 27 finished pieces drawn flat; no empty table.",
-    "A lost graphics context shows a notice with Reload; it goes away when the context returns."
+    "A lost graphics context shows a notice with Reload; it goes away when the context returns.",
+    "Lost-context notice: on the piece it promises the piece, paper and step; while folding an accessory, and with one attached, it says the accessory is not kept; a reload then keeps exactly the piece, paper and step."
   ],
   "errors": [],
   "physicalPhoneTested": false

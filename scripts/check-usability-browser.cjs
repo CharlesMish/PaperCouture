@@ -7,9 +7,11 @@
 // - short screens: at 844 x 390 and 320 x 568 the step title stays, the
 //   instructions open with "Instructions", lie between the top controls and the
 //   dock, and "Piece notes" and "Instructions" close each other; at 390 x 844
-//   everything shows; no horizontal scroll;
+//   everything shows; no horizontal scroll; at 320 x 568 the highlight and the
+//   open instructions together, through Fold, Back and rotation;
 // - no WebGL: a readable message, Try again, and the finished pieces drawn flat;
-//   a lost graphics context shows a notice until it returns.
+//   a lost graphics context shows a notice until it returns, and says only what a
+//   reload really keeps (not an accessory being folded or attached).
 // Isolated local contexts only.
 //
 //   BASE_URL=http://127.0.0.1:4173 CAPTURE_DIR=.usability-qa node scripts/check-usability-browser.cjs
@@ -131,6 +133,51 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
       result.checks.push(`${w}x${h}: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.`);
       await s.context.close();
     }
+    // --- the highlight and open instructions together on a small phone, through Fold, Back and rotation
+    {
+      const s = await make(320, 568, true);
+      await s.load('design=kimono&paper=oat-linen&step=7');
+      const tap = (name) => s.page.getByRole('button', { name, exact: true }).tap();
+      const fits = async (w, h, where) => {
+        assert.equal(await s.page.evaluate(() => document.documentElement.scrollWidth), w, `${where}: no horizontal scroll`);
+        const box = await s.page.evaluate(() => {
+          const r = (q) => { const e = document.querySelector(q); return e && e.getBoundingClientRect().toJSON(); };
+          return { controls: r('.studio-controls'), dock: r('.dock:not(.display-dock)'), hint: r('#step-hint'), note: r('.inspect-note') };
+        });
+        assert(await s.page.locator('#step-hint').isVisible() && await s.page.locator('.inspect-note').isVisible(), `${where}: instructions and the highlight's note both shown`);
+        // either clear of the top controls, or (too little room) the open dock covers them
+        const onTop = (r) => s.page.evaluate((r) => { const d = document.querySelector('.dock:not(.display-dock)'); return [r.top + 2, r.bottom - 2].every((y) => d.contains(document.elementFromPoint(r.left + r.width / 2, y))); }, r);
+        assert(box.hint.top >= box.controls.bottom - 1 || await onTop(box.hint), `${where}: instructions clear of the top controls or over them ${JSON.stringify(box)}`);
+        assert(await onTop(box.hint) && await onTop(box.note), `${where}: the instructions and the highlight's note are not covered by anything`);
+        assert(box.note.bottom <= box.dock.bottom + 0.5 && box.hint.top >= 0, `${where}: the highlight's note inside the dock, the instructions on screen`);
+        assert(box.dock.bottom <= h && box.dock.top >= 0, `${where}: dock on screen`);
+        // every dock control is on screen and is what a tap at its centre reaches
+        for (const b of await s.page.locator('.dock:not(.display-dock) button:visible').all()) {
+          const ok = await b.evaluate((e) => { const r = e.getBoundingClientRect(); const x = r.left + r.width / 2, y = r.top + r.height / 2; return r.left >= 0 && r.right <= innerWidth && r.top >= 0 && r.bottom <= innerHeight && e.contains(document.elementFromPoint(x, y)); });
+          assert(ok, `${where}: ${await b.innerText()} reachable`);
+        }
+      };
+      await tap('See this fold'); await tap('Instructions'); await s.page.waitForTimeout(250);
+      assert.equal((await s.state()).overlay, true);
+      await fits(320, 568, '320x568 highlight + instructions');
+      await s.shot('combined-320x568');
+      await s.page.locator('.dock:not([hidden]) .btn-primary').tap(); await s.settle();
+      assert.equal((await s.state()).step, 8, 'Fold works with both open');
+      await tap('Back'); await s.settle();
+      const back = await s.state();
+      assert.equal(back.step, 7); assert.equal(back.inspecting, 7); assert.equal(back.overlay, true, 'the highlight is back for the replay');
+      assert.equal(await s.page.getByRole('button', { name: 'Instructions', exact: true }).getAttribute('aria-expanded'), 'true', 'instructions stay open through Fold and Back');
+      await fits(320, 568, '320x568 after Fold and Back');
+      // rotate to landscape and back
+      await s.page.setViewportSize({ width: 568, height: 320 }); await s.page.waitForTimeout(400); await s.settle();
+      await fits(568, 320, '568x320 rotated');
+      await s.shot('combined-568x320');
+      await s.page.setViewportSize({ width: 320, height: 568 }); await s.page.waitForTimeout(400); await s.settle();
+      await fits(320, 568, '320x568 rotated back');
+      assert.deepEqual(s.errors, []);
+      result.checks.push('320x568 with See this fold and Instructions both open: instructions and the highlight note clear of the top controls (at 568x320, with no room, the open dock covers them), every dock control on screen and reachable; Fold and Back keep both; rotation to 568x320 and back keeps the same.');
+      await s.context.close();
+    }
     // --- no WebGL, and a lost context
     {
       const s = await make(390, 844, true, () => {
@@ -160,6 +207,35 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
       await s.page.evaluate(() => paperCouture.stage.renderer.forceContextRestore());
       await s.page.waitForFunction(() => !document.querySelector('.context-lost'));
       result.checks.push('A lost graphics context shows a notice with Reload; it goes away when the context returns.');
+      await s.context.close();
+    }
+    // --- what the lost-context notice promises about a reload, and that it holds
+    {
+      const s = await make();
+      const finish = async () => { while (!(await s.page.evaluate(() => paperCouture.controller.finished))) { await s.page.locator('.dock:not([hidden]) .btn-primary').click(); await s.settle(); } };
+      const lose = async () => {
+        await s.page.evaluate(() => paperCouture.stage.renderer.forceContextLoss());
+        const notice = s.page.getByRole('status').filter({ hasText: 'interrupted' });
+        await notice.waitFor();
+        const text = await notice.innerText();
+        await s.page.evaluate(() => paperCouture.stage.renderer.forceContextRestore());
+        await s.page.waitForFunction(() => !document.querySelector('.context-lost'));
+        return text;
+      };
+      await s.load('design=jacket&paper=oat-linen&step=99');
+      assert.match(await lose(), /Reloading keeps the box jacket, its paper and its step\./);
+      await s.page.getByLabel('Accessory type').selectOption('kerchief');
+      await s.page.getByRole('button', { name: 'Fold accessory', exact: true }).click(); await s.settle();
+      assert.equal(await s.page.evaluate(() => paperCouture.accessoryMode), true);
+      assert.match(await lose(), /not the accessory you are folding/);
+      await finish();
+      await s.page.getByRole('button', { name: 'Attach', exact: true }).click(); await s.settle();
+      assert.equal(await s.page.evaluate(() => paperCouture.attached), true);
+      assert.match(await lose(), /not the attached accessory/);
+      await s.page.reload(); await s.settle();
+      const after = await s.page.evaluate(() => ({ design: paperCouture.garmentId, finished: paperCouture.controller.finished, paper: paperCouture.paperId, attached: paperCouture.attached, accessoryMode: paperCouture.accessoryMode }));
+      assert.deepEqual(after, { design: 'jacket', finished: true, paper: 'oat-linen', attached: false, accessoryMode: false }, 'a reload keeps the piece, paper and step, and not the accessory, as the notice says');
+      result.checks.push('Lost-context notice: on the piece it promises the piece, paper and step; while folding an accessory, and with one attached, it says the accessory is not kept; a reload then keeps exactly the piece, paper and step.');
       await s.context.close();
     }
   } catch (e) {

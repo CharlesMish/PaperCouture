@@ -125,9 +125,17 @@ export class WorkshopPanel {
   /** Keep opened compact instructions below `topLimit` (CSS px from the top): they scroll instead. */
   setHintRoom(topLimit: number): void {
     if (!this.compact) { this.hint.style.maxHeight = ''; return; }
-    const open = this.hintOpen ? this.hint.getBoundingClientRect().height + this.inspectNote.getBoundingClientRect().height : 0;
+    // The highlight's explanation opens with the instructions but does not scroll
+    // with them, so the scrolling text gets the room that is left after it.
+    const note = this.inspectNote.getBoundingClientRect().height;
+    const open = this.hintOpen ? this.hint.getBoundingClientRect().height + note : 0;
     const closedTop = this.dock.getBoundingClientRect().top + open;
-    this.hint.style.maxHeight = `${Math.max(56, closedTop - topLimit - 16)}px`;
+    const room = closedTop - topLimit - 16 - note;
+    // Too little room below the top controls (a small phone on its side): the open
+    // instructions cover the controls while they are read, instead of tangling with them.
+    const over = this.hintOpen && room < 72;
+    this.dock.classList.toggle('over-controls', over);
+    this.hint.style.maxHeight = `${Math.max(56, over ? closedTop - 8 - 16 - note : room)}px`;
   }
 
   /** Open or close the instructions when compact (they always show otherwise). */
