@@ -92,14 +92,22 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
       await s.load('design=kimono&paper=oat-linen&step=7');
       assert.equal(await s.page.evaluate(() => document.documentElement.scrollWidth), w, 'no horizontal page scroll');
       const title = s.page.locator('.dock:not(.display-dock) .step-title'), hint = s.page.locator('#step-hint');
-      const instructions = s.page.getByRole('button', { name: 'Instructions', exact: true }), notes = s.page.getByRole('button', { name: 'Piece notes', exact: true });
+      const instructions = s.page.getByRole('button', { name: 'Instructions', exact: true });
+      // narrow screens fold the top controls into one row while folding: the notes are under More
+      const bar = await s.page.locator('.studio-controls').evaluate((e) => e.classList.contains('folding-bar'));
+      const notes = s.page.getByRole('button', { name: bar ? 'More' : 'Piece notes', exact: true });
       assert.equal(await title.isVisible(), true, `${w}x${h}: the step title stays`);
       assert.equal(await s.page.locator('.inspect-toggle').isVisible(), true);
       const dock = await s.rect('.dock:not([hidden])');
       assert(dock.bottom <= h && dock.top >= 0, `${w}x${h}: dock in view`);
       if (!compact) {
-        assert.equal(await hint.isVisible(), true); assert.equal(await instructions.isVisible(), false); assert.equal(await notes.isVisible(), false);
+        assert.equal(await hint.isVisible(), true); assert.equal(await instructions.isVisible(), false);
+        assert.equal(await s.page.getByRole('button', { name: 'Piece notes', exact: true }).isVisible(), false);
+        // on a narrow screen the top controls are one row while folding; the note is under More
+        const more = s.page.getByRole('button', { name: 'More', exact: true });
+        if (await more.isVisible()) { await more.tap(); await s.page.waitForTimeout(150); }
         assert.equal(await s.page.locator('.experiment-note').isVisible(), true);
+        if (await more.isVisible() && await more.getAttribute('aria-expanded') === 'true') { await more.tap(); await s.page.waitForTimeout(150); }
         const controls = await s.rect('.studio-controls');
         assert(controls.bottom <= dock.top, `${w}x${h}: controls and dock do not overlap`);
         await s.shot(`short-${w}x${h}`);
@@ -130,7 +138,7 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
       assert.equal((await s.state()).step, 8);
       assert.equal(await s.page.evaluate(() => document.documentElement.scrollWidth), w);
       assert.deepEqual(s.errors, []);
-      result.checks.push(`${w}x${h}: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.`);
+      result.checks.push(`${w}x${h}: title kept; Instructions opens the full text between the top controls and the screen edge; Piece notes (More, on a narrow screen) and Instructions close each other; grips step aside while either is open; Fold works; no horizontal scroll.`);
       await s.context.close();
     }
     // --- the highlight and open instructions together on a small phone, through Fold, Back and rotation

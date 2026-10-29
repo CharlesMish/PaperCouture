@@ -21,6 +21,10 @@ export class StudioControls {
   private position = document.createElement('select');
   private positionLabel = document.createElement('label');
   private note = document.createElement('span');
+  /** Narrow screens, mid-fold: one row (Browse, Design, More); the rest opens under More. */
+  private moreButton = document.createElement('button');
+  private designLabel!: HTMLLabelElement;
+  private barInset: number | null = null;
   /** Short screens keep a piece's construction notes behind this. */
   private noteToggle = document.createElement('button');
   private centreControls = document.createElement('span');
@@ -43,7 +47,10 @@ export class StudioControls {
     this.designPicker = new DesignPicker(parent, h.onDesign);
     this.root.className = 'studio-controls';
     this.root.setAttribute('aria-label', 'Garment and accessory');
-    const label = document.createElement('label'); label.textContent = 'Design ';
+    const label = document.createElement('label'); this.designLabel = label;
+    label.className = 'design-label';
+    const labelText = document.createElement('span'); labelText.className = 'design-label-text'; labelText.textContent = 'Design ';
+    label.append(labelText);
     this.design.setAttribute('aria-label', 'Garment design');
     for (const garment of BROWSE_GARMENTS) this.design.append(new Option(garment.name, garment.id));
     this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
@@ -82,8 +89,38 @@ export class StudioControls {
     this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
     this.centreToggle.textContent = 'Show folded centre';
     this.centreControls.append(this.centreEdit, this.centreToggle);
-    this.root.append(this.designPicker.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.noteToggle, this.note);
+    this.root.id = 'studio-controls';
+    this.moreButton.type = 'button';
+    this.moreButton.className = 'studio-button more-toggle';
+    this.moreButton.textContent = 'More';
+    this.moreButton.setAttribute('aria-controls', this.root.id);
+    this.moreButton.setAttribute('aria-expanded', 'false');
+    this.moreButton.onclick = () => {
+      const open = !this.root.classList.contains('more-open');
+      this.setMoreOpen(open);
+      if (open) h.onNotesOpen?.(); // More holds the notes too: it closes the instructions
+    };
+    // More closes on Escape, on a press outside it, and once a choice is made in it
+    this.root.addEventListener('keydown', (e) => { if (e.key === 'Escape' && this.root.classList.contains('more-open')) { this.setMoreOpen(false); this.moreButton.focus(); } });
+    document.addEventListener('pointerdown', (e) => { if (this.root.classList.contains('more-open') && !this.root.contains(e.target as Node)) this.setMoreOpen(false); });
+    this.root.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest('button');
+      if (b && b !== this.moreButton && b !== this.noteToggle && this.root.classList.contains('more-open')) this.setMoreOpen(false);
+    });
+    this.design.addEventListener('change', () => this.setMoreOpen(false));
+    this.root.append(this.designPicker.button, label, this.moreButton, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.noteToggle, this.note);
     parent.append(this.root);
+  }
+  /** Narrow screens while a piece is being folded: the controls fold down to one row. */
+  setFoldingBar(on: boolean): void {
+    if (this.root.classList.contains('folding-bar') === on) return;
+    this.root.classList.toggle('folding-bar', on);
+    if (!on) this.setMoreOpen(false);
+    this.barInset = null;
+  }
+  setMoreOpen(open: boolean): void {
+    this.root.classList.toggle('more-open', open);
+    this.moreButton.setAttribute('aria-expanded', String(open));
   }
   /** On a cramped screen the construction notes sit behind "Piece notes". */
   setCompactNotes(on: boolean): void {
@@ -91,6 +128,7 @@ export class StudioControls {
   }
   /** Open or close the construction notes when they are compact (otherwise they always show). */
   setNotesOpen(open: boolean): void {
+    if (!open) this.setMoreOpen(false);
     this.root.classList.toggle('notes-open', open);
     this.noteToggle.setAttribute('aria-expanded', String(open));
   }
@@ -102,7 +140,7 @@ export class StudioControls {
     if (editing) this.note.textContent = 'Folded centre · third square · both wings are kept';
     else if (available && shown) this.note.textContent = 'Three-piece bow · optional folded centre';
   }
-  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[], available: AccessoryId[] = ACCESSORIES.map(a => a.id)) {
+  render(id: GarmentId, accessoryMode: boolean, finished: boolean, attached: boolean, position: PinPosition, activeAccessory: AccessoryId, wing: number, revisit: FoldDecision[], anchors: AttachmentAnchor[], available: AccessoryId[] = ACCESSORIES.map(a => a.id), moving = false) {
     // Accessories with a restricted placement (neckerchief, patch pocket) are
     // only offered on garments that have one of their positions. An unavailable
     // selection falls back to the first available type, and is restored on the
@@ -129,6 +167,7 @@ export class StudioControls {
     this.position.value = position;
     this.returnButton.hidden = !accessoryMode;
     this.revisitLabel.hidden = accessoryMode || revisit.length === 0;
+    this.revisit.disabled = this.revisitChoice.disabled = moving;
     const revisitKey = revisit.map(d => d.id).join('|');
     if (this.revisitChoice.dataset.choices !== revisitKey) {
       const selected = this.revisitChoice.value;
@@ -151,6 +190,15 @@ export class StudioControls {
     return this.kept.attached && this.accessory.value === this.kept.id ? 'Edit accessory' : 'Fold accessory';
   }
   topInset(): number {
+    // the folding bar: only its row counts; an opened More panel lies over the paper
+    if (this.root.classList.contains('folding-bar')) {
+      // measured closed; while More is open the paper keeps the closed framing
+      if (!this.root.classList.contains('more-open') || this.barInset === null) {
+        const row = [this.designPicker.button, this.designLabel, this.moreButton].map((e) => e.getBoundingClientRect().bottom);
+        this.barInset = Math.max(...row) + 7 + 10;
+      }
+      return this.barInset;
+    }
     // opened short-screen notes lie over the paper; the paper keeps its framing
     const overlay = this.root.classList.contains('notes-open') && this.root.classList.contains('compact-notes')
       ? this.note.getBoundingClientRect().height : 0;

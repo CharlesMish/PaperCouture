@@ -426,9 +426,33 @@ button:focus-visible {
 /* Grips stay above the panels, so one over a panel's edge can still be reached;
    they step aside while opened instructions or piece notes lie over the paper. */
 #app:has(.dock.compact.hint-open:not([hidden])) .fold-handles,
-#app:has(.compact-notes.notes-open) .fold-handles { visibility: hidden; }
+#app:has(.compact-notes.notes-open) .fold-handles,
+#app:has(.folding-bar.more-open) .fold-handles { visibility: hidden; }
 /* a grip on paper that lies under other layers */
 .fold-handle.hidden-paper { border: 2px solid #c4672c; color: #8f461b; }
+
+/* The folding bar (narrow screens, while a piece is being folded): Browse pieces,
+   the design list and More on one row; More opens the rest over the paper. */
+.more-toggle { display: none; }
+.studio-controls.folding-bar { flex-wrap: nowrap; }
+.studio-controls.folding-bar .more-toggle { display: inline-flex; align-items: center; }
+.studio-controls.folding-bar .design-label-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.studio-controls.folding-bar .design-label { flex: 1 1 auto; min-width: 0; }
+.studio-controls.folding-bar .design-label select { width: 100%; min-width: 0; }
+.studio-controls.folding-bar:not(.more-open) > :not(.browse-designs):not(.design-label):not(.more-toggle) { display: none !important; }
+.studio-controls.folding-bar.more-open {
+  flex-wrap: wrap; z-index: 7; background: #f3eee6; box-shadow: 0 10px 30px rgba(52, 44, 34, .18);
+  max-height: calc(100dvh - 120px); overflow-y: auto;
+}
+.studio-controls.folding-bar.more-open .studio-note.experiment-note { display: block; flex: 1 1 100%; max-width: none; }
+.studio-controls.folding-bar.more-open .note-toggle { display: none !important; }
+.more-toggle[aria-expanded='true'] { background: rgba(255, 255, 255, .65); border-color: var(--ink); }
+/* A small phone on its side: the bar takes the title's row (Start over stays). */
+@media (max-width: 719px) and (max-height: 540px) {
+  #app:has(.studio-controls.folding-bar) .masthead { visibility: hidden; }
+  .studio-controls.folding-bar { top: calc(env(safe-area-inset-top, 0px) + 4px); right: calc(env(safe-area-inset-right, 0px) + 112px); padding: 4px 6px; gap: 6px; }
+  .studio-controls.folding-bar select, .studio-controls.folding-bar .studio-button { min-height: 34px; }
+}
 
 /* A compact dock (a short screen, or instructions that would crowd the paper):
    the step title stays as the action cue; the full instructions are one tap
@@ -439,6 +463,14 @@ button:focus-visible {
 .hint-toggle[aria-expanded='true'] { background: rgba(255, 255, 255, 0.65); border-color: var(--ink); }
 .dock.compact .inspect-note { display: none; }
 .dock.compact.hint-open .inspect-note:not([hidden]) { display: block; }
+/* a short screen: the dock's two buttons sit beside the step title when there is width */
+@media (max-height: 540px) {
+  .dock.compact .caption { display: flex; flex-wrap: wrap; align-items: center; column-gap: 10px; }
+  .dock.compact .caption-text { flex: 1 1 180px; min-width: 0; }
+  .dock.compact .caption-tools { margin-top: 0; }
+  .dock.compact.hint-open .caption-text { flex-basis: 100%; }
+  .dock.compact .progress { margin-bottom: 6px; }
+}
 /* not enough room below the top controls: the open dock covers them while it is read */
 .dock.compact.hint-open.over-controls { z-index: 6; background: #f3eee6; }
 

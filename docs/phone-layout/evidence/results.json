@@ -1,0 +1,36 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "1180x900: kimono step 8 368px wide (was 220); camera still while waiting and during a short drag, settled after the fold, Back retraces; the paper in view at every kimono step.",
+    "320x568: one-row bar (Browse, Design, More); kimono step 8 158px wide, between the bar and the dock; More shows Revisit and View board over the paper without moving it, closes on a press outside, Escape and a choice; Revisit works from it; finished piece keeps the bar with accessories under More; folding the obi brings back the full controls with Back to garment.",
+    "390x844: one-row bar (Browse, Design, More); kimono step 8 278px wide, between the bar and the dock; More shows Revisit and View board over the paper without moving it, closes on a press outside, Escape and a choice; Revisit works from it; finished piece keeps the bar with accessories under More; folding the obi brings back the full controls with Back to garment."
+  ],
+  "paperPx": {
+    "1180x900": {
+      "w": 368,
+      "h": 321,
+      "top": 309.7861499718719,
+      "bottom": 630.3629079137402,
+      "left": 465.9836378573455,
+      "right": 834.0163621426544
+    },
+    "320x568": {
+      "w": 158,
+      "h": 137,
+      "top": 229.85361542104496,
+      "bottom": 366.6882281967242,
+      "left": 80.89486186111773,
+      "right": 239.10513813888227
+    },
+    "390x844": {
+      "w": 278,
+      "h": 241,
+      "top": 277.05910914415114,
+      "bottom": 518.3742492287638,
+      "left": 55.87164047108736,
+      "right": 334.12835952891265
+    }
+  },
+  "errors": [],
+  "physicalPhoneTested": false
+}

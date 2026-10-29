@@ -1,3 +1,25 @@
+# Paper Couture — room for the paper on phones (Claude, 2026-10-29)
+
+Branch `claude/phone-layout`, on top of `claude/usability-pass`, following Astra's
+second review. Not merged. Notes: [docs/phone-layout/NOTES.md](docs/phone-layout/NOTES.md).
+
+- `src/app/workFrame.ts`: the workshop camera frames the paper the current step
+  involves over its whole motion. It starts on the old whole-sheet view, comes up
+  to ~2.2x closer as the piece shrinks, and is never wider. It blends to the next
+  step's frame only in the last 40% of a fold, so "fold settled" still means "view
+  settled".
+- `studioControls.ts`: on narrow screens in the workshop, a one-row bar (Browse
+  pieces, design list, More). More opens the rest over the paper. Accessory folding
+  keeps the full controls. At 568 x 320 the bar takes the title row.
+- `main.ts`: Revisit stays in place (disabled) while a fold moves. Hiding it
+  reframed the view mid-fold.
+- Checks: `check-work-frame.ts` (in `npm test`), `check-phone-layout-browser.cjs`
+  (CI: `.github/workflows/phone-layout.yml`); `check-usability-browser.cjs` and
+  `check-phone-journey.cjs` updated for More and for a thumb big enough to drag
+  directly.
+
+Not tested on a real phone.
+
 # Paper Couture — usability pass after Astra's review (Claude, 2026-10-29)
 
 Branch `claude/usability-pass` from main (`f33415b`), at Charlie's request in a

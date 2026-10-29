@@ -208,3 +208,10 @@ through the layers above it while you fold, go back and fold again, and it gets 
 grip of its own. On short screens the step title stays and the full instructions
 open with **Instructions**. If the browser cannot start the 3D table, the page says
 so and shows the finished pieces flat. See [the notes](docs/usability-pass/NOTES.md).
+
+## More room for the paper
+
+While you fold, the camera comes closer as the piece gets smaller, holding still
+while a step waits and settling as each fold finishes. On a phone the top controls
+fold to one row (Browse pieces, the design list and More), so the paper gets the
+screen. See [the notes and measurements](docs/phone-layout/NOTES.md).

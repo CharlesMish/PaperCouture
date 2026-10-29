@@ -20,6 +20,7 @@ import { SheetView } from './render/sheetView';
 import { LapelEdges } from './render/lapelEdges';
 import { FoldGuides } from './render/guides';
 import { HiddenPaperOverlay } from './render/hiddenPaper';
+import { blendFrames, stepFrame, type WorkFrame } from './app/workFrame';
 import { HIDDEN_FOLD, movingVisibility, type Visibility } from './fold/visibility';
 import { Stage } from './render/stage';
 import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
@@ -333,9 +334,11 @@ const displayPanel = new DisplayPanel(app, {
 const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
 function refreshWorkshopPanel() {
   const decisions = garmentDecisions(garmentId);
-  const revisit = controller.moving ? [] : decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
+  // Revisit stays in place while a fold moves (disabled, and revisitFold() refuses):
+  // hiding it changed the controls' height and so the framing, mid-fold.
+  const revisit = decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
   const available = ACCESSORIES.filter(a => accessoryAnchors(a.id, garmentAnchors()).length > 0).map(a => a.id);
-  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available);
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available, controller.moving);
   const bowReady = accessoryId === 'bow' && bowWing === 1 && savedPinStep === pinTimeline.ops.length;
   studio.renderCentre(!accessoryMode && controller.finished && bowReady && available.includes('bow'), savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
   const decision = !accessoryMode && !controller.moving ? decisions.find(d => decisionStep(construction, d) === controller.step) : undefined;
@@ -354,6 +357,7 @@ function refreshWorkshopPanel() {
     moving: controller.moving,
     inspect: (lastInspect = inspectState()),
   });
+  if (ready && studio.root.classList.contains('folding-bar') !== foldingBar()) layout();
   syncUrl();
 }
 function refreshDisplayPanel() {
@@ -382,6 +386,27 @@ applyCentrePaper();
 const WORK_TARGET = new THREE.Vector3(0, 0.08, 0);
 const WORK_DIR = new THREE.Vector3(0, Math.sin(THREE.MathUtils.degToRad(57)), Math.cos(THREE.MathUtils.degToRad(57)));
 let workCamPos = new THREE.Vector3();
+let workTarget = WORK_TARGET.clone();
+
+// The workshop camera frames the paper the current step involves (src/app/workFrame.ts).
+// A step's frame covers its whole motion, so the camera holds still while a fold
+// waits and while it is dragged, and moves to the next step's frame only in the last
+// part of the fold's own motion: it has arrived when the fold has, and Back retraces it.
+const frameCache = new WeakMap<OpAnim, WorkFrame>();
+const opFrame = (anim: OpAnim) => { let f = frameCache.get(anim); if (!f) frameCache.set(anim, f = stepFrame(anim)); return f; };
+function workshopFrame(): WorkFrame {
+  const pose = controller.pose();
+  const a = opFrame(ops[pose.op]);
+  if (pose.pending || pose.op + 1 >= ops.length) return a;
+  return blendFrames(a, opFrame(ops[pose.op + 1]), pose.t);
+}
+/** Recompute the workshop camera pose for the current step (and place it when in the workshop). */
+function frameWorkshop() {
+  const f = workshopFrame();
+  workTarget = new THREE.Vector3(f.x, WORK_TARGET.y, -f.y); // model (x, y) on the table, in the world
+  workCamPos = stage.framePose(workTarget, f.halfW, f.halfH, WORK_DIR);
+  if (view.inWorkshop) stage.placeCamera(workCamPos, workTarget);
+}
 let lastDisplayFit = 0;
 /** The display end of the camera transition: default front view going in, wherever the user left it coming out. */
 const displayCamPos = new THREE.Vector3();
@@ -517,13 +542,16 @@ function insets() {
   return { top: Math.max(p.top, studio.topInset(), mobile ? 44 : 56), left: p.left, right: 0, bottom };
 }
 
+/** Narrow screens, in the workshop (folding an accessory keeps the full controls, with Back to garment). */
+const foldingBar = () => window.innerWidth < 720 && view.target === 0 && !accessoryMode;
 function layout() {
+  studio.setFoldingBar(foldingBar());
   // a cramped screen keeps instructions and construction notes one tap away
   studio.setCompactNotes(workshopPanel.fit());
   workshopPanel.setHintRoom(Math.max(studio.root.getBoundingClientRect().bottom, picker.insets().top));
   stage.resize();
   stage.setInsets(insets());
-  workCamPos = stage.framePose(WORK_TARGET, 1.3, 1.08, WORK_DIR);
+  frameWorkshop();
   displayCam.updateLimits();
   const fit = displayCam.defaultDistance();
   if (lastDisplayFit > 0 && Math.abs(fit - lastDisplayFit) > 1e-6) {
@@ -534,7 +562,6 @@ function layout() {
     else displayCamPos.sub(displayCam.target).multiplyScalar(ratio).add(displayCam.target);
   }
   lastDisplayFit = fit;
-  if (view.inWorkshop) stage.placeCamera(workCamPos, WORK_TARGET);
   // whether a step's paper is hidden depends on where the camera ended up
   if (ready && inspectState() !== lastInspect) refreshWorkshopPanel();
 }
@@ -562,7 +589,7 @@ const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piec
 function pendingVisibility(anim: OpAnim): Visibility | null {
   if (anim.op.kind === 'turn' || !view.inWorkshop) return null;
   stage.modelRoot.updateMatrixWorld();
-  const eye = stage.modelRoot.worldToLocal(stage.camera.position.clone());
+  const eye = stage.modelRoot.worldToLocal(workCamPos.clone());
   const key = eye.toArray().map(n => n.toFixed(2)).join(',');
   if (visibilityCache?.anim !== anim || visibilityCache.eye !== key) {
     visibilityCache = { anim, eye: key, v: movingVisibility(anim, evaluateFrame(anim, pendingT(anim)), [eye.x, eye.y, eye.z]) };
@@ -600,12 +627,13 @@ function placePiece() {
   stand.setOpacity(smooth(0.55, 1, e));
   stage.backLight.intensity = 1.9 * e;
   if (!view.inWorkshop && !view.inDisplay) {
-    const target = WORK_TARGET.clone().lerp(displayCam.target, e);
+    const target = workTarget.clone().lerp(displayCam.target, e);
     stage.placeCamera(workCamPos.clone().lerp(displayCamPos, e), target);
   }
 }
 
 function draw() {
+  if (view.inWorkshop) frameWorkshop();
   studySeams.visible = accessoryMode && controller.finished;
   // An accessory whose positions this garment lacks (a neckerchief on a
   // skirt) stays folded and stored, but is not shown until it fits again.

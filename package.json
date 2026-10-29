@@ -12,7 +12,7 @@
     "sheet-map": "node --import tsx scripts/sheet_map.ts",
     "crease-pattern": "node --import tsx scripts/crease_pattern.ts",
     "typecheck": "tsc --noEmit && tsc --noEmit -p scripts",
-    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat && npm run check:design-pass && npm run check:mittens && npm run check:coat-dress && npm run check:gown && npm run check:kimono && npm run check:zori-sensu && npm run check:usability && npm run check:previews",
+    "test": "npm run check && npm run check:collection && npm run check:integrated && npm run check:positioning && npm run check:curation && npm run check:board && npm run check:sizing && npm run check:outfit-folds && npm run check:companions && npm run check:necktie && npm run check:camp-shirt && npm run check:fit-flare && npm run check:swing-coat && npm run check:design-pass && npm run check:mittens && npm run check:coat-dress && npm run check:gown && npm run check:kimono && npm run check:zori-sensu && npm run check:usability && npm run check:work-frame && npm run check:previews",
     "check:collection": "node --import tsx scripts/check-collection.ts",
     "build:experiment": "tsc --noEmit -p experiments/fold-study && vite build --config vite.experiment.config.ts",
     "test:experiment": "node --import tsx scripts/check-fold-study.ts",
@@ -40,6 +40,7 @@
     "kimono-pattern": "node --import tsx scripts/kimono-pattern.ts",
     "check:zori-sensu": "node --import tsx scripts/check-zori-sensu.ts",
     "check:usability": "node --import tsx scripts/check-usability.ts",
+    "check:work-frame": "node --import tsx scripts/check-work-frame.ts",
     "zori-sensu-pattern": "node --import tsx scripts/zori-sensu-pattern.ts"
   },
   "dependencies": {
