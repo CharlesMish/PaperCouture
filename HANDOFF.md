@@ -5,14 +5,19 @@ second review. Not merged. Notes: [docs/phone-layout/NOTES.md](docs/phone-layout
 
 - `src/app/workFrame.ts`: the workshop camera frames the paper the current step
   involves over its whole motion. It starts on the old whole-sheet view, comes up
-  to ~2.2x closer as the piece shrinks, and is never wider. It blends to the next
-  step's frame only in the last 40% of a fold, so "fold settled" still means "view
-  settled".
+  to ~2.2x closer as the piece shrinks, and is never wider. It is still for the
+  whole of a drag, even a long or reversed one (Astra's second review caught the
+  first version blending mid-drag). A fold running by itself blends over its last
+  40%. After a drag is let go and the fold finishes, the camera eases 0.35 s from
+  where it held. A fold that falls back never moves it.
 - `studioControls.ts`: on narrow screens in the workshop, a one-row bar (Browse
   pieces, design list, More). More opens the rest over the paper. Accessory folding
   keeps the full controls. At 568 x 320 the bar takes the title row.
 - `main.ts`: Revisit stays in place (disabled) while a fold moves. Hiding it
   reframed the view mid-fold.
+- Outstanding, not green: the October check (local time limit), the presentation
+  check (-0 vs 0 after reload, also on main), the baseline-build checks, and hosted
+  CI (no pull request yet). See the notes.
 - Checks: `check-work-frame.ts` (in `npm test`), `check-phone-layout-browser.cjs`
   (CI: `.github/workflows/phone-layout.yml`); `check-usability-browser.cjs` and
   `check-phone-journey.cjs` updated for More and for a thumb big enough to drag

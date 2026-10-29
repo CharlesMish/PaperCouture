@@ -1,7 +1,8 @@
 // Room for the paper, in the real app:
 // - the workshop camera frames the paper the current step involves: closer as the
 //   piece gets smaller, never farther out than the whole sheet; still while a step
-//   waits and while it is dragged; settled when a fold has finished; Back retraces;
+//   waits and for the whole of a drag (long, reversed, or cancelled); moving from
+//   where it held, without a jump, once the drag is let go; Back retraces;
 // - on narrow screens in the workshop the top controls fold down to one row
 //   (Browse pieces, the design list, More); More opens the rest over the paper
 //   without moving it, and closes on a press outside, Escape, or a choice; folding
@@ -81,6 +82,91 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       await s.shot('desktop-kimono-8');
       assert.deepEqual(s.errors, []);
       result.checks.push(`1180x900: kimono step 8 ${k.w}px wide (was 220); camera still while waiting and during a short drag, settled after the fold, Back retraces; the paper in view at every kimono step.`);
+      await s.context.close();
+    }
+    // --- a non-final step whose frame changes (kimono step 7 -> 8): the camera holds
+    //     still for the whole of a drag, however far, through a reversal; on release it
+    //     moves from where it held, without a jump; a fold that falls back never moves it
+    for (const touch of [false, true]) {
+      const s = await make(1180, 900, touch);
+      const cdp = touch ? await s.context.newCDPSession(s.page) : null;
+      const finger = async (type, x, y) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' || type === 'touchCancel' ? [] : [{ x, y }] });
+      await s.load('design=kimono&paper=oat-linen&step=7');
+      const B = await s.camera();
+      await s.load('design=kimono&paper=oat-linen&step=6');
+      const A = await s.camera();
+      const span = Math.hypot(...A.map((v, i) => v - B[i]));
+      assert(span > 0.3, `kimono step 7 and 8 are framed differently (${span})`);
+      const t = () => s.page.evaluate(() => paperCouture.controller.pose().t);
+      const grip = await s.page.locator('.fold-handle').first().evaluate((b) => { const r = b.getBoundingClientRect(), m = new DOMMatrix(getComputedStyle(b.firstElementChild).transform); return { x: r.x + r.width / 2, y: r.y + r.height / 2, vx: m.a, vy: m.b }; });
+      let at = 0;
+      const down = () => touch ? finger('touchStart', grip.x, grip.y) : s.page.mouse.move(grip.x, grip.y).then(() => s.page.mouse.down());
+      const moveTo = (d) => { at = d; const x = grip.x + grip.vx * d, y = grip.y + grip.vy * d; return touch ? finger('touchMove', x, y) : s.page.mouse.move(x, y); };
+      // drag along the arrow, a few px at a time, until progress passes `goal` (or falls below it)
+      const dragTo = async (goal) => {
+        const up = goal >= await t();
+        for (let n = 0; n < 400; n++) {
+          const now = await t();
+          if (up ? now >= goal : now <= goal) return now;
+          await moveTo(at + (up ? 6 : -6));
+        }
+        throw new Error(`drag never reached ${goal}: ${JSON.stringify(await s.page.evaluate(() => ({ scrubbing: paperCouture.controller.isScrubbing, pose: paperCouture.controller.pose(), step: paperCouture.controller.step })))} at ${at}px, grip ${JSON.stringify(grip)}`);
+      };
+      // camera, fold progress and time each frame, and the moment the finger or button lets go
+      const record = () => s.page.evaluate(() => {
+        window.__cams = []; window.__released = null;
+        for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, () => { window.__released ??= performance.now(); }, { capture: true, once: true });
+        const rec = (now) => { const P = paperCouture; window.__cams.push({ now, t: P.controller.pose().t, cam: P.stage.camera.position.toArray() }); if (window.__cams.length < 400 && (P.controller.moving || window.__cams.length < 40 || now - (window.__released ?? now) < 700)) requestAnimationFrame(rec); };
+        requestAnimationFrame(rec);
+      });
+      const recorded = () => s.page.evaluate(() => ({ cams: window.__cams, released: window.__released }));
+      const near = (c, ref) => Math.hypot(...c.map((v, i) => v - ref[i])) <= 0.01 * span;
+      const ease = (e) => { const x = Math.min(1, Math.max(0, e)); return x * x * (3 - 2 * x); };
+      // no jump: before the release the camera is where it held; after it, it has moved no
+      // further from there than the 0.35 s ease allows at that moment; it ends on the next
+      // frame, having moved one way
+      const glides = async (where) => {
+        const { cams, released } = await recorded();
+        assert(released !== null, `${where}: release seen`);
+        for (const r of cams) {
+          const moved = Math.hypot(...r.cam.map((v, i) => v - A[i]));
+          if (r.now < released) assert(moved <= 1e-6, `${where}: still before the release`);
+          else assert(moved <= (ease((r.now - released) / 350) + 0.05) * span, `${where}: ${(moved / span).toFixed(2)} of the way ${Math.round(r.now - released)} ms after release; A ${JSON.stringify(A)} B ${JSON.stringify(B)} trace ${JSON.stringify(cams.map((c) => [Math.round(c.now - released), +c.t.toFixed(3), c.cam.map((n) => +n.toFixed(3))]))}`);
+        }
+        assert(near(cams.at(-1).cam, B), `${where}: arrives at the next frame`);
+        for (let i = 1; i < cams.length; i++) assert(Math.hypot(...cams[i].cam.map((v, k) => v - B[k])) <= Math.hypot(...cams[i - 1].cam.map((v, k) => v - B[k])) + 1e-9, `${where}: moves one way`);
+      };
+      const still = async (where) => { await s.frames(); assert.deepEqual(await s.camera(), A, `${touch ? 'touch' : 'mouse'}: camera still ${where}`); };
+      // 1. a long drag, reversed and taken forward again, then let go: the fold finishes
+      await down();
+      for (const goal of [0.45, 0.75, 0.9]) { await dragTo(goal); await still(`at ${goal} of the drag`); }
+      await dragTo(0.2); await still('after reversing to 0.2');
+      await dragTo(0.9); await still('forward again to 0.9');
+      await record();
+      if (touch) await finger('touchEnd'); else await s.page.mouse.up();
+      await s.settle(); await s.page.waitForTimeout(700); await s.frames();
+      await glides(`${touch ? 'touch' : 'mouse'}: released at 0.9`);
+      assert.equal(await s.page.evaluate(() => paperCouture.controller.step), 7);
+      // 2. a long drag that falls back: on a touch screen a real touchcancel; with a mouse, let go below the commit point
+      await s.load('design=kimono&paper=oat-linen&step=6'); at = 0;
+      await down(); await dragTo(0.9); await still('at 0.9 before falling back');
+      if (!touch) { await dragTo(0.25); await still('dragged back to 0.25'); }
+      await record();
+      if (touch) await finger('touchCancel'); else await s.page.mouse.up();
+      await s.settle(); await s.page.waitForTimeout(700); await s.frames();
+      for (const r of (await recorded()).cams) assert.deepEqual(r.cam.map((n) => +n.toFixed(6)), A, `${touch ? 'touchcancel' : 'release below the commit point'}: the camera never moves`);
+      assert.equal(await s.page.evaluate(() => paperCouture.controller.step), 6, 'the fold fell back');
+      // 3. a drag pulled right to the end: nothing of the fold is left to move with, so a short glide, without a jump
+      if (!touch) {
+        at = 0; await down(); await dragTo(0.999); await still('at the very end of the drag');
+        await record(); await s.page.mouse.up(); await s.settle();
+        await s.page.waitForTimeout(700); await s.frames();
+        await glides('pulled to the end');
+      }
+      assert.deepEqual(s.errors, []);
+      result.checks.push(touch
+        ? 'Kimono step 7 (frame changes to step 8), touch: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on lifting the finger it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; a real touchcancel from 0.9 falls back with the camera never moving.'
+        : 'Kimono step 7 (frame changes to step 8), mouse: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on release it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; dragged to 0.9 and back below the commit point, it falls back with the camera never moving; pulled to the very end, the same ease.');
       await s.context.close();
     }
     // --- the folding bar on narrow screens

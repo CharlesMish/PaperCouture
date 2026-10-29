@@ -47,9 +47,16 @@ export function stepFrame(anim: OpAnim): WorkFrame {
   return { x: (u0 + u1) / 2, y: (v0 + v1) / 2 / SIN, halfW, halfH };
 }
 
-/** Between two steps' frames: still for most of a fold, moving over its last 40%. */
-export function blendFrames(a: WorkFrame, b: WorkFrame, t: number): WorkFrame {
-  const s = Math.min(1, Math.max(0, (t - 0.6) / 0.4)), k = s * s * (3 - 2 * s);
+/**
+ * Between two steps' frames, by the fold's progress t: still up to `from`, then
+ * eased to the next frame at t = 1. Normally `from` is 0.6, so the camera moves over
+ * the last 40% of a fold. After a drag released at t0, main.ts passes max(0.6, t0):
+ * the camera then starts from where it held still during the drag, with no jump,
+ * whether the fold goes on to finish or falls back. (main.ts also eases the camera
+ * over 0.35 s after a release that finishes the fold, so a late release cannot jump.)
+ */
+export function blendFrames(a: WorkFrame, b: WorkFrame, t: number, from = 0.6): WorkFrame {
+  const s = from >= 1 ? 0 : Math.min(1, Math.max(0, (t - from) / (1 - from))), k = s * s * (3 - 2 * s);
   if (k <= 0) return a;
   return { x: a.x + (b.x - a.x) * k, y: a.y + (b.y - a.y) * k, halfW: a.halfW + (b.halfW - a.halfW) * k, halfH: a.halfH + (b.halfH - a.halfH) * k };
 }

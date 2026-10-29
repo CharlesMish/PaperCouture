@@ -303,7 +303,7 @@ const picker = new PaperPicker(app, PAPERS, {
   },
   onPosition: () => {
     cancelDrag();
-    if (controller.isScrubbing) controller.endScrub(false);
+    releaseScrub(false);
     positionPanel.open();
   },
 });
@@ -357,7 +357,9 @@ function refreshWorkshopPanel() {
     moving: controller.moving,
     inspect: (lastInspect = inspectState()),
   });
-  if (ready && studio.root.classList.contains('folding-bar') !== foldingBar()) layout();
+  // lay out now, not a frame later: the dock's new text can change its height, and
+  // the framing must follow in the same frame
+  if (ready) layout();
   syncUrl();
 }
 function refreshDisplayPanel() {
@@ -394,17 +396,49 @@ let workTarget = WORK_TARGET.clone();
 // part of the fold's own motion: it has arrived when the fold has, and Back retraces it.
 const frameCache = new WeakMap<OpAnim, WorkFrame>();
 const opFrame = (anim: OpAnim) => { let f = frameCache.get(anim); if (!f) frameCache.set(anim, f = stepFrame(anim)); return f; };
+/** Where the last drag was let go (the fold then finishes or falls back from there). */
+let scrubRelease: { op: number; t: number } | null = null;
+/**
+ * After a drag is let go to finish the fold, the camera eases over 0.35 s from where
+ * it held still toward the step's frame (which itself follows the rest of the fold).
+ * Released late, the rest of a fold can be a few frames long; the ease keeps the
+ * camera from jumping however little of the fold is left.
+ */
+let releaseGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; start: number } | null = null;
+const RELEASE_GLIDE_MS = 350;
 function workshopFrame(): WorkFrame {
   const pose = controller.pose();
   const a = opFrame(ops[pose.op]);
-  if (pose.pending || pose.op + 1 >= ops.length) return a;
-  return blendFrames(a, opFrame(ops[pose.op + 1]), pose.t);
+  // still while waiting and for the whole of a drag, however far it goes
+  if (pose.pending || pose.op + 1 >= ops.length || controller.isScrubbing) return a;
+  if (scrubRelease && (scrubRelease.op !== pose.op || !controller.moving)) scrubRelease = null;
+  return blendFrames(a, opFrame(ops[pose.op + 1]), pose.t, scrubRelease ? Math.max(0.6, scrubRelease.t) : 0.6);
+}
+/** End a drag of the fold, remembering where it was let go for the camera. */
+function releaseScrub(commit: boolean) {
+  if (!controller.isScrubbing) return;
+  const pose = controller.pose();
+  scrubRelease = { op: pose.op, t: pose.t };
+  // the camera held this step's own frame for the whole drag
+  if (commit && pose.op + 1 < ops.length) releaseGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), start: performance.now() };
+  controller.endScrub(commit);
 }
 /** Recompute the workshop camera pose for the current step (and place it when in the workshop). */
 function frameWorkshop() {
   const f = workshopFrame();
   workTarget = new THREE.Vector3(f.x, WORK_TARGET.y, -f.y); // model (x, y) on the table, in the world
   workCamPos = stage.framePose(workTarget, f.halfW, f.halfH, WORK_DIR);
+  // easing after a release works on the camera itself, so a panel that changes height
+  // as the step changes is eased too
+  if (releaseGlide) {
+    const e = (performance.now() - releaseGlide.start) / RELEASE_GLIDE_MS;
+    if (e >= 1 || controller.isScrubbing || !view.inWorkshop) releaseGlide = null;
+    else {
+      const k = e * e * (3 - 2 * e);
+      workCamPos = releaseGlide.fromPos.clone().lerp(workCamPos, k);
+      workTarget = releaseGlide.fromTarget.clone().lerp(workTarget, k);
+    }
+  }
   if (view.inWorkshop) stage.placeCamera(workCamPos, workTarget);
 }
 let lastDisplayFit = 0;
@@ -754,7 +788,7 @@ function endDrag(e: PointerEvent, cancelled: boolean) {
   const t = controller.pose().t;
   const tap = drag.handle && drag.travel < 6;
   cancelDrag();
-  controller.endScrub(!cancelled && (tap || t > 0.35));
+  releaseScrub(!cancelled && (tap || t > 0.35));
 }
 window.addEventListener('pointerup', (e) => endDrag(e, false));
 window.addEventListener('pointercancel', (e) => endDrag(e, true));

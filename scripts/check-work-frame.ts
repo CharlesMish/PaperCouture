@@ -41,6 +41,26 @@ for (const g of GARMENTS) {
     for (const k of ['x', 'y', 'halfW', 'halfH'] as const) assert(Math.abs(end[k] - b[k]) < 1e-12, `${g.id} step ${i + 1}: arrives at the next frame`);
   }
 }
+// A drag let go at progress t0 (main.ts passes from = max(0.6, t0)): the frame at
+// t0 is still the step's own (no jump at release), it then moves steadily to the next
+// frame at t = 1 if the fold finishes, and stays put if it falls back below t0.
+{
+  const tl = buildTimeline(buildGarment('kimono').ops);
+  const a = stepFrame(tl.ops[6]), b = stepFrame(tl.ops[7]);
+  assert(Math.abs(a.halfW - b.halfW) > 0.5, 'kimono step 7 moves to a much closer frame');
+  for (const t0 of [0.2, 0.6, 0.75, 0.9, 0.99]) {
+    const from = Math.max(0.6, t0);
+    assert.deepEqual(blendFrames(a, b, t0, from), a, `released at ${t0}: no jump`);
+    for (const t of [0, t0 / 2, t0]) assert.deepEqual(blendFrames(a, b, t, from), a, `released at ${t0}, falling back through ${t}: still`);
+    const end = blendFrames(a, b, 1, from);
+    assert(Math.abs(end.halfW - b.halfW) < 1e-12 && Math.abs(end.y - b.y) < 1e-12, `released at ${t0}: arrives`);
+    let last = a.halfW;
+    for (let t = t0; t <= 1; t += 0.01) { const w = blendFrames(a, b, t, from).halfW; assert(w <= last + 1e-12, `released at ${t0}: moves one way`); last = w; }
+  }
+  // the brief glide after a drag pulled to the very end (from = 0, by time)
+  assert.deepEqual(blendFrames(a, b, 0, 0), a);
+  assert(Math.abs(blendFrames(a, b, 1, 0).halfW - b.halfW) < 1e-12);
+}
 assert(closest.kimono >= 1.6, `the kimono's last steps are framed ${closest.kimono}x closer`);
 if (process.argv.includes('--print')) console.log(JSON.stringify(closest, null, 1));
 const zoomed = Object.values(closest).filter((z) => z > 1.05).length;
