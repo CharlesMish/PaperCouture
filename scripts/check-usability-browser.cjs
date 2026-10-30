@@ -101,7 +101,10 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
       const dock = await s.rect('.dock:not([hidden])');
       assert(dock.bottom <= h && dock.top >= 0, `${w}x${h}: dock in view`);
       if (!compact) {
-        assert.equal(await hint.isVisible(), true); assert.equal(await instructions.isVisible(), false);
+        // a long instruction (this squash is one) starts behind Instructions on any screen,
+        // with the title as the cue; a screen with room shows a short one in full
+        const long = (await s.page.locator('.dock.long-hint').count()) > 0;
+        assert.equal(await hint.isVisible(), !long); assert.equal(await instructions.isVisible(), long);
         assert.equal(await s.page.getByRole('button', { name: 'Piece notes', exact: true }).isVisible(), false);
         // on a narrow screen the top controls are one row while folding; the note is under More
         const more = s.page.getByRole('button', { name: 'More', exact: true });
