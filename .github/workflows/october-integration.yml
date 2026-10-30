@@ -82,16 +82,14 @@ jobs:
           npm run preview -- --host 127.0.0.1 --port 5637 --strictPort > /tmp/phone-preview.log 2>&1 &
           for i in {1..30}; do curl -fsS "$BASE_URL/" > /dev/null && break; sleep 1; done
           curl -fsS "$BASE_URL/" > /dev/null
-          # TEMPORARY (PR #40 diagnosis): on failure, report the end of the output as an annotation
-          run() { name=$1; shift; "$@" > /tmp/$name.log 2>&1 || { echo "::error title=$name failed::$(tail -c 1800 /tmp/$name.log | tr '\n' ' ' | tr -s ' ')"; cat /tmp/$name.log; exit 1; }; }
-          run previews npm run check:previews
-          CAPTURE_DIR=.october-qa/chooser run chooser node scripts/check-design-picker-browser.cjs
-          CAPTURE_DIR=.october-qa/phone run phone node scripts/check-phone-journey.cjs
-          CAPTURE_DIR=.october-qa/roomy run roomy node scripts/check-roomy-board.cjs
-          CAPTURE_DIR=.october-qa/presentation run presentation node scripts/check-presentation-browser.cjs
-          CAPTURE_DIR=.october-qa/guides run guides node scripts/check-guide-browser.cjs
-          CAPTURE_DIR=.october-qa/board-review run board-review node scripts/check-board-review-browser.cjs
-          CAPTURE_DIR=.october-qa/stacking run stacking node scripts/check-board-stacking-browser.cjs
+          npm run check:previews
+          CAPTURE_DIR=.october-qa/chooser node scripts/check-design-picker-browser.cjs
+          CAPTURE_DIR=.october-qa/phone node scripts/check-phone-journey.cjs
+          CAPTURE_DIR=.october-qa/roomy node scripts/check-roomy-board.cjs
+          CAPTURE_DIR=.october-qa/presentation node scripts/check-presentation-browser.cjs
+          CAPTURE_DIR=.october-qa/guides node scripts/check-guide-browser.cjs
+          CAPTURE_DIR=.october-qa/board-review node scripts/check-board-review-browser.cjs
+          CAPTURE_DIR=.october-qa/stacking node scripts/check-board-stacking-browser.cjs
       - uses: actions/upload-artifact@v5
         if: always()
         with:
