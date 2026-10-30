@@ -162,6 +162,10 @@ button:focus-visible {
   transition: background-color 0.2s, opacity 0.2s;
 }
 .btn:disabled { opacity: 0.35; }
+/* The step's main action, with Pin to pinboard above it on a finished piece. */
+.dock-actions { display: flex; flex-direction: column; align-items: stretch; gap: 6px; }
+.dock-actions .pin-piece { white-space: normal; line-height: 1.15; max-width: 9.5em; }
+.dock-actions .pin-piece[hidden] { display: none; }
 .btn-quiet {
   border: 1px solid var(--rule);
   background: transparent;

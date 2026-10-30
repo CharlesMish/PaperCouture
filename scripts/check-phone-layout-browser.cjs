@@ -157,17 +157,42 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       await s.settle(); await s.page.waitForTimeout(700); await s.frames();
       for (const r of (await recorded()).cams) assert.deepEqual(r.cam.map((n) => +n.toFixed(6)), A, `${touch ? 'touchcancel' : 'release below the commit point'}: the camera never moves`);
       assert.equal(await s.page.evaluate(() => paperCouture.controller.step), 6, 'the fold fell back');
+      // The next actions follow on without reloading: a release must not shape later motions.
+      const fold = s.page.locator('.dock:not(.display-dock) .btn-primary'), back = s.page.getByRole('button', { name: 'Back', exact: true });
+      const pressed = (b) => touch ? b.tap() : b.click();
+      // 2b. then Fold: the camera moves over the fold's last 40% as usual (not from where the drag was let go)
+      await record(); await pressed(fold); await s.settle(); await s.page.waitForTimeout(400); await s.frames();
+      {
+        const { cams } = await recorded();
+        const mid = cams.filter((r) => r.t >= 0.65 && r.t < 0.88);
+        assert(mid.length > 0, 'frames recorded mid-fold');
+        for (const r of mid) assert(Math.hypot(...r.cam.map((v, i) => v - A[i])) > 0.02 * span, `Fold after a fallen-back drag: the camera moves from 60% of the fold, not from 90% (at t ${r.t.toFixed(2)} it had not moved)`);
+        assert(near(cams.at(-1).cam, B), 'Fold after a fallen-back drag arrives at the next frame');
+      }
+      await pressed(back); await s.settle(); await s.page.waitForTimeout(400); await s.frames();
+      assert.deepEqual(await s.camera(), A, 'Back returns to the step\'s own frame');
       // 3. a drag pulled right to the end: nothing of the fold is left to move with, so a short glide, without a jump
-      if (!touch) {
-        at = 0; await down(); await dragTo(0.999); await still('at the very end of the drag');
-        await record(); await s.page.mouse.up(); await s.settle();
-        await s.page.waitForTimeout(700); await s.frames();
-        await glides('pulled to the end');
+      at = 0; await down(); await dragTo(0.999); await still('at the very end of the drag');
+      await record(); if (touch) await finger('touchEnd'); else await s.page.mouse.up(); await s.settle();
+      await s.page.waitForTimeout(700); await s.frames();
+      await glides(`${touch ? 'touch' : 'mouse'}: pulled to the end`);
+      // 3b. then Back: the camera starts where it is and retraces over the fold's last 40%, without a jump
+      await record(); await pressed(back); await s.settle(); await s.page.waitForTimeout(400); await s.frames();
+      {
+        const { cams } = await recorded();
+        const after = cams.filter((r) => r.t < 0.999);
+        assert(after.length > 0, 'frames recorded during Back');
+        for (const r of after.filter((r) => r.t > 0.62)) {
+          const fromB = Math.hypot(...r.cam.map((v, i) => v - B[i]));
+          const expected = 1 - ease((r.t - 0.6) / 0.4); // the share of the way back to the wider frame
+          assert(fromB <= (expected + 0.08) * span, `Back after a drag pulled to the end: at t ${r.t.toFixed(2)} the camera is ${(fromB / span).toFixed(2)} of the way back already (jumped)`);
+        }
+        assert.deepEqual(await s.camera(), A, 'Back after a drag pulled to the end ends on the step\'s own frame');
       }
       assert.deepEqual(s.errors, []);
       result.checks.push(touch
-        ? 'Kimono step 7 (frame changes to step 8), touch: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on lifting the finger it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; a real touchcancel from 0.9 falls back with the camera never moving.'
-        : 'Kimono step 7 (frame changes to step 8), mouse: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on release it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; dragged to 0.9 and back below the commit point, it falls back with the camera never moving; pulled to the very end, the same ease.');
+        ? 'Kimono step 7 (frame changes to step 8), touch: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on lifting the finger it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; a real touchcancel from 0.9 falls back with the camera never moving; then Fold moves the camera over the fold's last 40% as usual; pulled to the very end, the same ease; then Back retraces without a jump (no reloads between).'
+        : 'Kimono step 7 (frame changes to step 8), mouse: camera still through a drag to 0.45, 0.75, 0.9, back to 0.2 and forward to 0.9; on release it eases from where it held (never ahead of the 0.35 s ease), one way, to the next frame; dragged to 0.9 and back below the commit point, it falls back with the camera never moving; then Fold moves the camera over the fold's last 40% as usual; pulled to the very end, the same ease; then Back retraces without a jump (no reloads between).');
       await s.context.close();
     }
     // --- the folding bar on narrow screens

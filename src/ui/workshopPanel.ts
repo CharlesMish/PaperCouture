@@ -1,6 +1,13 @@
 // Workshop controls. Pure DOM; it is told what to show and reports clicks.
 import { showLength } from '../fold/measure';
 
+/**
+ * An instruction longer than this (as shown) is a sequence for folding real paper,
+ * usually a collapse: the step's title stays as the cue and the full text opens with
+ * Instructions, on any screen.
+ */
+export const LONG_HINT = 240;
+
 export interface PanelView {
   total: number;
   /** completed steps */
@@ -53,7 +60,8 @@ export class WorkshopPanel {
   readonly hintToggle = el('button', 'caption-tool hint-toggle', 'Instructions');
   readonly inspectButton = el('button', 'caption-tool inspect-toggle', 'See this fold');
   readonly undoResetButton = el('button', 'caption-tool undo-reset', 'Undo start over');
-  readonly pinButton = el('button', 'caption-tool pin-piece', 'Pin to pinboard');
+  /** On a finished piece: keep it, as clear a choice as Display beside it. */
+  readonly pinButton = el('button', 'btn btn-quiet pin-piece', 'Pin to pinboard');
   private inspectNote = el('p', 'inspect-note', 'Highlighted: the paper this step moves, drawn through the layers above it. The paper and the view are unchanged.');
   private hintOpen = false;
   /** Instructions sit behind the Instructions button (short screens, or a dock that would crowd the paper). */
@@ -80,11 +88,13 @@ export class WorkshopPanel {
     this.inspectButton.setAttribute('aria-pressed', 'false');
     this.inspectButton.addEventListener('click', h.onInspect);
     const tools = el('div', 'caption-tools');
-    tools.append(this.hintToggle, this.inspectButton, this.undoResetButton, this.pinButton);
+    tools.append(this.hintToggle, this.inspectButton, this.undoResetButton);
     words.append(this.stepNo, this.title, this.hint, this.inspectNote);
     caption.append(words, tools);
     const row = el('div', 'dock-row');
-    row.append(this.back, caption, this.fold);
+    const actions = el('div', 'dock-actions');
+    actions.append(this.pinButton, this.fold);
+    row.append(this.back, caption, actions);
     this.dock.append(this.progress, row);
     this.back.addEventListener('click', h.onBack);
     this.fold.addEventListener('click', h.onFold);
@@ -103,6 +113,8 @@ export class WorkshopPanel {
     this.stepNo.textContent = v.active === null ? 'Finished' : `Step ${v.active + 1} of ${v.total}${v.squareCm ? ` · on a ${showLength(v.squareCm)} square` : ''}`;
     this.title.textContent = v.title;
     this.hint.textContent = v.hint;
+    this.longHint = v.hint.length > LONG_HINT;
+    this.applyCompact();
     this.back.disabled = !v.canBack;
     this.fold.disabled = !v.canFold;
     this.fold.textContent = v.foldLabel;
@@ -114,29 +126,41 @@ export class WorkshopPanel {
     this.dock.classList.toggle('inspecting', v.inspect === 'showing');
     this.undoResetButton.hidden = !v.undoReset;
     this.pinButton.hidden = !v.pin || v.pin === 'off';
-    this.pinButton.textContent = v.pin === 'pinned' ? 'Pinned · open pinboard' : 'Pin to pinboard';
+    this.pinButton.textContent = v.pin === 'pinned' ? 'View on pinboard' : 'Pin to pinboard';
   }
 
   get compact(): boolean { return this.dock.classList.contains('compact'); }
+  /** Compact because of the screen (rather than one long instruction). */
+  private screenCompact = false;
+  /** This step's instruction is long (a collapse, most often): its title is the cue, the rest sits behind Instructions. */
+  private longHint = false;
+  private applyCompact(): void {
+    this.dock.classList.toggle('compact', this.screenCompact || this.longHint);
+    this.dock.classList.toggle('long-hint', this.longHint);
+  }
 
   /**
    * Decide whether the instructions need the Instructions button: always at a
    * height of 540 px or less, and whenever the open dock would take more than 40%
    * of the screen. Once compact at a screen size it stays so until the size
-   * changes, so the dock does not switch back and forth between steps.
+   * changes, so the dock does not switch back and forth between steps. (A step
+   * with a long instruction is compact on any screen; see render.) Returns whether
+   * the screen is cramped, which also decides the piece notes.
    */
   fit(): boolean {
     const size = `${window.innerWidth}x${window.innerHeight}`;
-    if (this.dock.hidden) return this.compact;
+    if (this.dock.hidden) return this.screenCompact;
     if (size !== this.compactFor) {
       this.compactFor = size;
-      this.dock.classList.remove('compact');
+      this.screenCompact = false;
+      this.applyCompact();
     }
-    if (!this.compact) {
-      const tooTall = window.innerHeight <= 540 || this.dock.getBoundingClientRect().height > 0.4 * window.innerHeight;
-      if (tooTall) this.dock.classList.add('compact');
+    if (!this.screenCompact) {
+      // a dock compacted for a long instruction is measured on the next ordinary step
+      const tooTall = window.innerHeight <= 540 || (!this.longHint && this.dock.getBoundingClientRect().height > 0.4 * window.innerHeight);
+      if (tooTall) { this.screenCompact = true; this.applyCompact(); }
     }
-    return this.compact;
+    return this.screenCompact;
   }
 
   /** Keep opened compact instructions below `topLimit` (CSS px from the top): they scroll instead. */

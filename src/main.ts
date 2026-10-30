@@ -57,8 +57,12 @@ const designProgress = new Map<GarmentId, { done: number; total: number }>(
     .map(([id, p]) => [id as GarmentId, { done: p.done, total: p.total }]));
 /** Start over was just pressed from this step: it can be undone until the next fold. */
 let undoStart: number | null = null;
-/** What was last pinned from the finished piece, so the same piece is not pinned twice. */
-let pinnedRecipe: string | null = null;
+/**
+ * The board item last pinned from this finished piece, and what it captured: the
+ * shortcut says "Pinned" only while that item is still on the board (Undo or Remove
+ * take it off) and the piece has not changed since.
+ */
+let pinned: { id: string; recipe: string } | null = null;
 let lastSaved = '';
 function saveWorkshop() {
   const record = JSON.stringify({ search: location.search, progress: [...designProgress] } satisfies SavedWorkshop);
@@ -293,6 +297,8 @@ const positionPanel = new PrintPositionPanel(app, p => {
 });
 const pinboard = new Pinboard(app, {
   workshop: () => { if (!view.inWorkshop) leaveDisplay(); },
+  // the finished piece itself (source 0 in the workshop) was pinned, by the shortcut or on the board
+  pinned: (id, source) => { if (source === 0 && !accessoryMode) pinned = { id, recipe: pinRecipe() }; },
   sources: () => {
     if (!controller.finished || controller.moving) return [];
     draw();
@@ -335,8 +341,8 @@ const picker = new PaperPicker(app, PAPERS, {
 });
 
 const workshopPanel = new WorkshopPanel(app, {
-  onBack: () => controller.prev(),
-  onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
+  onBack: () => { scrubRelease = null; controller.prev(); },
+  onFold: () => { scrubRelease = null; controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next(); },
   onReset: () => {
     cancelDrag();
     const from = controller.step;
@@ -401,7 +407,7 @@ function refreshWorkshopPanel() {
     moving: controller.moving,
     inspect: (lastInspect = inspectState()),
     undoReset: undoStart !== null,
-    pin: !accessoryMode && controller.finished && !controller.moving ? pinnedRecipe === pinRecipe() ? 'pinned' : 'offer' : 'off',
+    pin: !accessoryMode && controller.finished && !controller.moving ? isPinned() ? 'pinned' : 'offer' : 'off',
   });
   // lay out now, not a frame later: the dock's new text can change its height, and
   // the framing must follow in the same frame
@@ -429,6 +435,8 @@ const studio = new StudioControls(app, {
   onNotesOpen: () => workshopPanel.setHintOpen(false),
 });
 studio.root.append(pinboard.launcher);
+// Undo or Remove on the board can take the pinned piece off: the shortcut says so on return
+pinboard.dialog.addEventListener('close', () => refreshWorkshopPanel());
 let unsubscribeController = controller.onChange(refreshWorkshopPanel);
 displayCam.onChange(refreshDisplayPanel);
 refreshWorkshopPanel();
@@ -461,9 +469,11 @@ const RELEASE_GLIDE_MS = 350;
 function workshopFrame(): WorkFrame {
   const pose = controller.pose();
   const a = opFrame(ops[pose.op]);
+  // a release only shapes the motion it started: forget it once that motion is over
+  // (before anything else, so a waiting step cannot keep it for the next fold or Back)
+  if (scrubRelease && !controller.isScrubbing && (scrubRelease.op !== pose.op || !controller.moving)) scrubRelease = null;
   // still while waiting and for the whole of a drag, however far it goes
   if (pose.pending || pose.op + 1 >= ops.length || controller.isScrubbing) return a;
-  if (scrubRelease && (scrubRelease.op !== pose.op || !controller.moving)) scrubRelease = null;
   return blendFrames(a, opFrame(ops[pose.op + 1]), pose.t, scrubRelease ? Math.max(0.6, scrubRelease.t) : 0.6);
 }
 /** End a drag of the fold, remembering where it was let go for the camera. */
@@ -536,12 +546,13 @@ function changeGarment(id: GarmentId) {
 function pinRecipe() {
   return JSON.stringify([location.search, attached && accessoryRoot.visible ? [accessoryId, pinPaper.id, pinTurns, pinPrintPosition, pinPosition, centreAttached, centrePaper.id, centreTurns] : null]);
 }
+const isPinned = () => !!pinned && pinned.recipe === pinRecipe() && pinboard.has(pinned.id);
 /** Pin the finished piece from the workshop in one go; the board opens with it selected. */
 function pinFinishedPiece() {
   if (accessoryMode || !controller.finished || controller.moving) return;
   cancelDrag();
-  if (pinnedRecipe === pinRecipe()) { pinboard.open(); return; }
-  if (pinboard.openAndPin()) pinnedRecipe = pinRecipe();
+  if (isPinned()) { pinboard.open(); return; }
+  pinboard.openAndPin();
   refreshWorkshopPanel();
 }
 function chooseFoldOption(id: DecisionId, value: string) {
@@ -674,14 +685,14 @@ window.addEventListener('keydown', (e) => {
   if (positionPanel.dialog.open || pinboard.dialog.open || e.defaultPrevented) return;
   if (e.target instanceof HTMLElement && e.target.closest('button, select, input, textarea')) return;
   if (view.inWorkshop) {
-    if (e.key === 'ArrowRight') controller.next();
-    else if (e.key === 'ArrowLeft') controller.prev();
+    if (e.key === 'ArrowRight') { scrubRelease = null; controller.next(); }
+    else if (e.key === 'ArrowLeft') { scrubRelease = null; controller.prev(); }
   } else if (view.inDisplay && e.key === 'Escape') {
     leaveDisplay();
   }
 });
 
-const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => controller.next());
+const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => { scrubRelease = null; controller.next(); });
 
 // ---- hidden folds: "See this fold" and grips on paper under other layers
 /** How much of a pending step's moving paper the workshop camera sees, at the waiting pose. */

@@ -51,10 +51,10 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       assert.match(await dress.innerText(), /6 steps · 20 cm square/);
       assert.match(await dialog.locator('[data-design="apron"]').innerText(), /Experimental/);
       assert.doesNotMatch(await dialog.locator('[data-design="kimono"]').innerText(), /Experimental/);
-      assert.match(await dialog.locator('[data-design="kimono"]').innerText(), /Step 3 of 8/, 'a started piece shows how far it got');
+      assert.match(await dialog.locator('[data-design="kimono"]').innerText(), /3 of 8 steps done/, 'a started piece shows how far it got');
       const mittens = dialog.locator('.design-pair', { hasText: 'Mittens' });
       assert.equal(await mittens.locator('button').count(), 2, 'one card, a button for each hand');
-      assert.match(await mittens.innerText(), /Left hand: step 2 of 9/);
+      assert.match(await mittens.innerText(), /Left hand: 2 of 9 steps done/);
       assert.equal(await mittens.locator('[data-design="mitten-left"]').getAttribute('aria-pressed'), 'true');
       assert(await dialog.evaluate((el) => el.scrollWidth <= el.clientWidth), 'no sideways scroll');
       await shot('gallery');
@@ -91,6 +91,15 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       await load('design=dress&step=0');
       assert.match(await page.locator('.step-no').innerText(), /Step 1 of 6 · on a 20 cm square/);
       assert.match(await page.locator('#step-hint').evaluate((e) => e.textContent), /by 2 cm/);
+      if (width >= 1280) assert.equal(await page.locator('#step-hint').isVisible(), true, 'a short instruction shows in full');
+      // a long instruction (a collapse, here): the title is the cue, the sequence opens with Instructions
+      await load('design=coat-dress&step=1');
+      assert.equal(await page.locator('.dock.long-hint').count(), 1);
+      assert.equal(await page.locator('#step-hint').isVisible(), false, 'a long instruction starts behind Instructions');
+      assert.match(await page.locator('.step-title').innerText(), /Collapse both shoulders/);
+      await press(btn('Instructions'));
+      assert.equal(await page.locator('#step-hint').isVisible(), true);
+      await press(btn('Instructions'));
       await load('design=dress&step=6');
       await more();
       assert.equal(await btn('Change side folds').isVisible(), true);
@@ -105,7 +114,7 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       await shot('finished');
       await press(btn('Change side folds')); await settle();
       assert.equal((await state()).step, 2, 'Change side folds goes back to that choice');
-      result.checks.push(`${key}: Rotate print; measurements in cm with the square named; Change buttons; Pinboard (n/12); no developer notes in the toolbar${width >= 1280 ? '; one toolbar row when finished' : ''}.`);
+      result.checks.push(`${key}: Rotate print; measurements in cm with the square named; a long (collapse) instruction behind Instructions with its title as the cue; Change buttons; Pinboard (n/12); no developer notes in the toolbar${width >= 1280 ? '; one toolbar row when finished' : ''}.`);
 
       // Pin to pinboard, once; arranging tools only once something is pinned; sizes capped
       if (await page.locator('.more-toggle').getAttribute('aria-expanded') === 'true') await page.keyboard.press('Escape');
@@ -125,12 +134,32 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       assert.deepEqual(sizes.map(([v]) => v), [16, 20, 21.6]);
       assert.match(sizes[2][1], /21\.6 cm square \(8\.5 in\)/);
       await shot('pinned');
+      assert.match(await board.locator('[role=status]').allInnerTexts().then((t) => t.join(' ')), /Pinned from a 20 cm square, the suggested size/);
       await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
-      assert.equal(await btn('Pinned · open pinboard').isVisible(), true);
-      await press(btn('Pinned · open pinboard'));
-      assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('paper-couture.pinboard.v1')).items.length), 1, 'pressing again opens the board, without pinning twice');
+      const items = () => page.evaluate(() => JSON.parse(localStorage.getItem('paper-couture.pinboard.v1')).items.length);
+      // as clear a choice as Display: a full-size button beside it
+      const [pinBox, displayBox] = [await btn('View on pinboard').boundingBox(), await btn('Display').boundingBox()];
+      assert(pinBox.height >= 44 && displayBox.height >= 44, 'Pin and Display are both full-size buttons');
+      await press(btn('View on pinboard'));
+      assert.equal(await items(), 1, 'pressing again opens the board, without pinning twice');
+      // Undo takes the piece off the board: the shortcut offers to pin it again (Astra's review)
+      await board.getByRole('button', { name: 'Undo', exact: true }).click();
+      assert.equal(await items(), 0);
       await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
-      result.checks.push(`${key}: Pin to pinboard pins once and opens the board; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger.`);
+      assert.equal(await btn('Pin to pinboard').isVisible(), true, 'after Undo the shortcut offers to pin again');
+      // a size chosen earlier for this piece is used, and the message names it (Astra's review)
+      await press(btn('Pin to pinboard'));
+      await board.getByRole('button', { name: 'Undo', exact: true }).click();
+      await board.getByLabel('Starting square size').selectOption('16');
+      await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
+      await press(btn('Pin to pinboard'));
+      await page.waitForFunction(() => JSON.parse(localStorage.getItem('paper-couture.pinboard.v1')).items.length === 1);
+      const status = (await board.locator('[role=status]').allInnerTexts()).join(' ');
+      assert.match(status, /Pinned from a 16 cm square\./, 'the message names the size used');
+      assert.doesNotMatch(status, /suggested/);
+      assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('paper-couture.pinboard.v1')).items[0].paperSize.sideCm), 16);
+      await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
+      result.checks.push(`${key}: Pin to pinboard, a full-size button beside Display, pins once and opens the board; after Undo it offers to pin again; a size chosen earlier is used and named; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger.`);
       await context.close();
     }
     assert.deepEqual(result.errors, []);

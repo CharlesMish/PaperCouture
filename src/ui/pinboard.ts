@@ -6,7 +6,7 @@ import { BoardDecor } from '../board/presentation';
 import { createCorkTexture } from '../board/surfaces';
 import { capture, restore } from '../board/snapshot';
 import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_FORMATS, BoardFormat } from '../board/layout';
-import { describePaperSize, MAX_SQUARE_CM, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
+import { describePaperSize, MAX_SQUARE_CM, PaperSizeSource, type StartingPaperSize, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
 
 export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number; paperSize?: PaperSizeSource }
 
@@ -72,12 +72,14 @@ export class Pinboard {
   private retry: HTMLButtonElement;
   private selectedTools: HTMLButtonElement[] = [];
   private arranging: HTMLElement[] = [];
+  /** The starting paper of the last piece pinned, for its message. */
+  private lastPinned?: StartingPaperSize;
   private drag?: { id: number; x: number; y: number; before: BoardState; moved: boolean } &
     ({ kind: 'paper'; item: string } | { kind: 'guide'; guide: GuideId; start: GuideTransform });
   private tiltBefore?: BoardState;
   private selection = new THREE.Box3Helper(new THREE.Box3(), '#5c4737');
 
-  constructor(parent: HTMLElement, private handlers: { sources(): BoardSource[]; workshop(): void }) {
+  constructor(parent: HTMLElement, private handlers: { sources(): BoardSource[]; workshop(): void; pinned?(id: string, source: number): void }) {
     try { this.state = this.store.load(); }
     catch { this.saveWarning = 'Saved board could not be read. Its data is untouched. New changes may last only in this tab.'; }
     this.dialog.className = 'editor-dialog pinboard-dialog';
@@ -386,8 +388,10 @@ export class Pinboard {
     if (index < 0 || next < 0 || next >= this.state.items.length) return;
     this.mutate(() => { const [item] = this.state.items.splice(index, 1); this.state.items.splice(next, 0, item); });
   }
+  /** Whether this item is on the board (it may have been undone or removed). */
+  has(id: string): boolean { return this.state.items.some(i => i.id === id); }
   private pin(): boolean {
-    const source = this.handlers.sources()[Number(this.source.value)];
+    const index = Number(this.source.value), source = this.handlers.sources()[index];
     if (!source || this.state.items.length >= MAX_PIECES) return false;
     this.focusPaper();
     try {
@@ -400,7 +404,9 @@ export class Pinboard {
         this.state.items.push({ id, title: source.title, snapshot, paperSize, x: offset, y: -offset, tilt: 0 }); this.state.selected = id;
       });
       this.constrain(this.state.selected!); this.persist(); this.refresh(); this.render();
-      this.status.textContent = 'Piece pinned and selected: drag it to arrange it. Return to folding to make another; this one stays as it is.';
+      this.lastPinned = paperSize;
+      this.status.textContent = `Pinned from a ${describePaperSize(paperSize)} and selected: drag it to arrange it. Return to folding to make another; this one stays as it is.`;
+      this.handlers.pinned?.(this.state.selected!, index);
       return true;
     } catch { this.status.textContent = 'This piece could not be pinned. Your existing board is unchanged.'; return false; }
   }
@@ -411,8 +417,9 @@ export class Pinboard {
       this.status.textContent = `The board is full (${MAX_PIECES} pieces). Remove one to pin this piece.`;
       return false;
     }
-    const pinned = this.pin();
-    if (pinned) this.status.textContent = 'Pinned at the suggested paper size. Drag it to arrange it, or Undo to take it off.';
+    const pinned = this.pin(), sizing = this.captureSize();
+    // name the size actually used: the one chosen earlier for this piece, or the suggested one
+    if (pinned && this.lastPinned && sizing) this.status.textContent = `Pinned from a ${describePaperSize(this.lastPinned)}${this.lastPinned.sideCm === sizing.recommendedCm ? ', the suggested size' : ''}. Drag it to arrange it, or Undo to take it off.`;
     return pinned;
   }
   open(): void {

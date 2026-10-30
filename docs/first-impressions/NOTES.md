@@ -29,7 +29,7 @@ newcomer what to do on arrival, which is kept for later. Branch
 - **Mirror pairs share a card:** Ankle boots (Toe left, Toe right) and Mittens (Left
   hand, Right hand). The gallery has 25 cards for 27 designs; the design IDs and
   addresses are unchanged.
-- **Started pieces say how far they got** ("Step 3 of 8", "Folded", or each side of
+- **Started pieces say how far they got** ("3 of 8 steps done", "Folded", or each side of
   a pair).
 - **The Design list is grouped the same way** (Easy, Medium, Advanced).
 
@@ -73,10 +73,16 @@ newcomer what to do on arrival, which is kept for later. Branch
 
 ## Pinning a finished piece
 
-- **A finished piece offers Pin to pinboard** in the dock. One press pins it at its
-  suggested size and opens the board with it selected; Undo takes it off again.
+- **A finished piece offers Pin to pinboard** as a full-size button above Display,
+  so keeping the piece is as clear a choice as displaying it.
+- **One press pins it and opens the board** with it selected. It uses the size
+  chosen earlier for this piece, or else the suggested one, and the message names
+  the size it used. Undo takes it off again.
 - **Pressing again opens the board without pinning twice.** The button then reads
-  "Pinned · open pinboard", until the paper or accessory changes.
+  "View on pinboard".
+- **It goes back to Pin to pinboard** once that item is no longer on the board
+  (Undo or Remove), or the paper or accessory changes. A pin made on the board
+  itself counts too.
 - **An empty board shows only what you can do yet.** The arranging tools (Selected,
   Tilt, the move and layer buttons) appear once something is pinned.
 
@@ -92,6 +98,11 @@ centre line") and, where needed, a measurement.
   piece is suggested for, and says which ("Step 3 of 6 · on a 20 cm square").
 - **Percentages and reviewer notes are gone from the steps.** What a piece lacks
   stays in its notes.
+- **Long instructions wait behind Instructions.** An instruction longer than 240
+  characters (15 of 270, mostly collapses) starts with only its title showing as
+  the cue, on any screen. The full sequence opens with Instructions, and See this
+  fold still highlights what moves. Shorter instructions show in full where there
+  is room.
 - **`npm run check:instructions`** (in `npm test`) covers every design, every fold
   choice and every accessory square:
   - each fold has a real instruction;
@@ -124,6 +135,24 @@ approximate or awkward, or on a judgement nobody has tried in paper:
 
 A folder with real paper should try these first.
 
+## After Astra's review of `a79f1ec`
+
+- **The pin shortcut forgot Undo.** It remembered the last pin rather than the item.
+  It now tracks the item and checks it is still on the board when the board closes.
+- **A release shaped later motions.** The camera remembered where a drag was let
+  go until the next motion on that step. So Back after a drag pulled to the end
+  jumped wider, and Fold after a fallen-back drag waited for 90% before moving.
+  `workshopFrame()` now forgets the release as soon as its motion is over, before
+  anything else, and Fold, Back, the arrow keys and a grip tap start afresh.
+- **Quick pinning named the wrong size.** It now names the size it used.
+- **Gallery progress** says "3 of 8 steps done", not "Step 3 of 8", which read as
+  the step you are on.
+- **From her refinements:** long instructions sit behind Instructions with the title
+  as the cue, and Pin to pinboard is now a full button beside Display. More
+  measurements could also go behind Instructions on every step. That is left until
+  someone has folded with the app, since it hides them from people folding real
+  paper.
+
 ## Checks
 
 - `scripts/check-design-order.ts`, `scripts/check-instructions.ts` (both in
@@ -140,6 +169,12 @@ A folder with real paper should try these first.
   - **Measurements:** shown in cm, with the square named.
   - **Pinning:** Pin to pinboard once and not twice; arranging tools after the
     first pin; sizes capped at 21.6 cm.
+  - **After Astra's review:** after Undo the shortcut offers to pin again; a size
+    chosen earlier is used and named; Pin and Display are both full-size buttons;
+    a collapse's instruction starts behind Instructions.
+- `check-phone-layout-browser.cjs`, extended, by mouse and by touch, with no reloads
+  between steps: Fold after a fallen-back drag moves the camera from 60% as usual;
+  Back after a drag pulled to the end retraces without a jump.
 - Existing checks updated for the new names:
   - Rotate print, Pinboard (n/12) and the Change buttons (`[data-revisit]`).
   - The chooser check, for 25 cards and the new order.

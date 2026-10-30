@@ -112,7 +112,7 @@ export class DesignPicker {
       const parts = ids.flatMap(k => {
         const p = progress.get(k);
         if (!p || p.done <= 0) return [];
-        const where = p.done >= p.total ? 'folded' : `step ${p.done} of ${p.total}`;
+        const where = p.done >= p.total ? 'folded' : `${p.done} of ${p.total} steps done`;
         return [ids.length > 1 ? `${sideName(k)}: ${where}` : where.charAt(0).toUpperCase() + where.slice(1)];
       });
       line.textContent = parts.join(' · ');
