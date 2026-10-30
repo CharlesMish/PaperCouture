@@ -42,7 +42,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.locator('.dock .btn-primary').click();
       // A second press completes this fold; it must not start another one.
       if ((await state()).moving) await p.locator('.dock .btn-primary').click();
-      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     await p.goto(root + '?step=2&paper=cut-paper-mosaic&turn=1');
     await p.waitForFunction(() => window.paperCouture);
@@ -77,7 +77,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     await p.screenshot({ path: `${output}/bow-waist.png` });
     console.log('Checking edit, remove, pin and reset');
     await p.getByRole('button', { name: 'Edit accessory', exact: true }).click();
-    await p.getByRole('button', { name: /^Turn paper/ }).click();
+    await p.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
     await p.getByRole('button', { name: 'Attach', exact: true }).click();
     await p.waitForFunction(() => paperCouture.view.inDisplay);
     assert.equal((await state()).turn, 1); // garment rotation untouched

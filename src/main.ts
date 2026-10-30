@@ -19,20 +19,57 @@ import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
 import { LapelEdges } from './render/lapelEdges';
 import { FoldGuides } from './render/guides';
+import { HiddenPaperOverlay } from './render/hiddenPaper';
+import { blendFrames, stepFrame, type WorkFrame } from './app/workFrame';
+import { HIDDEN_FOLD, movingVisibility, type Visibility } from './fold/visibility';
 import { Stage } from './render/stage';
 import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
 import { WorkshopPanel } from './ui/workshopPanel';
+import { showStartupFailure, watchContextLoss } from './ui/startupFailure';
 import { DisplayPanel } from './ui/displayPanel';
 import { PaperPicker } from './ui/paperPicker';
 import { PrintPositionPanel } from './ui/printPositionPanel';
 import { BoardSource, Pinboard } from './ui/pinboard';
 import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
+import { formatHint, measuresIn } from './fold/measure';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
 
-const params = new URLSearchParams(location.search);
+// A visit with no address state returns to where this device left off (the piece,
+// its paper and step, and how far each design got); the board is saved separately.
+const WORKSHOP_KEY = 'paper-couture.workshop.v1';
+type SavedWorkshop = { search: string; progress: [string, { done: number; total: number }][] };
+const savedWorkshop = ((): SavedWorkshop | null => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(WORKSHOP_KEY) ?? 'null');
+    return saved && typeof saved.search === 'string' && Array.isArray(saved.progress) ? saved : null;
+  } catch { return null; }
+})();
+const params = new URLSearchParams(location.search || savedWorkshop?.search || '');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ready = false;
-const designProgress = new Map<GarmentId, number>();
+/** The step whose moving paper is highlighted; stays set through Back and Fold, so a step can be replayed. */
+let inspectingOp: number | null = null;
+let lastInspect: 'off' | 'offered' | 'showing' = 'off';
+let visibilityCache: { anim: OpAnim; eye: string; v: Visibility } | null = null;
+/** Steps done in each design this visit (and saved on the device). */
+const designProgress = new Map<GarmentId, { done: number; total: number }>(
+  (savedWorkshop?.progress ?? []).filter(([id, p]) => garmentIdFrom(id) === id && Number.isFinite(p?.done) && Number.isFinite(p?.total))
+    .map(([id, p]) => [id as GarmentId, { done: p.done, total: p.total }]));
+/** Start over was just pressed from this step: it can be undone until the next fold. */
+let undoStart: number | null = null;
+/**
+ * The board item last pinned from this finished piece, and what it captured: the
+ * shortcut says "Pinned" only while that item is still on the board (Undo or Remove
+ * take it off) and the piece has not changed since.
+ */
+let pinned: { id: string; recipe: string } | null = null;
+let lastSaved = '';
+function saveWorkshop() {
+  const record = JSON.stringify({ search: location.search, progress: [...designProgress] } satisfies SavedWorkshop);
+  if (record === lastSaved) return;
+  try { localStorage.setItem(WORKSHOP_KEY, record); lastSaved = record; }
+  catch { /* storage unavailable: the address still holds the piece */ }
+}
 function syncUrl() {
   if (!ready || accessoryMode) return;
   const url = new URL(location.href);
@@ -44,6 +81,7 @@ function syncUrl() {
   url.searchParams.set('step', String(controller.step));
   url.searchParams.set('view', view.target === 1 ? 'display' : 'workshop');
   if (url.href !== location.href) history.replaceState(history.state, '', url);
+  saveWorkshop();
 }
 
 // ---- folding data (pure, precomputed once)
@@ -91,7 +129,25 @@ settlePosition();
 // ---- scene
 const app = document.getElementById('app')!;
 const canvas = document.getElementById('stage') as HTMLCanvasElement;
-const stage = new Stage(canvas);
+function startStage(): Stage {
+  try {
+    return new Stage(canvas);
+  } catch (error) {
+    // No WebGL: say so, offer to retry, show the finished pieces flat; stop here.
+    showStartupFailure(app, error);
+    throw error;
+  }
+}
+const stage = startStage();
+// The address holds only the main piece (syncUrl skips accessory mode), so say
+// exactly what a reload keeps.
+watchContextLoss(app, canvas, () => {
+  const full = savedGarment?.construction.name ?? construction.name;
+  const name = full.charAt(0).toLowerCase() + full.slice(1);
+  if (accessoryMode) return `Reloading keeps the ${name} and its step, but not the accessory you are folding: that starts again.`;
+  if (attached) return `Reloading keeps the ${name} and its step, but not the attached accessory: it would need folding again.`;
+  return `Reloading keeps the ${name}, its paper and its step.`;
+});
 
 const frontMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
 const backMat = new THREE.MeshStandardMaterial({ roughness: 0.9, metalness: 0 });
@@ -99,7 +155,8 @@ const sheet = new SheetView(frontMat, backMat);
 const guides = new FoldGuides();
 const lapelEdges = new LapelEdges();
 stage.modelRoot.add(lapelEdges.lines);
-stage.modelRoot.add(sheet.group, guides.group);
+const hiddenPaper = new HiddenPaperOverlay();
+stage.modelRoot.add(sheet.group, guides.group, hiddenPaper.group);
 const pinFront = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinBack = new THREE.MeshStandardMaterial({ roughness: 0.9 });
 const pinSheet = new SheetView(pinFront, pinBack);
@@ -240,6 +297,8 @@ const positionPanel = new PrintPositionPanel(app, p => {
 });
 const pinboard = new Pinboard(app, {
   workshop: () => { if (!view.inWorkshop) leaveDisplay(); },
+  // the finished piece itself (source 0 in the workshop) was pinned, by the shortcut or on the board
+  pinned: (id, source) => { if (source === 0 && !accessoryMode) pinned = { id, recipe: pinRecipe() }; },
   sources: () => {
     if (!controller.finished || controller.moving) return [];
     draw();
@@ -276,15 +335,33 @@ const picker = new PaperPicker(app, PAPERS, {
   },
   onPosition: () => {
     cancelDrag();
-    if (controller.isScrubbing) controller.endScrub(false);
+    releaseScrub(false);
     positionPanel.open();
   },
 });
 
 const workshopPanel = new WorkshopPanel(app, {
-  onBack: () => controller.prev(),
-  onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
-  onReset: () => { cancelDrag(); controller.reset(); },
+  onBack: () => { scrubRelease = null; controller.prev(); },
+  onFold: () => { scrubRelease = null; controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next(); },
+  onReset: () => {
+    cancelDrag();
+    const from = controller.step;
+    controller.reset();
+    // remembered after the reset, which itself clears a pending undo
+    if (from > 0) { undoStart = from; refreshWorkshopPanel(); }
+  },
+  onUndoReset: () => {
+    if (undoStart === null || controller.step !== 0) return;
+    const step = undoStart; undoStart = null;
+    controller.jumpTo(step); layout();
+  },
+  onPin: () => pinFinishedPiece(),
+  onHintOpen: () => studio.setNotesOpen(false),
+  onInspect: () => {
+    const a = controller.activeOp;
+    inspectingOp = a !== null && inspectingOp !== a ? a : null;
+    refreshWorkshopPanel();
+  },
 });
 
 const displayPanel = new DisplayPanel(app, {
@@ -301,27 +378,47 @@ const displayPanel = new DisplayPanel(app, {
 const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
 function refreshWorkshopPanel() {
   const decisions = garmentDecisions(garmentId);
-  const revisit = controller.moving ? [] : decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
+  if (!accessoryMode) designProgress.set(garmentId, { done: controller.step, total: ops.length });
+  studio.setProgress(designProgress);
+  // Start over can be undone until the paper moves again
+  if (undoStart !== null && (controller.step !== 0 || controller.moving || controller.isScrubbing)) undoStart = null;
+  // Revisit stays in place while a fold moves (disabled, and revisitFold() refuses):
+  // hiding it changed the controls' height and so the framing, mid-fold.
+  const revisit = decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
   const available = ACCESSORIES.filter(a => accessoryAnchors(a.id, garmentAnchors()).length > 0).map(a => a.id);
-  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available);
+  studio.render(garmentId, accessoryMode, controller.finished, attached, pinPosition, accessoryId, bowWing, revisit, placementAnchors(), available, controller.moving);
   const bowReady = accessoryId === 'bow' && bowWing === 1 && savedPinStep === pinTimeline.ops.length;
   studio.renderCentre(!accessoryMode && controller.finished && bowReady && available.includes('bow'), savedCentreStep === centreTimeline.ops.length, centreAttached, editingCentre);
   const decision = !accessoryMode && !controller.moving ? decisions.find(d => decisionStep(construction, d) === controller.step) : undefined;
   shapeChoices.render(decision, garmentOptions, value => buildGarment(garmentId, selectOption(garmentOptions, decision!, value)));
   const a = controller.activeOp;
   const op = a === null ? null : ops[a].op;
+  const squareCm = suggestedSquareCm();
   workshopPanel.render({
     total: ops.length,
     done: controller.step,
     active: a,
     title: op ? op.title : `${construction.name} is folded`,
-    hint: op ? op.hint : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : available.length ? 'Put it on display, or fold an optional paper accessory.' : 'Put it on display to inspect the front, back and edges.',
+    squareCm: op && measuresIn(op.hint).length ? squareCm : undefined,
+    hint: op ? formatHint(op.hint, squareCm) : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : available.length ? 'Put it on display, pin it to your pinboard, or fold an optional paper accessory.' : 'Put it on display to see the front, back and edges, or pin it to your pinboard.',
     foldLabel: controller.finished ? accessoryMode ? editingCentre ? 'Attach centre' : accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
+    inspect: (lastInspect = inspectState()),
+    undoReset: undoStart !== null,
+    pin: !accessoryMode && controller.finished && !controller.moving ? isPinned() ? 'pinned' : 'offer' : 'off',
   });
+  // lay out now, not a frame later: the dock's new text can change its height, and
+  // the framing must follow in the same frame
+  if (ready) layout();
   syncUrl();
+}
+/** The square the piece being folded is suggested for, in cm (what its instructions measure on). */
+function suggestedSquareCm(): number {
+  if (!accessoryMode) return recommendedSquareCm(garmentId);
+  const side = REFERENCE_SQUARE_CM * findAccessory(accessoryId).pieces[0].scale * attachmentSize(garmentId) * (editingCentre ? .85 : 1);
+  return Math.round(side * recommendedSquareCm(garmentId) / REFERENCE_SQUARE_CM * 100) / 100;
 }
 function refreshDisplayPanel() {
   displayPanel.render(`${construction.name} · ${paper.name}`, displayCam.turntable);
@@ -335,8 +432,11 @@ const studio = new StudioControls(app, {
   onPosition: (p) => { pinPosition = p; refreshWorkshopPanel(); },
   onCentre: editCentre,
   onCentreToggle: () => { centreAttached = !centreAttached; refreshWorkshopPanel(); layout(); },
+  onNotesOpen: () => workshopPanel.setHintOpen(false),
 });
 studio.root.append(pinboard.launcher);
+// Undo or Remove on the board can take the pinned piece off: the shortcut says so on return
+pinboard.dialog.addEventListener('close', () => refreshWorkshopPanel());
 let unsubscribeController = controller.onChange(refreshWorkshopPanel);
 displayCam.onChange(refreshDisplayPanel);
 refreshWorkshopPanel();
@@ -348,6 +448,68 @@ applyCentrePaper();
 const WORK_TARGET = new THREE.Vector3(0, 0.08, 0);
 const WORK_DIR = new THREE.Vector3(0, Math.sin(THREE.MathUtils.degToRad(57)), Math.cos(THREE.MathUtils.degToRad(57)));
 let workCamPos = new THREE.Vector3();
+let workTarget = WORK_TARGET.clone();
+
+// The workshop camera frames the paper the current step involves (src/app/workFrame.ts).
+// A step's frame covers its whole motion, so the camera holds still while a fold
+// waits and while it is dragged, and moves to the next step's frame only in the last
+// part of the fold's own motion: it has arrived when the fold has, and Back retraces it.
+const frameCache = new WeakMap<OpAnim, WorkFrame>();
+const opFrame = (anim: OpAnim) => { let f = frameCache.get(anim); if (!f) frameCache.set(anim, f = stepFrame(anim)); return f; };
+/** Where the last drag was let go (the fold then finishes or falls back from there). */
+let scrubRelease: { op: number; t: number } | null = null;
+/**
+ * The camera eases over 0.35 s from where it is toward where it should be:
+ * - after a drag is let go to finish the fold (released late, the rest of a fold can
+ *   be a few frames long; the ease keeps the camera from jumping however little of
+ *   the fold is left);
+ * - when the controls around the paper change size (a step's dock is taller or
+ *   shorter than the last one's, as when a long instruction waits behind
+ *   Instructions), so the framing never jumps with them.
+ */
+// Timed in animation seconds (the capped frame steps the folds themselves advance by),
+// so on a slow machine the ease and the fold keep pace with each other.
+let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; elapsed: number } | null = null;
+const GLIDE_S = 0.35;
+const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), elapsed: 0 }; };
+function workshopFrame(): WorkFrame {
+  const pose = controller.pose();
+  const a = opFrame(ops[pose.op]);
+  // a release only shapes the motion it started: forget it once that motion is over
+  // (before anything else, so a waiting step cannot keep it for the next fold or Back)
+  if (scrubRelease && !controller.isScrubbing && (scrubRelease.op !== pose.op || !controller.moving)) scrubRelease = null;
+  // still while waiting and for the whole of a drag, however far it goes
+  if (pose.pending || pose.op + 1 >= ops.length || controller.isScrubbing) return a;
+  return blendFrames(a, opFrame(ops[pose.op + 1]), pose.t, scrubRelease ? Math.max(0.6, scrubRelease.t) : 0.6);
+}
+/** End a drag of the fold, remembering where it was let go for the camera. */
+function releaseScrub(commit: boolean) {
+  if (!controller.isScrubbing) return;
+  const pose = controller.pose();
+  scrubRelease = { op: pose.op, t: pose.t };
+  // the camera held this step's own frame for the whole drag
+  if (commit && pose.op + 1 < ops.length) startGlide();
+  controller.endScrub(commit);
+}
+/** Recompute the workshop camera pose for the current step (and place it when in the workshop). */
+function frameWorkshop() {
+  const f = workshopFrame();
+  workTarget = new THREE.Vector3(f.x, WORK_TARGET.y, -f.y); // model (x, y) on the table, in the world
+  workCamPos = stage.framePose(workTarget, f.halfW, f.halfH, WORK_DIR);
+  // the ease works on the camera itself, so whatever moves the target meanwhile is eased too
+  if (cameraGlide) {
+    const e = cameraGlide.elapsed / GLIDE_S;
+    // a drag holds the camera where it is, part-way through the ease if need be (it
+    // resumes, or a release starts a new one, after the drag)
+    if (e >= 1 || !view.inWorkshop) cameraGlide = null;
+    else {
+      const k = e * e * (3 - 2 * e);
+      workCamPos = cameraGlide.fromPos.clone().lerp(workCamPos, k);
+      workTarget = cameraGlide.fromTarget.clone().lerp(workTarget, k);
+    }
+  }
+  if (view.inWorkshop) stage.placeCamera(workCamPos, workTarget);
+}
 let lastDisplayFit = 0;
 /** The display end of the camera transition: default front view going in, wherever the user left it coming out. */
 const displayCamPos = new THREE.Vector3();
@@ -367,6 +529,8 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   cancelDrag();
   unsubscribeController();
   construction = next; timeline = nextTimeline; ops = timeline.ops; lastOp = ops[ops.length - 1];
+  inspectingOp = null; visibilityCache = null;
+  undoStart = null;
   controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : ops[i].op.kind === 'collapse' ? 2.6 : 1.15) * (reducedMotion ? 0.6 : 1));
   unsubscribeController = controller.onChange(refreshWorkshopPanel);
   frame = undefined;
@@ -380,10 +544,23 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
 }
 function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
-  designProgress.set(garmentId, controller.step);
   garmentId = id;
+  const resume = designProgress.get(id)?.done ?? 0;
   replaceConstruction(buildGarment(id, garmentOptions));
-  controller.jumpTo(designProgress.get(id) ?? 0);
+  controller.jumpTo(resume);
+}
+/** What a pin of the finished piece would capture: the piece, its paper and its accessory. */
+function pinRecipe() {
+  return JSON.stringify([location.search, attached && accessoryRoot.visible ? [accessoryId, pinPaper.id, pinTurns, pinPrintPosition, pinPosition, centreAttached, centrePaper.id, centreTurns] : null]);
+}
+const isPinned = () => !!pinned && pinned.recipe === pinRecipe() && pinboard.has(pinned.id);
+/** Pin the finished piece from the workshop in one go; the board opens with it selected. */
+function pinFinishedPiece() {
+  if (accessoryMode || !controller.finished || controller.moving) return;
+  cancelDrag();
+  if (isPinned()) { pinboard.open(); return; }
+  pinboard.openAndPin();
+  refreshWorkshopPanel();
 }
 function chooseFoldOption(id: DecisionId, value: string) {
   const decision = garmentDecisions(garmentId).find(d => d.id === id);
@@ -482,10 +659,24 @@ function insets() {
   return { top: Math.max(p.top, studio.topInset(), mobile ? 44 : 56), left: p.left, right: 0, bottom };
 }
 
+let lastInsetKey = '';
+/** The first frame has been drawn (layout changes from then on are seen). */
+let drawn = false;
+/** Narrow screens, in the workshop (folding an accessory keeps the full controls, with Back to garment). */
+const foldingBar = () => window.innerWidth < 720 && view.target === 0 && !accessoryMode;
 function layout() {
+  studio.setFoldingBar(foldingBar());
+  // a cramped screen keeps instructions and construction notes one tap away
+  studio.setCompactNotes(workshopPanel.fit());
+  workshopPanel.setHintRoom(Math.max(studio.root.getBoundingClientRect().bottom, picker.insets().top));
   stage.resize();
-  stage.setInsets(insets());
-  workCamPos = stage.framePose(WORK_TARGET, 1.3, 1.08, WORK_DIR);
+  const inset = insets(), insetKey = JSON.stringify(inset);
+  // the controls around the paper changed size in the workshop: ease to the new framing
+  // (not before the first frame is drawn: at start-up there is nothing on screen to jump)
+  if (ready && drawn && view.inWorkshop && lastInsetKey && insetKey !== lastInsetKey && !controller.isScrubbing) startGlide();
+  lastInsetKey = insetKey;
+  stage.setInsets(inset);
+  frameWorkshop();
   displayCam.updateLimits();
   const fit = displayCam.defaultDistance();
   if (lastDisplayFit > 0 && Math.abs(fit - lastDisplayFit) > 1e-6) {
@@ -496,7 +687,8 @@ function layout() {
     else displayCamPos.sub(displayCam.target).multiplyScalar(ratio).add(displayCam.target);
   }
   lastDisplayFit = fit;
-  if (view.inWorkshop) stage.placeCamera(workCamPos, WORK_TARGET);
+  // whether a step's paper is hidden depends on where the camera ended up
+  if (ready && inspectState() !== lastInspect) refreshWorkshopPanel();
 }
 new ResizeObserver(layout).observe(app);
 new ResizeObserver(layout).observe(studio.root);
@@ -508,20 +700,41 @@ window.addEventListener('keydown', (e) => {
   if (positionPanel.dialog.open || pinboard.dialog.open || e.defaultPrevented) return;
   if (e.target instanceof HTMLElement && e.target.closest('button, select, input, textarea')) return;
   if (view.inWorkshop) {
-    if (e.key === 'ArrowRight') controller.next();
-    else if (e.key === 'ArrowLeft') controller.prev();
+    if (e.key === 'ArrowRight') { scrubRelease = null; controller.next(); }
+    else if (e.key === 'ArrowLeft') { scrubRelease = null; controller.prev(); }
   } else if (view.inDisplay && e.key === 'Escape') {
     leaveDisplay();
   }
 });
 
-const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => controller.next());
+const foldHandles = new FoldHandles(app, (event, piece) => startDrag(event, piece, true), () => { scrubRelease = null; controller.next(); });
+
+// ---- hidden folds: "See this fold" and grips on paper under other layers
+/** How much of a pending step's moving paper the workshop camera sees, at the waiting pose. */
+function pendingVisibility(anim: OpAnim): Visibility | null {
+  if (anim.op.kind === 'turn' || !view.inWorkshop) return null;
+  stage.modelRoot.updateMatrixWorld();
+  const eye = stage.modelRoot.worldToLocal(workCamPos.clone());
+  const key = eye.toArray().map(n => n.toFixed(2)).join(',');
+  if (visibilityCache?.anim !== anim || visibilityCache.eye !== key) {
+    visibilityCache = { anim, eye: key, v: movingVisibility(anim, evaluateFrame(anim, pendingT(anim)), [eye.x, eye.y, eye.z]) };
+  }
+  return visibilityCache.v;
+}
+function inspectState(): 'off' | 'offered' | 'showing' {
+  const a = controller.activeOp;
+  if (!ready || a === null) return 'off';
+  if (inspectingOp === a) return 'showing';
+  const v = pendingVisibility(ops[a]);
+  return v && v.fraction < HIDDEN_FOLD ? 'offered' : 'off';
+}
 
 // ---- pose evaluation
 const PEEK_FOLD = 8; // degrees the pending flap lifts while waiting
 const PEEK_TURN = 4;
 const PEEK_COLLAPSE = 0; // the tint shows what moves; a peek would lift the paper over the guides
 const tForAngle = (deg: number) => Math.acos(1 - 2 * (deg / 180)) / Math.PI;
+const pendingT = (a: OpAnim) => tForAngle(a.op.kind === 'turn' ? PEEK_TURN : a.op.kind === 'collapse' ? PEEK_COLLAPSE : PEEK_FOLD);
 let frame: Mat34 | undefined;
 const movingPieces = (a: OpAnim) => new Set(a.pieces.filter((p) => p.spec >= 0).map((p) => p.index));
 const ease = (t: number) => 0.5 - 0.5 * Math.cos(Math.PI * t);
@@ -539,12 +752,13 @@ function placePiece() {
   stand.setOpacity(smooth(0.55, 1, e));
   stage.backLight.intensity = 1.9 * e;
   if (!view.inWorkshop && !view.inDisplay) {
-    const target = WORK_TARGET.clone().lerp(displayCam.target, e);
+    const target = workTarget.clone().lerp(displayCam.target, e);
     stage.placeCamera(workCamPos.clone().lerp(displayCamPos, e), target);
   }
 }
 
 function draw() {
+  if (view.inWorkshop) frameWorkshop();
   studySeams.visible = accessoryMode && controller.finished;
   // An accessory whose positions this garment lacks (a neckerchief on a
   // skirt) stays folded and stored, but is not shown until it fits again.
@@ -558,7 +772,7 @@ function draw() {
   const anim = ops[pose.op];
   sheet.setAnim(anim);
   const workshop = view.inWorkshop;
-  const t = pose.pending && workshop ? tForAngle(anim.op.kind === 'turn' ? PEEK_TURN : anim.op.kind === 'collapse' ? PEEK_COLLAPSE : PEEK_FOLD) : pose.t;
+  const t = pose.pending && workshop ? pendingT(anim) : pose.t;
   frame = evaluateFrame(anim, t, frame);
   sheet.pose(frame);
   const lapels = new Set(timeline.states[pose.op + 1].facets.filter(f => f.tags.some(t => t.startsWith('vest-lapel-'))).map(f => f.id));
@@ -569,6 +783,8 @@ function draw() {
     guides.show(anim, anim.maxPreZ + LAYER_GAP);
     guides.group.position.z = frameLift(anim); // stay with paper that rises off the table
   } else guides.hide();
+  if (workshop && inspectingOp === pose.op && anim.op.kind !== 'turn' && (pose.pending || controller.moving || controller.isScrubbing)) hiddenPaper.show(anim, frame);
+  else hiddenPaper.hide();
   updateFoldHandles(anim, frame, preview);
   stage.render();
 }
@@ -618,6 +834,15 @@ function foldDirection(anim: OpAnim, spec: number): THREE.Vector2 {
 }
 function updateFoldHandles(anim: OpAnim, M: Mat34, preview: boolean) {
   const targets: FoldTarget[] = [];
+  // paper under other layers gets a grip of its own, one per moving part
+  const hidden = preview && !controller.isScrubbing ? pendingVisibility(anim) : null;
+  if (hidden) for (const [spec, g] of hidden.groups) {
+    if (g.fraction >= HIDDEN_FOLD) continue;
+    // the anchor was measured at the waiting pose, which is the pose shown while previewing
+    const screen = toScreen(new THREE.Vector3(...g.anchor));
+    const vector = foldDirection(anim, spec);
+    targets.push({ piece: g.piece, x: screen.x, y: screen.y, vx: vector.x, vy: vector.y, label: anim.op.kind === 'collapse' ? 'Move the hidden paper' : 'Fold the hidden paper' });
+  }
   if (preview && anim.op.kind === 'fold') {
     for (const piece of anim.pieces) {
       if (piece.spec < 0) continue;
@@ -654,7 +879,7 @@ function endDrag(e: PointerEvent, cancelled: boolean) {
   const t = controller.pose().t;
   const tap = drag.handle && drag.travel < 6;
   cancelDrag();
-  controller.endScrub(!cancelled && (tap || t > 0.35));
+  releaseScrub(!cancelled && (tap || t > 0.35));
 }
 window.addEventListener('pointerup', (e) => endDrag(e, false));
 window.addEventListener('pointercancel', (e) => endDrag(e, true));
@@ -672,7 +897,7 @@ if (params.get('view') === 'display' && controller.finished) {
   displayCam.setEnabled(true);
 }
 ready = true;
-syncUrl();
+refreshWorkshopPanel(); // offers "See this fold" now the camera is placed
 
 // ---- loop
 let last = performance.now();
@@ -682,11 +907,13 @@ function tick(now: number) {
   if (!pinboard.dialog.open) {
     if (!positionPanel.dialog.open) {
       controller.update(dt);
+      if (cameraGlide && !controller.isScrubbing) cameraGlide.elapsed += dt;
       view.update(dt);
       placePiece();
       if (view.inDisplay) displayCam.update(dt);
     }
     draw();
+    drawn = true;
   }
   requestAnimationFrame(tick);
 }
@@ -721,6 +948,10 @@ Object.assign(window, {
     get pinPrintPosition() { return { ...pinPrintPosition }; },
     get centrePrintPosition() { return { ...centrePrintPosition }; },
     sheet,
+    hiddenPaper,
+    get inspectingOp() { return inspectingOp; },
+    /** The workshop camera is easing (after a release, or to a new framing when the controls change size). */
+    get cameraSettling() { return cameraGlide !== null; },
     pinboard,
     pinSheet,
     view,

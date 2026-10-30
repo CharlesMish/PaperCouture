@@ -1,0 +1,18 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "1280x800: Browse pieces in Easy/Medium/Advanced, Dress first with Start here, experimental tags, pairs on one card, progress shown; design list grouped the same way.",
+    "1280x800: a visit with no address state resumes the piece, paper and step; each design resumes where it was.",
+    "1280x800: Start over offers Undo start over, which restores the step; folding again removes the offer.",
+    "1280x800: Rotate print; measurements in cm with the square named; Change buttons; Pinboard (n/12); no developer notes in the toolbar; one toolbar row when finished.",
+    "1280x800: Pin to pinboard pins once and opens the board; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger.",
+    "390x844: Browse pieces in Easy/Medium/Advanced, Dress first with Start here, experimental tags, pairs on one card, progress shown; design list grouped the same way.",
+    "390x844: a visit with no address state resumes the piece, paper and step; each design resumes where it was.",
+    "390x844: Start over offers Undo start over, which restores the step; folding again removes the offer.",
+    "390x844: Rotate print; measurements in cm with the square named; Change buttons; Pinboard (n/12); no developer notes in the toolbar.",
+    "390x844: Pin to pinboard pins once and opens the board; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger."
+  ],
+  "errors": [],
+  "physicalPhoneTested": false,
+  "passed": true
+}

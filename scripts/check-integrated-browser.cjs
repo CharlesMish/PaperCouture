@@ -1,10 +1,10 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=process.env.BASE_URL||'http://127.0.0.1:5173/',out=process.env.OUT||path.join(__dirname,'browser');fs.mkdirSync(out,{recursive:true});
 (async()=>{const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});const c=await b.newContext({viewport:{width:1100,height:800},hasTouch:true,reducedMotion:'reduce'}),p=await c.newPage();p.setDefaultTimeout(45000);const r={base,errors:[],badResponses:[],checks:[]};p.on('pageerror',e=>r.errors.push(String(e)));p.on('response',x=>{if(x.status()>=400)r.badResponses.push([x.url(),x.status()])});
-const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
 const shot=n=>p.screenshot({path:path.join(out,n+'.png')});const btn=n=>p.getByRole('button',{name:n,exact:true});
-const fold=async()=>{const s=await p.evaluate(()=>paperCouture.controller.step);await p.locator('.dock:not([hidden]) .btn-primary').click();if(process.env.SMOKE_ONLY&&await p.evaluate(()=>paperCouture.controller.moving))await p.locator('.dock:not([hidden]) .btn-primary').click();await p.waitForFunction(s=>paperCouture.controller.step===s+1&&!paperCouture.controller.moving,s)};
+const fold=async()=>{const s=await p.evaluate(()=>paperCouture.controller.step);await p.locator('.dock:not([hidden]) .btn-primary').click();if(process.env.SMOKE_ONLY&&await p.evaluate(()=>paperCouture.controller.moving))await p.locator('.dock:not([hidden]) .btn-primary').click();await p.waitForFunction(s=>paperCouture.controller.step===s+1&&!paperCouture.controller.moving&&!paperCouture.cameraSettling,s)};
 const finish=async()=>{while(await p.evaluate(()=>!paperCouture.controller.finished))await fold()};
 try{
 await p.goto(base);await settle();await p.evaluate(()=>localStorage.setItem('__astra_synthetic_save','keep'));
@@ -20,7 +20,7 @@ for(const id of ['apron','clutch','tunic']){
  await btn('Display').click();await settle();
  for(let q=0;q<(process.env.SMOKE_ONLY?1:4);q++){
   for(const view of ['Front','Angle','Back']){await btn(view).click();await settle();await shot(`${id}-turn${q}-${view}`)}
-  await p.getByRole('button',{name:/^Turn paper \(now /}).click();await settle();
+  await p.getByRole('button',{name:/^(?:Rotate print|Turn paper) \(now /}).click();await settle();
  }
  await btn('Reset view').click();await settle();
  if(!process.env.SMOKE_ONLY){const names=await p.getByRole('radio').evaluateAll(xs=>xs.map(x=>x.getAttribute('aria-label')));for(const name of names){await p.getByRole('radio',{name,exact:true}).click();await p.waitForTimeout(40);assert.equal(await p.getByRole('radio',{name,exact:true}).getAttribute('aria-checked'),'true')}r.checks.push(id+': '+names.length+' visible papers rendered')}
@@ -36,7 +36,9 @@ for(const size of [{width:390,height:844},{width:844,height:390}]){
  await p.setViewportSize(size);
  for(const id of ['apron','clutch','tunic']){
   await p.getByLabel('Garment design').selectOption(id);await settle();await finish();await p.getByRole('radio',{name:'Pinstripe and lining',exact:true}).click();await btn('Display').click();await settle();await btn('Front').click();await settle();await shot(`${id}-${size.width}-front`);
-  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),size.width);assert(await p.locator('.experiment-note').isVisible());
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),size.width);
+  // a short screen keeps the construction notes one tap away (Piece notes)
+  const notes=p.getByRole('button',{name:'Piece notes',exact:true});if(size.height<=540){assert(!(await p.locator('.experiment-note').isVisible()));await notes.click();}assert(await p.locator('.experiment-note').isVisible());if(size.height<=540)await notes.click();
   const free=await p.evaluate(()=>{const a=document.querySelector('.studio-controls').getBoundingClientRect(),b=document.querySelector('.display-dock').getBoundingClientRect();return b.top-a.bottom});assert(free>80,`no usable display area: ${free}`);
   await btn('Back').click();await settle();await shot(`${id}-${size.width}-back`);
  }

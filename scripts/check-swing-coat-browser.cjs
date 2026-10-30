@@ -1,6 +1,6 @@
 const checkCapacity = require('./board-capacity.cjs');
 // Isolated local contexts only; never reads the owner's browser/profile/save.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5637';
 const out = process.env.CAPTURE_DIR || 'docs/swing-coat/evidence/browser';
@@ -13,12 +13,12 @@ const key = 'paper-couture.pinboard.v1';
   const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce',acceptDownloads:true});
   const page=await context.newPage();page.setDefaultTimeout(30000);page.on('pageerror',e=>result.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text())});
   const btn=name=>page.getByRole('button',{name,exact:true});
-  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   const state=()=>page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,turn:paperCouture.quarterTurns,position:paperCouture.printPosition}));
   const load=async q=>{const r=await page.goto(base+'/?'+q);assert(r.ok());await settle()};
   const advance=async()=>{const before=(await state()).step;await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await settle();assert.equal((await state()).step,before+1)};
   const back=async()=>{const before=(await state()).step;await btn('Back').click();if(await page.evaluate(()=>paperCouture.controller.moving))await btn('Back').click();await settle();assert.equal((await state()).step,before-1)};
-  const open=()=>page.getByRole('button',{name:/^View board/}).click();
+  const open=()=>openBoard(page);
   const board=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
   const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
   const view=async name=>{await btn(name).click();await settle()};
@@ -52,7 +52,7 @@ const key = 'paper-couture.pinboard.v1';
   }
   await page.getByRole('radio',{name:'Reed study',exact:true}).click();
   for(let q=0;q<4;q++){
-   while((await state()).turn!==q)await page.getByRole('button',{name:/^Turn paper/}).click();
+   while((await state()).turn!==q)await page.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
    await btn('Position print').click();await btn('Reset print').click();await btn('Done').click();assert.deepEqual((await state()).position,{x:0,y:0});
    for(const v of['Front','Back']){await view(v);await shot(`reed-${q}-original-${v.toLowerCase()}`)}
    await btn('Position print').click();for(let n=0;n<4;n++){await btn('Right').click();await btn('Down').click()}await btn('Done').click();assert.deepEqual((await state()).position,{x:.125,y:-.125});
@@ -64,7 +64,7 @@ const key = 'paper-couture.pinboard.v1';
   // all four turns without changing completed material or print coordinates.
   await page.getByRole('radio',{name:'Reverse garden',exact:true}).click();
   for(let q=0;q<4;q++){
-   while((await state()).turn!==q)await page.getByRole('button',{name:/^Turn paper/}).click();
+   while((await state()).turn!==q)await page.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
    for(const v of['Front','Back']){await view(v);await shot(`garden-${q}-${v.toLowerCase()}`)}
    assert.equal(await page.evaluate(()=>JSON.stringify(paperCouture.timeline.states.at(-1).facets)),geometry);
   }

@@ -41,7 +41,8 @@
 import type { CollapseCrease, CollapseRegion, CollapseSpec, HalfPlane } from './collapse';
 import type { Construction } from './construction';
 import { FoldError, FoldSpec, Op } from './engine';
-import { Vec2, v2 } from './geometry';
+import { Vec2, v2, applyAffine, reflectionAcross, sub } from './geometry';
+import { cm, lineMeet } from './measure';
 
 export type GownSide = 'print' | 'reverse';
 
@@ -221,9 +222,38 @@ export function gownWaistSpec(p: GownParams = DEFAULT_GOWN): CollapseSpec {
   };
 }
 
+/** Measurements for the instructions, from the same numbers that place the creases
+ * (on the paper as it lies for each step; the side edge is the cupboard fold). */
+export function gownLandmarks(p: GownParams = DEFAULT_GOWN) {
+  const g = gownGeometry(p);
+  const bottom = -1 + p.hem, across = v2(1, 0);
+  // the bodice side crease, extended, meets the bottom edge here (a line to fold along)
+  const aim = lineMeet(g.P, sub(g.W1, g.P), v2(0, bottom), across);
+  // the skirt side crease ends on the bottom edge just inside the corner
+  const hem = lineMeet(g.W2, sub(g.corner, g.W2), v2(0, bottom), across);
+  // the cap sleeve: the side flap is folded behind across the bodice side crease
+  // and lowered with the bodice by the pleat, twice; its inner edge is the sheet's
+  // folded side edge, reflected
+  const flap = reflectionAcross(mirror(g.P), sub(mirror(g.W1), mirror(g.P)));
+  const lower = (q: Vec2) => v2(q.x, q.y - 2 * g.pleat);
+  const e0 = lower(applyAffine(flap, v2(g.edge, 1))), e1 = lower(applyAffine(flap, v2(g.edge, 0)));
+  const sleeveEnd = lineMeet(g.shoulder, v2(-Math.cos(p.sleeve * deg), -Math.sin(p.sleeve * deg)), e0, sub(e1, e0));
+  return {
+    shoulderIn: g.edge - p.bust,
+    aimIn: aim.x + g.edge,
+    hemIn: hem.x + g.edge,
+    waistTop: 1 - g.W1.y,
+    waistBottom: 1 - g.W2.y,
+    gussetEnd: 1 - g.C1end.y,
+    sleeveDrop: g.shoulder.y - sleeveEnd.y,
+  };
+}
+
 export function buildGown(p: GownParams = DEFAULT_GOWN): Construction {
   const g = gownGeometry(p);
   const e = g.edge;
+  const m = gownLandmarks(p);
+  const tip = 1 - p.drapeLeft;
   const print = p.side === 'print';
   const other = print ? 'the reverse colour' : 'the print';
   const sleeveDir = v2(-Math.cos(p.sleeve * deg), -Math.sin(p.sleeve * deg));
@@ -238,46 +268,46 @@ export function buildGown(p: GownParams = DEFAULT_GOWN): Construction {
     {
       kind: 'fold', id: 'hem', title: print ? 'Fold up the hem band' : 'Fold the hem band behind',
       hint: print
-        ? 'Print side up. Fold the bottom edge up toward you by a narrow band (3.5% of the side). It becomes the hem band, in the reverse colour.'
-        : 'Print side up. Fold the bottom edge behind by a narrow band (3.5% of the side). It becomes the printed hem band of a reverse-colour gown.',
+        ? `Print side up. Fold the bottom edge up onto the print by ${cm(p.hem)}, all the way across. This band becomes the hem band, in the reverse colour.`
+        : `Print side up. Fold the bottom edge behind by ${cm(p.hem)}, all the way across. This band becomes the printed hem band of a reverse-colour gown.`,
       folds: [{ name: 'hem', a: v2(1.5, -1 + p.hem), b: v2(-1.5, -1 + p.hem), moving: v2(0, -1), sense: print ? 'valley' : 'mountain' }],
     },
   ];
-  if (!print) ops.push({ kind: 'turn', id: 'turn-0', title: 'Turn over', hint: 'Reverse side up: the rest of the gown is folded on this side.' });
+  if (!print) ops.push({ kind: 'turn', id: 'turn-0', title: 'Turn over', hint: 'Turn it over from side to side: reverse side up, the hem band along the bottom. The rest of the gown is folded on this side.' });
   ops.push(
     {
       kind: 'fold', id: 'tip', title: 'Fold the corner tip in',
-      hint: 'Fold the top-left corner down at 45 degrees. It will hide under the sash and stops the sash just above the waist.',
+      hint: `Fold the top-left corner down at 45 degrees, along a crease from ${cm(tip)} down the left edge to ${cm(tip)} along the top edge. It hides under the sash and stops the sash just above the waist.`,
       folds: [{ name: 'tip', a: g.tipA, b: g.tipB, moving: v2(-1, 1), sense: 'valley' }],
     },
     {
       kind: 'fold', id: 'sash', title: 'Fold the sash down',
-      hint: `From the end of the last crease on the left edge to a point on the top edge right of centre: the corner folds down across the bodice as the sash, in ${other}. The crease is the neckline, low on the left and rising to the right shoulder.`,
+      hint: `Fold the whole top-left corner down toward you, along a crease from the end of the last one on the left edge (${cm(tip)} below the top) to the top edge ${cm(1 + p.drapeTop)} from the left. This is the sash, in ${other}; the crease is the neckline, rising to the right shoulder.`,
       folds: [{ name: 'sash', a: g.drapeA, b: g.drapeB, moving: v2(-1, 1), sense: 'valley' }],
     },
-    { kind: 'turn', id: 'turn-1', title: 'Turn over', hint: '' },
+    { kind: 'turn', id: 'turn-1', title: 'Turn over', hint: 'Turn it over from side to side: the sash is underneath, and the cut-away corner is now at the top right.' },
     {
       kind: 'fold', id: 'sides', title: 'Fold both sides to the centre',
-      hint: 'A cupboard fold: both side edges meet on the vertical centre line. These panels become the back of the gown.',
+      hint: 'Fold both side edges in to meet on the vertical centre line, all layers (a cupboard fold). These panels become the back of the gown.',
       folds: [
         { name: 'panel-right', a: v2(-e, -1.5), b: v2(-e, 1.5), moving: v2(-1, 0), sense: 'valley' },
         { name: 'panel-left', a: v2(e, -1.5), b: v2(e, 1.5), moving: v2(1, 0), sense: 'valley' },
       ],
     },
-    { kind: 'turn', id: 'turn-2', title: 'Turn over', hint: '' },
+    { kind: 'turn', id: 'turn-2', title: 'Turn over', hint: 'Turn it over from side to side: the sash is on top again, with the panels behind.' },
     {
       kind: 'fold', id: 'tuck', title: 'Tuck the back panel behind the neckline',
-      hint: 'On the low side of the neckline the back panel shows above it. Fold that corner of the back panel down behind, along the neckline.',
+      hint: `Above the neckline, just right of the centre line, the back panel shows up to where the neckline meets the top edge, ${cm(p.drapeTop)} right of the centre. Fold that corner of the back panel only down behind, along the neckline.`,
       folds: [{ name: 'tuck', a: g.drapeA, b: g.drapeB, moving: v2(p.drapeTop - 0.05, 0.999), sense: 'mountain', only: 'panel-right' }],
     },
     {
       kind: 'collapse', id: 'waist', title: 'Pleat the empire waist',
-      hint: 'The fit-and-flare waist, high under the bust: a pleat across the body and a hidden gusset each side, with the sides folding behind. The skirt widens gently to the hem.',
+      hint: `1. Crease two lines across, ${cm(m.waistTop)} and ${cm(m.waistBottom)} below the top. 2. On each side, crease from the top ${cm(m.shoulderIn)} in from the side (on the left, from the neckline) toward the bottom edge ${cm(m.aimIn)} in, stopping at the upper line; then from the lower line, just inside, to the bottom edge ${cm(m.hemIn)} from the corner. 3. Fold the sides behind along these creases while you fold the body down along the lower line and back up along the upper one. A small gusset folds flat inside each side, reaching the side edge ${cm(m.gussetEnd)} below the top.`,
       collapse: gownWaistSpec(p),
     },
     {
       kind: 'fold', id: 'sleeve', title: 'Fold out the cap sleeve',
-      hint: 'Behind the right shoulder, the top of the side flap folds out past the shoulder as a single cap sleeve.',
+      hint: `Behind the right shoulder, side flap only: fold its top corner back and out past the shoulder, along a crease from the top of the side fold down to the flap's inner edge, ${cm(m.sleeveDrop)} below the shoulder. This is the cap sleeve.`,
       folds: [sleeve],
     },
   );

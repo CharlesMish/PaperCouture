@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import * as THREE from 'three';
 import { capture, restore } from '../src/board/snapshot';
 import { BOARD_KEY, BoardStore, copyBoard, emptyBoard, parseBoard } from '../src/board/model';
-import { recommendedSquareCm, squareChoices, startingPaperSize } from '../src/fold/paperSize';
+import { MAX_SQUARE_CM, recommendedSquareCm, squareChoices, startingPaperSize } from '../src/fold/paperSize';
 import { buildGarment, garmentDisplayAngle, GARMENTS } from '../src/fold/garments';
 import { buildTimeline, evaluateFrame, posePoint } from '../src/fold/timeline';
 import { PAPERS } from '../src/papers';
@@ -22,6 +22,10 @@ assert(clutch.after[0] < skirt.after[0] * .4, 'Clutch should read as a small han
 assert(apron.after[0] < skirt.after[0] && apron.after[1] < skirt.after[1], 'Apron fits inside the skirt silhouette');
 assert.equal(recommendedSquareCm('future-design'), 20);
 assert.deepEqual(squareChoices({ key: 'clutch', referenceCm: 20, recommendedCm: 8 }), [6.4, 8, 9.6, 20]);
+// Never a square larger than US letter's 8.5 in short side (21.6 cm): a larger choice is capped there.
+assert.deepEqual(squareChoices({ key: 'dress', referenceCm: 20, recommendedCm: 20 }), [16, 20, 21.6]);
+for (const { id } of GARMENTS) for (const side of squareChoices({ key: id, referenceCm: 20, recommendedCm: recommendedSquareCm(id) }))
+  assert(side <= MAX_SQUARE_CM, `${id}: ${side} cm is within 8.5 in`);
 assert.deepEqual(startingPaperSize({ key: 'bow', referenceCm: 3.8, recommendedCm: 3.8, companionCm: [3.8, 3.23] }, 3.04), { sideCm: 3.04, companionCm: [3.04, 2.58] });
 
 // A real nested assembly: uniform sheet scaling includes an independently posed

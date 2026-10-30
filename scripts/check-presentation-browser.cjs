@@ -1,6 +1,6 @@
 // Fresh production browser only. Fixtures are isolated test data; interactions
 // use real board controls and pointer input, without importing source modules.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5647';
@@ -20,11 +20,11 @@ fs.mkdirSync(out, { recursive: true });
   page.on('request', r => { if (/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname)) result.sourceRequests.push(r.url()); });
   const btn = name => page.getByRole('button', { name, exact: true });
   const control = name => page.getByLabel(name, { exact: true });
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-  const open = () => page.getByRole('button', { name: /^View board/ }).click();
+  const open = () => openBoard(page);
   const garmentBounds = () => page.evaluate(() => {
     const b = paperCouture.pinboard;
     return b.state.items.map(item => {

@@ -16,6 +16,7 @@ import { buildSensu, sensuGeometry, sensuPleatSpec, DEFAULT_SENSU, type SensuSid
 import { DEFAULT_OPTIONS, garmentDecisions, decisionStep, sharedFoldPrefix, optionsFromParams, optionsToParams } from '../src/fold/garmentOptions';
 import { buildGarment, garmentIdFrom, attachmentAnchors, garmentExperiment, GARMENTS } from '../src/fold/garments';
 import { recommendedSquareCm } from '../src/fold/paperSize';
+import { measuresIn } from '../src/fold/measure';
 import { checkState, isFlipped, modelPoly, type SheetState } from '../src/fold/engine';
 import { planCollapse, collapseAngles, loopResidual } from '../src/fold/collapse';
 import { centroid, signedArea, v2, type Vec2 } from '../src/fold/geometry';
@@ -269,7 +270,9 @@ assert.deepEqual(outline(fanFinals[0]), outline(fanFinals[1]), 'both fan colourw
 // Every measurement written in a step's hint or in the folding sheet's data is
 // read back and compared with the crease coordinates themselves (fractions of the
 // square's side, which spans 2 units). A wrong formula in prose fails here.
-const percents = (text: string) => [...text.matchAll(/(\d+(?:\.\d+)?)%/g)].map((m) => Number(m[1]) / 100);
+// Hints write lengths with cm() (src/fold/measure.ts), in sheet units: a fraction
+// of the side is units / 2.
+const fractions = (text: string) => measuresIn(text).map((u) => u / 2);
 const degrees = (text: string) => [...text.matchAll(/(\d+(?:\.\d+)?) degrees/g)].map((m) => Number(m[1]));
 const near = (a: number, b: number, tol: number, what: string) => assert(Math.abs(a - b) <= tol, `${what}: written ${a}, creases say ${b}`);
 const fold = (c: Construction, id: string) => {
@@ -280,13 +283,15 @@ const fold = (c: Construction, id: string) => {
 {
   const c = zori.print;
   const band = fold(c, 'zori-band'), thong = fold(c, 'zori-thong'), sides = fold(c, 'zori-sides'), toe = fold(c, 'zori-toe'), round = fold(c, 'zori-round');
-  near(percents(band.hint)[0], (1 - band.folds[0].a.y) / 2, 5e-4, 'zori band');
+  near(fractions(band.hint)[0], (1 - band.folds[0].a.y) / 2, 5e-4, 'zori band');
   // the corner crease meets the folded strip's side (half the sheet from its middle) this far below the top
   const t = thong.folds[0], slope = (t.a.y - t.b.y) / Math.abs(t.a.x - t.b.x);
-  near(percents(thong.hint)[0], (0.5 * slope) / 2, 5e-4, 'zori corner drop');
-  near(percents(sides.hint)[0], Math.abs(sides.folds[0].a.x - sides.folds[1].a.x) / 2, 5e-4, 'zori sole width');
-  // the bottom edge (y = -1) lands at 2h + 1; the toe is what shows above the thong's point
-  near(percents(toe.hint)[0], (2 * toe.folds[0].a.y + 1 - zg.point.y) / 2, 5e-4, 'zori toe');
+  near(fractions(thong.hint)[0], (0.5 * slope) / 2, 5e-4, 'zori corner drop');
+  near(fractions(sides.hint)[0], Math.abs(sides.folds[0].a.x - sides.folds[1].a.x) / 2, 5e-4, 'zori sole width');
+  // the hint places the toe crease below the top edge (the thong's point, at point.y);
+  // the bottom edge (y = -1) lands at 2h + 1, and the toe is what shows above the point
+  const written = zg.point.y - 2 * fractions(toe.hint)[0];
+  near((2 * written + 1 - zg.point.y) / 2, (2 * toe.folds[0].a.y + 1 - zg.point.y) / 2, 5e-4, 'zori toe');
   // the rounding folds run at 45 degrees and cut this much off each edge
   const edgeCut = (f: (typeof round.folds)[number]) => Math.abs(f.a.x - f.b.x) / 2;
   const sheet = JSON.parse(readFileSync('docs/kimono-companions/crease-pattern.json', 'utf8'));
@@ -300,7 +305,7 @@ const fold = (c: Construction, id: string) => {
   const r = fold(sensu.print, 'sensu-round');
   const fromCorner = (1 - r.folds[0].a.x) / 2;
   assert(Math.abs(r.folds[0].a.y - 1) < 1e-12 && Math.abs(r.folds[0].b.x - 1) < 1e-12, 'the fan corner crease runs from the top edge to the side');
-  near(percents(r.hint)[0], fromCorner, 5e-4, 'fan corner offset');
+  near(fractions(r.hint)[0], fromCorner, 5e-4, 'fan corner offset');
   near(sheet.sensu.cornerOffset, fromCorner, 5e-5, 'sheet: fan corner offset');
   for (const op of sensu.print.ops.filter((o) => o.kind === 'collapse')) {
     const [inner, tuck] = degrees(op.hint);

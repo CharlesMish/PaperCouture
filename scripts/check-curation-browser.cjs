@@ -1,6 +1,6 @@
 // Local Chromium rendering/interaction evidence. Supply PLAYWRIGHT_MODULE and
 // CHROMIUM_EXECUTABLE_PATH. The baseline must be exact PR17 candidate f3f735c.
-const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4183';
 const dev = process.env.DEV_URL || 'http://127.0.0.1:5183';
@@ -14,11 +14,11 @@ fs.mkdirSync(out, {recursive:true});
  const page = await context.newPage(); page.setDefaultTimeout(45000);
  const result = {base, baselineSHA:'f3f735cd68d784ca3850dafdefa8030124d3088f', checks:[], errors:[], captures:0};
  page.on('pageerror',e=>result.errors.push(String(e)));
- const settle = () => page.waitForFunction(()=>window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t===paperCouture.view.target && !paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t===paperCouture.view.target && !paperCouture.displayCam.glide);
  const load = async q => {await page.goto(base+'/?'+q); await settle()};
  const button = name => page.getByRole('button',{name,exact:true});
  const shot = async name => {await page.screenshot({path:path.join(out,name+'.png')});result.captures++};
- const fold = async () => {const s=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(s=>!paperCouture.controller.moving && paperCouture.controller.step===s+1,s)};
+ const fold = async () => {const s=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(s=>!paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.controller.step===s+1,s)};
  const finish = async () => {while(await page.evaluate(()=>!paperCouture.controller.finished))await fold()};
  const state = () => page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,paper:paperCouture.paperId,turn:paperCouture.quarterTurns,position:paperCouture.printPosition,attached:paperCouture.attached,accessory:paperCouture.accessoryId,options:paperCouture.options}));
  try {
@@ -28,8 +28,10 @@ fs.mkdirSync(out, {recursive:true});
   const signature = async url => {const p=await context.newPage();await p.goto(url);await p.waitForFunction(()=>window.paperCouture);const r=await p.evaluate(async()=>{
     const {PAPERS}=await import('/src/papers/index.ts'),{paperCanvas}=await import('/src/render/textures.ts');
     const {GARMENTS,buildGarment}=await import('/src/fold/garments.ts');const {ACCESSORIES}=await import('/src/fold/accessories.ts');
+    // folds must match exactly; step wording may be rewritten (docs/instructions/STYLE.md)
+    const unworded=ops=>ops.map(o=>({...o,title:'',hint:''}));
     const hashes={};for(const paper of PAPERS)for(const side of ['front','back']){const c=paperCanvas(paper,side,0);hashes[paper.id+'/'+side]=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',c.getContext('2d').getImageData(0,0,c.width,c.height).data))).map(v=>v.toString(16).padStart(2,'0')).join('')}
-    return {hashes,visiblePapers:PAPERS.filter(p=>!p.hidden).map(p=>p.name),garments:Object.fromEntries(GARMENTS.map(g=>[g.id,buildGarment(g.id).ops])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:a.build().ops,pieces:a.pieces,positions:a.positions}]))};
+    return {hashes,visiblePapers:PAPERS.filter(p=>!p.hidden).map(p=>p.name),garments:Object.fromEntries(GARMENTS.map(g=>[g.id,unworded(buildGarment(g.id).ops)])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:unworded(a.build().ops),pieces:a.pieces,positions:a.positions}]))};
   });await p.close();return r};
   const old=await signature(baseline),current=await signature(dev);
   for(const [key,value]of Object.entries(old.hashes))assert.equal(current.hashes[key],value,key+' raster changed');

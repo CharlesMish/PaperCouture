@@ -1,6 +1,6 @@
 // Real Canvas drawings plus actual Three.js texture matrices. Run against Vite.
 // Isolated browser context; does not read personal browser storage.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const base = process.env.DEV_URL || 'http://127.0.0.1:5627';
 const out = process.env.CAPTURE_DIR || 'docs/october-integration/evidence';

@@ -22,6 +22,7 @@ import type { CollapseCrease, CollapseRegion, CollapseSpec, HalfPlane } from './
 import { Construction } from './construction';
 import { Op } from './engine';
 import { Vec2, v2 } from './geometry';
+import { cm, lineMeet } from './measure';
 
 export interface FitFlareParams {
   /** Top band folded down for the collar. */
@@ -117,8 +118,31 @@ export function fitFlareGeometry(p: FitFlareParams = DEFAULT_FIT_FLARE) {
   };
 }
 
+/** Numbers for the step instructions, from the same geometry that places the creases:
+ * distances on the paper as it lies before the waist step (front up, side edges at
+ * x = -edge and edge, top edge at `top`). */
+export function fitFlareMeasures(p: FitFlareParams = DEFAULT_FIT_FLARE) {
+  const g = fitFlareGeometry(p);
+  const across = (y: number) => [v2(0, y), v2(1, 0)] as const;
+  // the side creases, extended to the far edge so they can be ruled from edge to edge
+  const sideFoot = lineMeet(g.P, v2(g.W1.x - g.P.x, g.W1.y - g.P.y), ...across(-1));
+  const skirtTop = lineMeet(g.W2, v2(g.corner.x - g.W2.x, g.corner.y - g.W2.y), ...across(g.top));
+  return {
+    collar: p.collar,
+    edgeFold: p.edgeFold,
+    upperLine: g.top - g.W1.y, // below the top edge
+    lowerLine: g.top - g.W2.y,
+    pleat: g.W1.y - g.W2.y,
+    sideTop: g.edge + g.P.x, // in from the side edge, on the top edge
+    sideFoot: g.edge + sideFoot.x, // ... and where that line would reach the bottom edge
+    skirtTop: g.edge + skirtTop.x, // the skirt's side line, extended to the top edge
+    gussetEdge: g.top - g.C1end.y, // where the gusset creases reach the side edge, below the top
+  };
+}
+
 export function buildFitFlare(p: FitFlareParams = DEFAULT_FIT_FLARE): Construction {
   const g = fitFlareGeometry(p);
+  const m = fitFlareMeasures(p);
   const { top, edge, P, W1, W2, corner } = g;
   const h1 = W1.y;
   const h2 = W2.y;
@@ -198,20 +222,20 @@ export function buildFitFlare(p: FitFlareParams = DEFAULT_FIT_FLARE): Constructi
       kind: 'fold',
       id: 'collar',
       title: 'Fold the top edge down',
-      hint: 'This band becomes the neckline. The reverse colour shows where the paper turns over.',
+      hint: `Print side up. Fold the top edge down onto the print by ${cm(m.collar)}, all the way across. This band becomes the neckline, in the paper's other colour.`,
       folds: [{ name: 'collar', a: v2(-1.5, top), b: v2(1.5, top), moving: v2(0, 1), sense: 'valley' }],
     },
     {
       kind: 'turn',
       id: 'turn-1',
       title: 'Turn the paper over',
-      hint: 'The neckline band is underneath now. The rest is shaped from the back.',
+      hint: 'Turn it over from side to side, so the neckline band is underneath along the top edge.',
     },
     {
       kind: 'fold',
       id: 'edges',
       title: 'Fold both side edges in',
-      hint: 'A wide hem on each side. It keeps the waist pleat in the next step small.',
+      hint: `Fold each side edge in by ${cm(m.edgeFold)}, all the way down, through all the layers. These wide hems keep the waist pleat in step 5 small.`,
       folds: [
         { name: 'edge-left', a: v2(-edge, -1.5), b: v2(-edge, 1.5), moving: v2(-1, 0), sense: 'valley' },
         { name: 'edge-right', a: v2(edge, -1.5), b: v2(edge, 1.5), moving: v2(1, 0), sense: 'valley' },
@@ -221,20 +245,25 @@ export function buildFitFlare(p: FitFlareParams = DEFAULT_FIT_FLARE): Constructi
       kind: 'turn',
       id: 'turn-2',
       title: 'Turn the paper over',
-      hint: 'Printed side up again. The waist is shaped from the front, so you can watch it form.',
+      hint: 'Turn it over from side to side, print side up, with the side hems behind. The waist is shaped from the front.',
     },
     {
       kind: 'collapse',
       id: 'waist',
       title: 'Fold the sides behind and pleat the waist',
-      hint: 'One move: the sides fold behind, and a small pleat across the waist lets each side bend, in to the waist and out below it.',
+      hint: `Crease first, through all the layers. On each side, crease from the top edge ${cm(m.sideTop)} in from the side, aiming at the bottom edge ${cm(m.sideFoot)} in, ` +
+        `stopping ${cm(m.upperLine)} below the top; and from the bottom corner, aiming at the top edge ${cm(m.skirtTop)} in, stopping ${cm(m.lowerLine)} below the top. ` +
+        'Join the two upper ends straight across, the two lower ends straight across, and each upper end to the lower end below it; ' +
+        `then crease from each of these ends out to the side edge, ${cm(m.gussetEdge)} below the top. ` +
+        `Now fold the top down along the lower line and back up along the upper one (a pleat ${cm(m.pleat)} deep), ` +
+        'folding the sides behind along their creases; the paper between the waist lines swivels in behind.',
       collapse,
     },
     {
       kind: 'fold',
       id: 'shoulders',
-      title: 'Tuck the shoulder points behind',
-      hint: 'The side flaps peek above the neckline at each shoulder. Fold those points down behind: a nipped waist and a full skirt, from one uncut square.',
+      title: 'Fold the shoulder points behind',
+      hint: 'At each shoulder a small point of the side flap sticks up above the neckline. Fold each point down behind, level with the neckline, so the neckline runs straight from shoulder to shoulder.',
       folds: [
         { name: 'shoulder-left', a: v2(-1.5, neck), b: v2(0, neck), moving: v2(-0.4, neck + 0.1), sense: 'mountain', only: 'side-left' },
         { name: 'shoulder-right', a: v2(0, neck), b: v2(1.5, neck), moving: v2(0.4, neck + 0.1), sense: 'mountain', only: 'side-right' },

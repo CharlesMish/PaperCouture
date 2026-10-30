@@ -1,5 +1,6 @@
 import type { Construction } from './construction';
 import { v2 } from './geometry';
+import { cm } from './measure';
 
 export type BroochShape = 'square' | 'rectangle';
 
@@ -17,10 +18,10 @@ export function buildFramedBrooch(shape: BroochShape = 'square'): Construction {
     name: rectangular ? 'Framed brooch · rectangle' : 'Framed brooch · square',
     meta: { top: y, shoulderPoint: v2(0, y), sleeveCutDir: v2(1, 0) },
     ops: [
-      edge('frame-top', rectangular ? 'Fold a deeper top border' : 'Fold a narrow top border', 'Bring the top edge toward the centre along the guide. Its reverse makes the first border; keep the printed centre uncovered.', [-1.5, y], [1.5, y], [0, 1]),
-      edge('frame-bottom', 'Match the bottom border', 'Bring the bottom edge inward by the same amount. A broad printed strip remains between the two borders.', [-1.5, -y], [1.5, -y], [0, -1]),
-      edge('frame-left', 'Fold the left border', 'Turn the left edge onto the front, including the ends of both folded bands. The layers overlap at the corners.', [-x, -1.5], [-x, 1.5], [-1, 0]),
-      edge('frame-right', 'Complete the paper frame', 'Match the right border. The printed centre is intact paper, not a hole. Place this flat accent on the board; it has no pin or fastening.', [x, -1.5], [x, 1.5], [1, 0]),
+      edge('frame-top', rectangular ? 'Fold a deeper top border' : 'Fold a narrow top border', `Print side up. Fold the top edge down onto the print by ${cm(1 - y)}, all the way across. The other colour makes the top of the frame.`, [-1.5, y], [1.5, y], [0, 1]),
+      edge('frame-bottom', 'Match the bottom border', `Fold the bottom edge up onto the print by the same ${cm(1 - y)}.`, [-1.5, -y], [1.5, -y], [0, -1]),
+      edge('frame-left', 'Fold the left border', `Fold the left edge over onto the print by ${cm(1 - x)}, all the layers, so the ends of both borders fold in with it. ${rectangular ? 'The side borders are narrower than the top and bottom.' : 'All four borders are the same depth.'}`, [-x, -1.5], [-x, 1.5], [-1, 0]),
+      edge('frame-right', 'Complete the paper frame', `Fold the right edge over by the same ${cm(1 - x)}, all the layers. The four borders now frame the printed centre.`, [x, -1.5], [x, 1.5], [1, 0]),
     ],
   };
 }

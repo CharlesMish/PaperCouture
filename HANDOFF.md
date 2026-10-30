@@ -1,3 +1,106 @@
+# Paper Couture — the first five minutes (Claude, 2026-10-30)
+
+Branch `claude/first-impressions`, on top of `claude/phone-layout`, from Charlie's
+request after Claude's review of the basics. Telling a newcomer what to do on
+arrival is deliberately left for later. Not merged. Notes:
+[docs/first-impressions/NOTES.md](docs/first-impressions/NOTES.md).
+
+- `src/ui/designOrder.ts`: Easy / Medium / Advanced by one rule (checked by
+  `scripts/check-design-order.ts`), the Dress first as Start here, the experimental
+  list, mirror pairs. `designPicker.ts` shows groups, tags, pair cards and progress;
+  the Design list uses optgroups.
+- `main.ts`: a bare address resumes from `paper-couture.workshop.v1` (piece, paper,
+  step, per-design progress); Start over is undoable until the paper moves; Pin to
+  pinboard from the finished step (`Pinboard.openAndPin`), once per recipe.
+- Labels: Rotate print, Change buttons (`[data-revisit]`), Pinboard (n/12), no
+  developer notes in the toolbar, plainer pinboard text; arranging tools only once
+  something is pinned. `paperSize.ts`: no square above 21.6 cm (8.5 in).
+- Instructions: `src/fold/measure.ts` (`cm()` measurements, shown in cm on the
+  suggested square), every hint rewritten to `docs/instructions/STYLE.md`, checked by
+  `scripts/check-instructions.ts` (measurements against the creases);
+  `scripts/fold-measurements.ts` prints the distances. Placement notes the pocket and
+  neckerchief steps used to carry are now their accessory notes.
+- Checks: `check-first-impressions-browser.cjs` (CI:
+  `.github/workflows/first-impressions.yml`); chooser, phone layout, kimono, gown,
+  coat-dress, zori/fan, collection review, centre review, capelet/brooch and brooch
+  choice checks updated for the new names; `check-integrated.ts` compares the
+  reviewed apron and clutch folds without their wording.
+
+After Astra's review of `a79f1ec`:
+- **Pin shortcut:** tracks the pinned board item, so Undo or Remove brings back
+  "Pin to pinboard".
+- **Camera:**
+  - A release no longer shapes later motions.
+  - The camera eases, on animation time, when the controls around the paper
+    change size.
+  - A drag holds the camera mid-ease.
+- **Quick pin:** names the size it actually used.
+- **Gallery:** says "3 of 8 steps done".
+- **Long instructions:** sit behind Instructions.
+- **Pin to pinboard:** a full button beside Display.
+- **Narrow dock:** its tools take their own row.
+- **Older checks:** load Playwright through `scripts/lib/legacy-playwright.cjs`.
+- **Hosted CI:** draft PR #40 (not for merging). 17 of 24 jobs pass; the 6 failures
+  also fail on main's PR #37, and phone layout once failed intermittently. See the
+  notes.
+
+Not tested on a real phone; no physical folding for this pass.
+
+# Paper Couture — room for the paper on phones (Claude, 2026-10-29)
+
+Branch `claude/phone-layout`, on top of `claude/usability-pass`, following Astra's
+second review. Not merged. Notes: [docs/phone-layout/NOTES.md](docs/phone-layout/NOTES.md).
+
+- `src/app/workFrame.ts`: the workshop camera frames the paper the current step
+  involves over its whole motion. It starts on the old whole-sheet view, comes up
+  to ~2.2x closer as the piece shrinks, and is never wider. It is still for the
+  whole of a drag, even a long or reversed one (Astra's second review caught the
+  first version blending mid-drag). A fold running by itself blends over its last
+  40%. After a drag is let go and the fold finishes, the camera eases 0.35 s from
+  where it held. A fold that falls back never moves it.
+- `studioControls.ts`: on narrow screens in the workshop, a one-row bar (Browse
+  pieces, design list, More). More opens the rest over the paper. Accessory folding
+  keeps the full controls. At 568 x 320 the bar takes the title row.
+- `main.ts`: Revisit stays in place (disabled) while a fold moves. Hiding it
+  reframed the view mid-fold.
+- Outstanding, not green: the October check (local time limit), the presentation
+  check (-0 vs 0 after reload, also on main), the baseline-build checks, and hosted
+  CI (no pull request yet). See the notes.
+- Checks: `check-work-frame.ts` (in `npm test`), `check-phone-layout-browser.cjs`
+  (CI: `.github/workflows/phone-layout.yml`); `check-usability-browser.cjs` and
+  `check-phone-journey.cjs` updated for More and for a thumb big enough to drag
+  directly.
+
+Not tested on a real phone.
+
+# Paper Couture — usability pass after Astra's review (Claude, 2026-10-29)
+
+Branch `claude/usability-pass` from main (`f33415b`), at Charlie's request in a
+Claude chat, addressing the three findings of Astra's 28 October review. Not
+merged. Independent of `claude/wardrobe-gaps`. Notes:
+[docs/usability-pass/NOTES.md](docs/usability-pass/NOTES.md).
+
+- Hidden folds: `src/fold/visibility.ts` measures how much of a step's moving paper
+  the camera sees. Below 25%, the dock offers **See this fold**
+  (`src/render/hiddenPaper.ts`, a labelled overlay; the camera and the paper are
+  unchanged). It stays on through Fold and Back, for replay. Hidden paper gets
+  labelled grips, collapses included (`main.ts` `updateFoldHandles`); grips hide
+  while opened instructions or notes lie over the paper.
+- Short screens: a measured compact dock (540 px tall or less, or a dock over 40%
+  of the screen) with an **Instructions** disclosure that overlays the paper, and
+  **Piece notes** for the construction notes (`workshopPanel.ts`,
+  `studioControls.ts`, `styles.css`).
+- No WebGL: `src/ui/startupFailure.ts`. An alert with Try again and the finished
+  pieces drawn flat; a notice while the graphics context is lost.
+- Checks: `scripts/check-usability.ts` (in `npm test`; it records the five steps
+  offered the highlight), `scripts/check-usability-browser.cjs` (CI:
+  `.github/workflows/usability.yml`), and `check-integrated-browser.cjs` updated
+  for Piece notes. When `claude/wardrobe-gaps` is merged too, rerun
+  `check-usability.ts` and add any of its steps that come out hidden to the
+  recorded list.
+
+Not tested on a real phone or in mobile Safari.
+
 # Five-design integration — October 18, 2026
 
 Charlie authorized bringing Claude’s corrected companion branch onto main and

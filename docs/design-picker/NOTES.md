@@ -2,8 +2,9 @@
 
 Charlie requested finished previews and a stronger ordering for the collection.
 Browse pieces opens a responsive, keyboard-accessible modal with all 27 current
-main designs. Kimono, Coat-dress, One-shoulder gown, Folding fan and Zori lead;
-the compact name selector follows the same order. Existing design IDs, default
+main designs. (Since the first-impressions pass the gallery runs easiest first in three groups; see
+[its notes](../first-impressions/NOTES.md). Originally Kimono, Coat-dress, One-shoulder gown, Folding fan and Zori led;
+the compact name selector followed the same order.) Existing design IDs, default
 entry design, saved board records, geometry, materials and fold choices remain.
 
 Previews are generated from finished default material facets, including each

@@ -1,6 +1,6 @@
 // Real authored folds and app rendering in a fresh browser context. Test data
 // only: diagnostic arrangement positions do not touch a personal saved board.
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=process.env.BASE_URL||'http://127.0.0.1:5304',out=process.env.CAPTURE_DIR||'docs/companion-accent/evidence';
 fs.mkdirSync(out,{recursive:true});
@@ -9,11 +9,11 @@ fs.mkdirSync(out,{recursive:true});
  const context=await browser.newContext({viewport:{width:1100,height:800},hasTouch:true,reducedMotion:'reduce',acceptDownloads:true}),page=await context.newPage();page.setDefaultTimeout(60000);
  const result={base,checks:[],errors:[],physicalPhoneTested:false};page.on('pageerror',e=>result.errors.push(String(e)));
  const btn=name=>page.getByRole('button',{name,exact:true});
- const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
+ const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
  const load=async query=>{await page.goto(base+'/?'+query);await settle()};
  const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
  const fold=async()=>{await page.locator('.dock:not(.display-dock) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not(.display-dock) .btn-primary').click();await settle()};
- const open=()=>page.getByRole('button',{name:/^View board/}).click();
+ const open=()=>openBoard(page);
  const state=()=>page.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
  const frontRed=()=>page.evaluate(()=>{const a=paperCouture;a.stage.renderer.render(a.stage.scene,a.stage.camera);const c=document.createElement('canvas');c.width=a.stage.renderer.domElement.width;c.height=a.stage.renderer.domElement.height;const ctx=c.getContext('2d');ctx.drawImage(a.stage.renderer.domElement,0,0);const pixels=ctx.getImageData(0,0,c.width,c.height).data;let red=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>100&&pixels[i]>pixels[i+1]*1.4&&pixels[i]>pixels[i+2]*1.4)red++;return red});
  try{

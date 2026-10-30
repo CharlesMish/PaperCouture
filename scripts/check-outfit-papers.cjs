@@ -1,6 +1,6 @@
 // Node 24 + Playwright, a dev server for candidate imports, optional PR23 dev baseline.
 // Only disposable browser contexts are used; no owner's browser storage is read/cleared.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.DEV_URL || 'http://127.0.0.1:5203';
 const baseline = process.env.BASELINE_URL;
@@ -16,7 +16,7 @@ fs.mkdirSync(out, { recursive: true });
   const page = await context.newPage();
   const result = { base, baseline: baseline || null, baselineSHA: 'feb9cc80f5ca0da7ef2e49619665458c2f923c5a', phase: process.env.FLOW_ONLY ? 'interaction' : 'complete', errors: [], checks: [], captures: 0 };
   page.on('pageerror', e => result.errors.push(String(e)));
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const load = async query => { const response = await page.goto(base + '/?' + query); assert(response.ok()); await settle(); };
   const button = name => page.getByRole('button', { name, exact: true });
   const shot = async name => { await page.screenshot({ path: path.join(out, name + '.png') }); result.captures++; };
@@ -131,7 +131,7 @@ fs.mkdirSync(out, { recursive: true });
       const step = await page.evaluate(() => paperCouture.controller.step);
       await page.locator('.dock:not([hidden]) .btn-primary').click();
       if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not([hidden]) .btn-primary').click();
-      await page.waitForFunction(step => !paperCouture.controller.moving && paperCouture.controller.step === step + 1, step);
+      await page.waitForFunction(step => !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.controller.step === step + 1, step);
     };
     while (await page.evaluate(() => !paperCouture.controller.finished)) await fold();
     await button('Back').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await button('Back').click(); await settle(); await fold();
@@ -155,7 +155,7 @@ fs.mkdirSync(out, { recursive: true });
     const png = fs.readFileSync(path.join(out, 'mixed-board-export.png'));
     result.exportPixels = [png.readUInt32BE(16), png.readUInt32BE(20)];
     assert.deepEqual(result.exportPixels, [1800, 2100]);
-    await page.reload(); await settle(); await page.getByRole('button', { name: /^View board/ }).click();
+    await page.reload(); await settle(); await openBoard(page);
     assert.deepEqual(await board(), composed);
     for (const [width, height] of [[390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await shot('mixed-board-' + width);
@@ -165,7 +165,7 @@ fs.mkdirSync(out, { recursive: true });
       await button('Position print').click(); await button('Right').click(); await shot('print-controls-' + width); await button('Done').click();
       await page.getByRole('radio', { name: 'Oat linen', exact: true }).click();
       await button('Position print').click(); assert.match(await page.locator('.print-dialog').innerText(), /fixed fibres/); await button('Done').click();
-      await page.getByRole('button', { name: /^View board/ }).click(); assert.deepEqual(await board(), composed);
+      await openBoard(page); assert.deepEqual(await board(), composed);
     }
     result.checks.push('Real Fold/Back retains positioned Ginkgo; three independent paper captures survive moves/remove/Undo/reload and PNG. Portrait 390/320 swatches/print controls reachable without overflow; existing captures stay exact after paper edits.');
     assert.deepEqual(result.errors, []); result.passed = true;
