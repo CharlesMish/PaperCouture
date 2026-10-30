@@ -21,9 +21,11 @@ export function buildOpenFrontCapelet(): Construction {
   // For the instructions: after the hem fold the outline's top corners are the
   // panel creases' bottom ends (x = ±hem); the shoulder crease leaves the top edge
   // shoulderTop in from the centre and meets the slanting side (from (-hem, 1) to
-  // the panel crease at y = 0) at sideMeet, below the top edge at y = 1.
-  const sideMeet = lineMeet(v2(-.63, .5), v2(.28, .5), v2(-hem, 1), v2(hem - (neck + hem) / 2, -1));
-  const shoulder = `along a slanting crease: from the top edge ${cm(hem - shoulderTop)} in from the corner, to the side ${cm(1 - sideMeet.y)} below the top edge. Fold all the layers.`;
+  // the panel crease at y = 0) at sideMeet; measured up that side from the bottom corner.
+  const sideDir = v2(hem - (neck + hem) / 2, -1);
+  const sideMeet = lineMeet(v2(-.63, .5), v2(.28, .5), v2(-hem, 1), sideDir);
+  const sideUp = sideMeet.y * Math.hypot(sideDir.x, sideDir.y);
+  const shoulder = `along a slanting crease: from the top edge ${cm(hem - shoulderTop)} in from the corner, to the side edge ${cm(sideUp)} up from the bottom corner. Fold all the layers.`;
   const panel = `along a slanting crease: from the top edge ${cm(1 - neck)} in from the side, to the bottom edge ${cm(1 - hem)} in from the side.`;
   return { name: 'Open-front capelet', meta: meta(1), ops: [
     turn('capelet-lining', 'Put the lining face up', 'Turn it over from side to side, so the other colour is up. It becomes the lining between the two printed front panels.'),
@@ -48,15 +50,16 @@ export function buildAnkleBoot(direction: BootDirection = 'right'): Construction
   // Sides as the paper lies while folding: the foot swings out toward `other`, and
   // the final turn sends the toe the opposite way (toward `direction`).
   const first = direction, other = direction === 'left' ? 'right' : 'left';
-  // The foot runs from y = ankle - 2 * third up to y = ankle (the leg's top is y = 1);
-  // the toe crease meets the toe end .3 below its top corner, the top edge .28 in.
+  // The foot runs from y = ankle - 2 * third up to y = ankle; the toe crease meets the
+  // toe end .3 below its top corner and, extended, the leg's top edge just inside its
+  // corner (at x = third - 0.01).
   const footBottom = ankle - 2 * third;
   return { name: `Ankle boot, toe ${direction}`, meta: meta(1), ops: [
     turn('boot-back', 'Put the print underneath', 'Turn it over from side to side, so the other colour is up. The boot is shaped from the back.'),
     fold('boot-side-first', `Fold the ${first} third in`, `Fold the ${first} side over, creasing a third of the way across, ${cm(1 - third)} from the ${first} edge.`, X([-third, -1.5]), X([-third, 1.5]), X([-1, 0])),
     fold('boot-side-second', `Fold the ${other} third over it`, `Fold the ${other} side over on top, creasing along the edge of the first flap, so the ${other} edge meets the ${first} fold. This strip becomes the leg and foot.`, X([third, -1.5]), X([third, 1.5]), X([1, 0])),
     fold('boot-ankle', 'Turn the lower strip into a foot', `Fold the bottom of the strip up and out to the ${other} at 45 degrees: crease from the ${first} edge ${cm(1 - ankle)} below the top to the ${other} edge ${cm(1 - footBottom)} below the top. Fold all the layers; the strip turns sideways into the foot.`, X([-third, ankle]), X([third, ankle - 2 * third]), X([0, -1])),
-    fold('boot-toe', 'Fold down the toe corner', `Fold the top corner of the toe down onto this side, all the layers. Crease from the toe end, ${cm(1 - (ankle - .3))} below the top of the leg, up to the foot's top edge, cutting off a small triangle almost as long on top as down the end.`, X([toeEnd - .28, ankle]), X([toeEnd, ankle - .3]), X([toeEnd, ankle])),
+    fold('boot-toe', 'Fold down the toe corner', `Fold the top corner of the toe down onto this side, all the layers. Crease from the toe end, ${cm(.3)} below its top corner, up across the foot's top edge on a line aimed at the leg's top ${other} corner.`, X([toeEnd - .28, ankle]), X([toeEnd, ankle - .3]), X([toeEnd, ankle])),
     turn('boot-front', 'Reveal the flat ankle boot', `Turn it over from side to side: the boot in the print, toe pointing ${direction}.`),
   ] };
 }

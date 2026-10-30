@@ -47,9 +47,9 @@ const fold = (F: typeof A, id: string, title: string, hint: string, a: Point, b:
 });
 const turn = (id: string, title: string, hint: string): Op => ({ kind: 'turn', id, title, hint });
 
-/** Width of the narrowed tie (or of the folded-down knot flap) at a distance `d`
- * along the axis from its narrow point: its edges run at the second kite angle. */
-const tieWidth = (d: number) => 2 * d * Math.tan(NECKTIE_KITE_DEGREES[1] * Math.PI / 180);
+/** How far along the narrowed tie's edges (or the folded-down knot flap's) a
+ * distance `d` along the axis reaches: those edges run at the second kite angle. */
+const alongEdge = (d: number) => d / Math.cos(NECKTIE_KITE_DEGREES[1] * Math.PI / 180);
 
 export function buildNecktie(): Construction {
   const [wide, narrow] = NECKTIE_KITE_DEGREES.map(kitePoint);
@@ -60,9 +60,9 @@ export function buildNecktie(): Construction {
   // far from the bottom left (top right) corner, the second ones this far from the
   // bottom right corner, the tip.
   const wideIn = A(...wide).x + 1, narrowIn = 1 - A(...narrow).x;
-  // The knot flap is the end beyond the knot crease folded back; the tuck crease
-  // crosses it where the end was (2 * crease - tuck) along the axis.
-  const knotWidth = tieWidth(S - crease), tuckWidth = tieWidth(S - (2 * crease - (crease - depth)));
+  // The knot crease lies S - crease along the axis from the narrow point; the tuck
+  // crease lies `depth` below the knot fold. Both are given along the edges.
+  const knotAlong = alongEdge(S - crease), tuckAlong = alongEdge(depth);
   return {
     name: 'Folded necktie',
     meta: { top: crease, shoulderPoint: v2(0, crease), sleeveCutDir: v2(1, 0) },
@@ -84,10 +84,10 @@ export function buildNecktie(): Construction {
       turn('tie-front', 'Turn over to the printed blade',
         'Turn it over from side to side. The print is up, the narrow end now points to the top right and the tip to the bottom left.'),
       fold(B, 'tie-knot', 'Fold the narrow end down',
-        `Fold the narrow end down toward the tip onto the print, all the layers, creasing straight across the tie where it is ${cm(knotWidth)} wide. Its point lands near the middle of the tie.`,
+        `Fold the narrow end down toward the tip onto the print, all the layers, creasing straight across the tie ${cm(knotAlong)} from the narrow point, measured along its edges. The point comes down to about the middle of the tie.`,
         [-2, crease], [2, crease], knot),
       fold(B, 'tie-knot-tuck', 'Fold the point back up into a knot',
-        `Fold only the folded-down point back up on top of the flap, creasing straight across where the flap is ${cm(tuckWidth)} wide, so the point stops just short of the top fold. The two folds make the knot.`,
+        `Fold only the folded-down point back up on top of the flap, creasing straight across it ${cm(tuckAlong)} below the top fold, measured along its edges. The point ends just below the top fold. The two folds make the knot.`,
         [-2, crease - depth], [2, crease - depth], [0, crease - depth - 1], 'tie-knot'),
     ],
   };

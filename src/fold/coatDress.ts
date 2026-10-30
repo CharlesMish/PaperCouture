@@ -45,6 +45,7 @@ import type { CollapseCrease, CollapseRegion, CollapseSpec, HalfPlane } from './
 import type { Construction } from './construction';
 import { FoldError, Op } from './engine';
 import { Vec2, v2 } from './geometry';
+import { cm, lineMeet } from './measure';
 
 export type CoatSide = 'print' | 'reverse';
 
@@ -308,31 +309,55 @@ export function coatWaistSpec(p: CoatDressParams = DEFAULT_COAT_DRESS): Collapse
   return p.coat === 'print' ? spec : mirrored(spec);
 }
 
+/** Where a crease from a shoulder point leaves the sheet, for the instructions. */
+const edgeEnd = (q: Vec2) => (q.y > 1 - 1e-9 ? `the top edge ${cm(1 + q.x)} in from the side` : `the side edge ${cm(1 - q.y)} below the top`);
+
+/** The two collapses' creases as a folder finds them, from the same numbers that place them. */
+function coatInstructions(p: CoatDressParams) {
+  const g = coatDressGeometry(p);
+  const { V } = g;
+  const points = Math.abs(p.hinge - 0.5) < 1e-9
+    ? 'halfway between each side edge and the centre line'
+    : `${cm(1 - p.hinge)} in from each side edge`;
+  const creases = `1. Crease the shoulder line between the two shoulder points, ${cm(1 - V.y)} below the top edge and ${points}. `
+    + `2. From each shoulder point crease three lines: the side seam, down to the bottom edge ${cm(1 + g.seamX(-1))} in from the side; `
+    + `the top of the collar, up to ${edgeEnd(g.X1)}; and the neckline, out to ${edgeEnd(g.X2)}.`;
+  // the waist, on the paper as it lies after the shoulders: its top is the shoulder fold
+  const aim = lineMeet(g.A, v2(g.W1.x - g.A.x, g.W1.y - g.A.y), v2(0, -1), v2(1, 0));
+  const below = g.collarLow < g.sleeveLow ? 'the collar point' : 'the sleeve';
+  const waist = (behind: boolean) => `1. Crease two lines across, ${cm(V.y - g.W1.y)} and ${cm(V.y - g.W2.y)} below the shoulder fold. `
+    + `2. On each side, crease from the side edge just below ${below} toward the bottom edge ${cm(aim.x - g.corner.x)} in from the bottom corner, stopping at the upper line; then from the lower line, just inside, to the bottom corner. `
+    + (behind
+      ? '3. Fold the sides behind along these creases while you fold the body down along the lower line and back up along the upper one. '
+      : '3. Fold the sides toward you along these creases while you fold the body down behind along the lower line and back up behind along the upper one, so the pleat forms on the far side. ')
+    + `A small gusset folds flat inside each side, reaching the side edge ${cm(V.y - g.C1end.y)} below the shoulder fold.`;
+  return { creases, waist };
+}
+
 export function buildCoatDress(p: CoatDressParams = DEFAULT_COAT_DRESS): Construction {
   const print = p.coat === 'print';
+  const say = coatInstructions(p);
   const ops: Op[] = [
     {
       kind: 'turn',
       id: 'turn',
       title: 'Turn the paper over',
-      hint: 'Start with the print side down. Every crease that follows is precreased on this side first, then collapsed.',
+      hint: 'Print side up to start. Turn it over from side to side, so the print is underneath: every crease that follows is made on this side first, then collapsed.',
     },
     {
       kind: 'collapse',
       id: 'shoulders',
       title: print ? 'Collapse both shoulders' : 'Collapse both shoulders from the back',
       hint: print
-        ? 'One move at each shoulder point. The fronts fold in to meet, the strip above the shoulders folds down behind as the back yoke, and the wedge between them turns over each shoulder as the collar. The short sleeves come down with the yoke, under the collar.'
-        : 'You are working on the back of the coat. One move at each shoulder point: the strip above the shoulders folds down toward you as the back yoke, the fronts fold away underneath to meet, and the wedge between them turns over each shoulder to become the collar on the other side.',
+        ? `${say.creases} 3. Fold the fronts in along the side seams to meet while the strip above the shoulders folds down behind as the back yoke; each top corner turns over its shoulder onto the front as the collar. The short sleeves come down with the yoke, under the collar.`
+        : `You are working on the back of the coat. ${say.creases} 3. Fold the strip above the shoulders down toward you as the back yoke while the fronts fold away underneath along the side seams to meet; each top corner turns over its shoulder to become the collar on the other side.`,
       collapse: coatShoulderSpec(p),
     },
     {
       kind: 'collapse',
       id: 'waist',
       title: print ? 'Pleat the waist and fold the sides behind' : 'Pleat the waist and fold the sides toward you',
-      hint: print
-        ? 'The fit-and-flare waist, just below the collar: a pleat across the body and a hidden gusset each side. The skirt flares out to the leaning side seams.'
-        : 'Still on the back: the fit-and-flare waist, just below the yoke. The pleat forms on the far side; the sides and their gussets fold toward you.',
+      hint: print ? say.waist(true) : `Still on the back. ${say.waist(false)}`,
       collapse: coatWaistSpec(p),
     },
   ];
@@ -341,7 +366,7 @@ export function buildCoatDress(p: CoatDressParams = DEFAULT_COAT_DRESS): Constru
       kind: 'turn',
       id: 'reveal',
       title: 'Turn over to reveal the coat',
-      hint: 'The coat shows the reverse colour; the collar, the underskirt in the opening and the back yoke show the print.',
+      hint: 'Turn it over from side to side: the coat shows the reverse colour; the collar, the underskirt in the opening and the back yoke show the print.',
     });
   }
   const g = coatDressGeometry(p);

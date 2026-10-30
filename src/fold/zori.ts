@@ -27,6 +27,7 @@
 import type { Construction } from './construction';
 import { FoldError, Op } from './engine';
 import { v2 } from './geometry';
+import { cm } from './measure';
 
 export type ZoriSide = 'print' | 'reverse';
 
@@ -87,36 +88,35 @@ export function buildZori(p: ZoriParams = DEFAULT_ZORI): Construction {
   const thong = print ? 'the reverse colour' : 'the print';
   // the last steps are worked from the back, where the model is mirrored
   const M = (x: number, y: number) => v2(-x, y);
-  const pct = (x: number) => `${(x * 50).toFixed(1)}%`; // of the square's side
   const ops: Op[] = [
     {
       kind: 'fold', id: 'zori-band', title: print ? 'Fold down a narrow band' : 'Fold a narrow band behind',
       hint: (print
-        ? `Print side up. Fold the top edge down ${pct(b)} of the side. `
-        : `Print side up. Fold the top edge behind ${pct(b)} of the side. `)
+        ? `Print side up. Fold the top edge down onto the print by ${cm(b)}. `
+        : `Print side up. Fold the top edge behind by ${cm(b)}. `)
         + `This band becomes the thong, in ${thong}; the sole shows ${sole}.`,
       folds: [{ name: 'zori-band', a: v2(1.5, 1 - b), b: v2(-1.5, 1 - b), moving: v2(0, 0.99), sense: print ? 'valley' : 'mountain' }],
     },
   ];
-  if (!print) ops.push({ kind: 'turn', id: 'zori-turn', title: 'Turn over', hint: 'The band stays at the top.' });
+  if (!print) ops.push({ kind: 'turn', id: 'zori-turn', title: 'Turn over', hint: 'Turn it over from side to side: the band is now on top, along the top edge.' });
   ops.push(
     {
       kind: 'fold', id: 'zori-half', title: 'Fold in half, right half behind',
-      hint: 'Fold the right half behind onto the left, edges together. The band of the back half is now on the outside, on the back.',
+      hint: 'Fold the right half behind onto the left half, edges together. The band of the back half is now on the outside, on the back.',
       folds: [{ name: 'zori-half', a: v2(0, -1.5), b: v2(0, 1.5), moving: v2(0.5, 0), sense: 'mountain' }],
     },
     {
       kind: 'fold', id: 'zori-thong', title: 'Fold both top corners down',
-      hint: `All layers. From the middle of the top edge, fold each top corner down along a line that meets the side ${pct(p.cornerSlope * 0.5)} of the square below the top. The back half's band comes round to the front as two strips spreading from the point: the thong.`,
+      hint: `All layers: fold each top corner down along a crease from the middle of the top edge to the side edge ${cm(p.cornerSlope * 0.5)} below the top. The back half's band comes round to the front as two strips spreading from the point: the thong.`,
       folds: [
         { name: 'zori-thong-left', a: point, b: v2(cx - 1, point.y - p.cornerSlope), moving: v2(cx - 0.45, point.y - 0.01), sense: 'valley' },
         { name: 'zori-thong-right', a: v2(cx + 1, point.y - p.cornerSlope), b: point, moving: v2(cx + 0.45, point.y - 0.01), sense: 'valley' },
       ],
     },
-    { kind: 'turn', id: 'zori-turn-back', title: 'Turn over', hint: 'The thong is underneath now. Shape the sole from the back.' },
+    { kind: 'turn', id: 'zori-turn-back', title: 'Turn over', hint: 'Turn it over from side to side: the thong is underneath now. Shape the sole from the back.' },
     {
       kind: 'fold', id: 'zori-sides', title: 'Fold in the sides',
-      hint: `All layers. Fold both long sides in so the sole is ${pct(2 * s)} of the square wide, centred on the thong; the two edges meet down the middle. The thong's ends go round the sides.`,
+      hint: `All layers: fold both long edges in to meet on the centre line, so the sole is ${cm(2 * s)} wide, centred on the thong. The thong's ends go round the sides.`,
       folds: [
         { name: 'zori-side-left', a: M(cx + s, 1.5), b: M(cx + s, -1.5), moving: M(-0.01, 0), sense: 'valley' },
         { name: 'zori-side-right', a: M(cx - s, -1.5), b: M(cx - s, 1.5), moving: M(-0.99, 0), sense: 'valley' },
@@ -124,12 +124,12 @@ export function buildZori(p: ZoriParams = DEFAULT_ZORI): Construction {
     },
     {
       kind: 'fold', id: 'zori-toe', title: 'Fold the bottom up',
-      hint: `All layers. Fold the bottom edge up past the top until, seen from the other side, ${pct(p.toe)} of the square shows above the thong's point: the toe.`,
+      hint: `All layers: fold the bottom edge up along a crease ${cm(point.y - heel)} below the top edge, so it reaches past the top. Seen from the other side, the paper above the thong's point is the toe.`,
       folds: [{ name: 'zori-toe', a: M(1.5, heel), b: M(-1.5, heel), moving: M(cx, -0.99), sense: 'valley' }],
     },
     {
       kind: 'fold', id: 'zori-round', title: 'Round the corners',
-      hint: 'Fold the four corners in at 45 degrees, a little more at the toe than at the heel.',
+      hint: `All layers: fold the four corners in at 45 degrees. At the top (the toe) each crease cuts ${cm(ct)} off both edges; at the bottom (the heel), ${cm(ch)}.`,
       folds: [
         { name: 'zori-toe-left', a: M(cx - s + ct, toeTop), b: M(cx - s, toeTop - ct), moving: M(cx - s + 0.005, toeTop - 0.005), sense: 'valley' },
         { name: 'zori-toe-right', a: M(cx + s, toeTop - ct), b: M(cx + s - ct, toeTop), moving: M(cx + s - 0.005, toeTop - 0.005), sense: 'valley' },
@@ -137,7 +137,7 @@ export function buildZori(p: ZoriParams = DEFAULT_ZORI): Construction {
         { name: 'zori-heel-right', a: M(cx + s - ch, heel), b: M(cx + s, heel + ch), moving: M(cx + s - 0.005, heel + 0.005), sense: 'valley' },
       ],
     },
-    { kind: 'turn', id: 'zori-reveal', title: 'Turn over', hint: 'The finished zori. Fold a second square the same way for the pair.' },
+    { kind: 'turn', id: 'zori-reveal', title: 'Turn over', hint: 'Turn it over from side to side: the finished zori. Fold a second square the same way for the pair.' },
   );
   return { name: print ? 'Zori' : 'Zori, reverse colour', ops, meta: { top: toeTop, shoulderPoint: point, sleeveCutDir: v2(1, 0) } };
 }
