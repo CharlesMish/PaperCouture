@@ -14,7 +14,7 @@ fs.mkdirSync(out, { recursive: true });
     if (seed) await context.addInitScript(({ key, seed }) => { if (localStorage.getItem(key) === null) localStorage.setItem(key, seed); }, { key, seed });
     const page = await context.newPage(); page.setDefaultTimeout(60000); page.on('pageerror', e => result.errors.push(String(e)));
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { assert((await page.goto(url + '/?' + query)).ok()); await settle(); };
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);

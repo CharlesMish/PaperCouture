@@ -43,7 +43,7 @@ function snapshotBounds(snapshot) {
       if (u.pathname.startsWith('/assets/') && !result.assets.includes(u.pathname)) result.assets.push(u.pathname);
     });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async query => { assert((await page.goto(base + '/?' + query)).ok()); await settle(); };
     const state = () => page.evaluate(() => ({ design: paperCouture.garmentId, paper: paperCouture.paperId, turn: paperCouture.quarterTurns, step: paperCouture.controller.step }));
     const geometry = () => page.evaluate(() => JSON.stringify({ facets: paperCouture.timeline.states.at(-1).facets,

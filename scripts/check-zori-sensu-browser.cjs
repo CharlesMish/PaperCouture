@@ -29,7 +29,7 @@ const PAPERS = ['Seigaiha waves', 'Asanoha', 'Polka dot', 'Houndstooth'];
     page.on('pageerror', (e) => result.errors.push(String(e)));
     page.on('console', (m) => { if (m.type() === 'error') result.errors.push(m.text()); });
     const btn = (name) => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const state = () => page.evaluate(() => ({ design: paperCouture.garmentId, step: paperCouture.controller.step, total: paperCouture.timeline.ops.length }));
     const load = async (q) => { const r = await page.goto(base + '/?' + q); assert(r.ok()); await settle(); };
     const primary = () => page.locator('.dock:not([hidden]) .btn-primary');

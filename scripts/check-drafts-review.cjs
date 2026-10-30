@@ -40,7 +40,7 @@ const errors = [];
       const s = await step();
       await p.locator('.dock .btn-primary').click();
       if (await p.evaluate(() => paperCouture.controller.moving)) await p.locator('.dock .btn-primary').click();
-      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving, s);
+      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, s);
     };
     const settle = () => p.waitForFunction(() => !paperCouture.displayCam.glide);
     const capture = async name => { await settle(); await p.waitForTimeout(150); await p.screenshot({ path: `${output}/${name}.png` }); };

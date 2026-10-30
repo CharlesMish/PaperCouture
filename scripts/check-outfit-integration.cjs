@@ -19,7 +19,7 @@ fs.mkdirSync(out, { recursive: true });
   const page = await context.newPage(); page.setDefaultTimeout(60000);
   page.on('pageerror', e => report.errors.push(String(e)));
   const btn = name => page.getByRole('button', { name, exact: true });
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const load = async query => { const response = await page.goto(base + '/?' + query); assert(response.ok()); await settle(); };
   const open = () => openBoard(page);

@@ -10,7 +10,7 @@ const fixture = fs.readFileSync(path.join(out, 'new-rectangle-outfit.json'), 'ut
   await context.addInitScript(raw => localStorage.setItem('paper-couture.pinboard.v1', raw), fixture);
   const page = await context.newPage(); page.setDefaultTimeout(60000); const errors = []; page.on('pageerror', e => errors.push(String(e)));
   const btn = name => page.getByRole('button', { name, exact: true });
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0);
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0);
   const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
   const recipe = () => page.evaluate(() => ({ shape: paperCouture.options.broochShape, paper: paperCouture.paperId, turn: paperCouture.quarterTurns, position: paperCouture.printPosition }));
   const result = { physicalPhoneTested: false };

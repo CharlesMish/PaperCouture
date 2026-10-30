@@ -499,7 +499,9 @@ function frameWorkshop() {
   // the ease works on the camera itself, so whatever moves the target meanwhile is eased too
   if (cameraGlide) {
     const e = cameraGlide.elapsed / GLIDE_S;
-    if (e >= 1 || controller.isScrubbing || !view.inWorkshop) cameraGlide = null;
+    // a drag holds the camera where it is, part-way through the ease if need be (it
+    // resumes, or a release starts a new one, after the drag)
+    if (e >= 1 || !view.inWorkshop) cameraGlide = null;
     else {
       const k = e * e * (3 - 2 * e);
       workCamPos = cameraGlide.fromPos.clone().lerp(workCamPos, k);
@@ -905,7 +907,7 @@ function tick(now: number) {
   if (!pinboard.dialog.open) {
     if (!positionPanel.dialog.open) {
       controller.update(dt);
-      if (cameraGlide) cameraGlide.elapsed += dt;
+      if (cameraGlide && !controller.isScrubbing) cameraGlide.elapsed += dt;
       view.update(dt);
       placePiece();
       if (view.inDisplay) displayCam.update(dt);

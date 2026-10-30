@@ -11,7 +11,7 @@ const key = 'paper-couture.pinboard.v1';
  result.checks.push=(...items)=>{console.log(...items);return Array.prototype.push.apply(result.checks,items)};
  page.setDefaultTimeout(45000); page.on('pageerror',e=>result.errors.push(String(e)));
  const btn = name => page.getByRole('button',{name,exact:true});
- const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const load = async q => { await page.goto(base+'/?'+q); await settle(); };
  const board = () => page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
  const fold = async () => { await page.locator('.dock:not(.display-dock) .btn-primary').click(); if(await page.evaluate(()=>paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); };

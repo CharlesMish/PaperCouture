@@ -8,7 +8,7 @@ fs.mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const context=await browser.newContext({viewport:{width:900,height:760},reducedMotion:'reduce'}),page=await context.newPage();
 const errors=[];page.on('pageerror',e=>errors.push(String(e)));
-const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
 for(const id of ids){
 await page.goto(`${base}/?design=${id}&paper=pinstripe-lining&step=99&view=display`);await settle();
 for(const view of ['Front','Angle','Back']){await page.getByRole('button',{name:view,exact:true}).click();await settle();await page.screenshot({path:path.join(out,`${id}-${view.toLowerCase()}.png`),timeout:60000});}

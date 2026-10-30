@@ -47,7 +47,7 @@ async function bundle() {
     page.on('pageerror', e => result.pageErrors.push(String(e)));
     page.on('response', r => { if (r.status() >= 400 && ['document', 'script', 'stylesheet'].includes(r.request().resourceType())) result.failedResources.push({ url: r.url(), status: r.status() }); });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async query => { const response = await page.goto(base + '?' + query); assert.equal(response.status(), 200); await settle(); };
     const open = () => openBoard(page);
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));

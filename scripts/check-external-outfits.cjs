@@ -13,7 +13,7 @@ fs.mkdirSync(out,{recursive:true});
   if(seed!==undefined)await context.addInitScript(({key,seed})=>{if(localStorage.getItem(key)===null)localStorage.setItem(key,seed)},{key,seed});
   const p=current=await context.newPage();p.setDefaultTimeout(90000);p.on('pageerror',e=>report.errors.push(String(e)));
   const btn=name=>p.getByRole('button',{name,exact:true});
-  const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
+  const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
   const load=async q=>{const r=await p.goto(url+'/?'+q);assert(r.ok());await settle()};
   // Durable boards are JSON: -0 becomes 0 without a geometric change.
   const board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state)));

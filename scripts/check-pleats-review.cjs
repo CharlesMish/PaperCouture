@@ -34,7 +34,7 @@ const csp="default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'se
       const before=(await state()).step;
       const b=forward?p.locator('.dock:not([hidden]) .btn-primary'):p.getByRole('button',{name:'Back',exact:true});
       await b.click();if((await state()).moving)await b.click();
-      await p.waitForFunction(({step,forward})=>paperCouture.controller.step===step+(forward?1:-1)&&!paperCouture.controller.moving,{step:before,forward});
+      await p.waitForFunction(({step,forward})=>paperCouture.controller.step===step+(forward?1:-1)&&!paperCouture.controller.moving&&!paperCouture.cameraSettling,{step:before,forward});
     };
     for(let i=0;i<7;i++)await move(true);
     for(let i=0;i<7;i++)await move(false);

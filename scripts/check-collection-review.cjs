@@ -47,13 +47,13 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     }));
     const goto = async q => {
       await p.goto(root + q); await p.waitForFunction(() => window.paperCouture);
-      await p.waitForFunction(() => !paperCouture.controller.moving);
+      await p.waitForFunction(() => !paperCouture.controller.moving&&!paperCouture.cameraSettling);
     };
     const fold = async () => {
       const before = (await state()).step;
       await p.locator('.dock:not([hidden]) .btn-primary').click();
       if ((await state()).moving) await p.locator('.dock:not([hidden]) .btn-primary').click();
-      await p.waitForFunction(step => paperCouture.controller.step === step + 1 && !paperCouture.controller.moving, before);
+      await p.waitForFunction(step => paperCouture.controller.step === step + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, before);
     };
     const finish = async () => {
       for (let i = 0; i < 20; i++) { const s = await state(); if (s.step === s.total) return; await fold(); }
@@ -68,7 +68,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     };
     const revisit = async id => {
       await p.locator(`[data-revisit="${id}"]`).click();
-      await p.waitForFunction(() => paperCouture.view.inWorkshop && !paperCouture.controller.moving && !paperCouture.accessoryRoot.visible);
+      await p.waitForFunction(() => paperCouture.view.inWorkshop && !paperCouture.controller.moving&&!paperCouture.cameraSettling && !paperCouture.accessoryRoot.visible);
     };
     const display = async () => {
       await p.getByRole('button', { name: 'Display', exact: true }).click();

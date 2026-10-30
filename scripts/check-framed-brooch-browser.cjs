@@ -9,7 +9,7 @@ fs.mkdirSync(out,{recursive:true});
  const context=await browser.newContext({viewport:{width:1100,height:800},hasTouch:true,reducedMotion:'reduce',acceptDownloads:true}),page=await context.newPage();page.setDefaultTimeout(60000);
  const result={base,checks:[],errors:[],physicalPhoneTested:false};page.on('pageerror',e=>result.errors.push(String(e)));
  const btn=name=>page.getByRole('button',{name,exact:true});
- const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
+ const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
  const load=async query=>{await page.goto(base+'/?'+query);await settle()};
  const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
  const fold=async()=>{await page.locator('.dock:not(.display-dock) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not(.display-dock) .btn-primary').click();await settle()};

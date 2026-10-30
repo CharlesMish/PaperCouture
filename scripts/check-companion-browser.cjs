@@ -64,7 +64,7 @@ async function bundle(url) {
     page.on('response', r => { if (r.status() >= 400 && ['document', 'script', 'stylesheet'].includes(r.request().resourceType())) report.failedResources.push({ url: r.url(), status: r.status() }); });
     page.on('request', r => { if (/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname)) report.sourceRequests.push(r.url()); });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { const r = await page.goto(url + '?' + query); assert(r.ok()); await settle(); };
     const open = () => openBoard(page);
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));

@@ -11,9 +11,9 @@ const out=process.env.CAPTURE_DIR||'docs/companion-folds/evidence/browser';
  const context=await browser.newContext({viewport:{width:900,height:760},reducedMotion:'reduce'}),page=await context.newPage();
  page.setDefaultTimeout(60000);page.on('pageerror',e=>result.errors.push(String(e)));
  const button=name=>page.getByRole('button',{name,exact:true});
- const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const shot=name=>page.screenshot({path:path.join(out,name+'.png'),timeout:60000});
- const advance=async()=>{const before=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(n=>!paperCouture.controller.moving&&paperCouture.controller.step===n+1,before)};
+ const advance=async()=>{const before=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(n=>!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.controller.step===n+1,before)};
  const state=()=>page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns}));
  for(const id of ['capelet','boot-left','boot-right']){
   const response=await page.goto(`${base}/?design=${id}&paper=oat-linen&step=0`);assert(response?.ok());await settle();assert.equal((await state()).design,id);let step=0;

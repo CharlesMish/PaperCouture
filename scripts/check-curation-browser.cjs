@@ -14,11 +14,11 @@ fs.mkdirSync(out, {recursive:true});
  const page = await context.newPage(); page.setDefaultTimeout(45000);
  const result = {base, baselineSHA:'f3f735cd68d784ca3850dafdefa8030124d3088f', checks:[], errors:[], captures:0};
  page.on('pageerror',e=>result.errors.push(String(e)));
- const settle = () => page.waitForFunction(()=>window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t===paperCouture.view.target && !paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t===paperCouture.view.target && !paperCouture.displayCam.glide);
  const load = async q => {await page.goto(base+'/?'+q); await settle()};
  const button = name => page.getByRole('button',{name,exact:true});
  const shot = async name => {await page.screenshot({path:path.join(out,name+'.png')});result.captures++};
- const fold = async () => {const s=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(s=>!paperCouture.controller.moving && paperCouture.controller.step===s+1,s)};
+ const fold = async () => {const s=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(s=>!paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.controller.step===s+1,s)};
  const finish = async () => {while(await page.evaluate(()=>!paperCouture.controller.finished))await fold()};
  const state = () => page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,paper:paperCouture.paperId,turn:paperCouture.quarterTurns,position:paperCouture.printPosition,attached:paperCouture.attached,accessory:paperCouture.accessoryId,options:paperCouture.options}));
  try {

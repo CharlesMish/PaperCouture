@@ -14,7 +14,7 @@ fs.mkdirSync(out, { recursive: true });
  page.on('pageerror',e=>result.errors.push(String(e)));
  page.on('request',r=>{if(/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname))result.sourceRequests.push(r.url())});
  const btn = name => page.getByRole('button',{name,exact:true});
- const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const state = () => page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
  const raw = () => page.evaluate(k=>localStorage.getItem(k),key);
  const open = () => openBoard(page);

@@ -20,7 +20,7 @@ fs.mkdirSync(out, { recursive: true });
   page.on('request', r => { if (/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname)) result.sourceRequests.push(r.url()); });
   const btn = name => page.getByRole('button', { name, exact: true });
   const control = name => page.getByLabel(name, { exact: true });
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const raw = () => page.evaluate(k => localStorage.getItem(k), key);

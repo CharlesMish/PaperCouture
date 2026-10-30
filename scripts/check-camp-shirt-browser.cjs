@@ -13,7 +13,7 @@ const key = 'paper-couture.pinboard.v1';
   const context=await browser.newContext({viewport:{width,height},reducedMotion:'reduce',acceptDownloads:true});
   const page=await context.newPage();page.setDefaultTimeout(30000);page.on('pageerror',e=>result.errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')result.errors.push(m.text())});
   const btn=name=>page.getByRole('button',{name,exact:true});
-  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   const state=()=>page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,turn:paperCouture.quarterTurns,position:paperCouture.printPosition}));
   const load=async q=>{const r=await page.goto(base+'/?'+q);assert(r.ok());await settle()};
   const advance=async()=>{const before=(await state()).step;await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await settle();assert.equal((await state()).step,before+1)};

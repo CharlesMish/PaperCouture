@@ -61,7 +61,7 @@ async function paperVisible(page) {
       page.on('pageerror', e => result.errors.push(String(e)));
       page.on('request', r => { if (/\/(src|node_modules)\//.test(new URL(r.url()).pathname)) result.sourceRequests.push(r.url()); });
       const cdp = await context.newCDPSession(page);
-      const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+      const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
       const step = () => page.evaluate(() => paperCouture.controller.step);
       const tap = async name => { await page.getByRole('button',{name,exact:true}).tap(); await settle(); };
       const touch = async (type,x,y) => cdp.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'||type==='touchCancel'?[]:[{x,y,id:1}]});

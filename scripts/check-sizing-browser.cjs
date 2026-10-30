@@ -10,7 +10,7 @@ const key = 'paper-couture.pinboard.v1'; fs.mkdirSync(out, {recursive:true});
  const make=async viewport=>{
   const context=await browser.newContext({viewport,reducedMotion:'reduce',hasTouch:true,acceptDownloads:true}),page=await context.newPage();page.setDefaultTimeout(60000);page.on('pageerror',e=>result.errors.push(String(e)));
   const btn=name=>page.getByRole('button',{name,exact:true});
-  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+  const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   const load=async query=>{await page.goto(base+'/?'+query);await settle()};
   const open=()=>openBoard(page);
   const state=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));

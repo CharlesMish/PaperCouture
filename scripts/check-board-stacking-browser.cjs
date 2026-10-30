@@ -27,7 +27,7 @@ fs.mkdirSync(out, { recursive: true });
   page.on('pageerror', e => result.errors.push(String(e)));
   const btn = name => page.getByRole('button', { name, exact: true });
   const control = name => page.getByLabel(name, { exact: true });
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const open = () => openBoard(page);
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));

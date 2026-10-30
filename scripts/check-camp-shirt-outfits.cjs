@@ -7,7 +7,7 @@ const base=process.env.BASE_URL||'http://127.0.0.1:5317',out=process.env.CAPTURE
  try{
  for(const[top,cm,height]of[['boat-top',16,.736],['wrap-top',18,1.2101735015772872],['camp-shirt',18,1.089]]){
   const context=await browser.newContext({viewport:{width:1180,height:900},reducedMotion:'reduce',acceptDownloads:true}),p=await context.newPage();
-  p.on('pageerror',e=>result.errors.push(String(e)));const btn=name=>p.getByRole('button',{name,exact:true});const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+  p.on('pageerror',e=>result.errors.push(String(e)));const btn=name=>p.getByRole('button',{name,exact:true});const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   for(const[id,paper,size,x,y]of[[top,'oat-linen',cm,-.28,.055+height/2],['skirt','slate-grain',20,-.28,-.57],['hat','oat-linen',8,-.28,.055+height+.26],['clutch','corner-bloom',8,1.02,-.30]]){
    await p.goto(`${base}/?design=${id}&paper=${paper}&step=99&view=display&printX=0.125&printY=-0.125`);await settle();
    await openBoard(p);assert.equal(Number(await p.getByLabel('Starting square size').inputValue()),size);await btn('Pin current piece').click();
@@ -21,7 +21,7 @@ const base=process.env.BASE_URL||'http://127.0.0.1:5317',out=process.env.CAPTURE
  if(!process.env.SKIP_CONTROLS){
  // Actual small-flap pointer and keyboard controls at a phone-sized viewport.
  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce',hasTouch:true}),p=await context.newPage();p.on('pageerror',e=>result.errors.push(String(e)));
- const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  let pointerChecks=0,keyboardChecks=0;
  for(const step of[0,5,7,10]){
   await p.goto(`${base}/?design=camp-shirt&paper=oat-linen&step=${step}`);await settle();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth),390);

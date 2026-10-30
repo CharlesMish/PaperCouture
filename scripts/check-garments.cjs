@@ -42,13 +42,13 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.locator('.dock .btn-primary').click();
       // A second press completes this fold; it must not start another one.
       if ((await state()).moving) await p.locator('.dock .btn-primary').click();
-      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const back = async () => {
       const step = (await state()).step;
       await p.getByRole('button', { name: 'Back', exact: true }).click();
       if ((await state()).moving) await p.getByRole('button', { name: 'Back', exact: true }).click();
-      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const display = async () => {
       await p.getByRole('button', { name: 'Display', exact: true }).click();

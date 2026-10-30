@@ -2,7 +2,7 @@ const{chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const out=process.env.CAPTURE_DIR||'.external-study-browser';fs.mkdirSync(out,{recursive:true});
 (async()=>{const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});const page=await browser.newPage({viewport:{width:1000,height:800},reducedMotion:'reduce'});page.setDefaultTimeout(60000);const report={views:[],print:[],errors:[]};page.on('pageerror',e=>report.errors.push(String(e)));
-const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0);
+const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0);
 const btn=name=>page.getByRole('button',{name,exact:true});
 try{
 for(const id of ['notch-crop','bolero-study','capelet','camp-shirt','necktie']){

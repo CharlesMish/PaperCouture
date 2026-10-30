@@ -7,7 +7,7 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
  const report={checkedAt:new Date().toISOString(),errors:[],visuals:[],checks:[],physicalPhoneTested:false};let p;
  const context=await browser.newContext({viewport:{width:1180,height:900},hasTouch:true,acceptDownloads:true});p=await context.newPage();p.setDefaultTimeout(25000);p.on('pageerror',e=>report.errors.push(String(e)));
  const btn=n=>p.getByRole('button',{name:n,exact:true}),frames=()=>p.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
- const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
+ const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
  const load=async q=>{await p.goto(base+'/?'+q);await settle();};
  const geometry=()=>p.evaluate(()=>Array.from(paperCouture.sheet.front.geometry.attributes.position.array));
  const board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state))),raw=()=>p.evaluate(k=>localStorage.getItem(k),key);

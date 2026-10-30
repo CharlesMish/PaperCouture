@@ -37,7 +37,7 @@ const result = { baseline, browser: '', primary: [], selection: [], strokes: [],
    }
   };
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const load = async value => {
    await page.goto(base + '/?step=99&view=display'); await settle();
    await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key, value });

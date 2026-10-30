@@ -10,7 +10,7 @@ fs.mkdirSync(out, { recursive: true });
   const context = await browser.newContext({ reducedMotion: 'reduce', hasTouch: true });
   const page = await context.newPage(); page.setDefaultTimeout(30000);
   const errors = []; page.on('pageerror', e => errors.push(String(e)));
-  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target);
+  const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target);
   const state = () => page.evaluate(() => ({ id: paperCouture.garmentId, step: paperCouture.controller.step,
    paper: paperCouture.paperId, options: paperCouture.options, saved: localStorage.getItem('paper-couture.pinboard.v1') }));
   for (const width of [1280, 390, 320]) {

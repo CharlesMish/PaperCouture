@@ -24,7 +24,7 @@ fs.mkdirSync(out, { recursive: true });
     const page = currentPage = await context.newPage(); page.setDefaultTimeout(90000); page.setDefaultNavigationTimeout(90000);
     page.on('pageerror', e => report.errors.push(String(e))); page.on('console', m => { if (m.type() === 'error') report.errors.push(m.text()); });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async q => { const r = await page.goto(url + '?' + q); assert(r.ok()); await settle(); };
     const shot = name => page.screenshot({ path: path.join(out, name + '.png') });
     const step = () => page.evaluate(() => paperCouture.controller.step);
