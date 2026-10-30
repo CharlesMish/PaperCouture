@@ -29,7 +29,7 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
   const make = async (width = 1180, height = 900, touch = false, init) => {
     const context = await browser.newContext({ viewport: { width, height }, reducedMotion: 'reduce', hasTouch: touch, isMobile: touch });
     if (init) await context.addInitScript(init);
-    const page = await context.newPage(); page.setDefaultTimeout(30000);
+    const page = await context.newPage(); page.setDefaultTimeout(Number(process.env.CHECK_TIMEOUT_MS) || 30000); // a slower machine (software WebGL) may need longer
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);

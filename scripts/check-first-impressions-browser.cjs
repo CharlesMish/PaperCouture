@@ -25,7 +25,7 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
     for (const [width, height, touch] of [[1280, 800, false], [390, 844, true]]) {
       const key = `${width}x${height}`;
       const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch, isMobile: touch, reducedMotion: 'reduce' });
-      const page = await context.newPage(); page.setDefaultTimeout(60000);
+      const page = await context.newPage(); page.setDefaultTimeout(Number(process.env.CHECK_TIMEOUT_MS) || 60000);
       page.on('pageerror', (e) => result.errors.push(`${key}: ${e}`));
       const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target);
       const load = async (q) => { assert((await page.goto(base + (q === undefined ? '/' : '/?' + q))).ok()); await settle(); };

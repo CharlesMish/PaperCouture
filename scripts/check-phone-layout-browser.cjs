@@ -25,7 +25,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
   fs.mkdirSync(out, { recursive: true });
   const make = async (width, height, touch) => {
     const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch, isMobile: touch });
-    const page = await context.newPage(); page.setDefaultTimeout(30000);
+    const page = await context.newPage(); page.setDefaultTimeout(Number(process.env.CHECK_TIMEOUT_MS) || 30000); // a slower machine (software WebGL) may need longer
     const errors = []; page.on('pageerror', (e) => errors.push(String(e)));
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async (q) => { assert((await page.goto(base + '/?' + q)).ok()); await settle(); await frames(); };
