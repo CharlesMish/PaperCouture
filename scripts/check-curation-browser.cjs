@@ -28,8 +28,10 @@ fs.mkdirSync(out, {recursive:true});
   const signature = async url => {const p=await context.newPage();await p.goto(url);await p.waitForFunction(()=>window.paperCouture);const r=await p.evaluate(async()=>{
     const {PAPERS}=await import('/src/papers/index.ts'),{paperCanvas}=await import('/src/render/textures.ts');
     const {GARMENTS,buildGarment}=await import('/src/fold/garments.ts');const {ACCESSORIES}=await import('/src/fold/accessories.ts');
+    // folds must match exactly; step wording may be rewritten (docs/instructions/STYLE.md)
+    const unworded=ops=>ops.map(o=>({...o,title:'',hint:''}));
     const hashes={};for(const paper of PAPERS)for(const side of ['front','back']){const c=paperCanvas(paper,side,0);hashes[paper.id+'/'+side]=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',c.getContext('2d').getImageData(0,0,c.width,c.height).data))).map(v=>v.toString(16).padStart(2,'0')).join('')}
-    return {hashes,visiblePapers:PAPERS.filter(p=>!p.hidden).map(p=>p.name),garments:Object.fromEntries(GARMENTS.map(g=>[g.id,buildGarment(g.id).ops])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:a.build().ops,pieces:a.pieces,positions:a.positions}]))};
+    return {hashes,visiblePapers:PAPERS.filter(p=>!p.hidden).map(p=>p.name),garments:Object.fromEntries(GARMENTS.map(g=>[g.id,unworded(buildGarment(g.id).ops)])),accessories:Object.fromEntries(ACCESSORIES.map(a=>[a.id,{ops:unworded(a.build().ops),pieces:a.pieces,positions:a.positions}]))};
   });await p.close();return r};
   const old=await signature(baseline),current=await signature(dev);
   for(const [key,value]of Object.entries(old.hashes))assert.equal(current.hashes[key],value,key+' raster changed');
