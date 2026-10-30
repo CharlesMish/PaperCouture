@@ -1,4 +1,5 @@
 // Workshop controls. Pure DOM; it is told what to show and reports clicks.
+import { showLength } from '../fold/measure';
 
 export interface PanelView {
   total: number;
@@ -8,12 +9,18 @@ export interface PanelView {
   active: number | null;
   title: string;
   hint: string;
+  /** The square the instruction's measurements are for (when it has any), in cm. */
+  squareCm?: number;
   foldLabel: string;
   canBack: boolean;
   canFold: boolean;
   moving: boolean;
   /** "See this fold": off (not offered), offered (most of the moving paper is hidden), or showing. */
   inspect: 'off' | 'offered' | 'showing';
+  /** Start over was just pressed: offer to put the folds back. */
+  undoReset?: boolean;
+  /** On a finished piece: offer to pin it, or say it is pinned (and open the board). */
+  pin?: 'off' | 'offer' | 'pinned';
 }
 
 export interface PanelHandlers {
@@ -21,6 +28,8 @@ export interface PanelHandlers {
   onFold(): void;
   onReset(): void;
   onInspect(): void;
+  onUndoReset?(): void;
+  onPin?(): void;
   /** The short-screen instructions were opened (the page closes other disclosures). */
   onHintOpen?(): void;
 }
@@ -43,6 +52,8 @@ export class WorkshopPanel {
   /** Short screens hide the step's instructions behind this; the title stays as the action cue. */
   readonly hintToggle = el('button', 'caption-tool hint-toggle', 'Instructions');
   readonly inspectButton = el('button', 'caption-tool inspect-toggle', 'See this fold');
+  readonly undoResetButton = el('button', 'caption-tool undo-reset', 'Undo start over');
+  readonly pinButton = el('button', 'caption-tool pin-piece', 'Pin to pinboard');
   private inspectNote = el('p', 'inspect-note', 'Highlighted: the paper this step moves, drawn through the layers above it. The paper and the view are unchanged.');
   private hintOpen = false;
   /** Instructions sit behind the Instructions button (short screens, or a dock that would crowd the paper). */
@@ -56,7 +67,10 @@ export class WorkshopPanel {
     const words = el('div', 'caption-text');
     words.setAttribute('aria-live', 'polite');
     this.hint.id = 'step-hint';
-    this.hintToggle.type = this.inspectButton.type = 'button';
+    this.hintToggle.type = this.inspectButton.type = this.undoResetButton.type = this.pinButton.type = 'button';
+    this.undoResetButton.hidden = this.pinButton.hidden = true;
+    this.undoResetButton.addEventListener('click', () => h.onUndoReset?.());
+    this.pinButton.addEventListener('click', () => h.onPin?.());
     this.hintToggle.setAttribute('aria-controls', this.hint.id);
     this.hintToggle.setAttribute('aria-expanded', 'false');
     this.hintToggle.addEventListener('click', () => {
@@ -66,7 +80,7 @@ export class WorkshopPanel {
     this.inspectButton.setAttribute('aria-pressed', 'false');
     this.inspectButton.addEventListener('click', h.onInspect);
     const tools = el('div', 'caption-tools');
-    tools.append(this.hintToggle, this.inspectButton);
+    tools.append(this.hintToggle, this.inspectButton, this.undoResetButton, this.pinButton);
     words.append(this.stepNo, this.title, this.hint, this.inspectNote);
     caption.append(words, tools);
     const row = el('div', 'dock-row');
@@ -86,7 +100,7 @@ export class WorkshopPanel {
       li.classList.toggle('done', i < v.done);
       li.classList.toggle('active', i === v.active);
     });
-    this.stepNo.textContent = v.active === null ? 'Finished' : `Step ${v.active + 1} of ${v.total}`;
+    this.stepNo.textContent = v.active === null ? 'Finished' : `Step ${v.active + 1} of ${v.total}${v.squareCm ? ` · on a ${showLength(v.squareCm)} square` : ''}`;
     this.title.textContent = v.title;
     this.hint.textContent = v.hint;
     this.back.disabled = !v.canBack;
@@ -98,6 +112,9 @@ export class WorkshopPanel {
     this.inspectButton.textContent = v.inspect === 'showing' ? 'Hide highlight' : 'See this fold';
     this.inspectNote.hidden = v.inspect !== 'showing';
     this.dock.classList.toggle('inspecting', v.inspect === 'showing');
+    this.undoResetButton.hidden = !v.undoReset;
+    this.pinButton.hidden = !v.pin || v.pin === 'off';
+    this.pinButton.textContent = v.pin === 'pinned' ? 'Pinned · open pinboard' : 'Pin to pinboard';
   }
 
   get compact(): boolean { return this.dock.classList.contains('compact'); }

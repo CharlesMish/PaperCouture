@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { CANDIDATES as ORIGINAL } from '../experiments/fold-study/constructions';
 import { buildGarment, attachmentAnchors } from '../src/fold/garments';
 const CANDIDATES = {apron: () => buildGarment('apron'), clutch: () => buildGarment('clutch'), tunic: () => buildGarment('tunic')};
-for (const id of ['apron', 'clutch'] as const) assert.deepEqual(CANDIDATES[id](), ORIGINAL[id](), `${id} changed from the reviewed study`);
+// The folds must be the reviewed study's exactly; the step wording may be rewritten
+// (docs/instructions/STYLE.md), so titles and instructions are left out of the comparison.
+const folds = (c: { name: string; ops: { title: string; hint: string }[] }) => ({ ...c, ops: c.ops.map(op => ({ ...op, title: '', hint: '' })) });
+for (const id of ['apron', 'clutch'] as const) assert.deepEqual(folds(CANDIDATES[id]()), folds(ORIGINAL[id]()), `${id} changed from the reviewed study`);
 for (const id of ['apron', 'clutch', 'tunic'] as const) assert.deepEqual(attachmentAnchors(id, 1, -1), []);
 import { checkState, modelPoly, isFlipped } from '../src/fold/engine';
 import { centroid, signedArea, Vec2 } from '../src/fold/geometry';

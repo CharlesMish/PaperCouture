@@ -26,7 +26,7 @@ for(const item of ['clutch','apron']){
  const entryDistance=await p.evaluate(()=>foldStudy.stage.camera.position.distanceTo(foldStudy.displayCam.target));
  for(const name of ['Front','Angle','Back']){await button(name);await shot(item+'-'+name.toLowerCase())}
  await button('Reset view');assert(Math.abs((await p.evaluate(()=>foldStudy.stage.camera.position.distanceTo(foldStudy.displayCam.target)))-entryDistance)<1e-5);
- await p.getByRole('radio',{name:'Starlit lining',exact:true}).click();await settle();for(let q=0;q<4;q++){await p.getByRole('button',{name:`Turn paper (now ${q*90}°)`,exact:true}).click();await settle()}
+ await p.getByRole('radio',{name:'Starlit lining',exact:true}).click();await settle();for(let q=0;q<4;q++){await p.getByRole('button',{name:`Rotate print (now ${q*90}°)`,exact:true}).click();await settle()}
  assert.equal(await p.evaluate(()=>foldStudy.turns),0);assert.equal(await step(),count);await shot(item+'-starlit');
  await button('Turntable');assert(await p.evaluate(()=>foldStudy.displayCam.turntable));await button('Turntable');
  await p.getByRole('button',{name:'Return to the workshop',exact:true}).click();await settle();assert.equal(await step(),count);

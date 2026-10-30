@@ -57,8 +57,7 @@ const out = process.env.CAPTURE_DIR || 'docs/coat-dress/evidence/browser';
     await back(); await back(); await advance(); await advance();
     assert.equal((await state()).step, 3);
     // revisit the choice from the finished piece: it rewinds to the choice only
-    await page.getByLabel('Fold to revisit').selectOption('coatSide');
-    await btn('Revisit fold').click(); await settle();
+    await page.locator(`[data-revisit="coatSide"]`).click(); await settle();
     assert.equal((await state()).step, 1);
     await btn('Reverse-colour coat').click(); await settle();
     assert.equal((await state()).total, 4);
@@ -70,7 +69,7 @@ const out = process.env.CAPTURE_DIR || 'docs/coat-dress/evidence/browser';
     await page.locator('.dock:not([hidden]) .btn-primary').click(); await settle();
     for (const v of ['Front', 'Angle', 'Back']) { await btn(v).click(); await settle(); await shot(`display-${v.toLowerCase()}`); }
     // the board: suggested size and an exact capture of the live geometry
-    await page.getByRole('button', { name: /^View board/ }).click();
+    await page.getByRole('button', { name: /^Pinboard \(/ }).click();
     assert.equal(Number(await page.getByLabel('Starting square size').inputValue()), 20);
     await btn('Pin current piece').click();
     const board = await page.evaluate(() => structuredClone(paperCouture.pinboard.state));

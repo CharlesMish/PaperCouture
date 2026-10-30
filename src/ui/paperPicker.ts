@@ -57,8 +57,8 @@ export class PaperPicker {
     }
     this.rotate.className = 'rotate';
     this.rotate.innerHTML =
-      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Turn paper</span>';
-    this.rotate.title = 'Turn paper';
+      '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8.5A6 6 0 1 0 14 14.2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M16.4 3.8v5h-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Rotate print</span>';
+    this.rotate.title = 'Rotate print a quarter turn';
     this.rotate.addEventListener('click', h.onRotate);
     this.position.className = 'rotate position-print';
     this.position.innerHTML = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16M7 5l3-3 3 3M7 15l3 3 3-3M5 7l-3 3 3 3M15 7l3 3-3 3" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Position print</span>';
@@ -80,8 +80,8 @@ export class PaperPicker {
       img.style.transform = `rotate(${quarterTurns * 90}deg)`;
     }
     const deg = (quarterTurns % 4) * 90;
-    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, paper turned ${deg}°` : ''}`;
-    this.rotate.setAttribute('aria-label', `Turn paper (now ${deg}°)`);
+    this.name.textContent = current.hidden ? current.name : `${current.name}${deg ? `, print rotated ${deg}°` : ''}`;
+    this.rotate.setAttribute('aria-label', `Rotate print (now ${deg}°)`);
     this.position.classList.toggle('print-shifted', shifted);
     this.position.title = shifted ? 'Position print · shifted' : 'Position print';
     // after the name: a longer name takes height from the list

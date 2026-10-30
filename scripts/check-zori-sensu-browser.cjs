@@ -58,8 +58,7 @@ const PAPERS = ['Seigaiha waves', 'Asanoha', 'Polka dot', 'Houndstooth'];
       for (let i = 0; i < p.steps.reverse; i++) await advance();
       await shot(`${p.id}-reverse-finished`);
       await back(); await advance();
-      await page.getByLabel('Fold to revisit').selectOption(p.option);
-      await btn('Revisit fold').click(); await settle();
+      await page.locator(`[data-revisit="${p.option}"]`).click(); await settle();
       assert.equal((await state()).step, 0);
       await btn(p.print).click(); await settle();
       assert.equal((await state()).total, p.steps.print);
@@ -89,7 +88,7 @@ const PAPERS = ['Seigaiha waves', 'Asanoha', 'Polka dot', 'Houndstooth'];
       const place = (x, y) => b.page.evaluate(({ x, y }) => { const p = paperCouture.pinboard; p.mutate(() => { const i = p.state.items.at(-1); i.x = x; i.y = y; p.position(); p.constrain(i.id); }); }, { x, y });
       for (const [q, cm, x, y] of [['design=zori&paper=asanoha', 8, -0.5, -0.6], ['design=zori&paper=asanoha', 8, -0.15, -0.6], ['design=sensu&paper=seigaiha', 7.5, 0.5, 0.4]]) {
         await b.load(`${q}&step=99&view=display`);
-        await b.page.getByRole('button', { name: /^View board/ }).click();
+        await b.page.getByRole('button', { name: /^Pinboard \(/ }).click();
         assert.equal(Number(await b.page.getByLabel('Starting square size').inputValue()), cm, `${q}: suggested size`);
         await b.btn('Pin current piece').click(); await place(x, y);
       }

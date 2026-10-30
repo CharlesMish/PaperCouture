@@ -1,5 +1,5 @@
-import { DesignPicker } from './designPicker';
-import { BROWSE_GARMENTS } from './designOrder';
+import { DesignPicker, type DesignProgress } from './designPicker';
+import { BROWSE_GARMENTS, DESIGN_FACTS, DIFFICULTIES } from './designOrder';
 import { GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
 import type { DecisionId, FoldDecision } from '../fold/garmentOptions';
 export type { GarmentId };
@@ -15,9 +15,10 @@ export class StudioControls {
   private edit = document.createElement('button');
   private remove = document.createElement('button');
   private returnButton = document.createElement('button');
-  private revisit = document.createElement('button');
-  private revisitChoice = document.createElement('select');
-  private revisitLabel = document.createElement('label');
+  /** "Change": a button for each choice already made, which goes back to it. */
+  private revisitGroup = document.createElement('span');
+  private revisitButtons = document.createElement('span');
+  private progress: DesignProgress = new Map();
   private position = document.createElement('select');
   private positionLabel = document.createElement('label');
   private note = document.createElement('span');
@@ -52,24 +53,36 @@ export class StudioControls {
     const labelText = document.createElement('span'); labelText.className = 'design-label-text'; labelText.textContent = 'Design ';
     label.append(labelText);
     this.design.setAttribute('aria-label', 'Garment design');
-    for (const garment of BROWSE_GARMENTS) this.design.append(new Option(garment.name, garment.id));
+    // grouped by tier, easiest first, as in Browse pieces
+    for (const tier of DIFFICULTIES) {
+      const group = document.createElement('optgroup'); group.label = tier.name;
+      for (const garment of BROWSE_GARMENTS) if (DESIGN_FACTS[garment.id].difficulty === tier.id) group.append(new Option(garment.name, garment.id));
+      this.design.append(group);
+    }
     this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
     for (const accessory of ACCESSORIES) this.accessory.append(new Option(accessory.name, accessory.id));
     this.accessoryLabel.append(this.accessory);
-    for (const b of [this.edit, this.remove, this.returnButton, this.revisit]) b.className = 'studio-button';
+    for (const b of [this.edit, this.remove, this.returnButton]) b.className = 'studio-button';
     this.edit.onclick = () => h.onEdit(this.accessory.value as AccessoryId);
     this.accessory.onchange = () => { this.displaced = null; this.edit.textContent = this.actionLabel(); };
     this.remove.textContent = 'Remove accessory'; this.remove.onclick = h.onRemove;
     this.returnButton.textContent = 'Back to garment'; this.returnButton.onclick = h.onReturn;
-    this.revisitLabel.textContent = 'Revisit ';
-    this.revisitChoice.setAttribute('aria-label', 'Fold to revisit');
-    this.revisit.textContent = 'Revisit fold'; this.revisit.onclick = () => h.onRevisit(this.revisitChoice.value as DecisionId);
-    this.revisitLabel.append(this.revisitChoice, this.revisit);
+    this.revisitGroup.className = 'revisit-group';
+    this.revisitGroup.setAttribute('role', 'group');
+    this.revisitGroup.setAttribute('aria-label', 'Change a choice');
+    const revisitText = document.createElement('span'); revisitText.textContent = 'Change'; revisitText.setAttribute('aria-hidden', 'true');
+    this.revisitButtons.className = 'revisit-buttons';
+    this.revisitButtons.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-revisit]');
+      if (b && !b.disabled) h.onRevisit(b.dataset.revisit as DecisionId);
+    });
+    this.revisitGroup.append(revisitText, this.revisitButtons);
     this.positionLabel.textContent = 'Place ';
-    this.position.setAttribute('aria-label', 'Accessory position');
+    this.position.setAttribute('aria-label', 'Accessory position (left and right as you look at it)');
+    this.positionLabel.title = 'Left and right as you look at the piece';
     this.position.onchange = () => h.onPosition(this.position.value as PinPosition);
     this.positionLabel.append(this.position);
     this.note.className = 'studio-note';
@@ -108,9 +121,11 @@ export class StudioControls {
       if (b && b !== this.moreButton && b !== this.noteToggle && this.root.classList.contains('more-open')) this.setMoreOpen(false);
     });
     this.design.addEventListener('change', () => this.setMoreOpen(false));
-    this.root.append(this.designPicker.button, label, this.moreButton, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.noteToggle, this.note);
+    this.root.append(this.designPicker.button, label, this.moreButton, this.revisitGroup, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.noteToggle, this.note);
     parent.append(this.root);
   }
+  /** Steps done in each design, for Browse pieces. */
+  setProgress(progress: DesignProgress): void { this.progress = progress; }
   /** Narrow screens while a piece is being folded: the controls fold down to one row. */
   setFoldingBar(on: boolean): void {
     if (this.root.classList.contains('folding-bar') === on) return;
@@ -151,7 +166,7 @@ export class StudioControls {
       this.displaced ??= this.accessory.value as AccessoryId;
       this.accessory.value = available[0];
     }
-    this.designPicker.render(id, accessoryMode);
+    this.designPicker.render(id, accessoryMode, this.progress);
     this.design.value = id; this.design.disabled = accessoryMode;
     this.kept = { id: activeAccessory, attached };
     this.edit.textContent = this.actionLabel();
@@ -166,18 +181,22 @@ export class StudioControls {
     }
     this.position.value = position;
     this.returnButton.hidden = !accessoryMode;
-    this.revisitLabel.hidden = accessoryMode || revisit.length === 0;
-    this.revisit.disabled = this.revisitChoice.disabled = moving;
+    this.revisitGroup.hidden = accessoryMode || revisit.length === 0;
     const revisitKey = revisit.map(d => d.id).join('|');
-    if (this.revisitChoice.dataset.choices !== revisitKey) {
-      const selected = this.revisitChoice.value;
-      this.revisitChoice.replaceChildren(...revisit.map(d => new Option(d.label, d.id)));
-      if (revisit.some(d => d.id === selected)) this.revisitChoice.value = selected;
-      this.revisitChoice.dataset.choices = revisitKey;
+    if (this.revisitButtons.dataset.choices !== revisitKey) {
+      this.revisitButtons.replaceChildren(...revisit.map(d => {
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'studio-button';
+        b.dataset.revisit = d.id; b.textContent = d.label;
+        b.setAttribute('aria-label', `Change ${d.label.toLowerCase()}`);
+        b.title = 'Go back to this choice; your other folds and choices are kept';
+        return b;
+      }));
+      this.revisitButtons.dataset.choices = revisitKey;
     }
+    for (const b of this.revisitButtons.querySelectorAll('button')) b.disabled = moving;
     const accessoryName = ACCESSORIES.find(a => a.id === activeAccessory)!.name;
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
-      : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
+      : finished && attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : '';
     const experiment = garmentExperiment(id);
     if (experiment && !accessoryMode) this.note.textContent = `${experiment}${attached ? ' · accessory kept aside' : ''}`;
     const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;

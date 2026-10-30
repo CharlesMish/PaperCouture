@@ -49,7 +49,7 @@ function snapshotBounds(snapshot) {
     const geometry = () => page.evaluate(() => JSON.stringify({ facets: paperCouture.timeline.states.at(-1).facets,
       position: Array.from(paperCouture.sheet.front.geometry.attributes.position.array), uv: Array.from(paperCouture.sheet.front.geometry.attributes.uv.array) }));
     const board = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
-    const open = () => page.getByRole('button', { name: /^View board/ }).click();
+    const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
     const shot = async (name, frame = false) => {
       const file = path.join(out, frame ? 'frames' : '', name + '.png');
       await page.screenshot({ path: file }); result.captures.push({ name, sha256: sha(fs.readFileSync(file)) });
@@ -122,7 +122,7 @@ function snapshotBounds(snapshot) {
         const radio = page.getByRole('radio', { name, exact: true }); await radio.click(); await settle();
         assert.equal((await state()).paper, id); assert.equal(await radio.getAttribute('aria-checked'), 'true');
         for (let q = 0; q < 4; q++) {
-          while ((await state()).turn !== q) await page.getByRole('button', { name: /^Turn paper/ }).click();
+          while ((await state()).turn !== q) await page.getByRole('button', { name: /^Rotate print/ }).click();
           const matrices = await page.evaluate(() => [paperCouture.sheet.front.material.map.matrix.toArray(), paperCouture.sheet.back.material.map.matrix.toArray()]);
           for (const [u, v] of [[.13, .22], [.29, .87], [.75, .41]]) {
             const sample = m => [m[0] * u + m[3] * v + m[6], m[1] * u + m[4] * v + m[7]];

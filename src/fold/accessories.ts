@@ -27,8 +27,11 @@ export const ACCESSORIES: {
   { id: 'bow', name: 'Two-piece bow', build: buildBowWing, pieces: [
     { angle: -Math.PI / 4, offset: -1.27, scale: 0.19 }, { angle: 3 * Math.PI / 4, offset: 1.27, scale: 0.19 },
   ] },
-  { id: 'kerchief', name: 'Neckerchief', build: buildNeckerchief, pieces: [{ angle: 0, offset: 0, scale: NECKERCHIEF_SCALE }], positions: NECKERCHIEF_POSITIONS },
-  { id: 'pocket', name: 'Folded patch pocket', build: buildPocketSquare, pieces: [{ angle: 0, offset: 0, scale: POCKET_SCALE }], positions: POCKET_POSITIONS },
+  { id: 'kerchief', name: 'Neckerchief', build: buildNeckerchief, pieces: [{ angle: 0, offset: 0, scale: NECKERCHIEF_SCALE }], positions: NECKERCHIEF_POSITIONS,
+    // what a step once said about its placement, kept as the piece's note
+    experiment: 'Separate square · placed at the neckline; not knotted or fastened on' },
+  { id: 'pocket', name: 'Folded patch pocket', build: buildPocketSquare, pieces: [{ angle: 0, offset: 0, scale: POCKET_SCALE }], positions: POCKET_POSITIONS,
+    experiment: 'Separate square · placed flat on the chest; nothing is tucked into the garment' },
   // Draft (PR #13): a folded tulip at the waist anchors, stood upright and
   // lowered so the flower (not its base point) is centred on the anchor.
   { id: 'tulip', name: 'Folded tulip', build: buildTulip, pieces: [{ angle: -3 * Math.PI / 4, offset: 0, scale: TULIP_SCALE, lift: TULIP_LIFT }], positions: TULIP_POSITIONS },

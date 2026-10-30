@@ -9,7 +9,8 @@
 // far edge of the table (the top of the dress).
 
 import { Op } from './engine';
-import { Vec2, v2 } from './geometry';
+import { Vec2, v2, applyAffine, reflectionAcross, sub } from './geometry';
+import { cm, lineMeet } from './measure';
 
 export interface DressParams {
   /** Depth of the top band folded down for the collar (sheet is 2 units wide). */
@@ -36,6 +37,26 @@ export interface Construction {
   meta: { top: number; shoulderPoint: Vec2; sleeveCutDir: Vec2 };
 }
 
+/** Where the side folds run, for the instructions (every skirt shape). */
+export const sideFolds = (p: DressParams) =>
+  `Fold each side in along a slanting crease: from the top edge ${cm(1 - p.shoulder)} in from the side, to the bottom edge ${cm(1 - p.hem)} in from the side. Fold all the layers.`;
+/**
+ * How far below the top edge the sleeve crease leaves the side flap, on the flap's
+ * inner edge (the sheet's side edge, folded in): a landmark for the instructions,
+ * from the same numbers that place the creases.
+ */
+export function sleeveDrop(p: DressParams): number {
+  const top = 1 - p.collar, P = v2(-p.shoulder, top), H = v2(-p.hem, -1);
+  const phi = Math.atan2(p.hem - p.shoulder, top + 1);
+  const alpha = Math.PI / 2 - (p.sleeveDroop * Math.PI) / 360 + phi;
+  const across = reflectionAcross(P, sub(H, P));
+  const inner = [applyAffine(across, v2(-1, top)), applyAffine(across, v2(-1, -1))];
+  return top - lineMeet(P, v2(Math.cos(alpha), -Math.sin(alpha)), inner[0], sub(inner[1], inner[0])).y;
+}
+/** Where the sleeve folds run (every sleeve angle): `drop` is how far below the top edge the crease leaves the flap. */
+export const sleeveFolds = (drop: number) =>
+  `On each side flap only, fold the top corner back out: crease from the top of the side fold down to the flap's inner edge, ${cm(drop)} below the top.`;
+
 export function buildDress(p: DressParams = DEFAULT_DRESS): Construction {
   const top = 1 - p.collar; // model y of the collar fold edge
   const bottom = -1;
@@ -57,20 +78,20 @@ export function buildDress(p: DressParams = DEFAULT_DRESS): Construction {
       kind: 'fold',
       id: 'collar',
       title: 'Fold the top edge down',
-      hint: 'This band becomes the collar. The reverse colour shows where the paper turns over.',
+      hint: `Print side up. Fold the top edge down onto the print by ${cm(p.collar)}, all the way across. This band becomes the collar, in the paper's other colour.`,
       folds: [{ name: 'collar', a: v2(-1.5, top), b: v2(1.5, top), moving: v2(0, 1), sense: 'valley' }],
     },
     {
       kind: 'turn',
       id: 'turn-1',
       title: 'Turn the paper over',
-      hint: 'The collar is now underneath. We shape the dress from the back.',
+      hint: 'Turn it over from side to side, so the collar band is underneath along the top edge. The dress is shaped from the back.',
     },
     {
       kind: 'fold',
       id: 'sides',
-      title: 'Fold both sides in along the guides',
-      hint: 'The creases slant outward toward the hem, which gives the skirt its A-line.',
+      title: 'Fold both sides in',
+      hint: `${sideFolds(p)} The slant gives the skirt its A-line.`,
       folds: [
         { name: 'side-left', a: P, b: H, moving: v2(-1, 0), sense: 'valley' },
         { name: 'side-right', a: mirror(P), b: mirror(H), moving: v2(1, 0), sense: 'valley' },
@@ -80,7 +101,7 @@ export function buildDress(p: DressParams = DEFAULT_DRESS): Construction {
       kind: 'fold',
       id: 'sleeves',
       title: 'Fold the top corners out into sleeves',
-      hint: 'Only the side flaps move. Their tips swing past the shoulders.',
+      hint: `${sleeveFolds(sleeveDrop(p))} Their corners swing out past the shoulders.`,
       folds: [
         {
           name: 'sleeve-left',
@@ -104,14 +125,14 @@ export function buildDress(p: DressParams = DEFAULT_DRESS): Construction {
       kind: 'fold',
       id: 'hem',
       title: 'Fold the hem points up',
-      hint: 'The slanted creases leave two small points below the hem. Fold them onto the back.',
+      hint: 'The slanting side folds leave a small point sticking out below the bottom edge on each side. Fold both points up along the bottom edge, onto the back.',
       folds: [{ name: 'hem-points', a: v2(-1.5, bottom), b: v2(1.5, bottom), moving: v2(0, -2), sense: 'valley' }],
     },
     {
       kind: 'turn',
       id: 'turn-2',
       title: 'Turn over to reveal the dress',
-      hint: 'Collar, sleeves and hem: all one square, uncut.',
+      hint: 'Turn it over from side to side: the collar, sleeves and hem all come from one uncut square.',
     },
   ];
 

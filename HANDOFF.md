@@ -1,3 +1,33 @@
+# Paper Couture — the first five minutes (Claude, 2026-10-30)
+
+Branch `claude/first-impressions`, on top of `claude/phone-layout`, from Charlie's
+request after Claude's review of the basics. Telling a newcomer what to do on
+arrival is deliberately left for later. Not merged. Notes:
+[docs/first-impressions/NOTES.md](docs/first-impressions/NOTES.md).
+
+- `src/ui/designOrder.ts`: Easy / Medium / Advanced by one rule (checked by
+  `scripts/check-design-order.ts`), the Dress first as Start here, the experimental
+  list, mirror pairs. `designPicker.ts` shows groups, tags, pair cards and progress;
+  the Design list uses optgroups.
+- `main.ts`: a bare address resumes from `paper-couture.workshop.v1` (piece, paper,
+  step, per-design progress); Start over is undoable until the paper moves; Pin to
+  pinboard from the finished step (`Pinboard.openAndPin`), once per recipe.
+- Labels: Rotate print, Change buttons (`[data-revisit]`), Pinboard (n/12), no
+  developer notes in the toolbar, plainer pinboard text; arranging tools only once
+  something is pinned. `paperSize.ts`: no square above 21.6 cm (8.5 in).
+- Instructions: `src/fold/measure.ts` (`cm()` measurements, shown in cm on the
+  suggested square), every hint rewritten to `docs/instructions/STYLE.md`, checked by
+  `scripts/check-instructions.ts` (measurements against the creases);
+  `scripts/fold-measurements.ts` prints the distances. Placement notes the pocket and
+  neckerchief steps used to carry are now their accessory notes.
+- Checks: `check-first-impressions-browser.cjs` (CI:
+  `.github/workflows/first-impressions.yml`); chooser, phone layout, kimono, gown,
+  coat-dress, zori/fan, collection review, centre review, capelet/brooch and brooch
+  choice checks updated for the new names; `check-integrated.ts` compares the
+  reviewed apron and clutch folds without their wording.
+
+Not tested on a real phone; no physical folding for this pass.
+
 # Paper Couture — room for the paper on phones (Claude, 2026-10-29)
 
 Branch `claude/phone-layout`, on top of `claude/usability-pass`, following Astra's

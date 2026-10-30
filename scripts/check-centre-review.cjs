@@ -39,7 +39,7 @@ const output = 'docs/geometry-collection/centre-review';
   const checkpoint=async name=>{const s=await state();checks.push({name,state:s});console.log(name,JSON.stringify(s));return s};
   const capture=async name=>{await p.waitForTimeout(350);await p.screenshot({path:`${output}/${name}.png`})};
   const paper=async name=>p.getByRole('radio',{name,exact:true}).click();
-  const rotate=async()=>p.getByRole('button',{name:/^Turn paper \(now/}).click();
+  const rotate=async()=>p.getByRole('button',{name:/^Rotate print \(now/}).click();
   await p.goto(`http://127.0.0.1:${server.address().port}/play/paper-couture/?step=6&paper=tidal-bands&view=display`);await p.waitForFunction(()=>window.paperCouture);await displayed();
   await p.getByLabel('Accessory type',{exact:true}).selectOption('bow');await button('Fold accessory').click();
   await paper('Cut-paper mosaic');await rotate();await rotate();
@@ -54,7 +54,7 @@ const output = 'docs/geometry-collection/centre-review';
   await button('Fold centre').click();assert.equal((await state()).step,0);await finish();await button('Attach centre').click();await displayed();
   s=await checkpoint('three-piece bow attached');assert(s.attached&&s.visible&&s.centre&&s.complete&&s.centreVisible);assert.equal(s.paper,'tidal-bands');assert.equal(s.turn,0);assert.equal(s.wingPaper,'cut-paper-mosaic');assert.equal(s.wingTurn,2);assert.equal(s.centrePaper,'midnight-orchard');assert.equal(s.centreTurn,1);await capture('assembled-desktop');
   await button('Show folded centre').click();await p.waitForFunction(()=>!paperCouture.accessoryRoot.children[2].visible);s=await state();assert(!s.centre&&s.attached&&s.complete);await button('Show folded centre').click();await p.waitForFunction(()=>paperCouture.accessoryRoot.children[2].visible);
-  await p.getByLabel('Fold to revisit').selectOption('silhouette');await button('Revisit fold').click();await p.waitForFunction(()=>paperCouture.view.inWorkshop&&!paperCouture.controller.moving);assert.equal((await state()).step,2);await p.locator('[data-decision="silhouette"][data-choice="flare"]').click();await finish();await button('Display').click();await displayed();
+  await p.locator(`[data-revisit="silhouette"]`).click();await p.waitForFunction(()=>paperCouture.view.inWorkshop&&!paperCouture.controller.moving);assert.equal((await state()).step,2);await p.locator('[data-decision="silhouette"][data-choice="flare"]').click();await finish();await button('Display').click();await displayed();
   s=await checkpoint('changed garment fold restored complete assembly');assert(s.attached&&s.visible&&s.centre&&s.complete&&s.centreVisible);assert.equal(s.options.silhouette,'flare');assert.equal(s.wingPaper,'cut-paper-mosaic');assert.equal(s.wingTurn,2);assert.equal(s.centrePaper,'midnight-orchard');assert.equal(s.centreTurn,1);assert.equal(s.paper,'tidal-bands');
   await button('Edit centre').click();assert.equal((await state()).step,5);await back();await back();await button('Back to garment').click();await displayed();s=await checkpoint('unfolded centre returned; wings retained');assert(s.attached&&s.visible&&!s.centre&&!s.complete);await button('Fold centre').click();assert.equal((await state()).step,3);await finish();await button('Attach centre').click();await displayed();
   for(const [width,height]of[[390,844],[844,390]]){

@@ -13,7 +13,7 @@ fs.mkdirSync(out,{recursive:true});
  const load=async query=>{await page.goto(base+'/?'+query);await settle()};
  const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
  const fold=async()=>{await page.locator('.dock:not(.display-dock) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not(.display-dock) .btn-primary').click();await settle()};
- const open=()=>page.getByRole('button',{name:/^View board/}).click();
+ const open=()=>page.getByRole('button',{name:/^Pinboard \(/}).click();
  const state=()=>page.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
  const frontRed=()=>page.evaluate(()=>{const a=paperCouture;a.stage.renderer.render(a.stage.scene,a.stage.camera);const c=document.createElement('canvas');c.width=a.stage.renderer.domElement.width;c.height=a.stage.renderer.domElement.height;const ctx=c.getContext('2d');ctx.drawImage(a.stage.renderer.domElement,0,0);const pixels=ctx.getImageData(0,0,c.width,c.height).data;let red=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>100&&pixels[i]>pixels[i+1]*1.4&&pixels[i]>pixels[i+2]*1.4)red++;return red});
  try{

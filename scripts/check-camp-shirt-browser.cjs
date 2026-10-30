@@ -18,7 +18,7 @@ const key = 'paper-couture.pinboard.v1';
   const load=async q=>{const r=await page.goto(base+'/?'+q);assert(r.ok());await settle()};
   const advance=async()=>{const before=(await state()).step;await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await settle();assert.equal((await state()).step,before+1)};
   const back=async()=>{const before=(await state()).step;await btn('Back').click();if(await page.evaluate(()=>paperCouture.controller.moving))await btn('Back').click();await settle();assert.equal((await state()).step,before-1)};
-  const open=()=>page.getByRole('button',{name:/^View board/}).click();
+  const open=()=>page.getByRole('button',{name:/^Pinboard \(/}).click();
   const board=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
   const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
   const view=async name=>{await btn(name).click();await settle()};
@@ -52,7 +52,7 @@ const key = 'paper-couture.pinboard.v1';
   }
   await page.getByRole('radio',{name:'Corner bloom',exact:true}).click();
   for(let q=0;q<4;q++){
-   while((await state()).turn!==q)await page.getByRole('button',{name:/^Turn paper/}).click();
+   while((await state()).turn!==q)await page.getByRole('button',{name:/^Rotate print/}).click();
    await btn('Position print').click();await btn('Reset print').click();await btn('Done').click();assert.deepEqual((await state()).position,{x:0,y:0});
    for(const v of['Front','Back']){await view(v);await shot(`bloom-${q}-original-${v.toLowerCase()}`)}
    await btn('Position print').click();for(let n=0;n<4;n++){await btn('Right').click();await btn('Down').click()}await btn('Done').click();assert.deepEqual((await state()).position,{x:.125,y:-.125});
@@ -64,7 +64,7 @@ const key = 'paper-couture.pinboard.v1';
   // all four turns without changing completed material or print coordinates.
   await page.getByRole('radio',{name:'Reverse garden',exact:true}).click();
   for(let q=0;q<4;q++){
-   while((await state()).turn!==q)await page.getByRole('button',{name:/^Turn paper/}).click();
+   while((await state()).turn!==q)await page.getByRole('button',{name:/^Rotate print/}).click();
    for(const v of['Front','Back']){await view(v);await shot(`garden-${q}-${v.toLowerCase()}`)}
    assert.equal(await page.evaluate(()=>JSON.stringify(paperCouture.timeline.states.at(-1).facets)),geometry);
   }

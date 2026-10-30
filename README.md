@@ -28,7 +28,8 @@ Production preview normally uses http://localhost:4173/. The static build is in 
 and uses relative asset paths. Serve it over HTTP; do not double-click index.html.
 
 Use **Browse pieces** to see finished shape previews before choosing a design.
-Recent collection highlights lead the gallery and the compact name selector.
+Pieces are grouped Easy, Medium and Advanced, easiest first, with the Dress marked Start here
+(see [the first five minutes](docs/first-impressions/NOTES.md)).
 See [the visual chooser](docs/design-picker/NOTES.md).
 
 ## Garments and optional accessories
@@ -37,7 +38,7 @@ Choose Dress, Box jacket, Wrap skirt, Lapel vest or Pleated skirt from Design. A
 fold a separate diamond pin or a two-piece bow (one square per wing), choose its own paper and place or remove it.
 At dress step 3, choose Straight, Classic A-line or Wide flare, then choose the sleeve angle at step 4.
 The jacket and vest offer two body lengths. The wrap skirt offers either wrap direction and a broad
-one-turn or narrow two-turn waistband. Use Revisit to return to a completed choice; paper, other
+one-turn or narrow two-turn waistband. Use the Change buttons to return to a completed choice; paper, other
 preferences and finished accessories are kept while affected folds are redone.
 After folding both bow wings, optionally fold a third centre square with its own paper and rotation.
 The experimental Fit-and-flare dress folds its nipped waist in one rigid collapse step
@@ -215,3 +216,14 @@ While you fold, the camera comes closer as the piece gets smaller, holding still
 while a step waits and settling as each fold finishes. On a phone the top controls
 fold to one row (Browse pieces, the design list and More), so the paper gets the
 screen. See [the notes and measurements](docs/phone-layout/NOTES.md).
+
+## The first five minutes
+
+Browse pieces runs easiest first (Easy, Medium, Advanced), with the Dress marked Start
+here, experimental pieces tagged, mirror pairs on one card and how far each started
+piece got. A visit with a bare address resumes where this device left off, and Start
+over can be undone. Turn paper is now Rotate print; Change buttons replace Revisit;
+the board is Pinboard everywhere. A finished piece offers Pin to pinboard. Paper sizes
+stop at 21.6 cm (8.5 in). Every fold instruction says where its crease goes, with
+measurements in cm computed from the geometry. See [the notes](docs/first-impressions/NOTES.md)
+and [the writing guide](docs/instructions/STYLE.md).

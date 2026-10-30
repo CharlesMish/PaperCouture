@@ -1,0 +1,128 @@
+# The first five minutes
+
+Charlie asked for the review's "basics" points (29 October 2026), except telling a
+newcomer what to do on arrival, which is kept for later. Branch
+`claude/first-impressions`, on top of `claude/phone-layout`. Not merged.
+
+![Browse pieces at 1280 px](evidence/gallery-1280.jpg)
+
+## Choosing a piece
+
+- **Browse pieces runs easiest first**, in three groups with a line each on what
+  they mean. The Dress leads, marked **Start here**. Each card gives its steps and
+  the square it is suggested for ("6 steps · 20 cm square").
+  - **Easy:** a few straight folds on a full-size square.
+  - **Medium:** more steps, or a small square that takes care in the hand.
+  - **Advanced:** several creases folded at once (a collapse), or 12 steps or more.
+- **One rule decides the group**, from each design's own construction, and
+  `scripts/check-design-order.ts` (in `npm test`) holds the table to it. Within a
+  group: the Dress first, the collection before experiments, fewer steps first.
+  This replaces the earlier order, which led with the newest pieces (Kimono,
+  Coat-dress, Gown, Fan, Zori). Those are now the Advanced group, except the zori,
+  which is Medium.
+- **Experimental pieces are tagged.** The list is in one place
+  (`src/ui/designOrder.ts`) and follows what the collection notes call experimental:
+  clutch, apron, tunic, tabard, boat-neck and cross-wrap tops, hat, capelet, ankle
+  boots, framed brooch, camp-collar shirt, necktie, swing coat, fit-and-flare and
+  mittens. The kimono, gown, coat-dress, zori, fan and the five original garments are
+  not tagged. Edit that list to promote or demote a piece.
+- **Mirror pairs share a card:** Ankle boots (Toe left, Toe right) and Mittens (Left
+  hand, Right hand). The gallery has 25 cards for 27 designs; the design IDs and
+  addresses are unchanged.
+- **Started pieces say how far they got** ("Step 3 of 8", "Folded", or each side of
+  a pair).
+- **The Design list is grouped the same way** (Easy, Medium, Advanced).
+
+## Keeping your place
+
+- **A visit with a bare address resumes where this device left off:** the piece, its
+  paper, rotation, print position, fold choices and step, and how far each design got.
+  It is saved on this device (`paper-couture.workshop.v1` in local storage, beside
+  the board's own key). An address with its own state still wins, so shared links and
+  reloads behave as before. An accessory being folded is not saved, as before.
+- **Start over can be undone.** It offers **Undo start over** until the paper next
+  moves (a fold, Back, a drag or another design). On a phone, Start over is a little
+  taller to tap.
+
+![On a phone: Undo start over, the finished piece, pinned in one press](evidence/phone-390.jpg)
+
+## Labels
+
+- **Turn paper is now Rotate print**, so it no longer sounds like Turn over, which
+  flips the sheet. The readout says "print rotated 90°".
+- **Change buttons replace Revisit's three controls**: one button per choice already
+  made ("Side folds", "Sleeves"; read out as "Change side folds"). Each goes straight
+  back to that choice, as before.
+- **One name for the board:** the toolbar button is **Pinboard (0/12)**, matching
+  Display's Pinboard and the board's title.
+- **Developer notes are gone from the toolbar:** "Fold first, then add an accessory"
+  and "Accessory optional · left/right as viewed". Left and right "as you look at
+  it" moved to the Place control's label. The finished toolbar now fits one row at
+  1280 px.
+- **The pinboard's words are plainer:** "Piece" for Capture, "Paper size" for Starting
+  paper. The note now says why it matters: "The square you would fold it from, so
+  pieces sit on the board at their real sizes."
+
+## Paper sizes
+
+- No paper size above **21.6 cm (8.5 in)** is offered: the larger choice is capped
+  there and labelled in inches.
+- A 20 cm design now offers 16, 20 and 21.6 cm, and every suggested size was
+  already 20 cm or less.
+- Saved boards keep their sizes. `check-sizing.ts` checks the cap for every design.
+
+## Pinning a finished piece
+
+- **A finished piece offers Pin to pinboard** in the dock. One press pins it at its
+  suggested size and opens the board with it selected; Undo takes it off again.
+- **Pressing again opens the board without pinning twice.** The button then reads
+  "Pinned · open pinboard", until the paper or accessory changes.
+- **An empty board shows only what you can do yet.** The arranging tools (Selected,
+  Tilt, the move and layer buttons) appear once something is pinned.
+
+## Instructions for real paper
+
+See [the writing guide](../instructions/STYLE.md). Every fold step says where its
+crease goes in terms a folder can find on paper: a landmark ("in half", "to the
+centre line") and, where needed, a measurement.
+
+- **Measurements come from the geometry.** They are written with `cm(units)` from
+  the same numbers that place the creases (`src/fold/measure.ts`), so they cannot
+  drift from the fold. The dock shows them in cm (mm below 1 cm) for the square the
+  piece is suggested for, and says which ("Step 3 of 6 · on a 20 cm square").
+- **Percentages and reviewer notes are gone from the steps.** What a piece lacks
+  stays in its notes.
+- **`npm run check:instructions`** (in `npm test`) covers every design, every fold
+  choice and every accessory square:
+  - each fold has a real instruction;
+  - none uses a percentage or reviewer wording;
+  - every measurement equals a distance that step's creases (or the next step's)
+    actually have on the paper as it lies.
+- **`npm run fold-measurements -- <design>`** prints those distances, for writing
+  more.
+- The printable folding sheets (PDFs) are unchanged and keep their own wording.
+
+## Checks
+
+- `scripts/check-design-order.ts`, `scripts/check-instructions.ts` (both in
+  `npm test`); `check-sizing.ts` extended.
+- `scripts/check-first-impressions-browser.cjs` (CI:
+  `.github/workflows/first-impressions.yml`), at 1280 × 800 by mouse and 390 × 844
+  by touch:
+  - **Gallery:** the groups, order, tags, pairs and progress; the grouped Design
+    list.
+  - **Your place:** resuming from a bare address and per design; Start over and its
+    Undo.
+  - **Labels:** Rotate print, the Change buttons, Pinboard (n/12), the toolbar
+    without notes (one row at 1280).
+  - **Measurements:** shown in cm, with the square named.
+  - **Pinning:** Pin to pinboard once and not twice; arranging tools after the
+    first pin; sizes capped at 21.6 cm.
+- Existing checks updated for the new names:
+  - Rotate print, Pinboard (n/12) and the Change buttons (`[data-revisit]`).
+  - The chooser check, for 25 cards and the new order.
+  - The zori and fan check, which now reads the measurements instead of percentages.
+
+Browser checks only (Chromium with software WebGL, emulated touch); not tested on a
+real phone. No physical folding was done for this pass. The measurements are checked
+against the geometry, but not against paper in the hand.

@@ -29,7 +29,7 @@ fs.mkdirSync(out, { recursive: true });
   const control = name => page.getByLabel(name, { exact: true });
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
-  const open = () => page.getByRole('button', { name: /^View board/ }).click();
+  const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const load = async value => {
     await page.goto(base + '/?design=mitten-left&paper=oat-linen&step=99&view=display'); await settle();

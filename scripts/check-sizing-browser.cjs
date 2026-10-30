@@ -12,7 +12,7 @@ const key = 'paper-couture.pinboard.v1'; fs.mkdirSync(out, {recursive:true});
   const btn=name=>page.getByRole('button',{name,exact:true});
   const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   const load=async query=>{await page.goto(base+'/?'+query);await settle()};
-  const open=()=>page.getByRole('button',{name:/^View board/}).click();
+  const open=()=>page.getByRole('button',{name:/^Pinboard \(/}).click();
   const state=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
   const bounds=()=>page.evaluate(async()=>{const THREE=await import('/node_modules/.vite/deps/three.js'),b=paperCouture.pinboard;return b.state.items.map(i=>{const box=new THREE.Box3().setFromObject(b.groups.get(i.id),true);return {title:i.title,size:box.getSize(new THREE.Vector3()).toArray(),bounds:[box.min.x,box.max.x,box.min.y,box.max.y]}})});
   const exportPNG=async name=>{const expected=await page.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1800,2100,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});const[d]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);assert.deepEqual(fs.readFileSync(file),Buffer.from(expected.split(',')[1],'base64'));};

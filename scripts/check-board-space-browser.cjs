@@ -24,7 +24,7 @@ fs.mkdirSync(out, { recursive: true });
         const page = await context.newPage(); page.setDefaultTimeout(60000);
         page.on('pageerror', e => result.errors.push(String(e)));
         const btn = name => page.getByRole('button', { name, exact: true });
-        const open = () => page.getByRole('button', { name: /^View board/ }).click();
+        const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
         const load = async query => { await page.goto(url + '/?' + query); await page.waitForFunction(() => window.paperCouture && paperCouture.view.t === paperCouture.view.target); };
         const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
         const file = path.join(fixtures, name + '.json');

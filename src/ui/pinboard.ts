@@ -6,7 +6,7 @@ import { BoardDecor } from '../board/presentation';
 import { createCorkTexture } from '../board/surfaces';
 import { capture, restore } from '../board/snapshot';
 import { BOARD_WIDTH as WIDTH, BOARD_HEIGHT as HEIGHT, BOARD_MARGIN as MARGIN, BOARD_FORMATS, BoardFormat } from '../board/layout';
-import { describePaperSize, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
+import { describePaperSize, MAX_SQUARE_CM, PaperSizeSource, REFERENCE_SQUARE_CM, squareChoices, startingPaperSize } from '../fold/paperSize';
 
 export interface BoardSource { title: string; objects: THREE.Object3D[]; angle: number; paperSize?: PaperSizeSource }
 
@@ -71,6 +71,7 @@ export class Pinboard {
   private undo: HTMLButtonElement;
   private retry: HTMLButtonElement;
   private selectedTools: HTMLButtonElement[] = [];
+  private arranging: HTMLElement[] = [];
   private drag?: { id: number; x: number; y: number; before: BoardState; moved: boolean } &
     ({ kind: 'paper'; item: string } | { kind: 'guide'; guide: GuideId; start: GuideTransform });
   private tiltBefore?: BoardState;
@@ -91,8 +92,8 @@ export class Pinboard {
     caption.textContent = 'Select paper to move it. The outline marks your selection and stays out of the PNG.';
     left.append(this.canvas, caption);
     const tools = document.createElement('div'); tools.className = 'board-tools';
-    const sourceLabel = this.label('Capture', this.source, 'Piece to pin');
-    const sizeLabel = this.label('Starting paper', this.size, 'Starting square size');
+    const sourceLabel = this.label('Piece', this.source, 'Piece to pin');
+    const sizeLabel = this.label('Paper size', this.size, 'Starting square size');
     this.sizeNote.className = 'editor-readout';
     this.source.onchange = () => { this.refreshSize(); this.refresh(); };
     this.size.onchange = () => {
@@ -225,6 +226,8 @@ export class Pinboard {
     finishBody.append(this.label('Surface', this.surface, 'Board surface'), this.label('Pins', this.pinStyle, 'Pin style'), pinActions,
       this.label('Outfit guide', this.guide, 'Figure guide'), this.guideAdjust, explanation, guideLabel, this.label('Light', this.lighting, 'Board lighting'), this.photo);
     finish.append(summary, finishBody);
+    // arranging tools appear once something is pinned
+    this.arranging = [selectionLabel, angle, nudges, edits];
     tools.append(sourceLabel, sizeLabel, this.sizeNote, this.add, workshop, finish, formatLabel, selectionLabel, this.savedSize, bg, angle, nudges, edits, this.undo, this.download, back, this.note, this.storageStatus, this.retry, this.status);
     const photoBar = document.createElement('div'); photoBar.className = 'board-photo-bar';
     this.photoSave = this.button('Save photograph', () => { void this.exportPNG(); }); this.photoSave.classList.add('btn-primary');
@@ -344,12 +347,12 @@ export class Pinboard {
   }
   private refreshSize() {
     const source = this.captureSize(); this.size.replaceChildren(); this.size.disabled = !source;
-    if (!source) { this.sizeNote.textContent = 'Finish a piece to choose its starting square.'; return; }
+    if (!source) { this.sizeNote.textContent = 'Finish a piece to choose its paper size.'; return; }
     const choices = squareChoices(source), chosen = this.chosenSizes.get(source.key);
     const selected = chosen !== undefined && choices.includes(chosen) ? chosen : source.recommendedCm;
-    for (const side of choices) this.size.add(new Option(`${side} cm square${side === source.recommendedCm ? ' · suggested' : ''}`, String(side)));
+    for (const side of choices) this.size.add(new Option(`${side} cm square${side === MAX_SQUARE_CM ? ' (8.5 in)' : ''}${side === source.recommendedCm ? ' · suggested' : ''}`, String(side)));
     this.size.value = String(selected);
-    this.sizeNote.textContent = `${source.companionCm?.length ? `New capture: ${describePaperSize(startingPaperSize(source, selected))}. ` : ''}Workshop is a close-up; this square size applies to the next capture. Printed features stay aligned. Pinned pieces keep their size.`;
+    this.sizeNote.textContent = `${source.companionCm?.length ? `Pins with ${describePaperSize(startingPaperSize(source, selected))}. ` : ''}The square you would fold it from, so pieces sit on the board at their real sizes. Pieces already pinned keep theirs.`;
   }
   private checkpoint(before: BoardState) { this.history.push(before); if (this.history.length > 20) this.history.shift(); }
   private mutate(action: () => void, keepGuideMode = false) {
@@ -383,9 +386,9 @@ export class Pinboard {
     if (index < 0 || next < 0 || next >= this.state.items.length) return;
     this.mutate(() => { const [item] = this.state.items.splice(index, 1); this.state.items.splice(next, 0, item); });
   }
-  private pin() {
+  private pin(): boolean {
     const source = this.handlers.sources()[Number(this.source.value)];
-    if (!source || this.state.items.length >= MAX_PIECES) return;
+    if (!source || this.state.items.length >= MAX_PIECES) return false;
     this.focusPaper();
     try {
       const sizing = this.captureSize()!, side = Number(this.size.value);
@@ -397,8 +400,20 @@ export class Pinboard {
         this.state.items.push({ id, title: source.title, snapshot, paperSize, x: offset, y: -offset, tilt: 0 }); this.state.selected = id;
       });
       this.constrain(this.state.selected!); this.persist(); this.refresh(); this.render();
-      this.status.textContent = 'Piece pinned. Return to folding to make another; this capture will stay as it is.';
-    } catch { this.status.textContent = 'This piece could not be pinned. Your existing board is unchanged.'; }
+      this.status.textContent = 'Piece pinned and selected: drag it to arrange it. Return to folding to make another; this one stays as it is.';
+      return true;
+    } catch { this.status.textContent = 'This piece could not be pinned. Your existing board is unchanged.'; return false; }
+  }
+  /** Open the board and pin the finished piece at its suggested size (Undo takes it off again). */
+  openAndPin(): boolean {
+    this.open();
+    if (this.state.items.length >= MAX_PIECES) {
+      this.status.textContent = `The board is full (${MAX_PIECES} pieces). Remove one to pin this piece.`;
+      return false;
+    }
+    const pinned = this.pin();
+    if (pinned) this.status.textContent = 'Pinned at the suggested paper size. Drag it to arrange it, or Undo to take it off.';
+    return pinned;
   }
   open(): void {
     if (this.dialog.open) return;
@@ -414,13 +429,14 @@ export class Pinboard {
     this.title.textContent = `Your pinboard · ${this.state.items.length}/${MAX_PIECES}`;
     this.format.value = this.state.format ?? 'standard';
     this.note.textContent = `${this.state.format === 'roomy' ? 'Roomy gives more arranging space; pieces appear smaller in the overview. ' : ''}PNG · ${this.layout.exportWidth} × ${this.layout.exportHeight}. Board saves on this device. Undo keeps the last 20 changes in this tab.`;
-    this.launcher.textContent = `View board (${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
+    this.launcher.textContent = `Pinboard (${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
+    for (const tool of this.arranging) tool.hidden = !this.state.items.length;
     this.pieces.replaceChildren();
     for (const [i, item] of this.state.items.entries()) this.pieces.add(new Option(`${i+1}. ${item.title}`, item.id));
     if (!this.state.items.length) this.pieces.add(new Option('No pinned pieces yet', ''));
     this.pieces.value = this.state.selected ?? '';
     const saved = this.selected();
-    this.savedSize.textContent = saved ? saved.paperSize ? `Pinned with ${describePaperSize(saved.paperSize)}.` : 'Earlier capture: kept at its saved size; starting square was not recorded.' : '';
+    this.savedSize.textContent = saved ? saved.paperSize ? `Pinned with ${describePaperSize(saved.paperSize)}.` : 'Pinned before paper sizes were recorded: kept at its saved size.' : '';
     this.pieces.disabled = !this.state.items.length; this.tilt.disabled = !this.selected();
     this.tilt.value = String(this.selected()?.tilt ?? 0); this.background.value = this.state.background;
     this.selectedTools.forEach(b => b.disabled = !this.selected());

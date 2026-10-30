@@ -67,8 +67,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       assert.equal(await locator.getAttribute('aria-pressed'), 'true');
     };
     const revisit = async id => {
-      await p.getByLabel('Fold to revisit').selectOption(id);
-      await p.getByRole('button', { name: 'Revisit fold', exact: true }).click();
+      await p.locator(`[data-revisit="${id}"]`).click();
       await p.waitForFunction(() => paperCouture.view.inWorkshop && !paperCouture.controller.moving && !paperCouture.accessoryRoot.visible);
     };
     const display = async () => {
@@ -117,7 +116,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
 
     await p.getByRole('button',{name:'Fold accessory',exact:true}).click();
     await p.getByRole('radio',{name:'Reverse garden',exact:true}).click();
-    await p.getByRole('button',{name:/^Turn paper/}).click();
+    await p.getByRole('button',{name:/^Rotate print/}).click();
     await finish();
     await p.getByRole('button',{name:'Attach',exact:true}).click();
     await p.waitForFunction(()=>paperCouture.view.inDisplay&&paperCouture.accessoryRoot.visible);

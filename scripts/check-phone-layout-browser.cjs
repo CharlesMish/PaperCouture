@@ -178,7 +178,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       assert.equal(await bar.evaluate((e) => e.classList.contains('folding-bar')), true, `${key}: folding bar`);
       const more = s.page.getByRole('button', { name: 'More', exact: true });
       for (const c of [s.page.getByRole('button', { name: 'Browse pieces', exact: true }), s.page.getByLabel('Garment design', { exact: true }), more]) assert.equal(await c.isVisible(), true);
-      for (const name of ['Revisit fold']) assert.equal(await s.page.getByRole('button', { name, exact: true }).isVisible(), false, `${key}: ${name} under More`);
+      assert.equal(await s.page.getByRole('button', { name: 'Change kimono colour', exact: true }).isVisible(), false, `${key}: Change under More`);
       // one row: every shown control's vertical centre within a few px of the others'
       const rows = await bar.evaluate((e) => [...e.children].filter((c) => c.getBoundingClientRect().height > 0).map((c) => { const r = c.getBoundingClientRect(); return r.top + r.height / 2; }));
       assert(rows.length === 3 && Math.max(...rows) - Math.min(...rows) <= 3, `${key}: one row of three controls ${JSON.stringify(rows)}`);
@@ -193,8 +193,8 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       const cam = await s.camera();
       await more.tap(); await s.frames();
       assert.equal(await more.getAttribute('aria-expanded'), 'true');
-      assert.equal(await s.page.getByRole('button', { name: 'Revisit fold', exact: true }).isVisible(), true);
-      assert.equal(await s.page.getByRole('button', { name: /^View board/ }).isVisible(), true);
+      assert.equal(await s.page.getByRole('button', { name: 'Change kimono colour', exact: true }).isVisible(), true);
+      assert.equal(await s.page.getByRole('button', { name: /^Pinboard \(/ }).isVisible(), true);
       assert.deepEqual(await s.camera(), cam, `${key}: opening More does not move the paper`);
       await s.shot(`${key}-more`);
       await s.page.mouse.click(w / 2, k.bottom - 4); await s.frames();
@@ -202,8 +202,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       await more.tap(); await s.page.keyboard.press('Escape');
       assert.equal(await more.getAttribute('aria-expanded'), 'false', 'Escape closes More');
       await more.tap();
-      await s.page.getByLabel('Fold to revisit').selectOption('kimonoSide');
-      await s.page.getByRole('button', { name: 'Revisit fold', exact: true }).tap(); await s.settle();
+      await s.page.locator(`[data-revisit="kimonoSide"]`).tap(); await s.settle();
       assert.equal(await more.getAttribute('aria-expanded'), 'false', 'a choice closes More');
       assert.equal(await s.page.evaluate(() => paperCouture.controller.step), 0, 'Revisit works from More');
       // finished: the bar stays, accessories under More; folding one keeps the full controls
@@ -217,7 +216,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       assert.equal(await s.page.getByRole('button', { name: 'Back to garment', exact: true }).isVisible(), true);
       assert.equal(await s.page.evaluate(() => document.documentElement.scrollWidth), w, 'no horizontal scroll');
       assert.deepEqual(s.errors, []);
-      result.checks.push(`${key}: one-row bar (Browse, Design, More); kimono step 8 ${k.w}px wide, between the bar and the dock; More shows Revisit and View board over the paper without moving it, closes on a press outside, Escape and a choice; Revisit works from it; finished piece keeps the bar with accessories under More; folding the obi brings back the full controls with Back to garment.`);
+      result.checks.push(`${key}: one-row bar (Browse, Design, More); kimono step 8 ${k.w}px wide, between the bar and the dock; More shows Revisit and Pinboard over the paper without moving it, closes on a press outside, Escape and a choice; Revisit works from it; finished piece keeps the bar with accessories under More; folding the obi brings back the full controls with Back to garment.`);
       await s.context.close();
     }
   } catch (e) {

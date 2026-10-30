@@ -155,7 +155,7 @@ fs.mkdirSync(out, { recursive: true });
     const png = fs.readFileSync(path.join(out, 'mixed-board-export.png'));
     result.exportPixels = [png.readUInt32BE(16), png.readUInt32BE(20)];
     assert.deepEqual(result.exportPixels, [1800, 2100]);
-    await page.reload(); await settle(); await page.getByRole('button', { name: /^View board/ }).click();
+    await page.reload(); await settle(); await page.getByRole('button', { name: /^Pinboard \(/ }).click();
     assert.deepEqual(await board(), composed);
     for (const [width, height] of [[390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await shot('mixed-board-' + width);
@@ -165,7 +165,7 @@ fs.mkdirSync(out, { recursive: true });
       await button('Position print').click(); await button('Right').click(); await shot('print-controls-' + width); await button('Done').click();
       await page.getByRole('radio', { name: 'Oat linen', exact: true }).click();
       await button('Position print').click(); assert.match(await page.locator('.print-dialog').innerText(), /fixed fibres/); await button('Done').click();
-      await page.getByRole('button', { name: /^View board/ }).click(); assert.deepEqual(await board(), composed);
+      await page.getByRole('button', { name: /^Pinboard \(/ }).click(); assert.deepEqual(await board(), composed);
     }
     result.checks.push('Real Fold/Back retains positioned Ginkgo; three independent paper captures survive moves/remove/Undo/reload and PNG. Portrait 390/320 swatches/print controls reachable without overflow; existing captures stay exact after paper edits.');
     assert.deepEqual(result.errors, []); result.passed = true;

@@ -207,7 +207,7 @@ const errors = [];
     await p.getByLabel('Accessory type').selectOption('kerchief');
     await p.getByRole('button', { name: 'Fold accessory', exact: true }).click();
     for (let i = 0; i < 5; i++) await fold();
-    await p.getByRole('button', { name: /^Turn paper/ }).click();
+    await p.getByRole('button', { name: /^Rotate print/ }).click();
     await p.locator('.dock .btn-primary').click();
     await p.waitForFunction(() => paperCouture.view.inDisplay && paperCouture.attached);
     const keptPiece = await p.evaluate(() => ({ id: paperCouture.accessoryId, paper: paperCouture.accessoryPaperId, turns: paperCouture.accessoryQuarterTurns }));

@@ -49,7 +49,7 @@ async function bundle() {
     const btn = name => page.getByRole('button', { name, exact: true });
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async query => { const response = await page.goto(base + '?' + query); assert.equal(response.status(), 200); await settle(); };
-    const open = () => page.getByRole('button', { name: /^View board/ }).click();
+    const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const measure = () => page.evaluate(() => {
       const b = paperCouture.pinboard;

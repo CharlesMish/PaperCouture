@@ -1,5 +1,6 @@
 import { Construction } from './construction';
 import { v2 } from './geometry';
+import { cm, lineMeet } from './measure';
 
 /** A folded tulip head from its own square, with valley folds only.
  *
@@ -30,25 +31,28 @@ export function buildTulip(): Construction {
   // unit directions from the base (0, 0): toward the tip (-1, -1) and toward each end of the fold
   const tip = v2(-s, -s), endA = v2(-s, s), endC = v2(s, -s);
   const crease = (end: typeof tip) => v2(Math.cos(f) * tip.x + Math.sin(f) * end.x, Math.cos(f) * tip.y + Math.sin(f) * end.y);
+  // for the instructions: the first petal crease meets the triangle's left edge (x = -1)
+  // this far above its square corner (-1, -1); the second, by symmetry, the bottom edge as far from it
+  const fromCorner = lineMeet(v2(0, 0), crease(endA), v2(-1, -1), v2(0, 1)).y + 1;
   return {
     name: 'Folded tulip',
     meta: { top: 0, shoulderPoint: v2(0, 0), sleeveCutDir: v2(1, 0) },
     ops: [
-      { kind: 'turn', id: 'tulip-turn', title: 'Turn the square over', hint: 'The print goes underneath; the next fold brings it back outside.' },
+      { kind: 'turn', id: 'tulip-turn', title: 'Turn the square over', hint: 'Start print side up and turn it over from side to side, so the print is underneath. The next fold brings it back outside.' },
       {
         kind: 'fold', id: 'tulip-half', title: 'Fold in half, corner to corner',
-        hint: 'Bring the far corner onto the near one. The middle of this long fold becomes the base of the flower.',
+        hint: 'Fold in half corner to corner: bring the top right corner down onto the bottom left corner, creasing from the top left corner to the bottom right corner. The middle of this long fold is the base of the flower.',
         folds: [{ name: 'tulip-half', a: v2(-1, 1), b: v2(1, -1), moving: v2(1, 1), sense: 'valley' }],
       },
       // Two operations: the second petal lands over the first.
       {
-        kind: 'fold', id: 'tulip-left', title: 'Fold the first petal up',
-        hint: 'Fold one end of the long fold up through both layers, hinged at the base, so it crosses just past the tip.',
+        kind: 'fold', id: 'tulip-left', title: 'Fold the top left point over into a petal',
+        hint: `Fold the top left point down, both layers, along a crease from the middle of the long fold to the left edge, ${cm(fromCorner)} above the square corner. Its point now sticks out past the bottom edge.`,
         folds: [{ name: 'tulip-left', a: v2(0, 0), b: crease(endA), moving: v2(-1, 1), sense: 'valley' }],
       },
       {
-        kind: 'fold', id: 'tulip-right', title: 'Fold the second petal up',
-        hint: 'Fold the other end up to match. The two petals cross in front of the tip: a folded tulip to place at the waist.',
+        kind: 'fold', id: 'tulip-right', title: 'Fold the bottom right point over into a petal',
+        hint: `Fold the bottom right point over the first petal, both layers: crease from the middle of the long fold to the bottom edge, ${cm(fromCorner)} from the square corner. The square corner shows between the two petals: the tulip.`,
         folds: [{ name: 'tulip-right', a: v2(0, 0), b: crease(endC), moving: v2(1, -1), sense: 'valley' }],
       },
     ],

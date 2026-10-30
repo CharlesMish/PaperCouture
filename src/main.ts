@@ -31,16 +31,41 @@ import { PaperPicker } from './ui/paperPicker';
 import { PrintPositionPanel } from './ui/printPositionPanel';
 import { BoardSource, Pinboard } from './ui/pinboard';
 import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
+import { formatHint, measuresIn } from './fold/measure';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
 
-const params = new URLSearchParams(location.search);
+// A visit with no address state returns to where this device left off (the piece,
+// its paper and step, and how far each design got); the board is saved separately.
+const WORKSHOP_KEY = 'paper-couture.workshop.v1';
+type SavedWorkshop = { search: string; progress: [string, { done: number; total: number }][] };
+const savedWorkshop = ((): SavedWorkshop | null => {
+  try {
+    const saved = JSON.parse(localStorage.getItem(WORKSHOP_KEY) ?? 'null');
+    return saved && typeof saved.search === 'string' && Array.isArray(saved.progress) ? saved : null;
+  } catch { return null; }
+})();
+const params = new URLSearchParams(location.search || savedWorkshop?.search || '');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 let ready = false;
 /** The step whose moving paper is highlighted; stays set through Back and Fold, so a step can be replayed. */
 let inspectingOp: number | null = null;
 let lastInspect: 'off' | 'offered' | 'showing' = 'off';
 let visibilityCache: { anim: OpAnim; eye: string; v: Visibility } | null = null;
-const designProgress = new Map<GarmentId, number>();
+/** Steps done in each design this visit (and saved on the device). */
+const designProgress = new Map<GarmentId, { done: number; total: number }>(
+  (savedWorkshop?.progress ?? []).filter(([id, p]) => garmentIdFrom(id) === id && Number.isFinite(p?.done) && Number.isFinite(p?.total))
+    .map(([id, p]) => [id as GarmentId, { done: p.done, total: p.total }]));
+/** Start over was just pressed from this step: it can be undone until the next fold. */
+let undoStart: number | null = null;
+/** What was last pinned from the finished piece, so the same piece is not pinned twice. */
+let pinnedRecipe: string | null = null;
+let lastSaved = '';
+function saveWorkshop() {
+  const record = JSON.stringify({ search: location.search, progress: [...designProgress] } satisfies SavedWorkshop);
+  if (record === lastSaved) return;
+  try { localStorage.setItem(WORKSHOP_KEY, record); lastSaved = record; }
+  catch { /* storage unavailable: the address still holds the piece */ }
+}
 function syncUrl() {
   if (!ready || accessoryMode) return;
   const url = new URL(location.href);
@@ -52,6 +77,7 @@ function syncUrl() {
   url.searchParams.set('step', String(controller.step));
   url.searchParams.set('view', view.target === 1 ? 'display' : 'workshop');
   if (url.href !== location.href) history.replaceState(history.state, '', url);
+  saveWorkshop();
 }
 
 // ---- folding data (pure, precomputed once)
@@ -311,7 +337,19 @@ const picker = new PaperPicker(app, PAPERS, {
 const workshopPanel = new WorkshopPanel(app, {
   onBack: () => controller.prev(),
   onFold: () => (controller.finished ? accessoryMode ? finishPin() : enterDisplay() : controller.next()),
-  onReset: () => { cancelDrag(); controller.reset(); },
+  onReset: () => {
+    cancelDrag();
+    const from = controller.step;
+    controller.reset();
+    // remembered after the reset, which itself clears a pending undo
+    if (from > 0) { undoStart = from; refreshWorkshopPanel(); }
+  },
+  onUndoReset: () => {
+    if (undoStart === null || controller.step !== 0) return;
+    const step = undoStart; undoStart = null;
+    controller.jumpTo(step); layout();
+  },
+  onPin: () => pinFinishedPiece(),
   onHintOpen: () => studio.setNotesOpen(false),
   onInspect: () => {
     const a = controller.activeOp;
@@ -334,6 +372,10 @@ const displayPanel = new DisplayPanel(app, {
 const shapeChoices = new ShapeChoices(workshopPanel.dock, chooseFoldOption);
 function refreshWorkshopPanel() {
   const decisions = garmentDecisions(garmentId);
+  if (!accessoryMode) designProgress.set(garmentId, { done: controller.step, total: ops.length });
+  studio.setProgress(designProgress);
+  // Start over can be undone until the paper moves again
+  if (undoStart !== null && (controller.step !== 0 || controller.moving || controller.isScrubbing)) undoStart = null;
   // Revisit stays in place while a fold moves (disabled, and revisitFold() refuses):
   // hiding it changed the controls' height and so the framing, mid-fold.
   const revisit = decisions.filter(d => decisionStep(construction, d) >= 0 && controller.step > decisionStep(construction, d));
@@ -345,22 +387,32 @@ function refreshWorkshopPanel() {
   shapeChoices.render(decision, garmentOptions, value => buildGarment(garmentId, selectOption(garmentOptions, decision!, value)));
   const a = controller.activeOp;
   const op = a === null ? null : ops[a].op;
+  const squareCm = suggestedSquareCm();
   workshopPanel.render({
     total: ops.length,
     done: controller.step,
     active: a,
     title: op ? op.title : `${construction.name} is folded`,
-    hint: op ? op.hint : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : available.length ? 'Put it on display, or fold an optional paper accessory.' : 'Put it on display to inspect the front, back and edges.',
+    squareCm: op && measuresIn(op.hint).length ? squareCm : undefined,
+    hint: op ? formatHint(op.hint, squareCm) : accessoryMode ? editingCentre ? 'Both wings are kept. Add this separate folded centre to make a three-piece bow.' : accessoryId === 'bow' && bowWing === 0 ? 'One wing is ready. Fold a second square in the same paper to complete the bow.' : 'Place the folded accessory on your garment, or return without adding it. Placement is a styling step.' : available.length ? 'Put it on display, pin it to your pinboard, or fold an optional paper accessory.' : 'Put it on display to see the front, back and edges, or pin it to your pinboard.',
     foldLabel: controller.finished ? accessoryMode ? editingCentre ? 'Attach centre' : accessoryId === 'bow' && bowWing === 0 ? 'Second wing' : 'Attach' : 'Display' : op?.kind === 'turn' ? 'Turn over' : 'Fold',
     canBack: controller.step > 0 || controller.moving,
     canFold: true,
     moving: controller.moving,
     inspect: (lastInspect = inspectState()),
+    undoReset: undoStart !== null,
+    pin: !accessoryMode && controller.finished && !controller.moving ? pinnedRecipe === pinRecipe() ? 'pinned' : 'offer' : 'off',
   });
   // lay out now, not a frame later: the dock's new text can change its height, and
   // the framing must follow in the same frame
   if (ready) layout();
   syncUrl();
+}
+/** The square the piece being folded is suggested for, in cm (what its instructions measure on). */
+function suggestedSquareCm(): number {
+  if (!accessoryMode) return recommendedSquareCm(garmentId);
+  const side = REFERENCE_SQUARE_CM * findAccessory(accessoryId).pieces[0].scale * attachmentSize(garmentId) * (editingCentre ? .85 : 1);
+  return Math.round(side * recommendedSquareCm(garmentId) / REFERENCE_SQUARE_CM * 100) / 100;
 }
 function refreshDisplayPanel() {
   displayPanel.render(`${construction.name} · ${paper.name}`, displayCam.turntable);
@@ -461,6 +513,7 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
   unsubscribeController();
   construction = next; timeline = nextTimeline; ops = timeline.ops; lastOp = ops[ops.length - 1];
   inspectingOp = null; visibilityCache = null;
+  undoStart = null;
   controller = nextController ?? new FoldController(ops.length, i => (ops[i].op.kind === 'turn' ? 1.5 : ops[i].op.kind === 'collapse' ? 2.6 : 1.15) * (reducedMotion ? 0.6 : 1));
   unsubscribeController = controller.onChange(refreshWorkshopPanel);
   frame = undefined;
@@ -474,10 +527,22 @@ function replaceConstruction(next: typeof construction, nextTimeline = buildTime
 }
 function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
-  designProgress.set(garmentId, controller.step);
   garmentId = id;
+  const resume = designProgress.get(id)?.done ?? 0;
   replaceConstruction(buildGarment(id, garmentOptions));
-  controller.jumpTo(designProgress.get(id) ?? 0);
+  controller.jumpTo(resume);
+}
+/** What a pin of the finished piece would capture: the piece, its paper and its accessory. */
+function pinRecipe() {
+  return JSON.stringify([location.search, attached && accessoryRoot.visible ? [accessoryId, pinPaper.id, pinTurns, pinPrintPosition, pinPosition, centreAttached, centrePaper.id, centreTurns] : null]);
+}
+/** Pin the finished piece from the workshop in one go; the board opens with it selected. */
+function pinFinishedPiece() {
+  if (accessoryMode || !controller.finished || controller.moving) return;
+  cancelDrag();
+  if (pinnedRecipe === pinRecipe()) { pinboard.open(); return; }
+  if (pinboard.openAndPin()) pinnedRecipe = pinRecipe();
+  refreshWorkshopPanel();
 }
 function chooseFoldOption(id: DecisionId, value: string) {
   const decision = garmentDecisions(garmentId).find(d => d.id === id);

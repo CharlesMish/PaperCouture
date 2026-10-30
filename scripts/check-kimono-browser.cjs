@@ -54,8 +54,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     await shot('reverse-finished');
     await back(); await advance();
     assert.equal((await state()).step, 7);
-    await page.getByLabel('Fold to revisit').selectOption('kimonoSide');
-    await btn('Revisit fold').click(); await settle();
+    await page.locator(`[data-revisit="kimonoSide"]`).click(); await settle();
     assert.equal((await state()).step, 0);
     await btn('Printed kimono').click(); await settle();
     assert.equal((await state()).total, 8);
@@ -77,7 +76,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     if (await btn('Display').isVisible()) { await btn('Display').click(); await settle(); }
     for (const v of ['Front', 'Angle', 'Back']) { await btn(v).click(); await settle(); await shot(`display-${v.toLowerCase()}`); }
     // the board: suggested size and an exact capture of the live geometry
-    await page.getByRole('button', { name: /^View board/ }).click();
+    await page.getByRole('button', { name: /^Pinboard \(/ }).click();
     assert.equal(Number(await page.getByLabel('Starting square size').inputValue()), 20);
     await btn('Pin current piece').click();
     const board = await page.evaluate(() => structuredClone(paperCouture.pinboard.state));

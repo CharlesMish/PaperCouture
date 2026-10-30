@@ -24,7 +24,7 @@ fs.mkdirSync(out, { recursive: true });
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-  const open = () => page.getByRole('button', { name: /^View board/ }).click();
+  const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
   const garmentBounds = () => page.evaluate(() => {
     const b = paperCouture.pinboard;
     return b.state.items.map(item => {

@@ -27,7 +27,7 @@ fs.mkdirSync(out, { recursive: true });
   const raw = () => page.evaluate(k => localStorage.getItem(k), key);
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
-  const open = () => page.getByRole('button', { name: /^View board/ }).click();
+  const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
   const details = async summary => {
     const element = page.locator('summary').filter({ hasText: new RegExp(`^${summary}$`) });
     if (!await element.evaluate(e => e.parentElement.open)) await element.click();

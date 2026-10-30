@@ -10,7 +10,7 @@ const base=process.env.BASE_URL||'http://127.0.0.1:5317',out=process.env.CAPTURE
   p.on('pageerror',e=>result.errors.push(String(e)));const btn=name=>p.getByRole('button',{name,exact:true});const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   for(const[id,paper,size,x,y]of[[top,'oat-linen',cm,-.28,.055+height/2],['skirt','slate-grain',20,-.28,-.57],['hat','oat-linen',8,-.28,.055+height+.26],['clutch','corner-bloom',8,1.02,-.30]]){
    await p.goto(`${base}/?design=${id}&paper=${paper}&step=99&view=display&printX=0.125&printY=-0.125`);await settle();
-   await p.getByRole('button',{name:/^View board/}).click();assert.equal(Number(await p.getByLabel('Starting square size').inputValue()),size);await btn('Pin current piece').click();
+   await p.getByRole('button',{name:/^Pinboard \(/}).click();assert.equal(Number(await p.getByLabel('Starting square size').inputValue()),size);await btn('Pin current piece').click();
    await p.evaluate(({x,y})=>{const b=paperCouture.pinboard;b.mutate(()=>{const i=b.state.items.at(-1);i.x=x;i.y=y;b.position();b.constrain(i.id)})},{x,y});
   }
   await p.locator('.board-tools').evaluate(e=>e.scrollTop=0);await p.screenshot({path:path.join(out,top+'-ui.png')});
