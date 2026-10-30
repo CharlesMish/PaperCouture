@@ -150,6 +150,10 @@ A folder with real paper should try these first.
   of the way. The camera now eases over 0.35 s whenever the controls around the
   paper change size in the workshop, as it already did after a release. It does
   not ease at start-up.
+- **The dock's tools could overlap its buttons.** Hosted CI found this; locally it
+  only shows with the wider DejaVu Sans font. On a narrow compact dock, Instructions
+  ran under Turn over. On narrow screens the dock's tools (Instructions, See this
+  fold, Undo start over) now take a row of their own across the dock.
 - **Quick pinning named the wrong size.** It now names the size it used.
 - **Gallery progress** says "3 of 8 steps done", not "Step 3 of 8", which read as
   the step you are on.

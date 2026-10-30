@@ -645,3 +645,14 @@ button:focus-visible {
   padding: 10px 12px; border-radius: 12px; background: var(--panel); box-shadow: 0 6px 20px rgba(52, 44, 34, .2);
 }
 .context-lost p { margin: 0; font-size: .85rem; line-height: 1.35; }
+
+/* A narrow dock: the step's tools (Instructions, See this fold, Undo start over) get a
+   row of their own across the dock, so a wide font cannot push them under the buttons
+   beside the caption. */
+@media (max-width: 520px) {
+  .dock .caption, .dock.compact .caption { display: contents; }
+  .dock .dock-row > .btn:first-child { grid-row: 1; grid-column: 1; }
+  .dock .caption-text { grid-row: 1; grid-column: 2; min-width: 0; }
+  .dock .dock-actions { grid-row: 1; grid-column: 3; }
+  .dock .caption-tools, .dock.compact .caption-tools { grid-row: 2; grid-column: 1 / -1; margin-top: 0; }
+}
