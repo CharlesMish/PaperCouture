@@ -1,5 +1,5 @@
 // Draws the real Canvas papers and checks every two-sided quarter-turn/slide.
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const base=process.env.DEV_URL||'http://127.0.0.1:5627';
 const out=process.env.CAPTURE_DIR||'docs/swing-coat/evidence/papers';

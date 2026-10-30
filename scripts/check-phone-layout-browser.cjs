@@ -117,7 +117,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
         window.__cams = []; window.__released = null;
         for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, () => { window.__released ??= performance.now(); }, { capture: true, once: true });
         // stamped when drawn (a frame's start time can precede an event handled within it)
-        const rec = () => { const now = performance.now(), P = paperCouture; window.__cams.push({ now, t: P.controller.pose().t, cam: P.stage.camera.position.toArray() }); if (window.__cams.length < 400 && (P.controller.moving || window.__cams.length < 40 || now - (window.__released ?? now) < 700)) requestAnimationFrame(rec); };
+        const rec = () => { const now = performance.now(), P = paperCouture; window.__cams.push({ now, t: P.controller.pose().t, cam: P.stage.camera.position.toArray() }); if (window.__cams.length < 400 && (P.controller.moving || P.cameraSettling || window.__cams.length < 40 || now - (window.__released ?? now) < 700)) requestAnimationFrame(rec); };
         requestAnimationFrame(rec);
       });
       const recorded = () => s.page.evaluate(() => ({ cams: window.__cams, released: window.__released }));

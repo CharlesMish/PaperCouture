@@ -4,7 +4,7 @@ const checkCapacity = require('./board-capacity.cjs');
 // Uses the running app's diagnostic objects and real controls, with no source imports.
 // BASE_URL / BASELINE_URL must serve compiled builds unless REQUIRE_PRODUCTION=0.
 process.env.DEBUG = [process.env.DEBUG, 'pw:browser'].filter(Boolean).join(',');
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = (process.env.BASE_URL || 'http://127.0.0.1:4301').replace(/\/$/, '') + '/';
 const baseline = (process.env.BASELINE_URL || 'http://127.0.0.1:4201').replace(/\/$/, '') + '/';
@@ -66,7 +66,7 @@ async function bundle(url) {
     const btn = name => page.getByRole('button', { name, exact: true });
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { const r = await page.goto(url + '?' + query); assert(r.ok()); await settle(); };
-    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+    const open = () => openBoard(page);
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
     // Exercise each move as a browser input action, allowing normal frame/input

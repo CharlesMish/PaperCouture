@@ -1,6 +1,6 @@
 // Fresh browser contexts only. Real capture controls, uniform bounds, old saves,
 // explicit size choices, accessories, print recipes, Undo, touch and exact PNG.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5297', out = process.env.CAPTURE_DIR || '.sizing-qa';
 const key = 'paper-couture.pinboard.v1'; fs.mkdirSync(out, {recursive:true});
@@ -12,7 +12,7 @@ const key = 'paper-couture.pinboard.v1'; fs.mkdirSync(out, {recursive:true});
   const btn=name=>page.getByRole('button',{name,exact:true});
   const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
   const load=async query=>{await page.goto(base+'/?'+query);await settle()};
-  const open=()=>page.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();
+  const open=()=>openBoard(page);
   const state=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
   const bounds=()=>page.evaluate(async()=>{const THREE=await import('/node_modules/.vite/deps/three.js'),b=paperCouture.pinboard;return b.state.items.map(i=>{const box=new THREE.Box3().setFromObject(b.groups.get(i.id),true);return {title:i.title,size:box.getSize(new THREE.Vector3()).toArray(),bounds:[box.min.x,box.max.x,box.min.y,box.max.y]}})});
   const exportPNG=async name=>{const expected=await page.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1800,2100,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});const[d]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);assert.deepEqual(fs.readFileSync(file),Buffer.from(expected.split(',')[1],'base64'));};

@@ -1,10 +1,10 @@
-const{chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('fs'),path=require('path'),assert=require('assert/strict');
 const base=process.env.BASE_URL || 'http://127.0.0.1:4470',old=process.env.BASELINE_URL || 'http://127.0.0.1:4472',key='paper-couture.pinboard.v1',root=process.env.CAPTURE_DIR || '.fit-flare-qa';
 (async()=>{const browser=await chromium.launch({headless:true,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});const report={checks:[],swatches:[],errors:[]};let p;
  async function open(url,seed,width=390,height=844){const c=await browser.newContext({viewport:{width,height},hasTouch:true});if(seed)await c.addInitScript(({key,seed})=>localStorage.setItem(key,seed),{key,seed});p=await c.newPage();p.setDefaultTimeout(30000);p.on('pageerror',e=>report.errors.push(String(e)));await p.goto(url);await settle();return c;}
  const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0);
- const btn=n=>p.getByRole('button',{name:n,exact:true}),raw=()=>p.evaluate(k=>localStorage.getItem(k),key),board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state))),enter=()=>p.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();
+ const btn=n=>p.getByRole('button',{name:n,exact:true}),raw=()=>p.evaluate(k=>localStorage.getItem(k),key),board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state))),enter=()=>openBoard(p);
  try{
   for(const[w,h]of[[390,844],[320,568],[844,390]]){const c=await open(base+'/?design=fit-flare&paper=sunray-pleats&step=4',null,w,h);const dimensions=()=>p.evaluate(()=>{const f=s=>{const r=document.querySelector(s).getBoundingClientRect();return{x:r.x,y:r.y,w:r.width,h:r.height,right:r.right,bottom:r.bottom}};return{row:f('.swatches'),selected:f('[role=radio][aria-checked=true]'),scroll:[document.querySelector('.swatches').scrollLeft,document.querySelector('.swatches').scrollTop]}});const before=await dimensions();await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();await p.waitForTimeout(200);report.swatches.push({viewport:[w,h],onLoad:before,afterTurn:await dimensions()});await c.close();}
   // Real pointer cancellation while folding the broad bodice; shoulder touch helpers separately.

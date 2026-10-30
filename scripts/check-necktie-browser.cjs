@@ -4,7 +4,7 @@ const checkCapacity = require('./board-capacity.cjs');
 // frozen PR25 build to prove it reads a board containing the new capture.
 //   BASE_URL=http://127.0.0.1:4301 BASELINE_URL=http://127.0.0.1:4201 \
 //   CAPTURE_DIR=docs/necktie/evidence node scripts/check-necktie-browser.cjs
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = (process.env.BASE_URL || 'http://127.0.0.1:4301').replace(/\/$/, '') + '/';
 const baseline = process.env.BASELINE_URL ? process.env.BASELINE_URL.replace(/\/$/, '') + '/' : null;
@@ -47,7 +47,7 @@ fs.mkdirSync(out, { recursive: true });
     };
     const capture = async (cm, expectPaper) => {
       const live = await page.evaluate(() => JSON.parse(JSON.stringify({ position: Array.from(paperCouture.sheet.front.geometry.attributes.position.array), uv: Array.from(paperCouture.sheet.front.geometry.attributes.uv.array) })));
-      await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click(); const previous = await state();
+      await openBoard(page); const previous = await state();
       await page.getByLabel('Starting square size').selectOption(String(cm)); await btn('Pin current piece').click();
       const next = await state(), piece = next.items.at(-1);
       assert.equal(next.items.length, previous.items.length + 1); assert.deepEqual(next.items.slice(0, -1), previous.items, 'earlier pieces are untouched');
@@ -155,7 +155,7 @@ fs.mkdirSync(out, { recursive: true });
       await a.btn('Send backward').click(); assert.notDeepEqual((await a.state()).items.map(i => i.id), selected.items.map(i => i.id)); await a.exportPNG('outfit-tie-under-top');
       await a.btn('Undo').click(); assert.deepEqual(await a.state(), selected);
       saved = await a.raw(); savedState = await a.state(); fs.writeFileSync(path.join(out, 'outfit-board.json'), saved);
-      await a.page.reload(); await a.settle(); await a.page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+      await a.page.reload(); await a.settle(); await openBoard(a.page);
       assert.deepEqual(await a.state(), savedState, 'reload restores the saved board'); assert.equal(await a.raw(), saved, 'reload does not rewrite the save');
       assert.deepEqual(await a.exportPNG('outfit-reloaded'), candidatePNG, 'reloaded board renders identically');
     });
@@ -163,7 +163,7 @@ fs.mkdirSync(out, { recursive: true });
 
     if (baseline) {
       await visit(baseline, saved, { width: 1280, height: 900 }, async a => {
-        await a.load(''); await a.page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+        await a.load(''); await openBoard(a.page);
         assert.deepEqual(await a.state(), savedState); assert.equal(await a.raw(), saved);
         assert.deepEqual(await a.exportPNG('pr25-reads-outfit'), candidatePNG, 'frozen PR25 renders the necktie board pixel-identically');
       });

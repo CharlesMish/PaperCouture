@@ -1,6 +1,6 @@
 // Local Chromium rendering/interaction evidence. Supply PLAYWRIGHT_MODULE and
 // CHROMIUM_EXECUTABLE_PATH. The baseline must be exact PR17 candidate f3f735c.
-const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4183';
 const dev = process.env.DEV_URL || 'http://127.0.0.1:5183';

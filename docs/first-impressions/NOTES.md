@@ -161,6 +161,14 @@ A folder with real paper should try these first.
 
 ## Checks
 
+- **Older checks keep testing what they were written for.** They now load
+  Playwright through `scripts/lib/legacy-playwright.cjs`. It does two things:
+  - Every page starts with no saved workshop, as a bare address did before.
+  - `openBoard()` opens More first when the Pinboard button sits under it on a
+    narrow screen.
+
+  Hosted CI on PR #40 found both problems.
+
 - `scripts/check-design-order.ts`, `scripts/check-instructions.ts` (both in
   `npm test`); `check-sizing.ts` extended.
 - `scripts/check-first-impressions-browser.cjs` (CI:

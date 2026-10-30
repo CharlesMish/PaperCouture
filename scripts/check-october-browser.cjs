@@ -1,7 +1,7 @@
 const checkCapacity = require('./board-capacity.cjs');
 // Production-compatible October integration check. No source-module imports,
 // injected papers, private profile, existing owner saves or external services.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -49,7 +49,7 @@ function snapshotBounds(snapshot) {
     const geometry = () => page.evaluate(() => JSON.stringify({ facets: paperCouture.timeline.states.at(-1).facets,
       position: Array.from(paperCouture.sheet.front.geometry.attributes.position.array), uv: Array.from(paperCouture.sheet.front.geometry.attributes.uv.array) }));
     const board = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
-    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+    const open = () => openBoard(page);
     const shot = async (name, frame = false) => {
       const file = path.join(out, frame ? 'frames' : '', name + '.png');
       await page.screenshot({ path: file }); result.captures.push({ name, sha256: sha(fs.readFileSync(file)) });

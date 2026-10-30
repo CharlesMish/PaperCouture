@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),http=require('node:http'),path=require('node:path'),assert=require('node:assert/strict');
 const out=process.env.CAPTURE_DIR||'.experiment-qa';fs.mkdirSync(out,{recursive:true});
 (async()=>{let server,base=process.env.BASE_URL;

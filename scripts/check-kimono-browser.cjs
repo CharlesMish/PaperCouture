@@ -9,7 +9,7 @@
 //
 // Browser checks use Chromium with software WebGL and emulated touch: they are
 // not a real phone, mobile Safari or physical paper.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4173';
 const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
@@ -76,7 +76,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     if (await btn('Display').isVisible()) { await btn('Display').click(); await settle(); }
     for (const v of ['Front', 'Angle', 'Back']) { await btn(v).click(); await settle(); await shot(`display-${v.toLowerCase()}`); }
     // the board: suggested size and an exact capture of the live geometry
-    await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+    await openBoard(page);
     assert.equal(Number(await page.getByLabel('Starting square size').inputValue()), 20);
     await btn('Pin current piece').click();
     const board = await page.evaluate(() => structuredClone(paperCouture.pinboard.state));

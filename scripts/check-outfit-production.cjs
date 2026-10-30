@@ -2,7 +2,7 @@ const checkCapacity = require('./board-capacity.cjs');
 // Smoke the served production bundle, never Vite source modules or a personal
 // browser profile. Diagnostic layout places the five real UI captures; fold,
 // capture, size, movement, remove/Undo, reload and export use their actual UI.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = (process.env.BASE_URL || 'http://127.0.0.1:4201').replace(/\/$/, '') + '/';
 const out = process.env.CAPTURE_DIR || '.outfit-production-qa';
@@ -49,7 +49,7 @@ async function bundle() {
     const btn = name => page.getByRole('button', { name, exact: true });
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async query => { const response = await page.goto(base + '?' + query); assert.equal(response.status(), 200); await settle(); };
-    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+    const open = () => openBoard(page);
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const measure = () => page.evaluate(() => {
       const b = paperCouture.pinboard;

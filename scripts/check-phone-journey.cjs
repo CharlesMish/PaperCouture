@@ -1,6 +1,6 @@
 // Production UI journey at phone width from an unfolded sheet. Touch gestures,
 // not controller jumps or auto-scrolled swatch clicks, drive the mobile path.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -147,11 +147,11 @@ async function paperVisible(page) {
       }
       // narrow screens keep Pinboard under More while in the workshop
       const more=page.getByRole('button',{name:'More',exact:true});if(await more.isVisible())await more.tap();
-      await page.getByRole('button',{name:/^(Pinboard|View board) \(/}).tap();
+      await openBoard(page, 'tap');
       const before=await page.evaluate(()=>JSON.stringify(paperCouture.pinboard.state.items));
       const exportPNG=async suffix=>{const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Save PNG',exact:true}).tap()]);const f=path.join(out,`pair-${width}-${suffix}.png`);await download.saveAs(f);return sha(fs.readFileSync(f));};
       journey.exports.push(await exportPNG('before'));
-      await page.reload(); await settle(); if(await more.isVisible())await more.tap(); await page.getByRole('button',{name:/^(Pinboard|View board) \(/}).tap();
+      await page.reload(); await settle(); if(await more.isVisible())await more.tap(); await openBoard(page, 'tap');
       assert.equal(await page.evaluate(()=>JSON.stringify(paperCouture.pinboard.state.items)),before);
       journey.exports.push(await exportPNG('after'));assert.equal(...journey.exports);
       result.journeys.push(journey); console.log(JSON.stringify(journey));await context.close();

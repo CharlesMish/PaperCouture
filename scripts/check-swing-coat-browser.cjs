@@ -1,6 +1,6 @@
 const checkCapacity = require('./board-capacity.cjs');
 // Isolated local contexts only; never reads the owner's browser/profile/save.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5637';
 const out = process.env.CAPTURE_DIR || 'docs/swing-coat/evidence/browser';
@@ -18,7 +18,7 @@ const key = 'paper-couture.pinboard.v1';
   const load=async q=>{const r=await page.goto(base+'/?'+q);assert(r.ok());await settle()};
   const advance=async()=>{const before=(await state()).step;await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await settle();assert.equal((await state()).step,before+1)};
   const back=async()=>{const before=(await state()).step;await btn('Back').click();if(await page.evaluate(()=>paperCouture.controller.moving))await btn('Back').click();await settle();assert.equal((await state()).step,before-1)};
-  const open=()=>page.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();
+  const open=()=>openBoard(page);
   const board=()=>page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
   const shot=name=>page.screenshot({path:path.join(out,name+'.png')});
   const view=async name=>{await btn(name).click();await settle()};

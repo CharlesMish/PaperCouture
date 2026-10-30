@@ -1,5 +1,5 @@
 // Local follow-up against the frozen reviewed PR25 build. Fresh contexts only.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4401';
 const baseline = process.env.BASELINE_URL || 'http://127.0.0.1:4400';
@@ -18,7 +18,7 @@ fs.mkdirSync(out, { recursive: true });
     const load = async query => { assert((await page.goto(url + '/?' + query)).ok()); await settle(); };
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+    const open = () => openBoard(page);
     const shot = name => page.screenshot({ path: path.join(out, name + '.png') });
     const fold = async () => { await page.locator('.dock:not(.display-dock) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); };
     const finish = async () => { while (!await page.evaluate(() => paperCouture.controller.finished)) await fold(); };

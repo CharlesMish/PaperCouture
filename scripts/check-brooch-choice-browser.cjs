@@ -1,5 +1,5 @@
 // Focused inverse shape choice and small-rectangle touch checks in a fresh context.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4401';
 const out = process.env.CAPTURE_DIR || '.capelet-brooch-qa';
@@ -18,7 +18,7 @@ const fixture = fs.readFileSync(path.join(out, 'new-rectangle-outfit.json'), 'ut
     await page.goto(base + '/?design=framed-brooch&broochShape=rectangle&paper=corner-bloom&turn=3&printX=.125&printY=.125&step=99&view=display'); await settle();
     const original = await recipe(); assert.deepEqual(original, { shape: 'rectangle', paper: 'corner-bloom', turn: 3, position: { x: .125, y: .125 } });
     await page.reload(); await settle(); assert.deepEqual(await recipe(), original);
-    await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click(); assert.deepEqual(await state(), JSON.parse(fixture));
+    await openBoard(page); assert.deepEqual(await state(), JSON.parse(fixture));
     const r = await page.locator('.pinboard-canvas').boundingBox(), initial = await state(), item = initial.items.at(-1);
     const x = r.x + r.width * (.5 + item.x / 3.6), y = r.y + r.height * (.5 - item.y / 4.2);
     const cdp = await context.newCDPSession(page), touch = (type, points) => cdp.send('Input.dispatchTouchEvent', { type, touchPoints: points });

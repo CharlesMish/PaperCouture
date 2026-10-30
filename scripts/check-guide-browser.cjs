@@ -1,7 +1,7 @@
 // Focused production checks for independently movable dressing guides. All
 // board mutations use real controls, pointer/touch gestures, or keyboard input.
 // Diagnostic reads inspect saved data and rendered bounds; no source imports.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5657';
@@ -27,7 +27,7 @@ fs.mkdirSync(out, { recursive: true });
   const raw = () => page.evaluate(k => localStorage.getItem(k), key);
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
-  const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+  const open = () => openBoard(page);
   const details = async summary => {
     const element = page.locator('summary').filter({ hasText: new RegExp(`^${summary}$`) });
     if (!await element.evaluate(e => e.parentElement.open)) await element.click();

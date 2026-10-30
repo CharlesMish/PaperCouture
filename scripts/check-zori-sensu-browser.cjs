@@ -10,7 +10,7 @@
 //
 // Browser checks use Chromium with software WebGL and emulated touch: they are
 // not a real phone, mobile Safari or physical paper.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4173';
 const out = process.env.CAPTURE_DIR || 'docs/kimono-companions/evidence/browser';
@@ -88,7 +88,7 @@ const PAPERS = ['Seigaiha waves', 'Asanoha', 'Polka dot', 'Houndstooth'];
       const place = (x, y) => b.page.evaluate(({ x, y }) => { const p = paperCouture.pinboard; p.mutate(() => { const i = p.state.items.at(-1); i.x = x; i.y = y; p.position(); p.constrain(i.id); }); }, { x, y });
       for (const [q, cm, x, y] of [['design=zori&paper=asanoha', 8, -0.5, -0.6], ['design=zori&paper=asanoha', 8, -0.15, -0.6], ['design=sensu&paper=seigaiha', 7.5, 0.5, 0.4]]) {
         await b.load(`${q}&step=99&view=display`);
-        await b.page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+        await openBoard(b.page);
         assert.equal(Number(await b.page.getByLabel('Starting square size').inputValue()), cm, `${q}: suggested size`);
         await b.btn('Pin current piece').click(); await place(x, y);
       }

@@ -1,6 +1,6 @@
 // Exact prior-paper preservation, registered material sampling, real folded views
 // and a disposable mixed board. No external input image or drawing is published.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const base = process.env.DEV_URL || process.env.BASE_URL || 'http://127.0.0.1:5303';
@@ -154,11 +154,11 @@ fs.mkdirSync(out, { recursive: true });
     await shot('mixed-board-desktop');
     const download = page.waitForEvent('download'); await button('Save PNG').click(); await (await download).saveAs(path.join(out, 'mixed-board-export.png'));
     const png = fs.readFileSync(path.join(out, 'mixed-board-export.png')); result.exportPixels = [png.readUInt32BE(16), png.readUInt32BE(20)]; assert.deepEqual(result.exportPixels, [1800, 2100]);
-    await page.reload(); await ready(); await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click(); assert.deepEqual(await board(), state);
+    await page.reload(); await ready(); await openBoard(page); assert.deepEqual(await board(), state);
     for (const [width, height] of [[390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await shot('mixed-board-' + width); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
       await button('Return to piece').click(); await button('Position print').click(); await shot('fixed-placement-' + width); await button('Done').click();
-      await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click(); assert.deepEqual(await board(), state);
+      await openBoard(page); assert.deepEqual(await board(), state);
     }
     result.checks.push('Real folds/Back, honest fixed-placement UI, small clutch and mixed printed outfit, old blossom offset, immutable capture/remove/Undo/reload, 1800×2100 PNG and 390/320 portrait controls pass.');
     assert.deepEqual(result.errors, []); result.passed = true;

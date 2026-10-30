@@ -1,4 +1,4 @@
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=process.env.BASE_URL||'http://127.0.0.1:5173/',out=process.env.OUT||path.join(__dirname,'browser');fs.mkdirSync(out,{recursive:true});
 (async()=>{const b=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});const c=await b.newContext({viewport:{width:1100,height:800},hasTouch:true,reducedMotion:'reduce'}),p=await c.newPage();p.setDefaultTimeout(45000);const r={base,errors:[],badResponses:[],checks:[]};p.on('pageerror',e=>r.errors.push(String(e)));p.on('response',x=>{if(x.status()>=400)r.badResponses.push([x.url(),x.status()])});

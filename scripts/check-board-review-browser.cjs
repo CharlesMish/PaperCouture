@@ -1,7 +1,7 @@
 // Production regression and matched captures for the independent 6284b4e review.
 // REVIEW_BASELINE=1 records the earlier candidate without requiring the repairs.
 // All interactions are real controls; diagnostic reads inspect actual geometry.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5678';
 const out = process.env.CAPTURE_DIR || '.october-qa/board-review/after';
@@ -41,7 +41,7 @@ const result = { baseline, browser: '', primary: [], selection: [], strokes: [],
   const load = async value => {
    await page.goto(base + '/?step=99&view=display'); await settle();
    await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key, value });
-   await page.reload(); await settle(); await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+   await page.reload(); await settle(); await openBoard(page);
   };
   const scale = async amount => { await control('Guide size').fill(String(amount)); await control('Guide size').dispatchEvent('change'); };
   const styles = locator => locator.evaluate(e => {

@@ -1,7 +1,7 @@
 // Production checks for the overlap-stacking integration. Isolated saved-board
 // fixtures reuse actual captured mitten geometry; subsequent edits use controls.
 // STACKING_BASELINE=1 records the same twelve-piece fixture before the change.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5637';
@@ -29,7 +29,7 @@ fs.mkdirSync(out, { recursive: true });
   const control = name => page.getByLabel(name, { exact: true });
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
-  const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
+  const open = () => openBoard(page);
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const load = async value => {
     await page.goto(base + '/?design=mitten-left&paper=oat-linen&step=99&view=display'); await settle();
