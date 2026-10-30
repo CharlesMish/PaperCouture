@@ -96,7 +96,7 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       await load('design=coat-dress&step=1');
       assert.equal(await page.locator('.dock.long-hint').count(), 1);
       assert.equal(await page.locator('#step-hint').isVisible(), false, 'a long instruction starts behind Instructions');
-      assert.match(await page.locator('.step-title').innerText(), /Collapse both shoulders/);
+      assert.match(await page.locator('.dock:not(.display-dock) .step-title').innerText(), /Collapse both shoulders/);
       await press(btn('Instructions'));
       assert.equal(await page.locator('#step-hint').isVisible(), true);
       await press(btn('Instructions'));
