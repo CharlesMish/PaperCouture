@@ -467,9 +467,11 @@ let scrubRelease: { op: number; t: number } | null = null;
  *   shorter than the last one's, as when a long instruction waits behind
  *   Instructions), so the framing never jumps with them.
  */
-let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; start: number } | null = null;
-const GLIDE_MS = 350;
-const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), start: performance.now() }; };
+// Timed in animation seconds (the capped frame steps the folds themselves advance by),
+// so on a slow machine the ease and the fold keep pace with each other.
+let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; elapsed: number } | null = null;
+const GLIDE_S = 0.35;
+const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), elapsed: 0 }; };
 function workshopFrame(): WorkFrame {
   const pose = controller.pose();
   const a = opFrame(ops[pose.op]);
@@ -496,7 +498,7 @@ function frameWorkshop() {
   workCamPos = stage.framePose(workTarget, f.halfW, f.halfH, WORK_DIR);
   // the ease works on the camera itself, so whatever moves the target meanwhile is eased too
   if (cameraGlide) {
-    const e = (performance.now() - cameraGlide.start) / GLIDE_MS;
+    const e = cameraGlide.elapsed / GLIDE_S;
     if (e >= 1 || controller.isScrubbing || !view.inWorkshop) cameraGlide = null;
     else {
       const k = e * e * (3 - 2 * e);
@@ -903,6 +905,7 @@ function tick(now: number) {
   if (!pinboard.dialog.open) {
     if (!positionPanel.dialog.open) {
       controller.update(dt);
+      if (cameraGlide) cameraGlide.elapsed += dt;
       view.update(dt);
       placePiece();
       if (view.inDisplay) displayCam.update(dt);
