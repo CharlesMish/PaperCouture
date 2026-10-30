@@ -32,7 +32,7 @@ const HIDDEN = [['kimono', 7, 'Move the hidden paper'], ['gown', 8, 'Fold the hi
     const page = await context.newPage(); page.setDefaultTimeout(Number(process.env.CHECK_TIMEOUT_MS) || 30000); // a slower machine (software WebGL) may need longer
     const errors = [];
     page.on('pageerror', (e) => errors.push(String(e)));
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && !paperCouture.cameraSettling);
     const state = () => page.evaluate(() => ({ step: paperCouture.controller.step, inspecting: paperCouture.inspectingOp, overlay: paperCouture.hiddenPaper.group.visible, camera: paperCouture.stage.camera.position.toArray() }));
     const load = async (q) => { const r = await page.goto(base + '/?' + q); assert(r.ok()); await settle(); await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))); };
     const shot = (name) => page.screenshot({ path: path.join(out, name + '.png') });

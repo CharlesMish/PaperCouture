@@ -144,6 +144,12 @@ A folder with real paper should try these first.
   jumped wider, and Fold after a fallen-back drag waited for 90% before moving.
   `workshopFrame()` now forgets the release as soon as its motion is over, before
   anything else, and Fold, Back, the arrow keys and a grip tap start afresh.
+- **Back jumped when the dock changed height.** Found by the new check rather than
+  by the review. Putting long instructions behind Instructions made kimono step 8's
+  dock shorter than step 7's, so pressing Back reframed the paper in one frame, 17%
+  of the way. The camera now eases over 0.35 s whenever the controls around the
+  paper change size in the workshop, as it already did after a release. It does
+  not ease at start-up.
 - **Quick pinning named the wrong size.** It now names the size it used.
 - **Gallery progress** says "3 of 8 steps done", not "Step 3 of 8", which read as
   the step you are on.

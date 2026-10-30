@@ -459,13 +459,17 @@ const opFrame = (anim: OpAnim) => { let f = frameCache.get(anim); if (!f) frameC
 /** Where the last drag was let go (the fold then finishes or falls back from there). */
 let scrubRelease: { op: number; t: number } | null = null;
 /**
- * After a drag is let go to finish the fold, the camera eases over 0.35 s from where
- * it held still toward the step's frame (which itself follows the rest of the fold).
- * Released late, the rest of a fold can be a few frames long; the ease keeps the
- * camera from jumping however little of the fold is left.
+ * The camera eases over 0.35 s from where it is toward where it should be:
+ * - after a drag is let go to finish the fold (released late, the rest of a fold can
+ *   be a few frames long; the ease keeps the camera from jumping however little of
+ *   the fold is left);
+ * - when the controls around the paper change size (a step's dock is taller or
+ *   shorter than the last one's, as when a long instruction waits behind
+ *   Instructions), so the framing never jumps with them.
  */
-let releaseGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; start: number } | null = null;
-const RELEASE_GLIDE_MS = 350;
+let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; start: number } | null = null;
+const GLIDE_MS = 350;
+const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), start: performance.now() }; };
 function workshopFrame(): WorkFrame {
   const pose = controller.pose();
   const a = opFrame(ops[pose.op]);
@@ -482,7 +486,7 @@ function releaseScrub(commit: boolean) {
   const pose = controller.pose();
   scrubRelease = { op: pose.op, t: pose.t };
   // the camera held this step's own frame for the whole drag
-  if (commit && pose.op + 1 < ops.length) releaseGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), start: performance.now() };
+  if (commit && pose.op + 1 < ops.length) startGlide();
   controller.endScrub(commit);
 }
 /** Recompute the workshop camera pose for the current step (and place it when in the workshop). */
@@ -490,15 +494,14 @@ function frameWorkshop() {
   const f = workshopFrame();
   workTarget = new THREE.Vector3(f.x, WORK_TARGET.y, -f.y); // model (x, y) on the table, in the world
   workCamPos = stage.framePose(workTarget, f.halfW, f.halfH, WORK_DIR);
-  // easing after a release works on the camera itself, so a panel that changes height
-  // as the step changes is eased too
-  if (releaseGlide) {
-    const e = (performance.now() - releaseGlide.start) / RELEASE_GLIDE_MS;
-    if (e >= 1 || controller.isScrubbing || !view.inWorkshop) releaseGlide = null;
+  // the ease works on the camera itself, so whatever moves the target meanwhile is eased too
+  if (cameraGlide) {
+    const e = (performance.now() - cameraGlide.start) / GLIDE_MS;
+    if (e >= 1 || controller.isScrubbing || !view.inWorkshop) cameraGlide = null;
     else {
       const k = e * e * (3 - 2 * e);
-      workCamPos = releaseGlide.fromPos.clone().lerp(workCamPos, k);
-      workTarget = releaseGlide.fromTarget.clone().lerp(workTarget, k);
+      workCamPos = cameraGlide.fromPos.clone().lerp(workCamPos, k);
+      workTarget = cameraGlide.fromTarget.clone().lerp(workTarget, k);
     }
   }
   if (view.inWorkshop) stage.placeCamera(workCamPos, workTarget);
@@ -652,6 +655,9 @@ function insets() {
   return { top: Math.max(p.top, studio.topInset(), mobile ? 44 : 56), left: p.left, right: 0, bottom };
 }
 
+let lastInsetKey = '';
+/** The first frame has been drawn (layout changes from then on are seen). */
+let drawn = false;
 /** Narrow screens, in the workshop (folding an accessory keeps the full controls, with Back to garment). */
 const foldingBar = () => window.innerWidth < 720 && view.target === 0 && !accessoryMode;
 function layout() {
@@ -660,7 +666,12 @@ function layout() {
   studio.setCompactNotes(workshopPanel.fit());
   workshopPanel.setHintRoom(Math.max(studio.root.getBoundingClientRect().bottom, picker.insets().top));
   stage.resize();
-  stage.setInsets(insets());
+  const inset = insets(), insetKey = JSON.stringify(inset);
+  // the controls around the paper changed size in the workshop: ease to the new framing
+  // (not before the first frame is drawn: at start-up there is nothing on screen to jump)
+  if (ready && drawn && view.inWorkshop && lastInsetKey && insetKey !== lastInsetKey && !controller.isScrubbing) startGlide();
+  lastInsetKey = insetKey;
+  stage.setInsets(inset);
   frameWorkshop();
   displayCam.updateLimits();
   const fit = displayCam.defaultDistance();
@@ -897,6 +908,7 @@ function tick(now: number) {
       if (view.inDisplay) displayCam.update(dt);
     }
     draw();
+    drawn = true;
   }
   requestAnimationFrame(tick);
 }
@@ -933,6 +945,8 @@ Object.assign(window, {
     sheet,
     hiddenPaper,
     get inspectingOp() { return inspectingOp; },
+    /** The workshop camera is easing (after a release, or to a new framing when the controls change size). */
+    get cameraSettling() { return cameraGlide !== null; },
     pinboard,
     pinSheet,
     view,
