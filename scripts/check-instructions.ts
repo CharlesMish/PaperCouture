@@ -59,6 +59,8 @@ for (const src of sources.filter(s => !only.length || only.includes(s.label.spli
     for (const { p, m } of points) candidates.push(p[0], m.size.w - p[0], p[1], m.size.h - p[1]);
     for (const a of points) for (const b of points) if (a.m === b.m) candidates.push(Math.abs(a.p[0] - b.p[0]), Math.abs(a.p[1] - b.p[1]), Math.hypot(a.p[0] - b.p[0], a.p[1] - b.p[1]));
     for (const m of near) candidates.push(m.size.w, m.size.h);
+    // along the paper's edges: from where a crease meets an edge to the corners and crease points on that edge
+    for (const m of near) for (const c of m.creases) candidates.push(...c.along);
     for (const u of measuresIn(op.hint)) {
       check(candidates.some(c => Math.abs(c - u) <= TOL), `${where}: the measurement ${u} (sheet units) matches none of the step's creases`);
       measured++;

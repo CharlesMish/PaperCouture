@@ -30,7 +30,7 @@ export interface Measured {
   step: number; kind: Op['kind']; id: string; title: string;
   /** current paper outline (bounding box), cm */
   size: { w: number; h: number };
-  creases: { name: string; from: [number, number]; to: [number, number]; angle: number; through: string[]; throughAt: [number, number][]; onMoving: [number, number][]; moves: string }[];
+  creases: { name: string; from: [number, number]; to: [number, number]; angle: number; through: string[]; throughAt: [number, number][]; onMoving: [number, number][]; along: number[]; moves: string }[];
 }
 
 export function measure(ops: Op[], cm: number): Measured[] {
@@ -77,6 +77,7 @@ export function measure(ops: Op[], cm: number): Measured[] {
         const through = on.map(name), throughAt = on.map(at);
         let moves = '';
         let onMoving: [number, number][] = [];
+        let onMovingPts: Vec2[] = [];
         if (l.spec) {
           const line = specLine(l.spec);
           const moving = state.facets.filter(f => mayMove(l.spec!, f) && modelPoly(f).some(p => sideOf(line, p) > 1e-6));
@@ -84,13 +85,28 @@ export function measure(ops: Op[], cm: number): Measured[] {
           if (l.spec.only || l.spec.except) {
             const touched = state.facets.filter(f => mayMove(l.spec!, f));
             const [mA, mB] = extent(touched.map(modelPoly));
-            if (Number.isFinite(mA.x)) onMoving = [at(mA), at(mB)];
+            if (Number.isFinite(mA.x)) { onMoving = [at(mA), at(mB)]; onMovingPts = [mA, mB]; }
           }
           const all = state.facets.filter(f => modelPoly(f).some(p => sideOf(line, p) > 1e-6));
           moves = `${moving.length} of ${all.length} facets on the moving side${l.spec.only ? ` (only ${l.spec.only})` : ''}${l.spec.except ? ` (not ${l.spec.except.join(', ')})` : ''}, ${l.spec.sense}`;
         }
+        // along the paper's edges: from each end of the crease (and each point it passes
+        // through) to the corners and crease points on the same straight edge
+        const along: number[] = [];
+        const ends = [A, B, ...on];
+        if (onMoving.length) ends.push(...onMovingPts);
+        for (const q of ends) for (const poly of polys) for (let k = 0; k < poly.length; k++) {
+          const p0 = poly[k], p1 = poly[(k + 1) % poly.length], e = v2(p1.x - p0.x, p1.y - p0.y), el = Math.hypot(e.x, e.y);
+          if (el < 1e-9) continue;
+          const t = ((q.x - p0.x) * e.x + (q.y - p0.y) * e.y) / (el * el);
+          if (t < -1e-6 || t > 1 + 1e-6 || Math.abs((q.x - p0.x) * e.y - (q.y - p0.y) * e.x) / el > 1e-4) continue;
+          for (const w of vertices) if (Math.abs((w.x - q.x) * e.y - (w.y - q.y) * e.x) / el < 1e-4) {
+            const dist = Math.hypot(w.x - q.x, w.y - q.y) * unit;
+            if (dist > 1e-6 && !along.some(a => Math.abs(a - dist) < 1e-9)) along.push(dist);
+          }
+        }
         const angle = +((Math.atan2(u.y, u.x) * 180) / Math.PI).toFixed(1);
-        return { name: l.name, from: at(A), to: at(B), angle: ((angle % 180) + 180) % 180, through, throughAt, onMoving, moves };
+        return { name: l.name, from: at(A), to: at(B), angle: ((angle % 180) + 180) % 180, through, throughAt, onMoving, along, moves };
       }),
     };
   });
@@ -107,7 +123,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     for (const m of measure(d.ops, d.cm)) {
       console.log(`${m.step}. [${m.kind}] ${m.title} · paper ${+m.size.w.toFixed(2)} x ${+m.size.h.toFixed(2)}`);
       const r = (p: [number, number]) => p.map(n => +n.toFixed(2)).join(',');
-      for (const c of m.creases) console.log(`   ${c.name}: ${r(c.from)} -> ${r(c.to)} at ${+c.angle.toFixed(1)}°; through ${c.through.join(' ') || '-'}${c.moves ? `; ${c.moves}` : ''}${c.onMoving.length ? `; across the layers that may move: ${r(c.onMoving[0])} -> ${r(c.onMoving[1])}` : ''}`);
+      for (const c of m.creases) console.log(`   ${c.name}: ${r(c.from)} -> ${r(c.to)} at ${+c.angle.toFixed(1)}°; through ${c.through.join(' ') || '-'}${c.moves ? `; ${c.moves}` : ''}${c.onMoving.length ? `; across the layers that may move: ${r(c.onMoving[0])} -> ${r(c.onMoving[1])}` : ''}${c.along.length ? `; along the edges it meets, to corners/crease points: ${c.along.map(n => +n.toFixed(2)).join(', ')}` : ''}`);
     }
   }
 }
