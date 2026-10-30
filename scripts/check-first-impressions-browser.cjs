@@ -146,7 +146,8 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       await board.getByRole('button', { name: 'Undo', exact: true }).click();
       assert.equal(await items(), 0);
       await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
-      assert.equal(await btn('Pin to pinboard').isVisible(), true, 'after Undo the shortcut offers to pin again');
+      // (the board's close event, which refreshes the dock, is dispatched just after the click)
+      await btn('Pin to pinboard').waitFor({ state: 'visible', timeout: 5000 }).catch(() => assert.fail('after Undo the shortcut offers to pin again'));
       // a size chosen earlier for this piece is used, and the message names it (Astra's review)
       await press(btn('Pin to pinboard'));
       await board.getByRole('button', { name: 'Undo', exact: true }).click();
