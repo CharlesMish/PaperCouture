@@ -29,8 +29,8 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
   for(const[op,t]of[[4,.25],[4,.455],[4,.60],[4,.75],[5,.34]]){
    await load('design=fit-flare&paper=botanical&step='+op);
    await p.evaluate(({t})=>{const c=paperCouture.controller;c.beginScrub();c.scrubTo(t)},{t});await shot('motion-'+op+'-'+t);
-   const disabled=await p.getByRole('button',{name:/^Pinboard \(/}).isEnabled();assert(disabled); // board remains available, capture must not be.
-   await p.getByRole('button',{name:/^Pinboard \(/}).click();assert(await btn('Pin current piece').isDisabled());
+   const disabled=await p.getByRole('button',{name:/^(Pinboard|View board) \(/}).isEnabled();assert(disabled); // board remains available, capture must not be.
+   await p.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();assert(await btn('Pin current piece').isDisabled());
   }
   report.checks.push('Capture disabled during waist and shoulder scrub');
   // Actual control flows, repeated interruption and reversal of waist collapse.
@@ -40,7 +40,7 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
    await btn('Fold').click();await p.waitForTimeout(200);await btn('Start over').click();await settle();assert.equal(await p.evaluate(()=>paperCouture.controller.step),0);
    await p.evaluate(()=>paperCouture.controller.jumpTo(4));
   }
-  await btn('Fold').click();await p.waitForTimeout(180);await p.getByRole('radio',{name:'Corner bloom',exact:true}).click();await p.getByRole('button',{name:/^Rotate print/}).click();await settle();assert.equal(await p.evaluate(()=>paperCouture.controller.step),5);
+  await btn('Fold').click();await p.waitForTimeout(180);await p.getByRole('radio',{name:'Corner bloom',exact:true}).click();await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();await settle();assert.equal(await p.evaluate(()=>paperCouture.controller.step),5);
   await btn('Fold').click();await settle();const final=await geometry();
   for(let k=0;k<3;k++){await btn('Back').click();await settle();await btn('Fold').click();await settle();assert.deepEqual(await geometry(),final);}
   await load('design=fit-flare&paper=corner-bloom&step=99&view=display');assert.deepEqual(await geometry(),final);
@@ -55,7 +55,7 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
     assert.deepEqual(await p.evaluate(()=>paperCouture.printPosition),{x:.125,y:.09375});assert.deepEqual(await geometry(),before);await shot(design+'-'+paper+'-shifted-front');await btn('Back').click();await settle();await shot(design+'-'+paper+'-shifted-back');
     const u=p.url();await p.reload();await settle();assert.deepEqual(await p.evaluate(()=>paperCouture.printPosition),{x:.125,y:.09375});assert.equal(p.url(),u);
    }
-   for(let q=1;q<=4;q++){await p.getByRole('button',{name:/^Rotate print/}).click();assert.deepEqual(await geometry(),before);}
+   for(let q=1;q<=4;q++){await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();assert.deepEqual(await geometry(),before);}
   }
   report.checks.push('Classic and fit-flare Sunray/floral front/back; floral shifts and URL reload; all four paper rotations preserve material geometry');
   for(const[w,h]of[[390,844],[320,568],[844,390]]){
@@ -66,7 +66,7 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
   await p.setViewportSize({width:1180,height:900});
   for(const[id,paper,cm,x,y]of[['fit-flare','plum-scatter',20,0,.1],['hat','slate-grain',8,0,1.27],['clutch','slate-grain',8,.93,-.65],['framed-brooch','plum-seed',4.5,.15,.46]]){
    await load(`design=${id}&paper=${paper}&step=99&view=display${id==='fit-flare'?'&printX=.125&printY=.09375&turn=1':''}`);
-   await p.getByRole('button',{name:/^Pinboard \(/}).click();await p.getByLabel('Starting square size').selectOption(String(cm));await btn('Pin current piece').click();
+   await p.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();await p.getByLabel('Starting square size').selectOption(String(cm));await btn('Pin current piece').click();
    await p.evaluate(({x,y})=>{const b=paperCouture.pinboard;b.mutate(()=>{const i=b.state.items.at(-1);i.x=x;i.y=y;b.position();b.constrain(i.id)})},{x,y});
   }
   const saved=await board();assert.equal(saved.items.length,4);
@@ -82,8 +82,8 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
   await touch('touchCancel');await p.waitForFunction(()=>!paperCouture.pinboard.drag);assert.deepEqual(await board(),selected);
   assert.deepEqual(await p.evaluate(()=>({saved:localStorage.getItem('paper-couture.pinboard.v1'),history:paperCouture.pinboard.history.length})),durableBefore);
   for(let k=0;k<3;k++){await touch('touchStart');await touch('touchMove',18,10);await touch('touchEnd');await p.waitForFunction(()=>!paperCouture.pinboard.drag);assert.notDeepEqual((await board()).items,selected.items);await btn('Undo').click();assert.deepEqual(await board(),selected);}
-  await p.reload();await settle();await p.getByRole('button',{name:/^Pinboard \(/}).click();assert.deepEqual((await board()).items,saved.items);assert.deepEqual(await png('fit-flare-reloaded'),exportBefore);
-  const old=await browser.newContext({viewport:{width:1180,height:900},acceptDownloads:true});await old.addInitScript(({key,seed})=>localStorage.setItem(key,seed),{key,seed:fixture});const op=await old.newPage();await op.goto(baseline);await op.waitForFunction(()=>window.paperCouture&&paperCouture.sheet.front.geometry.attributes.position?.count>0);await op.getByRole('button',{name:/^Pinboard \(/}).click();assert.equal(await op.evaluate(k=>localStorage.getItem(k),key),fixture);assert.deepEqual(await op.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state))),saved);const[d]=await Promise.all([op.waitForEvent('download'),op.getByRole('button',{name:'Save PNG',exact:true}).click()]);const dest=path.join(out,'fit-flare-read-by-published.png');await d.saveAs(dest);assert.deepEqual(fs.readFileSync(dest),exportBefore);await old.close();
+  await p.reload();await settle();await p.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();assert.deepEqual((await board()).items,saved.items);assert.deepEqual(await png('fit-flare-reloaded'),exportBefore);
+  const old=await browser.newContext({viewport:{width:1180,height:900},acceptDownloads:true});await old.addInitScript(({key,seed})=>localStorage.setItem(key,seed),{key,seed:fixture});const op=await old.newPage();await op.goto(baseline);await op.waitForFunction(()=>window.paperCouture&&paperCouture.sheet.front.geometry.attributes.position?.count>0);await op.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();assert.equal(await op.evaluate(k=>localStorage.getItem(k),key),fixture);assert.deepEqual(await op.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state))),saved);const[d]=await Promise.all([op.waitForEvent('download'),op.getByRole('button',{name:'Save PNG',exact:true}).click()]);const dest=path.join(out,'fit-flare-read-by-published.png');await d.saveAs(dest);assert.deepEqual(fs.readFileSync(dest),exportBefore);await old.close();
   report.checks.push('Fit-flare floral board: 4 captures; 320/390/desktop framing; four remove/Undo cycles; touch cancel and three move/Undo cycles; reload and PNG exact; old published source reads new garment snapshot exactly');
   assert.deepEqual(report.errors,[]);report.passed=true;
  }catch(e){report.failure=String(e.stack||e);await p.screenshot({path:path.join(out,'failure.png')}).catch(()=>{});throw e}

@@ -34,7 +34,7 @@ const out=process.env.CAPTURE_DIR||'docs/companion-folds/evidence/browser';
   await page.getByRole('radio',{name:'Corner bloom',exact:true}).click();
   const turns=id==='boot-left'?[0]:[0,1,2,3];
   for(const q of turns){
-   while((await state()).turn!==q)await page.getByRole('button',{name:/^Rotate print/}).click();
+   while((await state()).turn!==q)await page.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
    await button('Position print').click();await button('Reset print').click();await button('Done').click();assert.deepEqual((await state()).position,{x:0,y:0});
    for(const view of ['Front','Back']){await button(view).click();await settle();await shot(`${id}-bloom-${q}-original-${view.toLowerCase()}`)}
    await button('Position print').click();for(let n=0;n<4;n++){await button('Right').click();await button('Up').click()}await button('Done').click();

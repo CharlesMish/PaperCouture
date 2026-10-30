@@ -41,7 +41,7 @@ const result = { baseline, browser: '', primary: [], selection: [], strokes: [],
   const load = async value => {
    await page.goto(base + '/?step=99&view=display'); await settle();
    await page.evaluate(({ key, value }) => localStorage.setItem(key, JSON.stringify(value)), { key, value });
-   await page.reload(); await settle(); await page.getByRole('button', { name: /^Pinboard \(/ }).click();
+   await page.reload(); await settle(); await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
   };
   const scale = async amount => { await control('Guide size').fill(String(amount)); await control('Guide size').dispatchEvent('change'); };
   const styles = locator => locator.evaluate(e => {

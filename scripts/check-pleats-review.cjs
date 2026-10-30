@@ -46,7 +46,7 @@ const csp="default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'se
     await p.waitForFunction(()=>paperCouture.view.inDisplay&&!paperCouture.displayCam.glide);
     await p.screenshot({path:`${output}/pleats-front-final.png`});
     const camera=await p.evaluate(()=>paperCouture.stage.camera.position.toArray());
-    await p.getByRole('button',{name:/^Rotate print/}).click();
+    await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
     assert.equal((await state()).step,7);assert.equal((await state()).turn,1);
     assert.deepEqual(await p.evaluate(()=>paperCouture.stage.camera.position.toArray()),camera);
     assert.equal(await p.evaluate(()=>paperCouture.view.inDisplay),true);

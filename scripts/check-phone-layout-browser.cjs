@@ -220,7 +220,7 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
       await more.tap(); await s.frames();
       assert.equal(await more.getAttribute('aria-expanded'), 'true');
       assert.equal(await s.page.getByRole('button', { name: 'Change kimono colour', exact: true }).isVisible(), true);
-      assert.equal(await s.page.getByRole('button', { name: /^Pinboard \(/ }).isVisible(), true);
+      assert.equal(await s.page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).isVisible(), true);
       assert.deepEqual(await s.camera(), cam, `${key}: opening More does not move the paper`);
       await s.shot(`${key}-more`);
       await s.page.mouse.click(w / 2, k.bottom - 4); await s.frames();

@@ -76,7 +76,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     if (await btn('Display').isVisible()) { await btn('Display').click(); await settle(); }
     for (const v of ['Front', 'Angle', 'Back']) { await btn(v).click(); await settle(); await shot(`display-${v.toLowerCase()}`); }
     // the board: suggested size and an exact capture of the live geometry
-    await page.getByRole('button', { name: /^Pinboard \(/ }).click();
+    await page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
     assert.equal(Number(await page.getByLabel('Starting square size').inputValue()), 20);
     await btn('Pin current piece').click();
     const board = await page.evaluate(() => structuredClone(paperCouture.pinboard.state));

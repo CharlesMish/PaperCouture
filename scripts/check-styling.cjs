@@ -77,7 +77,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     await p.screenshot({ path: `${output}/bow-waist.png` });
     console.log('Checking edit, remove, pin and reset');
     await p.getByRole('button', { name: 'Edit accessory', exact: true }).click();
-    await p.getByRole('button', { name: /^Rotate print/ }).click();
+    await p.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
     await p.getByRole('button', { name: 'Attach', exact: true }).click();
     await p.waitForFunction(() => paperCouture.view.inDisplay);
     assert.equal((await state()).turn, 1); // garment rotation untouched

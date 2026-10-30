@@ -18,7 +18,7 @@ fs.mkdirSync(out,{recursive:true});
   // Durable boards are JSON: -0 becomes 0 without a geometric change.
   const board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
   const raw=()=>p.evaluate(k=>localStorage.getItem(k),key);
-  const enter=()=>p.getByRole('button',{name:/^Pinboard \(/}).click();
+  const enter=()=>p.getByRole('button',{name:/^(Pinboard|View board) \(/}).click();
   const png=async name=>{
    const expected=await p.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1800,2100,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});
    const[d]=await Promise.all([p.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);const bytes=fs.readFileSync(file);assert.deepEqual(bytes,Buffer.from(expected.split(',')[1],'base64'));await p.waitForFunction(()=>!paperCouture.pinboard.exporting);return bytes;

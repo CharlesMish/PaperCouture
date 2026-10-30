@@ -22,7 +22,7 @@ fs.mkdirSync(out, { recursive: true });
   const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving
     && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const load = async query => { const response = await page.goto(base + '/?' + query); assert(response.ok()); await settle(); };
-  const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
+  const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
   const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
   const shot = async name => { await page.locator('.board-tools').evaluate(e => e.scrollTop = 0); await page.screenshot({ path: path.join(out, name + '.png') }); };
   const nudge = async (name, count) => { await btn(name).evaluate((e, count) => { for (let n = 0; n < count; n++) e.click(); }, count); };
@@ -68,7 +68,7 @@ fs.mkdirSync(out, { recursive: true });
       const oldContext = await browser.newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce', acceptDownloads: true });
       await oldContext.addInitScript(({ key, fixture }) => localStorage.setItem(key, fixture), { key, fixture });
       const oldPage = await oldContext.newPage(); await oldPage.goto(before); await oldPage.waitForFunction(() => window.paperCouture);
-      await oldPage.getByRole('button', { name: /^Pinboard \(/ }).click();
+      await oldPage.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
       const oldPNG = await oldPage.evaluate(() => { const b = paperCouture.pinboard; b.selection.visible = false; b.renderer.setSize(1800, 2100, false); b.renderer.render(b.scene, b.camera); return b.canvas.toDataURL('image/png'); });
       assert.deepEqual(legacyPNG, Buffer.from(oldPNG.split(',')[1], 'base64'), 'Old captures render pixel-identically to PR23');
       await oldContext.close();

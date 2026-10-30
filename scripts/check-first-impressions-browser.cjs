@@ -87,7 +87,7 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       result.checks.push(`${key}: Start over offers Undo start over, which restores the step; folding again removes the offer.`);
 
       // labels and measurements
-      assert.equal(await page.getByRole('button', { name: /^Rotate print \(now / }).count(), 1);
+      assert.equal(await page.getByRole('button', { name: /^(?:Rotate print|Turn paper) \(now / }).count(), 1);
       await load('design=dress&step=0');
       assert.match(await page.locator('.step-no').innerText(), /Step 1 of 6 · on a 20 cm square/);
       assert.match(await page.locator('#step-hint').evaluate((e) => e.textContent), /by 2 cm/);
@@ -120,7 +120,7 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       if (await page.locator('.more-toggle').getAttribute('aria-expanded') === 'true') await page.keyboard.press('Escape');
       await load('design=jacket&step=0');
       await more();
-      await press(page.getByRole('button', { name: /^Pinboard \(/ }));
+      await press(page.getByRole('button', { name: /^(Pinboard|View board) \(/ }));
       const board = page.getByRole('dialog', { name: /Your pinboard/ });
       assert.equal(await board.getByLabel('Selected board piece').isVisible(), false, 'no arranging tools on an empty board');
       assert.equal(await board.getByRole('button', { name: 'Move left', exact: true }).isVisible(), false);

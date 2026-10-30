@@ -18,7 +18,7 @@ fs.mkdirSync(out, { recursive: true });
     const load = async query => { assert((await page.goto(url + '/?' + query)).ok()); await settle(); };
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-    const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
+    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
     const shot = name => page.screenshot({ path: path.join(out, name + '.png') });
     const fold = async () => { await page.locator('.dock:not(.display-dock) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); };
     const finish = async () => { while (!await page.evaluate(() => paperCouture.controller.finished)) await fold(); };
@@ -67,7 +67,7 @@ fs.mkdirSync(out, { recursive: true });
       await a.finish(); await a.btn('Display').click(); await a.settle();
       const geometry = await a.page.evaluate(() => JSON.stringify(paperCouture.timeline.states.at(-1).facets));
       for (let turn = 0; turn < 4; turn++) {
-        while ((await a.recipe()).turn !== turn) await a.page.getByRole('button', { name: /^Rotate print/ }).click();
+        while ((await a.recipe()).turn !== turn) await a.page.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
         for (const offset of ['original', 'shifted']) {
           await a.btn('Position print').click(); await a.btn('Reset print').click();
           if (offset === 'shifted') for (let n = 0; n < 4; n++) { await a.btn('Right').click(); await a.btn('Up').click(); }

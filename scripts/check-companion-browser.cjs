@@ -66,7 +66,7 @@ async function bundle(url) {
     const btn = name => page.getByRole('button', { name, exact: true });
     const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { const r = await page.goto(url + '?' + query); assert(r.ok()); await settle(); };
-    const open = () => page.getByRole('button', { name: /^Pinboard \(/ }).click();
+    const open = () => page.getByRole('button', { name: /^(Pinboard|View board) \(/ }).click();
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
     // Exercise each move as a browser input action, allowing normal frame/input
@@ -83,7 +83,7 @@ async function bundle(url) {
     const display = async () => { if (await btn('Display').isVisible()) await btn('Display').click(); await settle(); };
     const positionPrint = async () => {
       const before = await page.evaluate(() => ({ turns: paperCouture.quarterTurns, step: paperCouture.controller.step }));
-      await page.getByRole('button', { name: /^Rotate print \(now/ }).click();
+      await page.getByRole('button', { name: /^(?:Rotate print|Turn paper) \(now/ }).click();
       await btn('Position print').click(); await btn('Right').click(); await btn('Up').click(); await btn('Done').click();
       const recipe = await page.evaluate(() => ({ id: paperCouture.paperId, turns: paperCouture.quarterTurns, position: paperCouture.printPosition, step: paperCouture.controller.step }));
       assert.equal(recipe.turns, (before.turns + 1) % 4); assert.equal(recipe.step, before.step);

@@ -116,7 +116,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
 
     await p.getByRole('button',{name:'Fold accessory',exact:true}).click();
     await p.getByRole('radio',{name:'Reverse garden',exact:true}).click();
-    await p.getByRole('button',{name:/^Rotate print/}).click();
+    await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
     await finish();
     await p.getByRole('button',{name:'Attach',exact:true}).click();
     await p.waitForFunction(()=>paperCouture.view.inDisplay&&paperCouture.accessoryRoot.visible);

@@ -27,7 +27,7 @@ const out=process.env.CAPTURE_DIR||'docs/outfit-folds/evidence/progression';
   await page.getByRole('radio',{name:'Corner bloom',exact:true}).click();await button('Position print').click();await button('Right').click();await button('Up').click();await button('Done').click();
   const before=await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns}));
   assert.notDeepEqual(before.position,{x:0,y:0});
-  for(let q=0;q<4;q++)await page.getByRole('button',{name:/^Rotate print \(now /}).click();
+  for(let q=0;q<4;q++)await page.getByRole('button',{name:/^(?:Rotate print|Turn paper) \(now /}).click();
   assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);
   for(const view of ['Front','Back']){await button(view).click();await settle();await shot(`${id}-bloom-positioned-${view.toLowerCase()}`)}
   await page.reload();await settle();assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);

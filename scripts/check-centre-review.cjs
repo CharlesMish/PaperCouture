@@ -39,7 +39,7 @@ const output = 'docs/geometry-collection/centre-review';
   const checkpoint=async name=>{const s=await state();checks.push({name,state:s});console.log(name,JSON.stringify(s));return s};
   const capture=async name=>{await p.waitForTimeout(350);await p.screenshot({path:`${output}/${name}.png`})};
   const paper=async name=>p.getByRole('radio',{name,exact:true}).click();
-  const rotate=async()=>p.getByRole('button',{name:/^Rotate print \(now/}).click();
+  const rotate=async()=>p.getByRole('button',{name:/^(?:Rotate print|Turn paper) \(now/}).click();
   await p.goto(`http://127.0.0.1:${server.address().port}/play/paper-couture/?step=6&paper=tidal-bands&view=display`);await p.waitForFunction(()=>window.paperCouture);await displayed();
   await p.getByLabel('Accessory type',{exact:true}).selectOption('bow');await button('Fold accessory').click();
   await paper('Cut-paper mosaic');await rotate();await rotate();

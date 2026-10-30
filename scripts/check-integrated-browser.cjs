@@ -20,7 +20,7 @@ for(const id of ['apron','clutch','tunic']){
  await btn('Display').click();await settle();
  for(let q=0;q<(process.env.SMOKE_ONLY?1:4);q++){
   for(const view of ['Front','Angle','Back']){await btn(view).click();await settle();await shot(`${id}-turn${q}-${view}`)}
-  await p.getByRole('button',{name:/^Rotate print \(now /}).click();await settle();
+  await p.getByRole('button',{name:/^(?:Rotate print|Turn paper) \(now /}).click();await settle();
  }
  await btn('Reset view').click();await settle();
  if(!process.env.SMOKE_ONLY){const names=await p.getByRole('radio').evaluateAll(xs=>xs.map(x=>x.getAttribute('aria-label')));for(const name of names){await p.getByRole('radio',{name,exact:true}).click();await p.waitForTimeout(40);assert.equal(await p.getByRole('radio',{name,exact:true}).getAttribute('aria-checked'),'true')}r.checks.push(id+': '+names.length+' visible papers rendered')}
