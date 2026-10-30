@@ -1,6 +1,7 @@
-import { buildDress, Construction } from './construction';
+import { buildDress, Construction, DressParams, sideFolds, sleeveDrop, sleeveFolds } from './construction';
 import type { Op } from './engine';
 import { Affine2, MIRROR_X, Vec2, applyAffine, compose, norm, reflectionAcross, sub, v2 } from './geometry';
+import { cm } from './measure';
 
 export type JacketLength = 'cropped' | 'longer';
 export const JACKET_LENGTHS: { id: JacketLength; name: string; hem: number; hint: string }[] = [
@@ -17,6 +18,8 @@ export const CUFF_STYLES: { id: CuffStyle; name: string; hint: string }[] = [
  * values make the crease flatter; by about 0.11 it starts to catch the other
  * sleeve's collar layer, so the choice is a fixed authored corner, not a slider. */
 const CUFF_REACH = 0.1;
+/** The dress folds the jacket starts from: a deeper, broader body and flatter sleeves. */
+const JACKET_DRESS: DressParams = { collar: 0.18, shoulder: 0.62, hem: 0.66, sleeveDroop: 55 };
 
 /** Turned-back cuffs, worked on the front after the reveal.
  *
@@ -46,7 +49,9 @@ function cuffOp(c: Construction): Op {
   const mirror = (p: Vec2) => v2(-p.x, p.y);
   return {
     kind: 'fold', id: 'jacket-cuffs', title: 'Turn back the sleeve corners',
-    hint: 'Lift only the top layer at each sleeve end, hinged at the tip. Each corner shows the printed side: a turned corner, not a reverse cuff band.',
+    // the turned-back triangle: its crease runs from the sleeve tip to the band's raw
+    // edge, CUFF_REACH in from the sheet corner
+    hint: `At each sleeve end, lift the top layer only (the collar band) and fold its loose corner back: crease from the sleeve's outermost point to the band's loose edge, ${cm(CUFF_REACH)} from the corner. The corner shows the print.`,
     folds: [
       { name: 'cuff-left', a: tip, b: reach, moving: corner, sense: 'valley', only: 'collar' },
       { name: 'cuff-right', a: mirror(tip), b: mirror(reach), moving: mirror(corner), sense: 'valley', only: 'collar' },
@@ -58,27 +63,31 @@ function cuffOp(c: Construction): Op {
  * its material is retained rather than cutting or scaling a dress mesh. */
 export function buildJacket(length: JacketLength = 'cropped', cuffs: CuffStyle = 'plain'): Construction {
   const hem = JACKET_LENGTHS.find(option => option.id === length)!.hem;
-  const c = buildDress({ collar: 0.18, shoulder: 0.62, hem: 0.66, sleeveDroop: 55 });
+  const p = JACKET_DRESS;
+  const c = buildDress({ ...p });
+  const top = c.meta.top; // the collar fold, now the top edge
+  const hemFold = (what: string) =>
+    `Fold the bottom up onto the back along a crease ${cm(top - hem)} below the top edge, through all the layers. ${what}`;
   c.name = 'Box jacket';
-  c.ops[1].hint = 'The collar is underneath. Work from the back to shape a short jacket.';
-  c.ops[2].hint = 'These almost upright folds keep the body broad and box-shaped.';
-  c.ops[3].title = 'Open the broad sleeves';
-  c.ops[3].hint = 'Turn just the upper side flaps out. A short diagonal fold separates each sleeve from the body.';
+  c.ops[1].hint = 'Turn it over from side to side, so the collar band is underneath along the top edge. The jacket is shaped from the back.';
+  c.ops[2].hint = `${sideFolds(p)} These near-upright folds keep the body broad and boxy.`;
+  c.ops[3].title = 'Fold the top corners out into sleeves';
+  c.ops[3].hint = `${sleeveFolds(sleeveDrop(p))} The corners swing out into broad sleeves.`;
   c.ops[4] = {
-    kind: 'fold', id: 'jacket-hem', title: 'Shorten the body with a deep fold',
-    hint: 'Bring the whole lower panel up onto the back. The square becomes a cropped jacket; no paper is cut away.',
+    kind: 'fold', id: 'jacket-hem', title: 'Fold the body up short',
+    hint: hemFold('This deep fold makes the cropped body.'),
     folds: [{ name: 'jacket-hem', a: v2(-1.5, hem), b: v2(1.5, hem), moving: v2(0, -1), sense: 'valley' }],
   };
   c.ops[5].title = 'Turn over to reveal the jacket';
-  c.ops[5].hint = 'A broad collar, short body and open sleeves, folded from one square.';
+  c.ops[5].hint = 'Turn it over from side to side to reveal the jacket: a broad collar band, a short body and open sleeves.';
   if (length === 'longer') {
     c.name = 'Longer box jacket';
     c.ops[4].title = 'Turn up a shallower hem';
-    c.ops[4].hint = 'Fold the lower panel upward onto the back. More of the body stays long; all of the paper is retained.';
-    c.ops[5].hint = 'A broad collar, longer body and open sleeves, folded from one square.';
+    c.ops[4].hint = hemFold('This shallower fold leaves a longer body.');
+    c.ops[5].hint = 'Turn it over from side to side to reveal the jacket: a broad collar band, a longer body and open sleeves.';
   }
   if (cuffs === 'turned') {
-    c.ops[5].hint = 'Reveal the jacket. One more small fold turns back a printed corner at each sleeve end.';
+    c.ops[5].hint = 'Turn it over from side to side to reveal the jacket. One more small fold turns back a corner at each sleeve end.';
     c.ops.push(cuffOp(c));
     c.name = c.name.replace('box jacket', 'box jacket, turned sleeve corners').replace('Box jacket', 'Box jacket, turned sleeve corners');
   }
