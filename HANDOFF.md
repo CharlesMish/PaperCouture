@@ -26,6 +26,24 @@ arrival is deliberately left for later. Not merged. Notes:
   choice checks updated for the new names; `check-integrated.ts` compares the
   reviewed apron and clutch folds without their wording.
 
+After Astra's review of `a79f1ec`:
+- **Pin shortcut:** tracks the pinned board item, so Undo or Remove brings back
+  "Pin to pinboard".
+- **Camera:**
+  - A release no longer shapes later motions.
+  - The camera eases, on animation time, when the controls around the paper
+    change size.
+  - A drag holds the camera mid-ease.
+- **Quick pin:** names the size it actually used.
+- **Gallery:** says "3 of 8 steps done".
+- **Long instructions:** sit behind Instructions.
+- **Pin to pinboard:** a full button beside Display.
+- **Narrow dock:** its tools take their own row.
+- **Older checks:** load Playwright through `scripts/lib/legacy-playwright.cjs`.
+- **Hosted CI:** draft PR #40 (not for merging). 17 of 24 jobs pass; the 6 failures
+  also fail on main's PR #37, and phone layout once failed intermittently. See the
+  notes.
+
 Not tested on a real phone; no physical folding for this pass.
 
 # Paper Couture — room for the paper on phones (Claude, 2026-10-29)

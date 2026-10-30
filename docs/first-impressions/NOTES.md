@@ -165,6 +165,22 @@ A folder with real paper should try these first.
 
 ## Checks
 
+**Hosted CI, draft PR #40, commit `e376c15`:** 17 of 24 jobs pass, including First
+impressions, Phone layout, Usability pass, Design curation, October integration
+(phone-and-board), the pinboard checks and every per-design candidate.
+- **The 6 failing jobs also fail on main's last PR (#37):**
+  - Fit-and-flare verify
+  - Outfit composition
+  - Companion composition
+  - The wardrobe capelet-brooch, necktie and outfits checks
+- **Phone layout** failed once and passed when rerun. One of its timing-sensitive
+  camera assertions is intermittent on the hosted runners; which one has not been
+  found.
+- **Getting the evidence:** the hosted logs could not be downloaded from the
+  session. One failure was diagnosed by temporarily reporting the end of its
+  output as an annotation (reverted).
+
+
 - **Older checks keep testing what they were written for.** They now load
   Playwright through `scripts/lib/legacy-playwright.cjs`. It does two things:
   - Every page starts with no saved workshop, as a bare address did before.
