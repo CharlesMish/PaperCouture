@@ -102,6 +102,28 @@ centre line") and, where needed, a measurement.
   more.
 - The printable folding sheets (PDFs) are unchanged and keep their own wording.
 
+### Where an instruction is weaker
+
+All 270 fold instructions pass the check, but a few rest on a landmark that is
+approximate or awkward, or on a judgement nobody has tried in paper:
+
+- **Ankle boot toe:** the crease is aimed at the leg's top corner. This is within
+  0.4 mm of it on an 8 cm square, not exact.
+- **Necktie, last two steps:** the creases are placed exactly, but where the point
+  ends up is described ("about the middle", "just below the top fold").
+- **Cross-wrap top shoulders:** each crease is placed from the corner of the panel
+  point that peeks up from behind, because it never reaches the sheet's own top edge.
+- **Collapses (coat-dress, gown, fit-and-flare, kimono sleeves):** each is written as
+  a short numbered sequence of 400 to 600 characters, longer than the guide's usual
+  limit. Their waist creases are given as a start point and a direction, because
+  the corner where they bend is not a point the check can confirm.
+- **Swing coat hem:** measured down from the top edge, since the panel points stick
+  out below the bottom.
+- **Kimono sleeves:** the squash is worked from the back, and the order of its moves
+  is inferred from the crease directions.
+
+A folder with real paper should try these first.
+
 ## Checks
 
 - `scripts/check-design-order.ts`, `scripts/check-instructions.ts` (both in
@@ -122,6 +144,17 @@ centre line") and, where needed, a measurement.
   - Rotate print, Pinboard (n/12) and the Change buttons (`[data-revisit]`).
   - The chooser check, for 25 cards and the new order.
   - The zori and fan check, which now reads the measurements instead of percentages.
+
+Run locally on 30 October:
+- Typecheck, build and `npm test` passed.
+- These browser checks passed: first impressions, design picker, phone layout,
+  usability, phone journey, kimono, gown, coat-dress, and zori and fan.
+- The phone-layout check now stamps the frames it records with the moment they are
+  drawn. One touch run had failed on a frame stamped just before the release but
+  drawn just after it.
+- Other browser checks were not rerun. Their button names were updated to match.
+- The October timeout, the presentation failure and the baseline-build checks are
+  still outstanding, as on `claude/phone-layout`.
 
 Browser checks only (Chromium with software WebGL, emulated touch); not tested on a
 real phone. No physical folding was done for this pass. The measurements are checked
