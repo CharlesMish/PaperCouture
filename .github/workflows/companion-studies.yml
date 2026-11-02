@@ -43,6 +43,9 @@ jobs:
           CAPTURE_DIR: .companion-qa
           SUITE: ${{ matrix.suite }}
         run: |
+          # TEMPORARY (PR #40): report the end of the output as an annotation when this step fails
+          exec > >(tee /tmp/step-output.log) 2>&1
+          trap 'sleep 1; echo "::error title=step failed::$(tail -c 1800 /tmp/step-output.log | tr "\n" " " | tr -s " ")"' ERR
           if [ "$SUITE" = companion-composition ]; then
             npm run preview -- --host 127.0.0.1 --port 5301 --strictPort > /tmp/companion-preview.log 2>&1 &
             npm run preview --prefix .companion-baseline -- --host 127.0.0.1 --port 5391 --strictPort > /tmp/companion-baseline.log 2>&1 &

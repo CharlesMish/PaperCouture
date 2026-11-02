@@ -40,6 +40,9 @@ jobs:
           SKIP_PARKED_STUDIES: '1'
           SUITE: ${{ matrix.suite }}
         run: |
+          # TEMPORARY (PR #40): report the end of the output as an annotation when this step fails
+          exec > >(tee /tmp/step-output.log) 2>&1
+          trap 'sleep 1; echo "::error title=step failed::$(tail -c 1800 /tmp/step-output.log | tr "\n" " " | tr -s " ")"' ERR
           npm run preview -- --host 127.0.0.1 --port 5401 --strictPort > /tmp/wardrobe-preview.log 2>&1 &
           npm run preview --prefix .wardrobe-baseline -- --host 127.0.0.1 --port 5491 --strictPort > /tmp/wardrobe-baseline.log 2>&1 &
           for port in 5401 5491; do

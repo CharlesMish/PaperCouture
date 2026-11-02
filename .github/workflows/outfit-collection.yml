@@ -41,6 +41,9 @@ jobs:
           CAPTURE_DIR: .outfit-qa
           SUITE: ${{ matrix.suite }}
         run: |
+          # TEMPORARY (PR #40): report the end of the output as an annotation when this step fails
+          exec > >(tee /tmp/step-output.log) 2>&1
+          trap 'sleep 1; echo "::error title=step failed::$(tail -c 1800 /tmp/step-output.log | tr "\n" " " | tr -s " ")"' ERR
           npm run dev -- --host 127.0.0.1 --port 5201 --strictPort > /tmp/outfit-vite.log 2>&1 &
           for i in {1..30}; do curl -fsS http://127.0.0.1:5201/ > /dev/null && break; sleep 1; done
           if [ "$SUITE" != sizing-and-folds ]; then
