@@ -45,8 +45,8 @@ jobs:
         run: |
           # TEMPORARY (PR #40): report the end of the output as an annotation when this step fails
           exec 3>&1 > /tmp/step-output.log 2>&1
-          trap 'code=$?; [ $code = 0 ] || echo "::error title=step failed::exit $code: $(tail -c 1800 /tmp/step-output.log | tr "\n" " " | tr -s " ")" >&3' EXIT
-          trap 'echo "::error title=step failed::terminated: $(tail -c 1800 /tmp/step-output.log | tr "\n" " " | tr -s " ")" >&3; trap - EXIT; exit 143' TERM
+          trap 'code=$?; [ $code = 0 ] || echo "::error title=step failed::exit $code: $(tail -c 1200 /tmp/step-output.log | tr "\n" " " | tr -s " ") MEMORY: $(free -m | tr "\n" " " | tr -s " ") KERNEL: $(sudo dmesg 2>/dev/null | grep -iE "out of memory|killed process|oom" | tail -3 | tr "\n" " ")" >&3' EXIT
+          trap 'echo "::error title=step failed::terminated: $(tail -c 1200 /tmp/step-output.log | tr "\n" " " | tr -s " ") MEMORY: $(free -m | tr "\n" " " | tr -s " ") KERNEL: $(sudo dmesg 2>/dev/null | grep -iE "out of memory|killed process|oom" | tail -3 | tr "\n" " ")" >&3; trap - EXIT; exit 143' TERM
           if [ "$SUITE" = companion-composition ]; then
             npm run preview -- --host 127.0.0.1 --port 5301 --strictPort > /tmp/companion-preview.log 2>&1 &
             npm run preview --prefix .companion-baseline -- --host 127.0.0.1 --port 5391 --strictPort > /tmp/companion-baseline.log 2>&1 &
