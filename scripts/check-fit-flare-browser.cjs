@@ -16,7 +16,8 @@ const key='paper-couture.pinboard.v1',base=process.env.BASE_URL || 'http://127.0
  try{
   await load('design=fit-flare&paper=botanical&step=0');
   const designs=p.getByLabel('Garment design'),accessories=p.getByLabel('Accessory type');
-  assert.equal(await designs.locator('optgroup').count(),0);assert.equal(await accessories.locator('optgroup').count(),0);
+  // the design list is grouped by difficulty (docs/first-impressions/NOTES.md); every design is still listed once
+  assert.deepEqual(await designs.locator('optgroup').evaluateAll(gs=>gs.map(g=>g.label)),['Easy','Medium','Advanced']);assert.equal(await accessories.locator('optgroup').count(),0);
   const ids=await designs.locator('option').evaluateAll(xs=>xs.map(x=>x.value));
   assert.deepEqual([...ids].sort(), ["apron", "boat-top", "boot-left", "boot-right", "camp-shirt", "capelet", "clutch", "coat-dress", "dress", "fit-flare", "framed-brooch", "gown", "hat", "jacket", "kimono", "mitten-left", "mitten-right", "necktie", "pleats", "sensu", "skirt", "swing-coat", "tabard", "tunic", "vest", "wrap-top", "zori"]);
   assert.equal(new Set(ids).size,27);

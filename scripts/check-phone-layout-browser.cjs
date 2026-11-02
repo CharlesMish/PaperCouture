@@ -117,12 +117,18 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
         window.__cams = []; window.__released = null;
         for (const type of ['pointerup', 'pointercancel']) window.addEventListener(type, () => { window.__released ??= performance.now(); }, { capture: true, once: true });
         // stamped when drawn (a frame's start time can precede an event handled within it)
-        const rec = () => { const now = performance.now(), P = paperCouture; window.__cams.push({ now, t: P.controller.pose().t, cam: P.stage.camera.position.toArray() }); if (window.__cams.length < 400 && (P.controller.moving || P.cameraSettling || window.__cams.length < 40 || now - (window.__released ?? now) < 700)) requestAnimationFrame(rec); };
+        const rec = () => { const now = performance.now(), P = paperCouture; const cam = P.stage.camera, c = P.stage.renderer.domElement;
+          // where a fixed point of the table lands on screen: the camera's position alone
+          // misses a jump of the projection centre when the controls change size (Astra)
+          const v = new cam.position.constructor(0, 0, 0).applyMatrix4(P.stage.modelRoot.matrixWorld).project(cam);
+          window.__cams.push({ now, t: P.controller.pose().t, step: P.controller.step, cam: cam.position.toArray(), scr: [(v.x + 1) / 2 * c.clientWidth, (1 - v.y) / 2 * c.clientHeight] }); if (window.__cams.length < 400 && (P.controller.moving || P.cameraSettling || window.__cams.length < 40 || now - (window.__released ?? now) < 700)) requestAnimationFrame(rec); };
         requestAnimationFrame(rec);
       });
       const recorded = () => s.page.evaluate(() => ({ cams: window.__cams, released: window.__released }));
       const near = (c, ref) => Math.hypot(...c.map((v, i) => v - ref[i])) <= 0.01 * span;
       const ease = (e) => { const x = Math.min(1, Math.max(0, e)); return x * x * (3 - 2 * x); };
+      // a frame's movement on screen that counts as a jump (an 80 px change in the dock's height shifted the view 40 px)
+      const JUMP_PX = 8, dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1]);
       // no jump: before the release the camera is where it held; after it, it has moved no
       // further from there than the 0.35 s ease allows at that moment; it ends on the next
       // frame, having moved one way
@@ -168,6 +174,11 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
         assert(mid.length > 0, 'frames recorded mid-fold');
         for (const r of mid) assert(Math.hypot(...r.cam.map((v, i) => v - A[i])) > 0.02 * span, `Fold after a fallen-back drag: the camera moves from 60% of the fold, not from 90% (at t ${r.t.toFixed(2)} it had not moved)`);
         assert(near(cams.at(-1).cam, B), 'Fold after a fallen-back drag arrives at the next frame');
+        // the step's end changes the dock's height (step 8's instruction waits behind
+        // Instructions): on screen the paper does not jump as it does
+        const i = cams.findIndex((r, k) => k > 0 && r.step !== cams[k - 1].step);
+        assert(i > 0, 'the fold finished while recording');
+        for (const k of [i, i + 1].filter((k) => k < cams.length)) assert(dist(cams[k].scr, cams[k - 1].scr) <= JUMP_PX, `Fold's end: a fixed point moved ${dist(cams[k].scr, cams[k - 1].scr).toFixed(1)} px on screen in one frame as the dock changed height`);
       }
       await pressed(back); await s.settle(); await s.page.waitForTimeout(400); await s.frames();
       assert.deepEqual(await s.camera(), A, 'Back returns to the step\'s own frame');
@@ -188,6 +199,10 @@ const FLOOR = { '320x568': 140, '390x844': 250, '1180x900': 330 };
           assert(fromB <= (expected + 0.08) * span, `Back after a drag pulled to the end: at t ${r.t.toFixed(2)} the camera is ${(fromB / span).toFixed(2)} of the way back already (jumped)`);
         }
         assert.deepEqual(await s.camera(), A, 'Back after a drag pulled to the end ends on the step\'s own frame');
+        // pressing Back changes the dock's height at once: on screen the paper does not jump
+        const { released } = await recorded(), i = cams.findIndex((r) => r.now >= released);
+        assert(i > 0, 'frames recorded either side of Back');
+        for (const k of [i, i + 1].filter((k) => k < cams.length)) assert(dist(cams[k].scr, cams[k - 1].scr) <= JUMP_PX, `Back after a drag pulled to the end: a fixed point moved ${dist(cams[k].scr, cams[k - 1].scr).toFixed(1)} px on screen in one frame`);
       }
       assert.deepEqual(s.errors, []);
       result.checks.push(touch

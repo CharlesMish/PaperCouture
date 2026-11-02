@@ -22,7 +22,7 @@ import { FoldGuides } from './render/guides';
 import { HiddenPaperOverlay } from './render/hiddenPaper';
 import { blendFrames, stepFrame, type WorkFrame } from './app/workFrame';
 import { HIDDEN_FOLD, movingVisibility, type Visibility } from './fold/visibility';
-import { Stage } from './render/stage';
+import { Stage, type Insets } from './render/stage';
 import { makeStand, SLOT_DEPTH, STAND_HEIGHT } from './render/stand';
 import { WorkshopPanel } from './ui/workshopPanel';
 import { showStartupFailure, watchContextLoss } from './ui/startupFailure';
@@ -469,9 +469,13 @@ let scrubRelease: { op: number; t: number } | null = null;
  */
 // Timed in animation seconds (the capped frame steps the folds themselves advance by),
 // so on a slow machine the ease and the fold keep pace with each other.
-let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; elapsed: number } | null = null;
+let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; fromInsets: Insets; elapsed: number } | null = null;
 const GLIDE_S = 0.35;
-const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), elapsed: 0 }; };
+// The projection centre (where the free area's middle is on screen) eases with the
+// camera: moving only the camera would still shift the paper when the controls change size.
+const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), fromInsets: stage.projectionInsets(), elapsed: 0 }; };
+const mixInsets = (a: Insets, b: Insets, k: number): Insets =>
+  ({ top: a.top + (b.top - a.top) * k, right: a.right + (b.right - a.right) * k, bottom: a.bottom + (b.bottom - a.bottom) * k, left: a.left + (b.left - a.left) * k });
 function workshopFrame(): WorkFrame {
   const pose = controller.pose();
   const a = opFrame(ops[pose.op]);
@@ -501,11 +505,12 @@ function frameWorkshop() {
     const e = cameraGlide.elapsed / GLIDE_S;
     // a drag holds the camera where it is, part-way through the ease if need be (it
     // resumes, or a release starts a new one, after the drag)
-    if (e >= 1 || !view.inWorkshop) cameraGlide = null;
+    if (e >= 1 || !view.inWorkshop) { cameraGlide = null; stage.showInsets(null); }
     else {
       const k = e * e * (3 - 2 * e);
       workCamPos = cameraGlide.fromPos.clone().lerp(workCamPos, k);
       workTarget = cameraGlide.fromTarget.clone().lerp(workTarget, k);
+      stage.showInsets(mixInsets(cameraGlide.fromInsets, stage.realInsets(), k));
     }
   }
   if (view.inWorkshop) stage.placeCamera(workCamPos, workTarget);
@@ -550,8 +555,17 @@ function changeGarment(id: GarmentId) {
   controller.jumpTo(resume);
 }
 /** What a pin of the finished piece would capture: the piece, its paper and its accessory. */
+// Built from the piece itself (its design, fold choices, paper and accessory), not from
+// the address, which also says how it is being viewed: pinned in Display, it is the
+// same piece back in the workshop.
 function pinRecipe() {
-  return JSON.stringify([location.search, attached && accessoryRoot.visible ? [accessoryId, pinPaper.id, pinTurns, pinPrintPosition, pinPosition, centreAttached, centrePaper.id, centreTurns] : null]);
+  const accessory = attached && accessoryRoot.visible
+    ? { id: accessoryId, paper: pinPaper.id, turns: pinTurns, print: pinPrintPosition, place: pinPosition,
+        centre: accessoryId === 'bow' && centreAttached ? { paper: centrePaper.id, turns: centreTurns, print: centrePrintPosition } : null }
+    : null;
+  // only this design's own choices
+  const options = Object.fromEntries(garmentDecisions(garmentId).map(d => [d.id, garmentOptions[d.id]]));
+  return JSON.stringify({ design: garmentId, options, paper: garmentPaper.id, turns: garmentTurns, print: garmentPosition, accessory });
 }
 const isPinned = () => !!pinned && pinned.recipe === pinRecipe() && pinboard.has(pinned.id);
 /** Pin the finished piece from the workshop in one go; the board opens with it selected. */

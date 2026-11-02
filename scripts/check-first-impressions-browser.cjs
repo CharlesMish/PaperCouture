@@ -160,7 +160,20 @@ const out = process.env.CAPTURE_DIR || '.first-impressions-qa';
       assert.doesNotMatch(status, /suggested/);
       assert.equal(await page.evaluate(() => JSON.parse(localStorage.getItem('paper-couture.pinboard.v1')).items[0].paperSize.sideCm), 16);
       await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
-      result.checks.push(`${key}: Pin to pinboard, a full-size button beside Display, pins once and opens the board; after Undo it offers to pin again; a size chosen earlier is used and named; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger.`);
+      // pinned in Display, it is the same piece back in the workshop: the shortcut knows
+      // it is pinned and does not pin it twice (Astra's review of d66837f)
+      await page.evaluate(() => paperCouture.setPaper('oat-linen'));
+      await btn('Pin to pinboard').waitFor({ state: 'visible' });
+      await press(btn('Display')); await settle();
+      await press(btn('Pinboard'));
+      await board.getByRole('button', { name: 'Pin current piece', exact: true }).click();
+      assert.equal(await items(), 2);
+      await board.getByRole('button', { name: 'Return to folding', exact: true }).click(); await settle();
+      await btn('View on pinboard').waitFor({ state: 'visible', timeout: 5000 }).catch(() => assert.fail('pinned in Display, the piece is recognised back in the workshop'));
+      await press(btn('View on pinboard'));
+      assert.equal(await items(), 2, 'no duplicate after pinning in Display');
+      await board.getByRole('button', { name: 'Return to piece', exact: true }).click();
+      result.checks.push(`${key}: Pin to pinboard, a full-size button beside Display, pins once and opens the board; after Undo it offers to pin again; a size chosen earlier is used and named; pinned in Display, it is not pinned twice from the workshop; arranging tools appear once pinned; paper sizes 16, 20, 21.6 cm (8.5 in), none larger.`);
       await context.close();
     }
     assert.deepEqual(result.errors, []);
