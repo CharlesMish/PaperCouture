@@ -48,9 +48,12 @@ html, body {
 }
 .masthead h1 {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  /* Curator 2026-11-02: a couture-label serif for the name only; all controls keep the studio sans. */
+  font-family: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, 'DejaVu Serif', serif;
+  font-size: 1.12rem;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: 0.03em;
 }
 
 button {
