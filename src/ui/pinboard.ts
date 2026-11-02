@@ -414,7 +414,11 @@ export class Pinboard {
     this.title.textContent = `Your pinboard · ${this.state.items.length}/${MAX_PIECES}`;
     this.format.value = this.state.format ?? 'standard';
     this.note.textContent = `${this.state.format === 'roomy' ? 'Roomy gives more arranging space; pieces appear smaller in the overview. ' : ''}PNG · ${this.layout.exportWidth} × ${this.layout.exportHeight}. Board saves on this device. Undo keeps the last 20 changes in this tab.`;
-    this.launcher.textContent = `View board (${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
+    // Same accessible text as before ("View board (n/12)…"); the count sits in a quieter span.
+    const count = document.createElement('span');
+    count.className = 'studio-button-count';
+    count.textContent = `(${this.state.items.length}/${MAX_PIECES})${this.unsaved ? ' · unsaved' : ''}`;
+    this.launcher.replaceChildren('View board ', count);
     this.pieces.replaceChildren();
     for (const [i, item] of this.state.items.entries()) this.pieces.add(new Option(`${i+1}. ${item.title}`, item.id));
     if (!this.state.items.length) this.pieces.add(new Option('No pinned pieces yet', ''));
