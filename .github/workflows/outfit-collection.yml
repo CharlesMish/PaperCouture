@@ -41,10 +41,6 @@ jobs:
           CAPTURE_DIR: .outfit-qa
           SUITE: ${{ matrix.suite }}
         run: |
-          # TEMPORARY (PR #40): report the end of the output as an annotation when this step fails
-          exec 3>&1 > /tmp/step-output.log 2>&1
-          trap 'code=$?; [ $code = 0 ] || echo "::error title=step failed::exit $code: $(tail -c 1200 /tmp/step-output.log | tr "\n" " " | tr -s " ") MEMORY: $(free -m | tr "\n" " " | tr -s " ") KERNEL: $(sudo dmesg 2>/dev/null | grep -iE "out of memory|killed process|oom" | tail -3 | tr "\n" " ")" >&3' EXIT
-          trap 'echo "::error title=step failed::terminated: $(tail -c 1200 /tmp/step-output.log | tr "\n" " " | tr -s " ") MEMORY: $(free -m | tr "\n" " " | tr -s " ") KERNEL: $(sudo dmesg 2>/dev/null | grep -iE "out of memory|killed process|oom" | tail -3 | tr "\n" " ")" >&3; trap - EXIT; exit 143' TERM
           npm run dev -- --host 127.0.0.1 --port 5201 --strictPort > /tmp/outfit-vite.log 2>&1 &
           for i in {1..30}; do curl -fsS http://127.0.0.1:5201/ > /dev/null && break; sleep 1; done
           if [ "$SUITE" != sizing-and-folds ]; then

@@ -44,6 +44,16 @@ After Astra's review of `a79f1ec`:
   also fail on main's PR #37, and phone layout once failed intermittently. See the
   notes.
 
+After Astra's review of `d66837f`:
+- **Projection centre:** eases with the camera; the check follows the paper's
+  position on screen.
+- **Pin identity:** built from the piece, not the address, so pinning in Display does
+  not lead to a duplicate.
+- **Fit-and-flare check:** expects the difficulty groups.
+- **Hosted failures:** diagnosed with temporary annotations. Five jobs are killed by
+  the runner running out of memory, as #37's runs probably were (same exit code,
+  messages not recorded).
+
 Not tested on a real phone; no physical folding for this pass.
 
 # Paper Couture — room for the paper on phones (Claude, 2026-10-29)

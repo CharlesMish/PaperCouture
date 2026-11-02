@@ -135,6 +135,25 @@ approximate or awkward, or on a judgement nobody has tried in paper:
 
 A folder with real paper should try these first.
 
+## After Astra's review of `d66837f`
+
+- **The paper could still jump on screen when the dock changed height.** The camera's
+  position eased, but the projection centre (the middle of the free area) moved at
+  once. An 80 px dock change moved a fixed point 40 px with no camera movement.
+  - The projection centre now eases with the camera (`Stage.showInsets`), and the
+    ease never runs ahead of the time since it began.
+  - The phone-layout check follows a fixed point on screen across the dock changes
+    at a fold's end and at Back. Before the fix it failed on a 39.3 px jump in one
+    frame.
+- **Pinning from Display could pin twice.** The shortcut identified a piece by its
+  address, which includes `view=display`. It now uses the piece's design, its own
+  fold choices, paper, rotation, print position and accessory.
+  - The dock also refreshes when the paper changes, so a new paper offers Pin again.
+  - The first-impressions check pins from Display, returns to folding and confirms
+    there is no duplicate. Before the fix it failed.
+- **Fit-and-flare's check** expects the design list's three groups (see Hosted CI
+  below).
+
 ## After Astra's review of `a79f1ec`
 
 - **The pin shortcut forgot Undo.** It remembered the last pin rather than the item.
@@ -165,21 +184,30 @@ A folder with real paper should try these first.
 
 ## Checks
 
-**Hosted CI, draft PR #40, commit `e376c15`:** 17 of 24 jobs pass, including First
-impressions, Phone layout, Usability pass, Design curation, October integration
-(phone-and-board), the pinboard checks and every per-design candidate.
-- **The 6 failing jobs also fail on main's last PR (#37):**
-  - Fit-and-flare verify
-  - Outfit composition
-  - Companion composition
-  - The wardrobe capelet-brooch, necktie and outfits checks
-- **Phone layout** failed once and passed when rerun. One of its timing-sensitive
-  camera assertions is intermittent on the hosted runners; which one has not been
-  found.
-- **Getting the evidence:** the hosted logs could not be downloaded from the
-  session. One failure was diagnosed by temporarily reporting the end of its
-  output as an annotation (reverted).
-
+**Hosted CI, draft PR #40.**
+- **Commit `e376c15`:** 17 of 24 jobs passed, including First impressions, Phone
+  layout, Usability pass, Design curation, October integration (phone-and-board),
+  the pinboard checks and every per-design candidate. Phone layout failed once and
+  passed when rerun.
+- **Calling the other failures pre-existing was too quick (Astra).**
+  - **Fit-and-flare verify failed because of this branch.** It expected an ungrouped
+    design list and stopped at once. It now expects Easy/Medium/Advanced, and its
+    substantive checks run.
+  - **How the rest were diagnosed:** temporary changes to the workflows reported the
+    end of each failing step's output, the runner's memory and the kernel log as
+    annotations. They have been reverted.
+  - **Five jobs are stopped by the runner running out of memory:** Outfit
+    composition, Companion composition, wardrobe capelet-brooch and Fit-and-flare
+    verify among them. In each, the test process is killed by the kernel's
+    out-of-memory killer, with 12 to 14 GB of the runner's 16 GB in use. Each runs
+    two or three app servers (current and frozen baselines) and Chromium with
+    software WebGL.
+  - **Evidence from PR #37:** its runs of the same jobs ended with the same exit code
+    (143) at similar times. Their messages were not recorded, so this is evidence,
+    not proof, that the memory failures predate this branch. A diagnostic PR on main
+    could settle it.
+- **Getting the evidence:** the hosted logs and artifacts cannot be downloaded from
+  the session.
 
 - **Older checks keep testing what they were written for.** They now load
   Playwright through `scripts/lib/legacy-playwright.cjs`. It does two things:
