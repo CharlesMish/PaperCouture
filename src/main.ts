@@ -279,6 +279,8 @@ function applyPaper() {
   picker?.render(paper, quarterTurns, !!(printPosition.x || printPosition.y));
   positionPanel.render(paper, quarterTurns, printPosition, textures.front.image);
   refreshDisplayPanel();
+  // a new paper is a different piece to pin: the dock's pin button says so
+  if (ready) refreshWorkshopPanel();
   syncUrl();
 }
 
