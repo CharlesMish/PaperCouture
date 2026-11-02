@@ -20,6 +20,7 @@ import type { CollapseSpec, HalfPlane } from './collapse';
 import type { Construction } from './construction';
 import { FoldError, Op } from './engine';
 import { v2 } from './geometry';
+import { cm } from './measure';
 
 export type SensuSide = 'print' | 'reverse';
 
@@ -89,6 +90,24 @@ export function sensuPleatSpec(p: SensuParams, k: number): CollapseSpec {
   };
 }
 
+/** Where the line from the rivet at angle a (from the fold) meets the half-octagon's
+ * edge after the corners are folded behind, in sheet units from the rivet. Each
+ * pleat's lines lie in paper the earlier (outer) pleats have not moved. */
+function edgePoint(a: number, round: number) {
+  const c = Math.cos(a), s = Math.sin(a);
+  if (s / c <= round) return { x: 1, y: s / c, edge: 'side' as const };
+  if (c / s <= round) return { x: c / s, y: 1, edge: 'top' as const };
+  const t = Math.SQRT2 / (c + s);
+  return { x: c * t, y: s * t, edge: 'slanting' as const };
+}
+/** A pleat's lines for a folder: where the valley line meets the edge, and how far
+ * along the edge the mountain line lies beyond it. */
+function pleatMarks(inner: number, tuck: number, round: number) {
+  const a = edgePoint(inner, round), b = edgePoint(inner - tuck, round);
+  const at = a.edge === 'top' ? `the top edge ${cm(a.x)} out from the middle` : `the ${a.edge} edge ${cm(a.y)} above the fold`;
+  return { at, apart: Math.hypot(a.x - b.x, a.y - b.y) };
+}
+
 const ORDINAL = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];
 
 export function buildSensu(p: SensuParams = DEFAULT_SENSU): Construction {
@@ -105,7 +124,7 @@ export function buildSensu(p: SensuParams = DEFAULT_SENSU): Construction {
     },
     {
       kind: 'fold', id: 'sensu-round', title: 'Fold the top corners behind',
-      hint: `All layers. Fold each top corner behind along a line from ${(g.cornerOffset * 100).toFixed(1)}% of the square in from the corner along the top to the same distance down the side. The outline is now half an octagon round the rivet.`,
+      hint: `All layers: fold each top corner behind along a crease from the top edge ${cm(1 - r)} in from the corner to the side edge the same ${cm(1 - r)} below it. The outline is now half an octagon round the rivet.`,
       folds: [
         { name: 'sensu-round-right', a: v2(r, 1), b: v2(1, r), moving: v2(0.99, 0.99), sense: 'mountain' },
         { name: 'sensu-round-left', a: v2(-1, r), b: v2(-r, 1), moving: v2(-0.99, 0.99), sense: 'mountain' },
@@ -119,9 +138,10 @@ export function buildSensu(p: SensuParams = DEFAULT_SENSU): Construction {
   for (let k = g.n - 1; k >= 0; k--) {
     const fromMiddle = 90 - g.inner[k] / DEG;
     const done = g.n - 1 - k;
+    const mark = pleatMarks(g.inner[k], g.tuck, r);
     ops.push({
       kind: 'collapse', id: `sensu-pleat-${done + 1}`, title: done === 0 ? 'Pleat both sides' : `Pleat both sides (${ORDINAL[done]})`,
-      hint: `From the outside in. On each side, from the rivet: valley-fold along the line ${deg(fromMiddle * DEG)} degrees from the middle and mountain-fold along the line ${deg(g.tuck)} degrees further out, so the outer paper slides in over a narrow tuck. `
+      hint: `${done === 0 ? 'Work from the outside in. ' : ''}On each side, from the rivet: valley-fold to ${mark.at} (${deg(fromMiddle * DEG)} degrees from the middle), then mountain-fold to a point ${cm(mark.apart)} further out along the edge (${deg(g.tuck)} degrees more), so the outer paper slides in over a narrow tuck. `
         + (k === 0 ? `That is the last pleat: ${2 * g.n + 1} panels, the fan open to ${2 * p.halfSpread} degrees.` : `${k} more on each side.`),
       collapse: sensuPleatSpec(p, k),
     });

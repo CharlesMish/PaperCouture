@@ -1,6 +1,6 @@
 // Exact prior-paper preservation, registered material sampling, real folded views
 // and a disposable mixed board. No external input image or drawing is published.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const base = process.env.DEV_URL || process.env.BASE_URL || 'http://127.0.0.1:5303';
@@ -16,7 +16,7 @@ fs.mkdirSync(out, { recursive: true });
   const result = { baselineSHA: '574b2b10cc2894586f2ee3f8c9496035365e6408', checks: [], errors: [], captures: 0 };
   page.on('pageerror', e => result.errors.push(String(e)));
   const button = name => page.getByRole('button', { name, exact: true });
-  const ready = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+  const ready = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
   const load = async query => { const response = await page.goto(base + '/?' + query); assert(response.ok()); await ready(); };
   const shot = async name => { await page.screenshot({ path: path.join(out, name + '.png') }); result.captures++; };
   const board = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
@@ -134,7 +134,7 @@ fs.mkdirSync(out, { recursive: true });
     await load('design=boat-top&paper=plum-seed&printX=.125&printY=-.125');
     assert.deepEqual(await page.evaluate(() => paperCouture.printPosition), { x: 0, y: 0 });
     await button('Position print').click(); assert.match(await page.locator('.print-dialog').innerText(), /fixed placement/); await shot('fixed-placement'); await button('Done').click();
-    const fold = async () => { const before = await page.evaluate(() => paperCouture.controller.step); await page.locator('.dock:not([hidden]) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not([hidden]) .btn-primary').click(); await page.waitForFunction(before => !paperCouture.controller.moving && paperCouture.controller.step === before + 1, before); };
+    const fold = async () => { const before = await page.evaluate(() => paperCouture.controller.step); await page.locator('.dock:not([hidden]) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not([hidden]) .btn-primary').click(); await page.waitForFunction(before => !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.controller.step === before + 1, before); };
     await shot('boat-before-folds');
     while (await page.evaluate(() => !paperCouture.controller.finished)) await fold();
     await button('Back').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await button('Back').click(); await ready(); await fold();
@@ -154,11 +154,11 @@ fs.mkdirSync(out, { recursive: true });
     await shot('mixed-board-desktop');
     const download = page.waitForEvent('download'); await button('Save PNG').click(); await (await download).saveAs(path.join(out, 'mixed-board-export.png'));
     const png = fs.readFileSync(path.join(out, 'mixed-board-export.png')); result.exportPixels = [png.readUInt32BE(16), png.readUInt32BE(20)]; assert.deepEqual(result.exportPixels, [1800, 2100]);
-    await page.reload(); await ready(); await page.getByRole('button', { name: /^View board/ }).click(); assert.deepEqual(await board(), state);
+    await page.reload(); await ready(); await openBoard(page); assert.deepEqual(await board(), state);
     for (const [width, height] of [[390, 844], [320, 568]]) {
       await page.setViewportSize({ width, height }); await shot('mixed-board-' + width); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), width);
       await button('Return to piece').click(); await button('Position print').click(); await shot('fixed-placement-' + width); await button('Done').click();
-      await page.getByRole('button', { name: /^View board/ }).click(); assert.deepEqual(await board(), state);
+      await openBoard(page); assert.deepEqual(await board(), state);
     }
     result.checks.push('Real folds/Back, honest fixed-placement UI, small clutch and mixed printed outfit, old blossom offset, immutable capture/remove/Undo/reload, 1800×2100 PNG and 390/320 portrait controls pass.');
     assert.deepEqual(result.errors, []); result.passed = true;

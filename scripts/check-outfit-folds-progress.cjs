@@ -11,9 +11,9 @@ const out=process.env.CAPTURE_DIR||'docs/outfit-folds/evidence/progression';
  const context=await browser.newContext({viewport:{width:900,height:760},reducedMotion:'reduce'}),page=await context.newPage();
  page.setDefaultTimeout(60000);page.on('pageerror',e=>result.errors.push(String(e)));
  const button=name=>page.getByRole('button',{name,exact:true});
- const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const shot=name=>page.screenshot({path:path.join(out,name+'.png'),timeout:60000});
- const advance=async()=>{const before=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(n=>!paperCouture.controller.moving&&paperCouture.controller.step===n+1,before)};
+ const advance=async()=>{const before=await page.evaluate(()=>paperCouture.controller.step);await page.locator('.dock:not([hidden]) .btn-primary').click();if(await page.evaluate(()=>paperCouture.controller.moving))await page.locator('.dock:not([hidden]) .btn-primary').click();await page.waitForFunction(n=>!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.controller.step===n+1,before)};
  for(const id of ['boat-top','wrap-top','hat']){
   await page.goto(`${base}/?design=${id}&paper=running-stitch&step=0`);await settle();let step=0;
   while(await page.evaluate(()=>!paperCouture.controller.finished)){
@@ -27,7 +27,7 @@ const out=process.env.CAPTURE_DIR||'docs/outfit-folds/evidence/progression';
   await page.getByRole('radio',{name:'Corner bloom',exact:true}).click();await button('Position print').click();await button('Right').click();await button('Up').click();await button('Done').click();
   const before=await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns}));
   assert.notDeepEqual(before.position,{x:0,y:0});
-  for(let q=0;q<4;q++)await page.getByRole('button',{name:/^Turn paper \(now /}).click();
+  for(let q=0;q<4;q++)await page.getByRole('button',{name:/^(?:Rotate print|Turn paper) \(now /}).click();
   assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);
   for(const view of ['Front','Back']){await button(view).click();await settle();await shot(`${id}-bloom-positioned-${view.toLowerCase()}`)}
   await page.reload();await settle();assert.deepEqual(await page.evaluate(()=>({step:paperCouture.controller.step,position:paperCouture.printPosition,turn:paperCouture.quarterTurns})),before);

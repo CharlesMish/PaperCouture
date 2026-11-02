@@ -32,6 +32,7 @@ import type { CollapseCrease, CollapseRegion, CollapseSpec, HalfPlane } from './
 import type { Construction } from './construction';
 import { FoldError, Op } from './engine';
 import { Vec2, v2 } from './geometry';
+import { cm } from './measure';
 
 export type KimonoSide = 'print' | 'reverse';
 
@@ -126,11 +127,11 @@ export function buildKimono(p: KimonoParams = DEFAULT_KIMONO): Construction {
       folds: [{ name: 'half', a: v2(-1.5, 0), b: v2(1.5, 0), moving: v2(0, -1), sense: print ? 'mountain' : 'valley' }],
     },
   ];
-  if (print) ops.push({ kind: 'turn', id: 'turn-0', title: 'Turn over', hint: 'The open edges stay at the top.' });
+  if (print) ops.push({ kind: 'turn', id: 'turn-0', title: 'Turn over', hint: 'Turn it over from side to side. The open edges stay at the top.' });
   ops.push(
     {
       kind: 'fold', id: 'corners', title: 'Fold the lower corners up',
-      hint: `Crease a line across the front layer ${(b * 50).toFixed(1)}% of the side below the top edge (the collar band). Fold both lower corners up at 45 degrees, all layers, until their points touch that line.`,
+      hint: `Crease a line across the front layer ${cm(b)} below the top edge: the collar band. Fold both lower corners up, all layers, along 45 degree creases that start where that line meets each side edge, so the corner points touch the line.`,
       folds: [
         { name: 'corner-left', a: v2(-1, top), b: v2(-b, 0), moving: v2(-0.99, 0.01), sense: 'valley' },
         { name: 'corner-right', a: v2(b, 0), b: v2(1, top), moving: v2(0.99, 0.01), sense: 'valley' },
@@ -138,18 +139,18 @@ export function buildKimono(p: KimonoParams = DEFAULT_KIMONO): Construction {
     },
     {
       kind: 'fold', id: 'band-front', title: 'Fold down the front band',
-      hint: `Front layer only: fold the top edge down along the line, over the corner points. This band becomes one side of the collar, in ${collar}.`,
+      hint: `Front layer only: fold the top edge down by ${cm(b)}, along the line you creased, over the corner points. This band becomes one side of the collar, in ${collar}.`,
       folds: [{ name: 'band-front', a: v2(1.5, top), b: v2(-1.5, top), moving: v2(0, 0.99), sense: 'valley', only: 'half' }],
     },
-    { kind: 'turn', id: 'turn-1', title: 'Turn over', hint: '' },
+    { kind: 'turn', id: 'turn-1', title: 'Turn over', hint: 'Turn it over from side to side: the corner flaps are now behind, and the back layer is on top.' },
     {
       kind: 'fold', id: 'band-back', title: 'Fold down the back band',
-      hint: 'The same band on this layer, level with the one underneath.',
+      hint: `Fold the top edge down by ${cm(b)}, level with the band underneath: the same band on this layer, the other side of the collar.`,
       folds: [{ name: 'band-back', a: v2(1.5, top), b: v2(-1.5, top), moving: v2(0, 0.99), sense: 'valley' }],
     },
     {
       kind: 'fold', id: 'collar', title: 'Fold the top corners to the centre',
-      hint: 'All layers: fold each top corner down at 45 degrees so the banded top edge lies along the centre line. The two bands meet down the middle and hang past the bottom: the collar.',
+      hint: `All layers: fold each top corner down along a 45 degree crease from the middle of the top edge, so the banded top edge lies along the centre line. The two bands meet down the middle and hang ${cm(b)} past the bottom: the collar.`,
       folds: [
         { name: 'collar-left', a: v2(0, top), b: v2(-1, top - 1), moving: v2(-0.6, top - 0.02), sense: 'valley' },
         { name: 'collar-right', a: v2(1, top - 1), b: v2(0, top), moving: v2(0.6, top - 0.02), sense: 'valley' },
@@ -157,7 +158,7 @@ export function buildKimono(p: KimonoParams = DEFAULT_KIMONO): Construction {
     },
     {
       kind: 'collapse', id: 'sleeves', title: 'Open and lift the sleeves',
-      hint: `A squash, worked behind the collar (in paper it is easiest with the model turned over, then turned back). Lift the lower half of the back up across the line through the two side points, and at the same time open each side triangle outward into the empty shoulder corner. Press flat: square sleeves, the collar down the front in ${collar}.`,
+      hint: `A squash behind the collar; in paper it is easiest with the model turned over. 1. Turn it over: the side triangles are on top. 2. Fold the bottom half up toward you along the line between the two side corners, leaving the collar strips flat on the table. 3. As it rises, open each side triangle and press it flat into the empty corner above, as a square sleeve. 4. Turn back over: the collar runs down the front in ${collar}.`,
       collapse: kimonoSquashSpec(p),
     },
   );

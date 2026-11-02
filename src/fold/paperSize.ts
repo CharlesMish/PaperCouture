@@ -41,8 +41,12 @@ export interface PaperSizeSource {
 }
 export interface StartingPaperSize { sideCm: number; companionCm?: number[] }
 const rounded = (n: number) => Math.round(n * 100) / 100;
+/** The largest square offered: US letter's 8.5 in short side, the largest sheet Charlie folds. */
+export const MAX_SQUARE_CM = 21.6;
+/** Smaller, suggested and larger squares, never above MAX_SQUARE_CM (a larger choice is capped there). */
 export function squareChoices(source: PaperSizeSource): number[] {
-  return [...new Set([source.recommendedCm * .8, source.recommendedCm, source.recommendedCm * 1.2, source.referenceCm].map(rounded))].sort((a, b) => a - b);
+  return [...new Set([source.recommendedCm * .8, source.recommendedCm, source.recommendedCm * 1.2, source.referenceCm]
+    .map(n => rounded(Math.min(n, MAX_SQUARE_CM))))].sort((a, b) => a - b);
 }
 export function startingPaperSize(source: PaperSizeSource, sideCm: number): StartingPaperSize {
   return { sideCm, ...(source.companionCm?.length ? { companionCm: source.companionCm.map(n => rounded(n * sideCm / source.referenceCm)) } : {}) };

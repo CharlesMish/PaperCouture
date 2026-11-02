@@ -9,7 +9,7 @@
 //
 // Browser checks use Chromium with software WebGL and emulated touch: they are
 // not a real phone, mobile Safari or physical paper.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4173';
 const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
@@ -23,7 +23,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     page.on('pageerror', (e) => result.errors.push(String(e)));
     page.on('console', (m) => { if (m.type() === 'error') result.errors.push(m.text()); });
     const btn = (name) => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const state = () => page.evaluate(() => ({ design: paperCouture.garmentId, step: paperCouture.controller.step, total: paperCouture.timeline.ops.length, name: document.querySelector('.workshop-title, .dock h2')?.textContent ?? '' }));
     const load = async (q) => { const r = await page.goto(base + '/?' + q); assert(r.ok()); await settle(); };
     const primary = () => page.locator('.dock:not([hidden]) .btn-primary');
@@ -54,8 +54,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     await shot('reverse-finished');
     await back(); await advance();
     assert.equal((await state()).step, 7);
-    await page.getByLabel('Fold to revisit').selectOption('kimonoSide');
-    await btn('Revisit fold').click(); await settle();
+    await page.locator(`[data-revisit="kimonoSide"]`).click(); await settle();
     assert.equal((await state()).step, 0);
     await btn('Printed kimono').click(); await settle();
     assert.equal((await state()).total, 8);
@@ -77,7 +76,7 @@ const out = process.env.CAPTURE_DIR || 'docs/kimono/evidence/browser';
     if (await btn('Display').isVisible()) { await btn('Display').click(); await settle(); }
     for (const v of ['Front', 'Angle', 'Back']) { await btn(v).click(); await settle(); await shot(`display-${v.toLowerCase()}`); }
     // the board: suggested size and an exact capture of the live geometry
-    await page.getByRole('button', { name: /^View board/ }).click();
+    await openBoard(page);
     assert.equal(Number(await page.getByLabel('Starting square size').inputValue()), 20);
     await btn('Pin current piece').click();
     const board = await page.evaluate(() => structuredClone(paperCouture.pinboard.state));

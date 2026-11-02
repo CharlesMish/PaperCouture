@@ -1,6 +1,6 @@
 // Production UI journey at phone width from an unfolded sheet. Touch gestures,
 // not controller jumps or auto-scrolled swatch clicks, drive the mobile path.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -61,7 +61,7 @@ async function paperVisible(page) {
       page.on('pageerror', e => result.errors.push(String(e)));
       page.on('request', r => { if (/\/(src|node_modules)\//.test(new URL(r.url()).pathname)) result.sourceRequests.push(r.url()); });
       const cdp = await context.newCDPSession(page);
-      const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+      const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
       const step = () => page.evaluate(() => paperCouture.controller.step);
       const tap = async name => { await page.getByRole('button',{name,exact:true}).tap(); await settle(); };
       const touch = async (type,x,y) => cdp.send('Input.dispatchTouchEvent',{type,touchPoints:type==='touchEnd'||type==='touchCancel'?[]:[{x,y,id:1}]});
@@ -106,6 +106,24 @@ async function paperVisible(page) {
             await swipe(x,y,arrow.x*20,arrow.y*20,true); await settle(); assert.equal(await step(),i,'Cancelled real touch drag restores step');
             await handle.tap(); await settle(); assert.equal(await step(),i+1,'Thumb grip tap completes fold');
             handResult.thumbHandle=true;
+          } else if(i===4) {
+            // The workshop now frames the paper the step involves, so on a phone the
+            // thumb is big enough to drag by its own paper: no separate grip is made.
+            const t=await page.evaluate(i=>{
+              const P=paperCouture,cam=P.stage.camera,V=cam.position.constructor,c=P.stage.renderer.domElement,m=P.stage.modelRoot.matrixWorld;
+              const op=P.timeline.ops[i],moving=new Set(op.pieces.filter(p=>p.spec>=0).map(p=>p.index));
+              const pos=P.sheet.front.geometry.getAttribute('position'),vp=P.sheet.vPiece,sx=v=>(v.x+1)/2*c.clientWidth,sy=v=>(1-v.y)/2*c.clientHeight;
+              let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9,cx=0,cy=0,n=0;
+              for(let k=0;k<pos.count;k++){if(!moving.has(vp[k]))continue;const v=new V(pos.getX(k),pos.getY(k),pos.getZ(k)).applyMatrix4(m).project(cam);const x=sx(v),y=sy(v);x0=Math.min(x0,x);x1=Math.max(x1,x);y0=Math.min(y0,y);y1=Math.max(y1,y);cx+=x;cy+=y;n++;}
+              const a=op.arrows[0],p0=new V(a.from.x,a.from.y,0).applyMatrix4(m).project(cam),p1=new V(a.to.x,a.to.y,0).applyMatrix4(m).project(cam);
+              const dx=sx(p1)-sx(p0),dy=sy(p1)-sy(p0),L=Math.hypot(dx,dy)||1;
+              return {w:x1-x0,h:y1-y0,x:cx/n,y:cy/n,ux:dx/L,uy:dy/L,hit:document.elementFromPoint(cx/n,cy/n)===c};
+            },i);
+            assert(Math.min(t.w,t.h)>=28&&t.hit,`Thumb paper large enough to grab directly: ${JSON.stringify(t)}`);
+            await page.screenshot({path:path.join(out,`thumb-${hand}-${width}.png`)});
+            await swipe(t.x,t.y,t.ux*20,t.uy*20,true); await settle(); assert.equal(await step(),i,'Cancelled real touch drag restores step');
+            await swipe(t.x,t.y,t.ux*140,t.uy*140,false); await settle(); assert.equal(await step(),i+1,'Dragging the thumb paper completes the fold');
+            handResult.thumbDirect={w:Math.round(t.w),h:Math.round(t.h)};
           } else { await page.locator('.dock:not([hidden]) .btn-primary').tap(); await settle(); assert.equal(await step(),i+1); }
         }
         await tap('Back'); assert.equal(await step(),count-1);
@@ -123,15 +141,17 @@ async function paperVisible(page) {
         await page.screenshot({path:path.join(out,`capture-${hand}-${width}.png`)});
         await tap('Pin current piece');
         assert.equal(await page.evaluate(()=>paperCouture.pinboard.state.items.length),hand==='left'?1:2);
-        if(width===320) assert(handResult.thumbHandle,'The tiny 320px thumb must have a usable grip');
+        if(width===320) assert(handResult.thumbHandle||handResult.thumbDirect,'The 320px thumb must have a usable grip, or be big enough to drag directly');
         journey.hands.push(handResult); console.log(`${width}px: ${hand} hand folded and pinned`);
         await tap('Return to folding');
       }
-      await page.getByRole('button',{name:/^View board/}).tap();
+      // narrow screens keep Pinboard under More while in the workshop
+      const more=page.getByRole('button',{name:'More',exact:true});if(await more.isVisible())await more.tap();
+      await openBoard(page, 'tap');
       const before=await page.evaluate(()=>JSON.stringify(paperCouture.pinboard.state.items));
       const exportPNG=async suffix=>{const [download]=await Promise.all([page.waitForEvent('download'),page.getByRole('button',{name:'Save PNG',exact:true}).tap()]);const f=path.join(out,`pair-${width}-${suffix}.png`);await download.saveAs(f);return sha(fs.readFileSync(f));};
       journey.exports.push(await exportPNG('before'));
-      await page.reload(); await settle(); await page.getByRole('button',{name:/^View board/}).tap();
+      await page.reload(); await settle(); if(await more.isVisible())await more.tap(); await openBoard(page, 'tap');
       assert.equal(await page.evaluate(()=>JSON.stringify(paperCouture.pinboard.state.items)),before);
       journey.exports.push(await exportPNG('after'));assert.equal(...journey.exports);
       result.journeys.push(journey); console.log(JSON.stringify(journey));await context.close();

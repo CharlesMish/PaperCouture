@@ -1,6 +1,6 @@
 // Real frozen captures and movement controls; fresh contexts, never a personal profile.
 // BASELINE_URL optionally regenerates v1 fixtures and before evidence from b47b980.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5197';
 const out = process.env.CAPTURE_DIR || '.board-space-qa';
@@ -24,7 +24,7 @@ fs.mkdirSync(out, { recursive: true });
         const page = await context.newPage(); page.setDefaultTimeout(60000);
         page.on('pageerror', e => result.errors.push(String(e)));
         const btn = name => page.getByRole('button', { name, exact: true });
-        const open = () => page.getByRole('button', { name: /^View board/ }).click();
+        const open = () => openBoard(page);
         const load = async query => { await page.goto(url + '/?' + query); await page.waitForFunction(() => window.paperCouture && paperCouture.view.t === paperCouture.view.target); };
         const state = () => page.evaluate(() => structuredClone(paperCouture.pinboard.state));
         const file = path.join(fixtures, name + '.json');

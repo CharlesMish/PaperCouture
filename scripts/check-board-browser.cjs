@@ -1,5 +1,5 @@
 // Fresh contexts only. No personal profiles or existing saves.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5196', out = process.env.CAPTURE_DIR || '.board-qa';
 fs.mkdirSync(out, { recursive: true });
@@ -11,12 +11,12 @@ const key = 'paper-couture.pinboard.v1';
  result.checks.push=(...items)=>{console.log(...items);return Array.prototype.push.apply(result.checks,items)};
  page.setDefaultTimeout(45000); page.on('pageerror',e=>result.errors.push(String(e)));
  const btn = name => page.getByRole('button',{name,exact:true});
- const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const load = async q => { await page.goto(base+'/?'+q); await settle(); };
  const board = () => page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
  const fold = async () => { await page.locator('.dock:not(.display-dock) .btn-primary').click(); if(await page.evaluate(()=>paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); };
  const finish = async () => { while(!await page.evaluate(()=>paperCouture.controller.finished)) await fold(); };
- const open = () => page.getByRole('button',{name:/^View board/}).click();
+ const open = () => openBoard(page);
  const shot = name => page.screenshot({path:path.join(out,name+'.png')});
  const nudge = async (name,n) => {for(let i=0;i<n;i++)await btn(name).click();};
  const exportPng = async name => { const [d]=await Promise.all([page.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);const bytes=fs.readFileSync(file);assert.equal(bytes.readUInt32BE(16),1800);assert.equal(bytes.readUInt32BE(20),2100);return file; };
@@ -100,14 +100,14 @@ const key = 'paper-couture.pinboard.v1';
   await page.evaluate(()=>{window.originalSet=Storage.prototype.setItem;Storage.prototype.setItem=function(k,v){if(k==='paper-couture.pinboard.v1')throw new DOMException('Quota exceeded','QuotaExceededError');return window.originalSet.call(this,k,v)}});
   await btn('Move left').click();assert((await page.locator('.board-storage').innerText()).includes('only in this tab'));
   assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),durable);
-  await btn('Return to folding').click();assert((await page.getByRole('button',{name:/^View board/}).innerText()).includes('unsaved'));await open();
+  await btn('Return to folding').click();assert((await page.getByRole('button',{name:/^(Pinboard|View board) \(/,includeHidden:true}).textContent()).includes('unsaved'));await open();
   await page.evaluate(()=>Storage.prototype.setItem=window.originalSet);await btn('Retry saving board').click();assert((await page.locator('.board-storage').innerText()).includes('Board saved'));
   const conflict=await context.newPage();await conflict.goto(base);await conflict.waitForFunction(()=>window.paperCouture);
-  await conflict.getByRole('button',{name:/^View board/}).click();await conflict.getByRole('button',{name:'Move left',exact:true}).click();const newer=await conflict.evaluate(k=>localStorage.getItem(k),key);
+  await openBoard(conflict);await conflict.getByRole('button',{name:'Move left',exact:true}).click();const newer=await conflict.evaluate(k=>localStorage.getItem(k),key);
   await btn('Move right').click();assert((await page.locator('.board-storage').innerText()).includes('another tab'));assert.equal(await page.evaluate(k=>localStorage.getItem(k),key),newer);await conflict.close();
   result.checks.push('Quota failure retains prior save and flags unsaved outside the board; Retry recovers. A second tab cannot silently overwrite newer board work.');
   // Separate context: unsupported save preserved, never replace an unknown version.
-  const bad=await browser.newContext();await bad.addInitScript(k=>localStorage.setItem(k,'{"version":99,"keep":"future"}'),key);const bp=await bad.newPage();await bp.goto(base+'/?step=99&view=display');await bp.waitForFunction(()=>window.paperCouture);await bp.getByRole('button',{name:/^View board/}).click();await bp.getByRole('button',{name:'Pin current piece',exact:true}).click();assert.equal(await bp.evaluate(k=>localStorage.getItem(k),key),'{"version":99,"keep":"future"}');await bad.close();
+  const bad=await browser.newContext();await bad.addInitScript(k=>localStorage.setItem(k,'{"version":99,"keep":"future"}'),key);const bp=await bad.newPage();await bp.goto(base+'/?step=99&view=display');await bp.waitForFunction(()=>window.paperCouture);await openBoard(bp);await bp.getByRole('button',{name:'Pin current piece',exact:true}).click();assert.equal(await bp.evaluate(k=>localStorage.getItem(k),key),'{"version":99,"keep":"future"}');await bad.close();
   assert.deepEqual(result.errors,[]);result.passed=true;
  } catch(e) {result.failure=String(e);await shot('failure').catch(()=>{});throw e}
  finally {fs.writeFileSync(path.join(out,'browser-results.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));await browser.close()}

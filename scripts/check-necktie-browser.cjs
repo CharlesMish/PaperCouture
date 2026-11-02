@@ -4,7 +4,7 @@ const checkCapacity = require('./board-capacity.cjs');
 // frozen PR25 build to prove it reads a board containing the new capture.
 //   BASE_URL=http://127.0.0.1:4301 BASELINE_URL=http://127.0.0.1:4201 \
 //   CAPTURE_DIR=docs/necktie/evidence node scripts/check-necktie-browser.cjs
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = (process.env.BASE_URL || 'http://127.0.0.1:4301').replace(/\/$/, '') + '/';
 const baseline = process.env.BASELINE_URL ? process.env.BASELINE_URL.replace(/\/$/, '') + '/' : null;
@@ -24,7 +24,7 @@ fs.mkdirSync(out, { recursive: true });
     const page = currentPage = await context.newPage(); page.setDefaultTimeout(90000); page.setDefaultNavigationTimeout(90000);
     page.on('pageerror', e => report.errors.push(String(e))); page.on('console', m => { if (m.type() === 'error') report.errors.push(m.text()); });
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide);
     const load = async q => { const r = await page.goto(url + '?' + q); assert(r.ok()); await settle(); };
     const shot = name => page.screenshot({ path: path.join(out, name + '.png') });
     const step = () => page.evaluate(() => paperCouture.controller.step);
@@ -39,7 +39,7 @@ fs.mkdirSync(out, { recursive: true });
     const nudge = (name, count) => btn(name).evaluate((e, count) => { for (let n = 0; n < count; n++) e.click(); }, count);
     const moveTo = async (x, y) => { await btn('Reset selected').click(); await nudge(x < 0 ? 'Move left' : 'Move right', Math.round(Math.abs(x) / .08)); await nudge(y < 0 ? 'Move down' : 'Move up', Math.round(Math.abs(y) / .08)); };
     const setPrint = async (turn, offset) => {
-      while ((await page.evaluate(() => paperCouture.quarterTurns)) !== turn) await page.getByRole('button', { name: /^Turn paper/ }).click();
+      while ((await page.evaluate(() => paperCouture.quarterTurns)) !== turn) await page.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
       await btn('Position print').click(); await btn('Reset print').click();
       for (const [name, n] of [[offset.x < 0 ? 'Left' : 'Right', Math.abs(offset.x * 32)], [offset.y < 0 ? 'Down' : 'Up', Math.abs(offset.y * 32)]]) for (let i = 0; i < n; i++) await btn(name).click();
       await btn('Done').click();
@@ -47,7 +47,7 @@ fs.mkdirSync(out, { recursive: true });
     };
     const capture = async (cm, expectPaper) => {
       const live = await page.evaluate(() => JSON.parse(JSON.stringify({ position: Array.from(paperCouture.sheet.front.geometry.attributes.position.array), uv: Array.from(paperCouture.sheet.front.geometry.attributes.uv.array) })));
-      await page.getByRole('button', { name: /^View board/ }).click(); const previous = await state();
+      await openBoard(page); const previous = await state();
       await page.getByLabel('Starting square size').selectOption(String(cm)); await btn('Pin current piece').click();
       const next = await state(), piece = next.items.at(-1);
       assert.equal(next.items.length, previous.items.length + 1); assert.deepEqual(next.items.slice(0, -1), previous.items, 'earlier pieces are untouched');
@@ -155,7 +155,7 @@ fs.mkdirSync(out, { recursive: true });
       await a.btn('Send backward').click(); assert.notDeepEqual((await a.state()).items.map(i => i.id), selected.items.map(i => i.id)); await a.exportPNG('outfit-tie-under-top');
       await a.btn('Undo').click(); assert.deepEqual(await a.state(), selected);
       saved = await a.raw(); savedState = await a.state(); fs.writeFileSync(path.join(out, 'outfit-board.json'), saved);
-      await a.page.reload(); await a.settle(); await a.page.getByRole('button', { name: /^View board/ }).click();
+      await a.page.reload(); await a.settle(); await openBoard(a.page);
       assert.deepEqual(await a.state(), savedState, 'reload restores the saved board'); assert.equal(await a.raw(), saved, 'reload does not rewrite the save');
       assert.deepEqual(await a.exportPNG('outfit-reloaded'), candidatePNG, 'reloaded board renders identically');
     });
@@ -163,7 +163,7 @@ fs.mkdirSync(out, { recursive: true });
 
     if (baseline) {
       await visit(baseline, saved, { width: 1280, height: 900 }, async a => {
-        await a.load(''); await a.page.getByRole('button', { name: /^View board/ }).click();
+        await a.load(''); await openBoard(a.page);
         assert.deepEqual(await a.state(), savedState); assert.equal(await a.raw(), saved);
         assert.deepEqual(await a.exportPNG('pr25-reads-outfit'), candidatePNG, 'frozen PR25 renders the necktie board pixel-identically');
       });

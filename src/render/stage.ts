@@ -53,6 +53,8 @@ export class Stage {
   readonly table: THREE.Mesh;
 
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
+  /** Insets the projection centre is drawn with while it eases toward `insets` (null: `insets` itself). */
+  private shownInsets: Insets | null = null;
 
   constructor(canvas: HTMLCanvasElement) {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: false });
@@ -112,6 +114,22 @@ export class Stage {
     this.applyPrincipalShift();
   }
 
+  /** The real insets (what framing is computed from). */
+  realInsets(): Insets { return { ...this.insets }; }
+
+  /** The insets the projection centre is drawn with now (eased, or the real ones). */
+  projectionInsets(): Insets { return { ...(this.shownInsets ?? this.insets) }; }
+
+  /**
+   * Draw with the projection centre of these insets, part-way to the real ones, so
+   * the view eases when the controls change size; null returns to the real insets.
+   * Framing distances (fitDistance) always use the real insets.
+   */
+  showInsets(i: Insets | null): void {
+    this.shownInsets = i;
+    this.applyPrincipalShift();
+  }
+
   resize(): { w: number; h: number } {
     const canvas = this.renderer.domElement;
     const w = canvas.clientWidth;
@@ -131,7 +149,7 @@ export class Stage {
     const canvas = this.renderer.domElement;
     const w = canvas.clientWidth || 1;
     const h = canvas.clientHeight || 1;
-    const { top, right, bottom, left } = this.insets;
+    const { top, right, bottom, left } = this.shownInsets ?? this.insets;
     const cx = left + (w - left - right) / 2;
     const cy = top + (h - top - bottom) / 2;
     const e = this.camera.projectionMatrix.elements;

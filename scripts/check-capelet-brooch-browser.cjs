@@ -1,5 +1,5 @@
 // Local follow-up against the frozen reviewed PR25 build. Fresh contexts only.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs = require('node:fs'), path = require('node:path'), assert = require('node:assert/strict'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:4401';
 const baseline = process.env.BASELINE_URL || 'http://127.0.0.1:4400';
@@ -14,11 +14,11 @@ fs.mkdirSync(out, { recursive: true });
     if (seed) await context.addInitScript(({ key, seed }) => { if (localStorage.getItem(key) === null) localStorage.setItem(key, seed); }, { key, seed });
     const page = await context.newPage(); page.setDefaultTimeout(60000); page.on('pageerror', e => result.errors.push(String(e)));
     const btn = name => page.getByRole('button', { name, exact: true });
-    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
+    const settle = () => page.waitForFunction(() => window.paperCouture && !paperCouture.controller.moving&&!paperCouture.cameraSettling && paperCouture.view.t === paperCouture.view.target && !paperCouture.displayCam.glide && paperCouture.sheet.front.geometry.attributes.position?.count > 0 && paperCouture.sheet.front.geometry.attributes.uv?.count > 0);
     const load = async query => { assert((await page.goto(url + '/?' + query)).ok()); await settle(); };
     const state = () => page.evaluate(() => JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
     const raw = () => page.evaluate(k => localStorage.getItem(k), key);
-    const open = () => page.getByRole('button', { name: /^View board/ }).click();
+    const open = () => openBoard(page);
     const shot = name => page.screenshot({ path: path.join(out, name + '.png') });
     const fold = async () => { await page.locator('.dock:not(.display-dock) .btn-primary').click(); if (await page.evaluate(() => paperCouture.controller.moving)) await page.locator('.dock:not(.display-dock) .btn-primary').click(); await settle(); };
     const finish = async () => { while (!await page.evaluate(() => paperCouture.controller.finished)) await fold(); };
@@ -67,7 +67,7 @@ fs.mkdirSync(out, { recursive: true });
       await a.finish(); await a.btn('Display').click(); await a.settle();
       const geometry = await a.page.evaluate(() => JSON.stringify(paperCouture.timeline.states.at(-1).facets));
       for (let turn = 0; turn < 4; turn++) {
-        while ((await a.recipe()).turn !== turn) await a.page.getByRole('button', { name: /^Turn paper/ }).click();
+        while ((await a.recipe()).turn !== turn) await a.page.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
         for (const offset of ['original', 'shifted']) {
           await a.btn('Position print').click(); await a.btn('Reset print').click();
           if (offset === 'shifted') for (let n = 0; n < 4; n++) { await a.btn('Right').click(); await a.btn('Up').click(); }
@@ -91,7 +91,7 @@ fs.mkdirSync(out, { recursive: true });
       await a.load('design=framed-brooch&paper=corner-bloom&printX=.19921875&printY=.16015625&step=99&view=display');
       for (const shape of (version === 'before' ? ['square'] : ['square', 'rectangle'])) {
         if (shape === 'rectangle') {
-          await a.btn('Return to piece').click(); const before = await a.recipe(); await a.btn('Revisit fold').click(); await a.settle(); assert.equal(await a.page.evaluate(() => paperCouture.controller.step), 0);
+          await a.btn('Return to piece').click(); const before = await a.recipe(); await a.page.locator('[data-revisit="broochShape"]').click(); await a.settle(); assert.equal(await a.page.evaluate(() => paperCouture.controller.step), 0);
           await a.btn('Rectangle').click(); assert.equal(await a.page.evaluate(() => paperCouture.options.broochShape), shape); assert.deepEqual(await a.recipe(), before);
           await a.finish(); await a.btn('Display').click(); await a.settle();
         }

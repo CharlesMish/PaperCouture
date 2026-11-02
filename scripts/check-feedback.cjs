@@ -42,13 +42,13 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.locator('.dock .btn-primary').click();
       // A second press completes this fold; it must not start another one.
       if ((await state()).moving) await p.locator('.dock .btn-primary').click();
-      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const back = async () => {
       const step = (await state()).step;
       await p.getByRole('button', { name: 'Back', exact: true }).click();
       if ((await state()).moving) await p.getByRole('button', { name: 'Back', exact: true }).click();
-      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const display = async () => {
       await p.getByRole('button', { name: 'Display', exact: true }).click();
@@ -75,14 +75,14 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.mouse.move(h.x,h.y);await p.mouse.down();
       assert.equal(await p.evaluate(() => paperCouture.controller.isScrubbing),true);
       await p.mouse.move(h.x+h.vx*60,h.y+h.vy*60,{steps:5});await p.mouse.up();
-      await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving);
+      await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
       await back();
       // A short drag returns to the same step rather than committing the tiny fold.
       const short=await grip(1);await p.mouse.move(short.x,short.y);await p.mouse.down();
       await p.mouse.move(short.x+short.vx*9,short.y+short.vy*9);await p.mouse.up();
-      await p.waitForFunction(() => paperCouture.controller.step===4 && !paperCouture.controller.moving);
+      await p.waitForFunction(() => paperCouture.controller.step===4 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
       await p.getByRole('button',{name:'Fold small flap 2',exact:true}).focus();await p.keyboard.press('Enter');
-      await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving);
+      await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
       console.log(`${shape}: mouse drag, short-drag rollback, keyboard passed`);
     }
     await readyHem('classic',390,844);
@@ -91,15 +91,15 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:touch.x,y:touch.y}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:touch.x+touch.vx*60,y:touch.y+touch.vy*60}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
-    await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving);
+    await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
     await back();
     const cancel=await grip();
     await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:cancel.x,y:cancel.y}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:cancel.x+cancel.vx*60,y:cancel.y+cancel.vy*60}]});
     await cdp.send('Input.dispatchTouchEvent',{type:'touchCancel',touchPoints:[]});
-    await p.waitForFunction(() => paperCouture.controller.step===4 && !paperCouture.controller.moving);
+    await p.waitForFunction(() => paperCouture.controller.step===4 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
     await p.touchscreen.tap(cancel.x,cancel.y);
-    await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving);
+    await p.waitForFunction(() => paperCouture.controller.step===5 && !paperCouture.controller.moving&&!paperCouture.cameraSettling);
     await back();
     const reset=await grip();await p.mouse.move(reset.x,reset.y);await p.mouse.down();
     await p.getByRole('button',{name:'Start over',exact:true}).evaluate(b=>b.click());

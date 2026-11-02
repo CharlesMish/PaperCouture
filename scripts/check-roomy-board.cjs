@@ -1,6 +1,6 @@
 // Fresh production context; capture/move/format/Undo/export use real controls.
 // Only the documented outfit styling coordinates use the read/write diagnostic hook.
-const { chromium } = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const assert = require('node:assert/strict'), fs = require('node:fs'), path = require('node:path'), crypto = require('node:crypto');
 const base = process.env.BASE_URL || 'http://127.0.0.1:5637', out = process.env.CAPTURE_DIR || '.october-qa/roomy';
 const key = 'paper-couture.pinboard.v1';
@@ -14,10 +14,10 @@ fs.mkdirSync(out, { recursive: true });
  page.on('pageerror',e=>result.errors.push(String(e)));
  page.on('request',r=>{if(/\/(src|node_modules|@vite)\//.test(new URL(r.url()).pathname))result.sourceRequests.push(r.url())});
  const btn = name => page.getByRole('button',{name,exact:true});
- const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+ const settle = () => page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
  const state = () => page.evaluate(()=>structuredClone(paperCouture.pinboard.state));
  const raw = () => page.evaluate(k=>localStorage.getItem(k),key);
- const open = () => page.getByRole('button',{name:/^View board/}).click();
+ const open = () => openBoard(page);
  const load = async q => {await page.goto(base+'/?'+q);await settle();await open()};
  const shot = async name => {await page.locator('.board-tools').evaluate(e=>e.scrollTop=0);await page.screenshot({path:path.join(out,name+'.png')})};
  const png = async name => {

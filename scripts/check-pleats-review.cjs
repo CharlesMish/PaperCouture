@@ -34,7 +34,7 @@ const csp="default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'se
       const before=(await state()).step;
       const b=forward?p.locator('.dock:not([hidden]) .btn-primary'):p.getByRole('button',{name:'Back',exact:true});
       await b.click();if((await state()).moving)await b.click();
-      await p.waitForFunction(({step,forward})=>paperCouture.controller.step===step+(forward?1:-1)&&!paperCouture.controller.moving,{step:before,forward});
+      await p.waitForFunction(({step,forward})=>paperCouture.controller.step===step+(forward?1:-1)&&!paperCouture.controller.moving&&!paperCouture.cameraSettling,{step:before,forward});
     };
     for(let i=0;i<7;i++)await move(true);
     for(let i=0;i<7;i++)await move(false);
@@ -46,11 +46,11 @@ const csp="default-src 'self'; base-uri 'none'; connect-src 'self'; font-src 'se
     await p.waitForFunction(()=>paperCouture.view.inDisplay&&!paperCouture.displayCam.glide);
     await p.screenshot({path:`${output}/pleats-front-final.png`});
     const camera=await p.evaluate(()=>paperCouture.stage.camera.position.toArray());
-    await p.getByRole('button',{name:/^Turn paper/}).click();
+    await p.getByRole('button',{name:/^(?:Rotate print|Turn paper)/}).click();
     assert.equal((await state()).step,7);assert.equal((await state()).turn,1);
     assert.deepEqual(await p.evaluate(()=>paperCouture.stage.camera.position.toArray()),camera);
     assert.equal(await p.evaluate(()=>paperCouture.view.inDisplay),true);
-    checks.push('Turn paper in Display retains final step and camera');
+    checks.push('Rotate print in Display retains final step and camera');
     await p.getByRole('button',{name:'Fold accessory',exact:true}).click();
     await p.getByRole('radio',{name:'Tidal bands',exact:true}).click();
     for(let i=0;i<5;i++)await move(true);

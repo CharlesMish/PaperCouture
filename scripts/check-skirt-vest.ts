@@ -12,8 +12,12 @@ const artifact = fileURLToPath(new URL('../docs/geometry-collection/skirt-vest/'
 const baseline = JSON.parse(readFileSync(`${artifact}/baseline.json`, 'utf8'));
 // JSON round-trip also normalizes signed zero, matching the serialized baseline.
 const normalize = (c: Construction) => JSON.parse(JSON.stringify({ construction: c, states: buildTimeline(c.ops).states.map(s => s.facets.map(({ poly, T, rank, tags }) => ({ poly, T, rank, tags }))) }));
-assert.deepEqual(normalize(buildWrapSkirt()), baseline.skirt, 'default skirt must retain every authored fold and state');
-assert.deepEqual(normalize(buildLapelVest()), baseline.vest, 'default vest must retain every authored fold and state');
+// Folds and states must match the baseline exactly; step wording may be rewritten
+// (docs/instructions/STYLE.md), so titles and instructions are left out on both sides.
+const unworded = (n: { construction: { ops: { title: string; hint: string }[] } }) =>
+  ({ ...n, construction: { ...n.construction, ops: n.construction.ops.map(op => ({ ...op, title: '', hint: '' })) } });
+assert.deepEqual(unworded(normalize(buildWrapSkirt())), unworded(baseline.skirt), 'default skirt must retain every authored fold and state');
+assert.deepEqual(unworded(normalize(buildLapelVest())), unworded(baseline.vest), 'default vest must retain every authored fold and state');
 assert.deepEqual(buildWrapSkirt({ wrap: 'original', band: 'double' }), buildWrapSkirt());
 assert.deepEqual(buildLapelVest('short'), buildLapelVest());
 

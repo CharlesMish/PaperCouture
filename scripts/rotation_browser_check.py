@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Click through Workshop and Display on the built app.
 
-Turn paper mid-fold (progress kept), turn in Display (view and fold kept),
+Rotate print mid-fold (progress kept), turn in Display (view and fold kept),
 four turns return to 0°, switching papers keeps the turn, Back and Start over
 still work. Saves three screenshots under docs/rotation-check/.
 """
@@ -69,7 +69,7 @@ async def main() -> None:
 
         await page.goto(BASE, wait_until="networkidle")
         await page.wait_for_function("() => window.paperCouture && window.paperCouture.controller")
-        turn = page.get_by_role("button", name="Turn paper")
+        turn = page.get_by_role("button", name="Rotate print")
         primary = page.locator("button.btn-primary")
 
         # Mid-fold: start a fold, then turn the paper before it finishes.
@@ -82,7 +82,7 @@ async def main() -> None:
         check(before["moving"] and before["step"] == 0 and before["t"] > 0.05, f"fold was in progress (t={before['t']:.2f})")
         check(mid["step"] == before["step"] and mid["op"] == before["op"] and mid["moving"], "turn mid-fold kept the step")
         check(mid["t"] + 1e-3 >= before["t"] - 0.05, f"fold progress not reset ({before['t']:.2f} -> {mid['t']:.2f})")
-        check("90" in mid["turn"] and mid["label"] == "Turn paper", f"control reads {mid['label']!r} / {mid['turn']!r}")
+        check("90" in mid["turn"] and mid["label"] == "Rotate print", f"control reads {mid['label']!r} / {mid['turn']!r}")
         await page.screenshot(path=str(OUT / "browser-workshop-midfold.png"))
 
         # Four turns from the start return to 0°.
@@ -93,10 +93,10 @@ async def main() -> None:
             await turn.click()
             seen.append((await page.evaluate(STATE))["turn"])
         check(seen == [
-            "Turn paper (now 90°)",
-            "Turn paper (now 180°)",
-            "Turn paper (now 270°)",
-            "Turn paper (now 0°)",
+            "Rotate print (now 90°)",
+            "Rotate print (now 180°)",
+            "Rotate print (now 270°)",
+            "Rotate print (now 0°)",
         ], f"four turns -> {seen}")
         await page.screenshot(path=str(OUT / "browser-four-turns.png"))
 
@@ -105,7 +105,7 @@ async def main() -> None:
         await page.get_by_role("radio", name="Reverse garden").click()
         switched = await page.evaluate(STATE)
         check(
-            switched["name"] == "Reverse garden, paper turned 90°" and switched["step"] == 0 and not switched["moving"],
+            switched["name"] == "Reverse garden, print rotated 90°" and switched["step"] == 0 and not switched["moving"],
             f"paper switch kept the turn ({switched['name']!r}, step {switched['step']})",
         )
 

@@ -42,13 +42,13 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.locator('.dock .btn-primary').click();
       // A second press completes this fold; it must not start another one.
       if ((await state()).moving) await p.locator('.dock .btn-primary').click();
-      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s + 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const back = async () => {
       const step = (await state()).step;
       await p.getByRole('button', { name: 'Back', exact: true }).click();
       if ((await state()).moving) await p.getByRole('button', { name: 'Back', exact: true }).click();
-      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving, step);
+      await p.waitForFunction(s => paperCouture.controller.step === s - 1 && !paperCouture.controller.moving&&!paperCouture.cameraSettling, step);
     };
     const display = async () => {
       await p.getByRole('button', { name: 'Display', exact: true }).click();
@@ -73,7 +73,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       for (let i = 0; i < steps; i++) {
         await fold();
         if (i === 2) {
-          await p.getByRole('button', { name: /^Turn paper/ }).click();
+          await p.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
           assert.equal((await state()).step, 3);
           assert.equal((await state()).turn, 2);
         }
@@ -88,7 +88,7 @@ const csp = "default-src 'self'; base-uri 'none'; connect-src 'self'; font-src '
       await p.getByRole('button', { name: 'Front', exact: true }).click();
       for (let turn = 0; turn < 4; turn++) {
         const before = (await state()).turn;
-        await p.getByRole('button', { name: /^Turn paper/ }).click();
+        await p.getByRole('button', { name: /^(?:Rotate print|Turn paper)/ }).click();
         assert.equal((await state()).turn, (before + 1) % 4);
         assert.equal((await state()).step, steps);
         await capture(`${id}-mosaic-turn-${(before + 1) % 4}`);

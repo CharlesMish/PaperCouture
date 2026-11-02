@@ -6,7 +6,7 @@ const base=process.env.BASE_URL||'http://127.0.0.1:5199',out=process.env.CAPTURE
 (async()=>{const browser=await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--use-angle=swiftshader','--enable-unsafe-swiftshader']});
 const context=await browser.newContext({viewport:{width:1100,height:800},reducedMotion:'reduce',hasTouch:true,acceptDownloads:true});
 const page=await context.newPage(),result={base,checks:[],errors:[]};page.setDefaultTimeout(45000);page.on('pageerror',e=>result.errors.push(String(e)));
-const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
+const settle=()=>page.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide);
 const load=async(q='')=>{await page.goto(base+'/?'+q);await settle()};
 const btn=n=>page.getByRole('button',{name:n,exact:true});const shot=n=>page.screenshot({path:path.join(out,n+'.png')});
 const getState=()=>page.evaluate(()=>({design:paperCouture.garmentId,step:paperCouture.controller.step,paper:paperCouture.paperId,turn:paperCouture.quarterTurns,position:paperCouture.printPosition,options:paperCouture.options,attached:paperCouture.attached,centre:paperCouture.centreAttached}));

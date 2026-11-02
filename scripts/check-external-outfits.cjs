@@ -1,6 +1,6 @@
 // Local integration and visual review. Only fresh isolated browser contexts.
 // Requires compiled candidate, optional studies and frozen PR25 servers.
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+const { chromium, openBoard } = require('./lib/legacy-playwright.cjs');
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const base=process.env.BASE_URL||'http://127.0.0.1:4451',studies=process.env.STUDIES_URL||'http://127.0.0.1:4452',baseline=process.env.BASELINE_URL||'http://127.0.0.1:4400';
 const out=process.env.CAPTURE_DIR||'.external-outfits',key='paper-couture.pinboard.v1';
@@ -13,12 +13,12 @@ fs.mkdirSync(out,{recursive:true});
   if(seed!==undefined)await context.addInitScript(({key,seed})=>{if(localStorage.getItem(key)===null)localStorage.setItem(key,seed)},{key,seed});
   const p=current=await context.newPage();p.setDefaultTimeout(90000);p.on('pageerror',e=>report.errors.push(String(e)));
   const btn=name=>p.getByRole('button',{name,exact:true});
-  const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
+  const settle=()=>p.waitForFunction(()=>window.paperCouture&&!paperCouture.controller.moving&&!paperCouture.cameraSettling&&paperCouture.view.t===paperCouture.view.target&&!paperCouture.displayCam.glide&&paperCouture.sheet.front.geometry.attributes.position?.count>0&&paperCouture.sheet.front.geometry.attributes.uv?.count>0);
   const load=async q=>{const r=await p.goto(url+'/?'+q);assert(r.ok());await settle()};
   // Durable boards are JSON: -0 becomes 0 without a geometric change.
   const board=()=>p.evaluate(()=>JSON.parse(JSON.stringify(paperCouture.pinboard.state)));
   const raw=()=>p.evaluate(k=>localStorage.getItem(k),key);
-  const enter=()=>p.getByRole('button',{name:/^View board/}).click();
+  const enter=()=>openBoard(p);
   const png=async name=>{
    const expected=await p.evaluate(()=>{const b=paperCouture.pinboard;b.selection.visible=false;b.renderer.setSize(1800,2100,false);b.renderer.render(b.scene,b.camera);return b.canvas.toDataURL('image/png')});
    const[d]=await Promise.all([p.waitForEvent('download'),btn('Save PNG').click()]);const file=path.join(out,name+'.png');await d.saveAs(file);const bytes=fs.readFileSync(file);assert.deepEqual(bytes,Buffer.from(expected.split(',')[1],'base64'));await p.waitForFunction(()=>!paperCouture.pinboard.exporting);return bytes;
