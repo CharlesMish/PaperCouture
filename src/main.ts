@@ -471,11 +471,11 @@ let scrubRelease: { op: number; t: number } | null = null;
  */
 // Timed in animation seconds (the capped frame steps the folds themselves advance by),
 // so on a slow machine the ease and the fold keep pace with each other.
-let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; fromInsets: Insets; elapsed: number } | null = null;
+let cameraGlide: { fromPos: THREE.Vector3; fromTarget: THREE.Vector3; fromInsets: Insets; elapsed: number; startedAt: number } | null = null;
 const GLIDE_S = 0.35;
 // The projection centre (where the free area's middle is on screen) eases with the
 // camera: moving only the camera would still shift the paper when the controls change size.
-const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), fromInsets: stage.projectionInsets(), elapsed: 0 }; };
+const startGlide = () => { cameraGlide = { fromPos: workCamPos.clone(), fromTarget: workTarget.clone(), fromInsets: stage.projectionInsets(), elapsed: 0, startedAt: performance.now() }; };
 const mixInsets = (a: Insets, b: Insets, k: number): Insets =>
   ({ top: a.top + (b.top - a.top) * k, right: a.right + (b.right - a.right) * k, bottom: a.bottom + (b.bottom - a.bottom) * k, left: a.left + (b.left - a.left) * k });
 function workshopFrame(): WorkFrame {
@@ -923,7 +923,8 @@ function tick(now: number) {
   if (!pinboard.dialog.open) {
     if (!positionPanel.dialog.open) {
       controller.update(dt);
-      if (cameraGlide && !controller.isScrubbing) cameraGlide.elapsed += dt;
+      // never ahead of the time since it began (a frame's step can include time from before)
+      if (cameraGlide && !controller.isScrubbing) cameraGlide.elapsed = Math.min(cameraGlide.elapsed + dt, Math.max(0, (now - cameraGlide.startedAt) / 1000));
       view.update(dt);
       placePiece();
       if (view.inDisplay) displayCam.update(dt);
