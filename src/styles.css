@@ -531,3 +531,6 @@ button:focus-visible {
   .design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .design-thumbnail { height: 104px; }
 }
+
+/* Curator 2026-11-02: the pinboard count reads as a quiet tally beside its label. */
+.studio-button-count { color: var(--ink-soft); font-size: 0.85em; font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
