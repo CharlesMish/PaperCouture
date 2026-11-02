@@ -197,9 +197,11 @@ A folder with real paper should try these first.
     end of each failing step's output, the runner's memory and the kernel log as
     annotations. They have been reverted.
   - **Five jobs are stopped by the runner running out of memory:** Outfit
-    composition, Companion composition, wardrobe capelet-brooch and Fit-and-flare
-    verify among them. In each, the test process is killed by the kernel's
-    out-of-memory killer, with 12 to 14 GB of the runner's 16 GB in use. Each runs
+    composition, Companion composition, wardrobe capelet-brooch, wardrobe necktie
+    and Fit-and-flare verify. In each, the test process is killed by the kernel's
+    out-of-memory killer, with 12 to 14 GB of the runner's 16 GB in use.
+  - **Wardrobe outfits** was cancelled before it reported, so its cause is not
+    established. Each runs
     two or three app servers (current and frozen baselines) and Chromium with
     software WebGL.
   - **Evidence from PR #37:** its runs of the same jobs ended with the same exit code
