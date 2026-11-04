@@ -506,10 +506,14 @@ layout();
 
 window.addEventListener('keydown', (e) => {
   if (positionPanel.dialog.open || pinboard.dialog.open || e.defaultPrevented) return;
-  if (e.target instanceof HTMLElement && e.target.closest('button, select, input, textarea')) return;
-  if (view.inWorkshop) {
+  // A click leaves focus on the button. Buttons do not use arrow keys — Space
+  // and Enter activate them — so workshop arrows and display Escape keep
+  // working afterwards. A select, input, or textarea still owns those keys.
+  if (e.target instanceof HTMLElement && e.target.closest('select, input, textarea')) return;
+  if (view.inWorkshop && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+    e.preventDefault();
     if (e.key === 'ArrowRight') controller.next();
-    else if (e.key === 'ArrowLeft') controller.prev();
+    else controller.prev();
   } else if (view.inDisplay && e.key === 'Escape') {
     leaveDisplay();
   }
