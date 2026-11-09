@@ -156,6 +156,7 @@ button:focus-visible {
   border: 0;
   background: var(--accent);
   color: #fff;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 3px 8px rgba(74, 93, 122, 0.28);
 }
 .btn-primary:hover:not(:disabled) { background: var(--accent); filter: brightness(1.08); }
 
