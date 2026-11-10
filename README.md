@@ -199,3 +199,11 @@ waves, Asanoha, Polka dot and Houndstooth each come with a chosen reverse.
 `npm run check:zori-sensu` covers the two pieces. See [the notes, scale and
 checks](docs/kimono-companions/NOTES.md) and the [printable folding
 sheet](docs/kimono-companions/zori-and-fan-folding-sheet.pdf).
+
+## Twice folded (commissioned paper)
+
+Twice folded is one Experimental two-sided paper: fold-and-clamp indigo with a second
+dip of safflower red on the front, and the vat side of the same dye on the reverse.
+It was styled on the Kimono and the Folding fan. There are now 38 visible papers
+(17 curated, 21 Experimental). See [the paper, the board and how to recreate
+it](docs/twice-folded/NOTES.md).

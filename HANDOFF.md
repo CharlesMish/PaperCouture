@@ -1,3 +1,21 @@
+# Paper Couture — Twice folded, one commissioned paper (Claude, 2026-11-10)
+
+Branch `experiment/claude-paper-commission` from `f33415b`, at Charlie's request in a
+Claude chat. One Experimental two-sided paper, `twice-folded`, styled on two existing
+pieces (Kimono, reverse colour; Folding fan). Notes, flat view, board PNG and steps
+to recreate the board: [docs/twice-folded/NOTES.md](docs/twice-folded/NOTES.md).
+
+- `src/papers/twiceFolded.ts`: both faces from one dye function; registered after
+  Dusk wash in `src/papers/index.ts`. No garment, engine, renderer or default changes.
+- `scripts/check-design-pass.ts`: the registry assertion lists the new paper, and
+  checks where its dips sit. `scripts/check-companion-papers.cjs`: the new id is in
+  its list of papers newer than the frozen baseline.
+- `scripts/check-twice-folded-browser.cjs`: optional browser check, not in CI.
+- 38 visible papers (17 curated, 21 Experimental). Designs and accessories unchanged.
+
+Draft PR only; merging and deployment are Charlie's. Not tested on a real phone or in
+physical paper.
+
 # Five-design integration — October 18, 2026
 
 Charlie authorized bringing Claude’s corrected companion branch onto main and

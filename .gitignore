@@ -36,3 +36,5 @@ docs/swing-coat/evidence/papers/*.png
 
 .coat-dress-qa/
 docs/coat-dress/evidence/browser/*.png
+
+.twice-folded-qa/
