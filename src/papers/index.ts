@@ -33,6 +33,7 @@ import { creaseBloom } from './creaseBloom';
 import { marbledEndpaper } from './marbledEndpaper';
 import { duskWash } from './duskWash';
 import { seigaiha, asanoha, polkaDot, houndstooth } from './classicSuite';
+import { kintsugiCeladonPaper } from './kintsugiCeladon';
 
 export type { PaperDesign } from './types';
 
@@ -83,6 +84,7 @@ export const PAPERS: PaperDesign[] = [
   creaseBloom,
   marbledEndpaper,
   duskWash,
+  kintsugiCeladonPaper,
   diagnosticPaper,
 ].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'seigaiha', 'asanoha', 'polka-dot', 'houndstooth'].includes(p.id) ? 'curated' : 'experimental' }));
 

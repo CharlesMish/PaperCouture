@@ -43,7 +43,7 @@ assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 // --- Registry: four additions at the end of the experimental list, and
 // every earlier paper keeps its id, relative order and curation.
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
-const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
+const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash', 'kintsugi-celadon'];
 const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
 assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
 assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
