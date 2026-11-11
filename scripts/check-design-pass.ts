@@ -19,6 +19,7 @@ import { PAPERS } from '../src/papers';
 import { SWING_COAT_CREASES } from '../src/papers/coatMarks';
 import { PROOF_MARGIN } from '../src/papers/risoProof';
 import { dipAt, dyeAt, TWICE_FOLDED_REPEATS } from '../src/papers/twiceFolded';
+import { FIG_LEAVES } from '../src/papers/afternoonFig';
 import { creasePattern, vertexProblems } from './crease_pattern';
 import { hingeProblems } from './hingeCheck';
 import { interiorPiercing } from './experiment-collision';
@@ -47,7 +48,7 @@ const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatt
 const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
 const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
 // The commissioned papers (2026-11) follow the design pass, also experimental.
-const COMMISSION = ['twice-folded', 'kintsugi-celadon', 'sardine-run'];
+const COMMISSION = ['twice-folded', 'kintsugi-celadon', 'sardine-run', 'afternoon-fig'];
 assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, ...COMMISSION, 'grid']);
 assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
 for (const id of CLASSIC) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated');
@@ -59,6 +60,13 @@ for (const id of [...ADDED, ...COMMISSION]) {
   assert(p.placementNote && p.note && !p.hidden);
 }
 assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 17);
+
+// Afternoon fig: the high leaf is the one the swing coat wears on its shoulder
+// and the capelet keeps; the low leaf is in the half the capelet folds away.
+assert.equal(FIG_LEAVES.length, 2);
+assert(FIG_LEAVES[0].y > 0.15 && FIG_LEAVES[0].y < 0.4 && Math.abs(FIG_LEAVES[0].x - 0.5) < 0.1, JSON.stringify(FIG_LEAVES[0]));
+assert(FIG_LEAVES[1].y > 0.45 && FIG_LEAVES[1].x > 0.65, JSON.stringify(FIG_LEAVES[1]));
+assert(FIG_LEAVES[0].scale > FIG_LEAVES[1].scale);
 
 // --- Twice folded keeps the placement its two styled pieces rely on: a red dip
 // on every quarter of the sheet (the centre is a folding fan's rivet) and an

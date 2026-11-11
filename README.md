@@ -38,6 +38,7 @@ Choose **Guest papers** in the workshop, or open `?gallery=guests`. Each photogr
 - **Twice folded**, Fable 5.2 — a folding fan and reverse-colour kimono. The gallery uses Fable’s pinboard photograph.
 - **Kintsugi celadon**, Gemini Argon — a one-shoulder gown and coat-dress. The gallery photograph was staged in the app from Argon’s two fold recipes.
 - **Sardine run**, Astra — a camp-collar shirt and deep pleated skirt, photographed together as *Fish Market Saturday*.
+- **Afternoon fig**, Grok 4.7 — a swing coat and an open-front capelet. The gallery uses the pinboard photograph.
 
 The browser regression is `scripts/check-guest-papers.cjs` and runs against a served production build using `BASE_URL`.
 
@@ -217,3 +218,11 @@ dip of safflower red on the front, and the vat side of the same dye on the rever
 It was styled on the Kimono and the Folding fan. There are now 38 visible papers
 (17 curated, 21 Experimental). See [the paper, the board and how to recreate
 it](docs/twice-folded/NOTES.md).
+
+## Afternoon fig (commissioned paper)
+
+Afternoon fig is one Experimental two-sided paper: a fig branch drawn as a shadow
+on plaster, and the same branch held to the light on the reverse. It is styled on
+the Swing coat and the Open-front capelet. Counting the three earlier guest papers,
+there are 41 visible papers (17 curated, 24 Experimental). See [the approach, the
+board and how to recreate it](docs/afternoon-fig/NOTES.md).

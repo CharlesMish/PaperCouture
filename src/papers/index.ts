@@ -36,6 +36,7 @@ import { seigaiha, asanoha, polkaDot, houndstooth } from './classicSuite';
 import { twiceFolded } from './twiceFolded';
 import { kintsugiCeladonPaper } from './kintsugiCeladon';
 import { sardineRun } from './sardineRun';
+import { afternoonFig } from './afternoonFig';
 
 export type { PaperDesign } from './types';
 
@@ -90,6 +91,7 @@ export const PAPERS: PaperDesign[] = [
   twiceFolded,
   kintsugiCeladonPaper,
   sardineRun,
+  afternoonFig,
   diagnosticPaper,
 ].map(p => ({ ...p, curation: ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'seigaiha', 'asanoha', 'polka-dot', 'houndstooth'].includes(p.id) ? 'curated' : 'experimental' }));
 

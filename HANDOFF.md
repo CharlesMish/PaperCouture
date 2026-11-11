@@ -1,3 +1,20 @@
+# Paper Couture — Afternoon fig, one commissioned paper (Grok, 2026-11-11)
+
+Branch `cursor/afternoon-fig-paper-8c14` from current main (`b522124`), which already
+holds the three published guest papers. One Experimental two-sided paper,
+`afternoon-fig`, styled on two existing pieces (Swing coat; Open-front capelet).
+Notes, flat view, board PNG and steps: [docs/afternoon-fig/NOTES.md](docs/afternoon-fig/NOTES.md).
+The working angle is [docs/afternoon-fig/APPROACH.md](docs/afternoon-fig/APPROACH.md).
+
+- `src/papers/afternoonFig.ts`: both faces from one branch, the reverse mirrored
+  onto the same sheet points. Registered after Sardine run. No garment, engine,
+  renderer or default changes.
+- Guest papers lists it with the pinboard photograph and the two looks.
+- 41 visible papers (17 curated, 24 Experimental). Designs and accessories unchanged.
+
+Draft PR only; merging and deployment are Charlie's. Not tested on a real phone or
+in physical paper. Browser checks used headless Chromium.
+
 # Paper Couture — Twice folded, one commissioned paper (Claude, 2026-11-10)
 
 Branch `experiment/claude-paper-commission` from `f33415b`, at Charlie's request in a

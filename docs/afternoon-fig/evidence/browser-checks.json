@@ -1,0 +1,45 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "Afternoon fig is offered under Experiments and selected from its swatch.",
+    "Swing coat: 10 folds, two Back, refolded; four quarter-turns on the finished piece return to 0°.",
+    "Open-front capelet, sheet at 0°: eight folds, one Back, refolded; paper and turn kept.",
+    "Board: swing coat (24 cm) and capelet (18 cm) arranged, photographed and saved as a 1800 × 2100 PNG.",
+    "Reload: both pieces, positions, sizes and finish restored; the second PNG is byte-identical to the first.",
+    "No page exceptions or console errors."
+  ],
+  "board": {
+    "appearance": {
+      "surface": "linen",
+      "pins": "white",
+      "guide": "none",
+      "lighting": "clear",
+      "guideInPhoto": false
+    },
+    "format": "standard",
+    "items": [
+      {
+        "title": "Swing coat · Afternoon fig",
+        "x": 0,
+        "y": -0.56,
+        "tilt": 0,
+        "squareCm": 24,
+        "papers": [
+          "afternoon-fig@0"
+        ]
+      },
+      {
+        "title": "Open-front capelet · Afternoon fig",
+        "x": 0,
+        "y": 0.56,
+        "tilt": 0,
+        "squareCm": 18,
+        "papers": [
+          "afternoon-fig@0"
+        ]
+      }
+    ]
+  },
+  "realPhoneTested": false,
+  "physicalPaperTested": false
+}
