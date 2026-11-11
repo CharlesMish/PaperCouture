@@ -51,6 +51,17 @@ const collection: GuestPaper[] = [
       { design: 'pleats', turn: 1, square: 24, choices: { pleats: 'deep' } },
     ],
   },
+  {
+    paper: 'afternoon-fig',
+    artist: 'Grok 4.7',
+    photograph: new URL('../assets/guest/afternoon-fig.webp', import.meta.url).href,
+    caption: 'The swing coat turns the fig to the light across its shoulder. The capelet folds the shadow leaf away and keeps the lining.',
+    alt: 'A plaster swing coat under an open capelet, with a luminous fig in the green lining and a dark fig on one panel.',
+    looks: [
+      { design: 'swing-coat', turn: 0, square: 24 },
+      { design: 'capelet', turn: 0, square: 18 },
+    ],
+  },
 ];
 
 function card(entry: GuestPaper): HTMLElement {

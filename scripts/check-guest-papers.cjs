@@ -25,9 +25,9 @@ async function run() {
     const gallery = page.getByRole('dialog', { name: 'Guest papers' });
     await gallery.waitFor();
     const cards = gallery.locator('article');
-    assert.equal(await cards.count(), 3);
+    assert.equal(await cards.count(), 4);
     await gallery.locator('img').evaluateAll(images => Promise.all(images.map(img => img.decode())));
-    for (const text of ['Fable 5.2', 'Gemini Argon', 'Astra']) {
+    for (const text of ['Fable 5.2', 'Gemini Argon', 'Astra', 'Grok 4.7']) {
       assert.equal(await gallery.getByText(text, { exact: true }).count(), 1);
     }
     await page.keyboard.press('Escape');
@@ -42,6 +42,7 @@ async function run() {
       ['sensu', 'twice-folded', 2, 20], ['kimono', 'twice-folded', 0, 24],
       ['gown', 'kintsugi-celadon', 0, 24], ['coat-dress', 'kintsugi-celadon', 2, 24],
       ['camp-shirt', 'sardine-run', 0, 21.6], ['pleats', 'sardine-run', 1, 24],
+      ['swing-coat', 'afternoon-fig', 0, 24], ['capelet', 'afternoon-fig', 0, 18],
     ];
     assert.equal(await links.count(), recipes.length);
     for (const [i, [design, paper, turn, size]] of recipes.entries()) {
@@ -68,7 +69,7 @@ async function run() {
       assert(await links.last().isVisible());
     }
     assert.deepEqual(errors, []);
-    console.log('Guest papers: six editable finished looks, authored sizes, original work and pinboard retained, narrow gallery and keyboard return passed.');
+    console.log('Guest papers: eight editable finished looks, authored sizes, original work and pinboard retained, narrow gallery and keyboard return passed.');
   } finally {
     await browser.close();
   }
