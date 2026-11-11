@@ -45,7 +45,11 @@ export class StudioControls {
     const label = document.createElement('label'); label.textContent = 'Design ';
     this.design.setAttribute('aria-label', 'Garment design');
     for (const garment of BROWSE_GARMENTS) this.design.append(new Option(garment.name, garment.id));
-    this.design.title = 'Switch designs here. Completed folds are kept while this page stays open.';
+    // The menu is the garment registry, not a paper or a shape option. Choosing
+    // an entry replaces the piece on the table. Paper and each piece's folds stay.
+    const designNote = 'Design chooses the garment on the table. Changing it replaces that piece. The paper stays, and folds already made for each garment are kept while this page is open.';
+    this.design.title = designNote;
+    this.design.setAttribute('aria-description', designNote);
     this.design.onchange = () => h.onDesign(this.design.value as GarmentId); label.append(this.design);
     this.accessoryLabel.textContent = 'Accessory ';
     this.accessory.setAttribute('aria-label', 'Accessory type');
@@ -117,7 +121,7 @@ export class StudioControls {
     }
     const accessoryName = ACCESSORIES.find(a => a.id === activeAccessory)!.name;
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
-      : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
+      : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory. Design replaces this piece; paper stays.';
     const experiment = garmentExperiment(id);
     if (experiment && !accessoryMode) this.note.textContent = `${experiment}${attached ? ' · accessory kept aside' : ''}`;
     const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;
