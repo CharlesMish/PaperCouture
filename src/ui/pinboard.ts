@@ -337,6 +337,11 @@ export class Pinboard {
   }
   private selectedButton(label: string, action: () => void) { const b = this.button(label, () => { this.focusPaper(); action(); }); this.selectedTools.push(b); return b; }
   private selected() { return this.state.items.find(i => i.id === this.state.selected); }
+  /** An example link can preselect a size for its own garment in this tab.
+   * refreshSize validates this preference against the available square choices. */
+  rememberStartingSquare(key: string, sideCm: number) {
+    this.chosenSizes.set(key, sideCm);
+  }
   private captureSize(): PaperSizeSource | undefined {
     const source = this.handlers.sources()[Number(this.source.value)];
     if (!source || this.source.value === '') return;

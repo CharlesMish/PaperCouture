@@ -1,0 +1,45 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "checks": [
+    "Twice folded is offered under Experiments and selected from its swatch.",
+    "Kimono, reverse colour: 7 folds, two Back, refolded; four quarter-turns on the finished piece return to 0° with both faces turning together.",
+    "Folding fan, printed, sheet at 180°: seven folds, three Back, refolded; paper and turn kept.",
+    "Board: kimono (24 cm) and fan (20 cm) arranged, photographed and saved as a 1800 × 2100 PNG.",
+    "Reload: both pieces, positions, sizes and finish restored; the second PNG is byte-identical to the first.",
+    "No page exceptions or console errors."
+  ],
+  "board": {
+    "appearance": {
+      "surface": "linen",
+      "pins": "white",
+      "guide": "none",
+      "lighting": "clear",
+      "guideInPhoto": false
+    },
+    "format": "standard",
+    "items": [
+      {
+        "title": "Kimono, reverse colour · Twice folded",
+        "x": 0,
+        "y": -0.56,
+        "tilt": 0,
+        "squareCm": 24,
+        "papers": [
+          "twice-folded@0"
+        ]
+      },
+      {
+        "title": "Folding fan · Twice folded",
+        "x": 0,
+        "y": 0.72,
+        "tilt": 0,
+        "squareCm": 20,
+        "papers": [
+          "twice-folded@2"
+        ]
+      }
+    ]
+  },
+  "realPhoneTested": false,
+  "physicalPaperTested": false
+}

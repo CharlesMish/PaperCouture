@@ -1,3 +1,4 @@
+import { GuestPapers } from './guestPapers';
 import { DesignPicker } from './designPicker';
 import { BROWSE_GARMENTS } from './designOrder';
 import { GarmentId, AttachmentPosition, AttachmentAnchor, garmentExperiment } from '../fold/garments';
@@ -8,6 +9,7 @@ import { ACCESSORIES, AccessoryId } from '../fold/accessories';
 export type { AccessoryId };
 export class StudioControls {
   readonly root = document.createElement('section');
+  readonly guestPapers: GuestPapers;
   private designPicker: DesignPicker;
   private design = document.createElement('select');
   private accessory = document.createElement('select');
@@ -37,6 +39,7 @@ export class StudioControls {
     onCentre(): void; onCentreToggle(): void;
   }) {
     this.designPicker = new DesignPicker(parent, h.onDesign);
+    this.guestPapers = new GuestPapers(parent);
     this.root.className = 'studio-controls';
     this.root.setAttribute('aria-label', 'Garment and accessory');
     const label = document.createElement('label'); label.textContent = 'Design ';
@@ -67,7 +70,7 @@ export class StudioControls {
     this.centreEdit.onclick = h.onCentre; this.centreToggle.onclick = h.onCentreToggle;
     this.centreToggle.textContent = 'Show folded centre';
     this.centreControls.append(this.centreEdit, this.centreToggle);
-    this.root.append(this.designPicker.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
+    this.root.append(this.designPicker.button, this.guestPapers.button, label, this.revisitLabel, this.accessoryLabel, this.edit, this.positionLabel, this.remove, this.centreControls, this.returnButton, this.note);
     parent.append(this.root);
   }
   renderCentre(available: boolean, complete: boolean, shown: boolean, editing: boolean) {

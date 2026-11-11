@@ -18,6 +18,7 @@ import { buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/
 import { PAPERS } from '../src/papers';
 import { SWING_COAT_CREASES } from '../src/papers/coatMarks';
 import { PROOF_MARGIN } from '../src/papers/risoProof';
+import { dipAt, dyeAt, TWICE_FOLDED_REPEATS } from '../src/papers/twiceFolded';
 import { creasePattern, vertexProblems } from './crease_pattern';
 import { hingeProblems } from './hingeCheck';
 import { interiorPiercing } from './experiment-collision';
@@ -45,17 +46,38 @@ assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
 const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
 const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
-assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, 'grid']);
+// The commissioned papers (2026-11) follow the design pass, also experimental.
+const COMMISSION = ['twice-folded', 'kintsugi-celadon', 'sardine-run'];
+assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, ...COMMISSION, 'grid']);
 assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
 for (const id of CLASSIC) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated');
 assert.equal(new Set(PAPERS.map(p => p.id)).size, PAPERS.length);
-for (const id of ADDED) {
+for (const id of [...ADDED, ...COMMISSION]) {
   const p = PAPERS.find(q => q.id === id)!;
   assert.equal(p.curation, 'experimental');
   assert.equal(p.placement, undefined, `${id}: fixed placement; sliding has not been verified`);
   assert(p.placementNote && p.note && !p.hidden);
 }
 assert.equal(PAPERS.filter(p => p.curation === 'curated').length, 17);
+
+// --- Twice folded keeps the placement its two styled pieces rely on: a red dip
+// on every quarter of the sheet (the centre is a folding fan's rivet) and an
+// indigo blossom on every odd eighth (the middle of each kimono sleeve). Both
+// faces are the same dye, so the reverse has each dip where the front does.
+assert.equal(TWICE_FOLDED_REPEATS, 4);
+for (const soft of [false, true]) {
+  for (let i = 0; i <= 4; i++) for (let j = 0; j <= 4; j++) {
+    const d = dyeAt(i / 4, j / 4, soft);
+    assert(d.red > 0.9 && d.indigo < 0.25, `quarter ${i},${j}${soft ? ' (reverse)' : ''}: ${JSON.stringify(d)}`);
+  }
+  for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) {
+    // just off the blossom's pale heart
+    const x = (2 * i + 1) / 8 + 0.03, y = (2 * j + 1) / 8, d = dyeAt(x, y, soft);
+    assert(d.red === 0 && d.indigo > 0.8 * dipAt(x, y), `eighth ${i},${j}${soft ? ' (reverse)' : ''}: ${JSON.stringify(d)}`);
+  }
+}
+// The indigo is dipped deepest at the bottom edge, so a turn of the sheet matters.
+assert(dipAt(0.5, 0.02) < 0.4 && dipAt(0.5, 0.98) > 0.97);
 
 // --- Origami studies.
 const studies: Record<string, unknown> = {};

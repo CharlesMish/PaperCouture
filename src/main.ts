@@ -37,6 +37,7 @@ function syncUrl() {
   if (!ready || accessoryMode) return;
   const url = new URL(location.href);
   optionsToParams(garmentOptions, url.searchParams);
+  if (url.searchParams.get('design') !== garmentId) url.searchParams.delete('square');
   url.searchParams.set('design', garmentId);
   url.searchParams.set('paper', garmentPaper.id);
   url.searchParams.set('turn', String(garmentTurns));
@@ -264,6 +265,8 @@ const pinboard = new Pinboard(app, {
     return sources;
   },
 });
+const square = Number(params.get('square'));
+if (square > 0) pinboard.rememberStartingSquare(`garment:${garmentId}`, square);
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
     if (id !== paper.id) printPosition = { ...ORIGINAL };
@@ -673,6 +676,7 @@ if (params.get('view') === 'display' && controller.finished) {
 }
 ready = true;
 syncUrl();
+if (params.get('gallery') === 'guests') studio.guestPapers.open();
 
 // ---- loop
 let last = performance.now();
