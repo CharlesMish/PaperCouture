@@ -32,7 +32,9 @@ async function run() {
     }
     await page.keyboard.press('Escape');
     await gallery.waitFor({ state: 'hidden' });
-    assert.equal(await page.evaluate(() => document.activeElement.textContent), 'Guest papers');
+    // Native dialog.close() hides the element before dispatching its close event.
+    // Wait for the handler to return keyboard focus to the workshop.
+    await page.waitForFunction(() => document.activeElement === document.querySelector('.guest-trigger'));
     const trigger = page.getByRole('button', { name: 'Guest papers', exact: true });
     await trigger.click();
     const links = gallery.getByRole('link');
