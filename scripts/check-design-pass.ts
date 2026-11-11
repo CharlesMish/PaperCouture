@@ -46,8 +46,8 @@ assert(PROOF_MARGIN < Math.min(...Object.values(turns)));
 const BEFORE = ['stripe-disc', 'running-stitch', 'pinstripe-lining', 'plum-scatter', 'oat-linen', 'slate-grain', 'plum-seed', 'broken-twill', 'copper-fleck', 'border-print', 'botanical', 'indigo-lattice', 'ivory-border', 'reed-study', 'arc-study', 'ginkgo-pairs', 'corner-bloom', 'midnight-orchard', 'tidal-bands', 'woven-checks', 'seed-dashes', 'ink-reverse', 'reverse-garden', 'starlit-lining', 'open-stems', 'falling-chevrons', 'sunray-pleats', 'cut-paper-mosaic', 'wide-frame', 'compass-lining'];
 const ADDED = ['riso-proof', 'crease-bloom', 'marbled-endpaper', 'dusk-wash'];
 const CLASSIC = ['seigaiha', 'asanoha', 'polka-dot', 'houndstooth'];
-// One commissioned paper (2026-11) follows the design pass, also experimental.
-const COMMISSION = ['twice-folded'];
+// The commissioned papers (2026-11) follow the design pass, also experimental.
+const COMMISSION = ['twice-folded', 'kintsugi-celadon', 'sardine-run'];
 assert.deepEqual(PAPERS.filter(p => !CLASSIC.includes(p.id)).map(p => p.id), [...BEFORE, ...ADDED, ...COMMISSION, 'grid']);
 assert.deepEqual(PAPERS.filter(p => CLASSIC.includes(p.id)).map(p => p.id), CLASSIC);
 for (const id of CLASSIC) assert.equal(PAPERS.find(p => p.id === id)?.curation, 'curated');

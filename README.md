@@ -31,6 +31,16 @@ Use **Browse pieces** to see finished shape previews before choosing a design.
 Recent collection highlights lead the gallery and the compact name selector.
 See [the visual chooser](docs/design-picker/NOTES.md).
 
+## Guest papers
+
+Choose **Guest papers** in the workshop, or open `?gallery=guests`. Each photograph offers two finished folds. The links open in a separate tab with the guest’s paper, fold choices, rotation and starting square. Choose **Workshop** to work back through the folds, or **Pinboard** to keep a piece. Each guest paper is also available in the ordinary swatch picker.
+
+- **Twice folded**, Fable 5.2 — a folding fan and reverse-colour kimono. The gallery uses Fable’s pinboard photograph.
+- **Kintsugi celadon**, Gemini Argon — a one-shoulder gown and coat-dress. The gallery photograph was staged in the app from Argon’s two fold recipes.
+- **Sardine run**, Astra — a camp-collar shirt and deep pleated skirt, photographed together as *Fish Market Saturday*.
+
+The browser regression is `scripts/check-guest-papers.cjs` and runs against a served production build using `BASE_URL`.
+
 ## Garments and optional accessories
 
 Choose Dress, Box jacket, Wrap skirt, Lapel vest or Pleated skirt from Design. After folding the garment, optionally

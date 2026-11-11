@@ -51,7 +51,7 @@ fs.mkdirSync(out, { recursive: true });
     // the October integration adds four experimental papers and four curated classics.
     // The 2026-11 commission adds one experimental paper, Twice folded.
     // Keep every old raster, metadata and ordering assertion exact.
-    const added = ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha', 'broken-twill', 'copper-fleck', 'crease-bloom', 'dusk-wash', 'marbled-endpaper', 'plum-seed', 'reed-study', 'riso-proof', 'sunray-pleats', 'twice-folded'].sort();
+    const added = ['asanoha', 'houndstooth', 'polka-dot', 'seigaiha', 'broken-twill', 'copper-fleck', 'crease-bloom', 'dusk-wash', 'marbled-endpaper', 'plum-seed', 'reed-study', 'riso-proof', 'sunray-pleats', 'twice-folded', 'kintsugi-celadon', 'sardine-run'].sort();
     assert.deepEqual(current.registry.filter(p => !added.includes(p.id)), old.registry);
     assert.deepEqual(current.registry.filter(p => !old.registry.some(q => q.id === p.id)).map(p => p.id).sort(), added);
     assert.deepEqual(current.registry.find(p => p.id === 'sunray-pleats'), { id: 'sunray-pleats', name: 'Sunray pleats', hidden: false, curation: 'experimental' });
