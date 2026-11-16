@@ -368,7 +368,7 @@ button:focus-visible {
 }
 .studio-controls select:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 .studio-button:disabled { opacity: .45; }
-.studio-note { color: var(--ink-soft); }
+.studio-note { color: var(--ink-soft); font-style: italic; }
 .centre-controls { display: inline-flex; gap: 6px; align-items: center; }
 .centre-controls button[aria-pressed='true'] { background: rgba(255,255,255,.65); border-color: var(--ink); }
 @media (max-width: 719px) {
