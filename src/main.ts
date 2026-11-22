@@ -1,6 +1,6 @@
 import './styles.css';
 import * as THREE from 'three';
-import { garmentDecisions, optionsFromParams, optionsToParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
+import { garmentDecisions, optionsFromParams, optionsToParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId, DEFAULT_OPTIONS } from './fold/garmentOptions';
 import { buildBowCentre } from './fold/bowCentre';
 import { centroid } from './fold/geometry';
 import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
@@ -28,6 +28,7 @@ import { PrintPositionPanel } from './ui/printPositionPanel';
 import { BoardSource, Pinboard } from './ui/pinboard';
 import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
+import { StartingPoint, savedStart } from './papers/startingPoints';
 
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -185,6 +186,11 @@ let paper = resolvePaper(params.get('paper'));
 const requestedTurn = Number(params.get('turn'));
 let quarterTurns = Number.isFinite(requestedTurn) ? ((Math.trunc(requestedTurn) % 4) + 4) % 4 : 0;
 let printPosition = positionFromParams(paper, params);
+if (!params.has('turn') && !params.has('printX') && !params.has('printY')) {
+  // A link that names a placement wins; otherwise begin from the person's saved start.
+  const mine = savedStart(garmentId + colourway(garmentId, garmentOptions), paper.id);
+  if (mine) { quarterTurns = mine.turns; printPosition = normalizePosition(paper, mine); }
+}
 let textures: PaperTextures | null = null;
 let garmentPaper = paper;
 let garmentTurns = quarterTurns;
@@ -236,8 +242,27 @@ const view = new ViewSwitch(reducedMotion ? 0.6 : 1.1);
 const displayCam = new DisplayCamera(stage, canvas);
 
 // ---- interface
-const positionPanel = new PrintPositionPanel(app, p => {
-  printPosition = normalizePosition(paper, p); applyPaper();
+/** A design's other colourway shows a different face of the sheet, so it keeps its own starting points. */
+function colourway(id: GarmentId, options = garmentOptions) {
+  const side = garmentDecisions(id).find(d => d.id.endsWith('Side'));
+  return side && options[side.id] !== DEFAULT_OPTIONS[side.id] ? `:${options[side.id]}` : '';
+}
+const startKey = (id: GarmentId) => id + colourway(id);
+/** The piece the paper is being placed on, for the placement panel and saved starting points. */
+const placementPiece = () => ({
+  key: accessoryMode ? `accessory:${editingCentre ? 'bow-centre' : accessoryId}` : startKey(garmentId),
+  // Suggestions were chosen on each design's default colourway and are offered only there.
+  designId: accessoryMode || colourway(garmentId) ? '' : garmentId, name: construction.name, construction,
+  angle: accessoryMode ? 0 : garmentDisplayAngle(garmentId),
+});
+function applyStart(s: StartingPoint) {
+  quarterTurns = ((Math.trunc(s.turns) % 4) + 4) % 4;
+  printPosition = normalizePosition(paper, s);
+}
+const positionPanel = new PrintPositionPanel(app, {
+  change: p => { printPosition = normalizePosition(paper, p); applyPaper(); },
+  start: s => { applyStart(s); applyPaper(); },
+  piece: placementPiece,
 });
 const pinboard = new Pinboard(app, {
   workshop: () => { if (!view.inWorkshop) leaveDisplay(); },
@@ -269,8 +294,13 @@ const square = Number(params.get('square'));
 if (square > 0) pinboard.rememberStartingSquare(`garment:${garmentId}`, square);
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
-    if (id !== paper.id) printPosition = { ...ORIGINAL };
-    paper = findPaper(id);
+    if (id !== paper.id) {
+      printPosition = { ...ORIGINAL };
+      paper = findPaper(id);
+      // A start the person saved for this paper on this piece is where it begins.
+      const mine = savedStart(placementPiece().key, id);
+      if (mine) applyStart(mine);
+    }
     applyPaper();
   },
   onRotate: () => {
@@ -385,6 +415,9 @@ function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
   designProgress.set(garmentId, controller.step);
   garmentId = id;
+  // The same paper can begin differently on each piece: use the start saved for this one.
+  const mine = savedStart(startKey(id), paper.id);
+  if (mine) applyStart(mine);
   replaceConstruction(buildGarment(id, garmentOptions));
   controller.jumpTo(designProgress.get(id) ?? 0);
 }

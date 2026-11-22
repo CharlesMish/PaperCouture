@@ -38,7 +38,7 @@ function grain(): HTMLCanvasElement {
   return c;
 }
 
-function paint(draw: (ctx: CanvasRenderingContext2D, size: number) => void): HTMLCanvasElement {
+function paint(draw: (ctx: CanvasRenderingContext2D, size: number) => void, SIZE: number): HTMLCanvasElement {
   const c = document.createElement('canvas');
   c.width = c.height = SIZE;
   const ctx = c.getContext('2d')!;
@@ -59,8 +59,9 @@ export interface PaperTextures {
 }
 
 /** Bake translated ink on a finite sheet, then add stationary grain. Zero is
- * deliberately the original drawing path, preserving every existing paper. */
-export function paperCanvas(design: PaperDesign, side: 'front' | 'back', quarterTurns: number, position: PrintPosition = ORIGINAL): HTMLCanvasElement {
+ * deliberately the original drawing path, preserving every existing paper.
+ * `size` is 1024 for the folded sheet; small previews pass a smaller one. */
+export function paperCanvas(design: PaperDesign, side: 'front' | 'back', quarterTurns: number, position: PrintPosition = ORIGINAL, size = SIZE): HTMLCanvasElement {
   const p = normalizePosition(design, position), layers = design.placement;
   return paint((ctx, S) => {
     if (!layers || (!p.x && !p.y)) {
@@ -74,7 +75,7 @@ export function paperCanvas(design: PaperDesign, side: 'front' | 'back', quarter
     ctx.translate((side === 'front' ? shift.x : -shift.x) * S, -shift.y * S);
     if (side === 'front') layers.front(ctx, S); else layers.back?.(ctx, S);
     ctx.restore();
-  });
+  }, size);
 }
 
 /**

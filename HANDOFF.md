@@ -1,3 +1,25 @@
+# Paper Couture — placement review and starting points (Claude, 2026-11-21)
+
+Branch `claude/starting-points` from main `b522124`, at Charlie's request in a Claude
+chat. Notes, screenshots and the review page: [docs/placement-review/NOTES.md](docs/placement-review/NOTES.md).
+
+- Position print now draws the finished piece beside the flat sheet and dims what the
+  fold hides. Its controls and their names are unchanged.
+- Starting points in that dialog: the four turns, measured placements for sparse
+  sliding prints, 27 named suggestions (`src/papers/startingPoints.ts`) and one the
+  person saves. Only a saved start is applied without being pressed.
+- `docs/placement-review/review.html` (double-click to open): every paper on every piece
+  at every turn, findings with pictures, and a note on each fold. Source in
+  `experiments/placement/`; no CI, nothing in `src/` depends on it.
+- New: `src/render/flatPreview.ts`, `src/papers/landing.ts`, `src/papers/startingPoints.ts`,
+  `scripts/check-starting-points.ts` (in `npm test`), `scripts/check-starting-points-browser.cjs`
+  (optional). `paperCanvas` gained an optional size. No fold, engine, renderer, paper
+  drawing, default, link or saved board changes; 27 designs, 7 accessories, 40 visible papers.
+
+Existing browser checks run here on this branch: see the notes. CI on the PR head is
+the fuller run. Draft only; merging and deployment are Charlie's. Not tested on a real
+phone or in physical paper.
+
 # Paper Couture — Twice folded, one commissioned paper (Claude, 2026-11-10)
 
 Branch `experiment/claude-paper-commission` from `f33415b`, at Charlie's request in a
