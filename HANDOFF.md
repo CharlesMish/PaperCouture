@@ -16,8 +16,8 @@ chat. Notes, screenshots and the review page: [docs/placement-review/NOTES.md](d
   (optional). `paperCanvas` gained an optional size. No fold, engine, renderer, paper
   drawing, default, link or saved board changes; 27 designs, 7 accessories, 40 visible papers.
 
-Existing browser checks run here on this branch: see the notes. CI on the PR head is
-the fuller run. Draft only; merging and deployment are Charlie's. Not tested on a real
+Three existing browser checks were run here and passed (positioning, swing-coat phone,
+twice-folded); the rest need frozen baselines, so CI on a pull request is the fuller run. Draft only; merging and deployment are Charlie's. Not tested on a real
 phone or in physical paper.
 
 # Paper Couture — Twice folded, one commissioned paper (Claude, 2026-11-10)

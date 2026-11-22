@@ -78,7 +78,12 @@ Node 22.23 in a cloud container; browser checks in headless Chrome with software
   before; the veil choice is remembered; a saved start returns when the paper is chosen
   again and on a bare reload, does not override a link that names a turn, is separate
   per piece and per colourway, and can be forgotten; no page errors; no sideways scroll.
-- Existing browser checks run here against this branch are listed in HANDOFF.md.
+- Existing browser checks run here on this branch, all passed:
+  `check-positioning-browser.cjs` (dev server; real drags, nudges, reset, snap, reload,
+  pixels at all four turns, board and exports), `check-swing-coat-phone.cjs` (served
+  build; taps Position print, Right and Done at phone width) and
+  `check-twice-folded-browser.cjs` (served build). The other browser checks need their
+  frozen baseline builds and were not run here; CI on a pull request runs them.
 
 Limits. The flat preview has no lighting, layer thickness or camera tilt, so a few
 cells at raised flap edges can differ from the Display view (the same limit the landing
