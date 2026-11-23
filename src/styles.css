@@ -126,7 +126,8 @@ button:focus-visible {
   color: var(--ink-soft);
 }
 .step-title {
-  font-size: 1.02rem;
+  font-family: Georgia, 'Iowan Old Style', 'Times New Roman', serif;
+  font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.25;
 }
