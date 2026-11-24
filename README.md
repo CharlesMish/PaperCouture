@@ -224,5 +224,9 @@ it](docs/twice-folded/NOTES.md).
 the sheet the fold hides. Under them, **Starting points** offers the four turns, measured
 placements for sparse sliding prints, a few named suggestions, and one you save with
 **Save as my start**: from then on that paper begins there on that piece.
+A curated paper begins from its suggestion on a piece that has one.
 `docs/placement-review/review.html` opens by double-click and shows every paper on every
-piece at every turn. See [the notes](docs/placement-review/NOTES.md).
+piece at every turn, with findings and four fold sketches. See [the notes](docs/placement-review/NOTES.md).
+
+The camp shirt, coat-dress, fit-and-flare, gown, swing coat, capelet, cross-wrap top,
+clutch and apron now take accessories, at positions placed for each piece.

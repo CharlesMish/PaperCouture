@@ -1,3 +1,4 @@
+import type { AccessoryId } from './accessories';
 import { buildSilhouette, SilhouetteId } from './silhouettes';
 import { buildJacket } from './jacket';
 import { buildWrapSkirt } from './wrapSkirt';
@@ -23,8 +24,15 @@ import { buildZori, DEFAULT_ZORI } from './zori';
 import { buildSensu, DEFAULT_SENSU } from './sensu';
 
 export type GarmentId = 'dress' | 'jacket' | 'skirt' | 'vest' | 'pleats' | 'apron' | 'clutch' | 'tunic' | 'tabard' | 'boat-top' | 'wrap-top' | 'hat' | 'capelet' | 'boot-left' | 'boot-right' | 'framed-brooch' | 'necktie' | 'camp-shirt' | 'fit-flare' | 'swing-coat' | 'coat-dress' | 'gown' | 'kimono' | 'zori' | 'sensu' | 'mitten-left' | 'mitten-right';
-export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right';
-export interface AttachmentAnchor { id: AttachmentPosition; label: string; x: number; y: number }
+export type AttachmentPosition = 'neckline' | 'chest-left' | 'chest-right' | 'waist-left' | 'waist' | 'waist-right'
+  // Positions the newer silhouettes add. Each names the accessories it accepts (`only`):
+  // a collar, shoulder or clasp takes the pin; a hip takes the pin or the patch pocket.
+  | 'collar-left' | 'collar-right' | 'shoulder' | 'hip-left' | 'hip-right' | 'clasp';
+export interface AttachmentAnchor {
+  id: AttachmentPosition; label: string; x: number; y: number;
+  /** If set, only these accessories may sit here, whatever positions they list for themselves. */
+  only?: readonly AccessoryId[];
+}
 export const GARMENTS: { id: GarmentId; name: string; experiment?: string }[] = [
   { id: 'dress', name: 'Dress' }, { id: 'jacket', name: 'Box jacket' },
   { id: 'skirt', name: 'Wrap skirt' }, { id: 'vest', name: 'Lapel vest' },
@@ -89,12 +97,73 @@ export function buildGarment(id: GarmentId, selection: SilhouetteId | GarmentOpt
     default: return buildSilhouette(options.silhouette, options.sleeves);
   }
 }
+const PIN = ['pin'] as const, PIN_OR_POCKET = ['pin', 'pocket'] as const;
+/** Positions on the newer silhouettes, in the finished model's own coordinates
+ * (left and right as viewed). Neither colourway moves them. */
+const PLACED_ANCHORS: Partial<Record<GarmentId, readonly AttachmentAnchor[]>> = {
+  'camp-shirt': [
+    { id: 'neckline', label: 'Collar', x: 0, y: 0.70 },
+    { id: 'chest-left', label: 'Left chest', x: -0.26, y: 0.39 },
+    { id: 'chest-right', label: 'Right chest', x: 0.26, y: 0.39 },
+  ],
+  'coat-dress': [
+    { id: 'neckline', label: 'Collar point', x: 0, y: 0.06 },
+    { id: 'collar-left', label: 'Left collar', x: -0.38, y: 0.22, only: PIN },
+    { id: 'collar-right', label: 'Right collar', x: 0.38, y: 0.22, only: PIN },
+    { id: 'waist-left', label: 'Left waist', x: -0.23, y: -0.30 },
+    { id: 'waist', label: 'Centre waist', x: 0, y: -0.30 },
+    { id: 'waist-right', label: 'Right waist', x: 0.23, y: -0.30 },
+    { id: 'hip-left', label: 'Left pocket', x: -0.34, y: -0.62, only: PIN_OR_POCKET },
+    { id: 'hip-right', label: 'Right pocket', x: 0.34, y: -0.62, only: PIN_OR_POCKET },
+  ],
+  'fit-flare': [
+    { id: 'neckline', label: 'Neckline', x: 0, y: 0.36 },
+    { id: 'chest-left', label: 'Left chest', x: -0.20, y: 0.16 },
+    { id: 'chest-right', label: 'Right chest', x: 0.20, y: 0.16 },
+    { id: 'waist-left', label: 'Left waist', x: -0.19, y: -0.04 },
+    { id: 'waist', label: 'Centre waist', x: 0, y: -0.04 },
+    { id: 'waist-right', label: 'Right waist', x: 0.19, y: -0.04 },
+  ],
+  gown: [
+    { id: 'shoulder', label: 'Shoulder', x: 0.15, y: 0.66, only: PIN },
+    { id: 'waist', label: 'Empire waist', x: 0, y: 0.33 },
+  ],
+  'swing-coat': [
+    { id: 'neckline', label: 'Closure', x: 0, y: 0.24 },
+    { id: 'collar-left', label: 'Left lapel', x: -0.36, y: 0.66, only: PIN },
+    { id: 'collar-right', label: 'Right lapel', x: 0.36, y: 0.66, only: PIN },
+    { id: 'hip-left', label: 'Left pocket', x: -0.33, y: -0.35, only: PIN_OR_POCKET },
+    { id: 'hip-right', label: 'Right pocket', x: 0.33, y: -0.35, only: PIN_OR_POCKET },
+  ],
+  capelet: [
+    { id: 'neckline', label: 'Clasp', x: 0, y: 0.82 },
+  ],
+  'wrap-top': [
+    { id: 'neckline', label: 'Wrap closure', x: 0, y: 0.24 },
+    { id: 'waist', label: 'Waist', x: 0, y: 0.02 },
+  ],
+  // The apron is the whole width of the square, so its accessories are folded larger (attachmentSize).
+  apron: [
+    { id: 'neckline', label: 'Bib', x: 0, y: 0.55 },
+    { id: 'waist', label: 'Waist', x: 0, y: 0.10 },
+    { id: 'hip-left', label: 'Left pocket', x: -0.42, y: -0.22, only: PIN_OR_POCKET },
+    { id: 'hip-right', label: 'Right pocket', x: 0.42, y: -0.22, only: PIN_OR_POCKET },
+  ],
+  // In the clutch's own coordinates; it is shown turned an eighth, so this is the point of the flap.
+  clutch: [
+    { id: 'clasp', label: 'Flap point', x: -0.1, y: 0.1, only: PIN },
+  ],
+};
 /** Garment-specific points in the resting model, rather than generic body labels.
  * The skirt's waistband is asymmetric, and the vest has two narrow front panels. */
 export function attachmentAnchors(id: GarmentId, top: number, bottom: number, options: GarmentOptions = DEFAULT_OPTIONS): AttachmentAnchor[] {
   // The kimono's one position is the waist, for the obi.
   if (id === 'kimono') return kimonoAnchors({ ...DEFAULT_KIMONO, side: options.kimonoSide });
-  // These new silhouettes have no reviewed attachment positions yet.
+  // Placed by eye on each finished piece (Claude, 2026-11-24, at Charlie's request) and
+  // audited by check-attachments: every accessory allowed at a position lies wholly on paper.
+  const placed = PLACED_ANCHORS[id];
+  if (placed) return placed.map(a => ({ ...a }));
+  // The other new silhouettes have no reviewed attachment positions yet.
   if (garmentExperiment(id)) return [];
   if (id === 'skirt') return [
     { id: 'waist-left', label: 'Left waistband', x: -0.10, y: 0.57 },
@@ -124,5 +193,6 @@ export function attachmentAnchors(id: GarmentId, top: number, bottom: number, op
   ];
 }
 export function attachmentSize(id: GarmentId): number {
-  return id === 'skirt' || id === 'vest' || id === 'pleats' ? 0.75 : 1;
+  // The gown's bodice and the fit-and-flare's waist are narrow, and the capelet is short; accessories are folded smaller for them.
+  return id === 'skirt' || id === 'vest' || id === 'pleats' || id === 'gown' ? 0.75 : id === 'fit-flare' || id === 'capelet' ? 0.8 : id === 'apron' ? 1.4 : 1;
 }

@@ -119,7 +119,7 @@ export class StudioControls {
     this.note.textContent = accessoryMode ? activeAccessory === 'bow' ? `Two-piece bow · wing ${wing + 1} of 2` : `${accessoryName} · separate square`
       : finished ? attached && anchors.length === 0 ? `${accessoryName} kept aside · this garment has no place for it` : 'Accessory optional · left/right as viewed' : 'Fold first, then add an accessory';
     const experiment = garmentExperiment(id);
-    if (experiment && !accessoryMode) this.note.textContent = `${experiment}${attached ? ' · accessory kept aside' : ''}`;
+    if (experiment && !accessoryMode) this.note.textContent = `${experiment}${attached && anchors.length === 0 ? ' · accessory kept aside' : ''}`;
     const accessoryExperiment = ACCESSORIES.find(a => a.id === activeAccessory)?.experiment;
     if (accessoryExperiment && (accessoryMode || attached && !experiment)) this.note.textContent = accessoryExperiment;
     this.note.classList.toggle('experiment-note', !!experiment && !accessoryMode || !!accessoryExperiment && (accessoryMode || attached));

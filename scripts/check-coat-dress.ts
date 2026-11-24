@@ -46,7 +46,8 @@ assert.equal(DEFAULT_OPTIONS.coatSide, DEFAULT_COAT_DRESS.coat);
 assert.deepEqual(buildGarment('coat-dress'), buildCoatDress());
 assert.deepEqual(buildGarment('coat-dress', { ...DEFAULT_OPTIONS, coatSide: 'print' }), buildCoatDress({ ...DEFAULT_COAT_DRESS, coat: 'print' }));
 assert.equal(SQUARE_CM, 20);
-assert.deepEqual(attachmentAnchors('coat-dress', 1, -1), [], 'Do not invent attachment anchors');
+// Positions were placed and reviewed on 2026-11-24 (docs/placement-review/REVIEW.md); footprints are audited by check-attachments.
+assert.deepEqual(attachmentAnchors('coat-dress', 1, -1).map(a => a.id), ['neckline', 'collar-left', 'collar-right', 'waist-left', 'waist', 'waist-right', 'hip-left', 'hip-right'], 'The coat-dress keeps its reviewed attachment positions');
 assert(garmentExperiment('coat-dress'), 'the coat-dress is listed as an experiment');
 const [decision] = garmentDecisions('coat-dress');
 assert.equal(decision.id, 'coatSide');

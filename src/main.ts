@@ -14,6 +14,7 @@ import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
 import { DisplayCamera } from './app/displayCamera';
 import { PAPERS, findPaper } from './papers';
+import type { PaperDesign } from './papers/types';
 import { rotationCheckPaper } from './papers/rotationCheck';
 import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
@@ -28,7 +29,7 @@ import { PrintPositionPanel } from './ui/printPositionPanel';
 import { BoardSource, Pinboard } from './ui/pinboard';
 import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
-import { StartingPoint, savedStart } from './papers/startingPoints';
+import { StartingPoint, sameStart, savedStart, suggestedStarts } from './papers/startingPoints';
 
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -259,6 +260,23 @@ function applyStart(s: StartingPoint) {
   quarterTurns = ((Math.trunc(s.turns) % 4) + 4) % 4;
   printPosition = normalizePosition(paper, s);
 }
+/**
+ * Where a paper begins on a piece: the person's saved start, or, for a curated
+ * paper, the first suggestion for that design on its default colourway. Other
+ * papers begin as drawn.
+ */
+function beginning(key: string, designId: string, design: PaperDesign): StartingPoint | undefined {
+  return savedStart(key, design.id) ?? (design.curation === 'curated' ? suggestedStarts(design.id, designId)[0] : undefined);
+}
+/** The start most recently applied without being pressed, so it does not follow the paper to another piece. */
+let begunFrom: StartingPoint | null = null;
+function begin(key: string, designId: string) {
+  const start = beginning(key, designId, paper), now = { turns: quarterTurns, ...printPosition };
+  if (start) applyStart(start);
+  // A placement that only came from the last piece's start goes back to as drawn; one the person set is kept.
+  else if (begunFrom && sameStart(begunFrom, now)) applyStart({ turns: 0, ...ORIGINAL });
+  begunFrom = start ? { turns: quarterTurns, ...printPosition } : null;
+}
 const positionPanel = new PrintPositionPanel(app, {
   change: p => { printPosition = normalizePosition(paper, p); applyPaper(); },
   start: s => { applyStart(s); applyPaper(); },
@@ -295,11 +313,13 @@ if (square > 0) pinboard.rememberStartingSquare(`garment:${garmentId}`, square);
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
     if (id !== paper.id) {
-      printPosition = { ...ORIGINAL };
+      const turnsAsSet = begunFrom && sameStart(begunFrom, { turns: quarterTurns, ...printPosition }) ? 0 : quarterTurns;
+      printPosition = { ...ORIGINAL }; quarterTurns = turnsAsSet;
       paper = findPaper(id);
-      // A start the person saved for this paper on this piece is where it begins.
-      const mine = savedStart(placementPiece().key, id);
-      if (mine) applyStart(mine);
+      // A saved start, or a curated paper's suggestion for this piece, is where it begins.
+      const piece = placementPiece(), start = beginning(piece.key, piece.designId, paper);
+      if (start) applyStart(start);
+      begunFrom = start ? { turns: quarterTurns, ...printPosition } : null;
     }
     applyPaper();
   },
@@ -416,8 +436,7 @@ function changeGarment(id: GarmentId) {
   designProgress.set(garmentId, controller.step);
   garmentId = id;
   // The same paper can begin differently on each piece: use the start saved for this one.
-  const mine = savedStart(startKey(id), paper.id);
-  if (mine) applyStart(mine);
+  begin(startKey(id), colourway(id) ? '' : id);
   replaceConstruction(buildGarment(id, garmentOptions));
   controller.jumpTo(designProgress.get(id) ?? 0);
 }

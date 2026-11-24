@@ -1,4 +1,4 @@
-# Placement review and starting points (Claude, 2026-11-21)
+# Placement review and starting points (Claude, 2026-11-21 and 24)
 
 Branch `claude/starting-points` from main `b522124`, at Charlie's request in a Claude
 chat. He asked for an outside look at where papers and folds could be better, a way to
@@ -93,17 +93,64 @@ measure ranks what to show; it does not know what looks good. Suggestions were c
 each design's default shape and default colourway and are offered only on the default
 colourway.
 
-## Choices left to Charlie
+## Second pass (2026-11-24)
 
-They are set out with pictures in the review page's Findings tab. In short:
+Charlie answered the first pass: begin curated papers from their suggestion, add
+accessory positions wherever a piece is competent, take a first pass at the weaker folds,
+and leave a review note for Astra, which is [REVIEW.md](REVIEW.md).
 
-1. Whether a paper should *begin* from a suggestion on pieces that hide it as drawn
-   (33 paper-and-piece pairs lose a motif as drawn).
-2. Border print: half a turn on pieces cut from the top of the square.
-3. Plain reverses on 13 of the 17 curated papers, which make the reverse colourways flat.
-4. Letting Midnight orchard (and perhaps Reverse garden and Open stems) slide.
-5. Open stems' reverse and Oat linen's face are close to the board's colour.
-6. Accessory positions for the coat-dress, gown, fit-and-flare, camp shirt, swing coat
-   and capelet, which have none.
-7. Refolds for the hat, boots, boat-neck top, apron and tunic; pleat depth on the
-   pleated skirt.
+**Curated papers begin from their suggestion.** Choosing Border print or Plum scatter for
+a piece that has a suggestion starts there (13 and 8 pieces). A saved start still wins,
+and so does a link that names a turn or position. Experimental papers are offered theirs
+and begin as drawn. A start applied this way does not follow the paper to another piece
+or paper; a turn the person made is kept as before. A link that names only a paper opens
+as drawn, so existing links and checks see no change.
+
+**Accessory positions on nine more pieces** (`PLACED_ANCHORS` in `src/fold/garments.ts`):
+camp shirt 3, coat-dress 8, fit-and-flare 6, gown 2, swing coat 5, capelet 1, cross-wrap
+top 2, clutch 1, apron 4. New position ids `collar-left`, `collar-right`, `shoulder`,
+`hip-left`, `hip-right`, `clasp`. A position may now name the accessories it accepts: a
+collar, shoulder or clasp takes the pin, a hip takes the pin or the patch pocket. The
+accessories and their own position lists are unchanged. `attachmentSize` is 0.75 for the gown, 0.8 for the fit-and-flare and
+capelet, 1.4 for the apron.
+
+![A sample of the new positions, photographed in the app](accessories.jpg)
+
+**A note fixed.** A finished experimental piece with an accessory showing no longer says
+"accessory kept aside".
+
+**Fold sketches** (`experiments/placement/refolds.ts`, Refolds tab of the review page;
+not in the app): wide-leg trousers, an ankle boot with a cuff, the boat-neck top with
+short sleeves, a hat with a band. `node --import tsx experiments/placement/validate-refolds.ts`
+runs the draft gates and prints the metrics; two of the four exceed the hinge-stack limit
+the simple folds are held to, which REVIEW.md sets out.
+
+**Suggestions only:** accessories (one per piece is the limit that matters) and the
+pinboard (where new pins land, a recipe on each pin, a materials line, named boards).
+They are in the review page's Findings tab.
+
+### Checks for the second pass
+
+- `npm run typecheck`, `npm test`, `npm run build`: passed.
+- `check-attachments.ts`: 594 placements, none outside retained paper.
+- Seven existing checks had assertions changed on purpose; REVIEW.md lists each.
+- `check-starting-points-browser.cjs` at 1400 and 390 px, extended for the new beginning
+  rule: passed.
+- Existing browser checks re-run on this pass, all passed: `check-positioning-browser.cjs`
+  (dev server), `check-swing-coat-phone.cjs` and `check-twice-folded-browser.cjs` (served
+  build). A finished coat-dress at 390 × 844 and 844 × 390 keeps 305 px and 99 px of
+  display area under the taller toolbar, with no sideways scroll.
+- Not run: every browser check that needs a frozen baseline build, including
+  `check-companion-browser.cjs`, which I edited. CI cannot run this month.
+
+## Choices still open
+
+Set out with pictures in the review page's Findings tab:
+
+1. Plain reverses on 13 of the 17 curated papers, which make the reverse colourways flat.
+2. Letting Midnight orchard (and perhaps Reverse garden and Open stems) slide.
+3. Open stems' reverse and Oat linen's face are close to the board's colour.
+4. Whether to bring in any of the four fold sketches, and how.
+5. Letting a piece wear more than one accessory.
+6. The pinboard list.
+7. The pleated skirt's default depth.

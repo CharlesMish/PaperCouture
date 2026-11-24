@@ -1,3 +1,18 @@
+# Paper Couture — accessories, beginnings and fold sketches (Claude, 2026-11-24)
+
+Second pass on `claude/starting-points`, after Charlie's answers. **Astra: start with
+[docs/placement-review/REVIEW.md](docs/placement-review/REVIEW.md).** CI cannot run this
+month, so nothing on this branch has been through the workflows.
+
+- A curated paper begins from its suggestion when chosen for a piece that has one.
+- 32 accessory positions on nine pieces that had none (`PLACED_ANCHORS`); new position
+  ids; a position may name the accessories it accepts. The accessories are unchanged.
+- Seven checks had "no anchors" assertions replaced on purpose (listed in REVIEW.md).
+  One of them, `check-companion-browser.cjs`, I could not run.
+- Four fold sketches outside the app (`experiments/placement/refolds.ts`): trousers, a
+  cuffed boot, a short-sleeved top, a banded hat.
+- No existing fold, paper drawing, default, link or saved board changed.
+
 # Paper Couture — placement review and starting points (Claude, 2026-11-21)
 
 Branch `claude/starting-points` from main `b522124`, at Charlie's request in a Claude

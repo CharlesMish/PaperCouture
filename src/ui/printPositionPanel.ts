@@ -221,7 +221,7 @@ export class PrintPositionPanel {
     this.drawSheet();
     this.refresh();
     this.readout.textContent = paper.placement
-      ? `Right ${Math.round(position.x * 100)}% · Up ${Math.round(position.y * 100)}% of the sheet. New paper starts at its original position.`
+      ? `Right ${Math.round(position.x * 100)}% · Up ${Math.round(position.y * 100)}% of the sheet. A new paper starts as drawn, or from its starting point for this piece.`
       : 'Placement fixed for this paper.';
     if (changed) {
       this.controls.replaceChildren();

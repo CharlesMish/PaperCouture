@@ -8,6 +8,8 @@ import { FoundStart, findStarts } from '../../src/papers/landing';
 import { sameStart, suggestedStarts } from '../../src/papers/startingPoints';
 import { Piece, pieces } from './pieces';
 import { FINDINGS, FOLD_NOTES, PAPER_NOTES, Shot } from './findings';
+import { REFOLDS } from './refolds';
+import { finishedState } from '../../src/render/flatPreview';
 
 const root = document.getElementById('root')!;
 const all = pieces();
@@ -43,7 +45,7 @@ function showDetail(piece: Piece, paper: PaperDesign, turns: number, x: number, 
   const words = el('div', 'words'), close = el('button', 'close', 'Close');
   words.append(el('h3', '', `${piece.name} · ${paper.name}`),
     el('span', 'meta', `${label} · turn ${turns * 90}°${x || y ? ` · print right ${Math.round(x * 100)}% up ${Math.round(y * 100)}%` : ''}`),
-    el('span', '', 'Add this to the app’s address to open the same piece:'), el('code', '', address(piece, paper, turns, x, y)));
+    ...(piece.params ? [el('span', '', 'Add this to the app’s address to open the same piece:'), el('code', '', address(piece, paper, turns, x, y))] : [el('span', '', 'A sketch: it is not in the app yet.')]));
   close.addEventListener('click', () => { detail.hidden = true; });
   detail.replaceChildren(finishedCanvas(piece, paper, turns, x, y, 'front', 300), finishedCanvas(piece, paper, turns, x, y, 'back', 300), words, close);
   detail.hidden = false;
@@ -96,8 +98,8 @@ function row(piece: Piece, paper: PaperDesign, title: string) {
 }
 
 // ---- views
-type View = 'findings' | 'papers' | 'pieces' | 'folds';
-const VIEWS: [View, string][] = [['findings', 'Findings'], ['papers', 'By paper'], ['pieces', 'By piece'], ['folds', 'Folds']];
+type View = 'findings' | 'papers' | 'pieces' | 'folds' | 'refolds';
+const VIEWS: [View, string][] = [['findings', 'Findings'], ['papers', 'By paper'], ['pieces', 'By piece'], ['folds', 'Folds'], ['refolds', 'Refolds']];
 let view: View = 'findings', paperId = 'plum-scatter', pieceKey = 'kimono';
 const body = el('div', 'view');
 
@@ -179,6 +181,28 @@ function foldsView() {
   return wrap;
 }
 let foldPaper = 'pinstripe-lining';
+function refoldsView() {
+  const wrap = el('div', 'view'); wrap.style.padding = '0';
+  wrap.append(el('p', '', 'One new piece and three candidate refolds for pieces marked Look again, each beside the fold it would replace. They are sketches in experiments/placement/refolds.ts and are not in the app. A refold that is wanted should arrive as a choice on the old design, so the existing fold stays exact.'));
+  for (const r of REFOLDS) {
+    const card = el('article', 'finding'), now = r.replaces ? pieceOf(r.replaces) : undefined;
+    const state = finishedState(r.build()), next: Piece = { ...(now ?? all[0]), key: r.id, name: r.name, state, angle: 0, params: '' };
+    card.append(el('span', 'kind', now ? `Sketch · would replace ${now.name}` : 'Sketch · a new piece'), el('h3', '', r.name), el('p', '', r.note), el('p', 'meta', r.measured));
+    const tiles = el('div', 'tiles');
+    for (const [paperId, turns] of [['slate-grain', 0], ['pinstripe-lining', 0], ['border-print', 2]] as const) {
+      const paper = findPaper(paperId);
+      if (now) tiles.append(tile(now, paper, turns, 0, 0, `Now · ${paper.name}`));
+      tiles.append(tile(next, paper, turns, 0, 0, `Sketch · ${paper.name}`, 'suggested'));
+    }
+    if (now) tiles.append(tile(now, findPaper('pinstripe-lining'), 0, 0, 0, 'Now · back', 'turn', undefined, 'back'));
+    tiles.append(tile(next, findPaper('pinstripe-lining'), 0, 0, 0, 'Sketch · back', 'suggested', undefined, 'back'));
+    if (!now) for (const id of ['twice-folded', 'indigo-lattice', 'sardine-run']) tiles.append(tile(next, findPaper(id), 0, 0, 0, `Sketch · ${findPaper(id).name}`, 'suggested'));
+    card.style.setProperty('--rows', String(card.children.length));
+    card.append(tiles);
+    wrap.append(card);
+  }
+  return wrap;
+}
 function shotTile(s: Shot) {
   const piece = pieceOf(s.piece), paper = findPaper(s.paper);
   return tile(piece, paper, s.turns ?? 0, s.x ?? 0, s.y ?? 0, s.label, 'turn', undefined, s.view ?? 'front');
@@ -194,7 +218,8 @@ function findingsView() {
       if (para.startsWith('- ')) { const ul = card.lastElementChild instanceof HTMLUListElement ? card.lastElementChild : card.appendChild(el('ul')); ul.append(el('li', '', para.slice(2))); }
       else card.append(el('p', '', para));
     }
-    if (f.shots?.length) { const t = el('div', 'tiles'); for (const s of f.shots) t.append(shotTile(s)); card.append(t); }
+    if (f.image) { const img = el('img', 'evidence'); img.src = (import.meta.env.DEV ? '/docs/placement-review/' : './') + f.image.file; img.alt = f.image.alt; img.loading = 'lazy'; card.style.setProperty('--rows', String(card.children.length)); card.append(img); }
+    if (f.shots?.length) { const t = el('div', 'tiles'); for (const s of f.shots) t.append(shotTile(s)); card.style.setProperty('--rows', String(card.children.length)); card.append(t); }
     wrap.append(card);
   }
   return wrap;
@@ -210,7 +235,7 @@ function render() {
     t.addEventListener('click', () => { view = id; render(); try { location.hash = id; } catch { /* the hash is a convenience */ } });
     tabs.append(t);
   }
-  body.replaceChildren(view === 'papers' ? papersView() : view === 'pieces' ? piecesView() : view === 'folds' ? foldsView() : findingsView());
+  body.replaceChildren(view === 'papers' ? papersView() : view === 'pieces' ? piecesView() : view === 'folds' ? foldsView() : view === 'refolds' ? refoldsView() : findingsView());
   root.replaceChildren(top, tabs, body, detail);
 }
 function fromHash() {

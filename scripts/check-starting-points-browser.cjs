@@ -52,6 +52,29 @@ fs.mkdirSync(out, { recursive: true });
     await shot('border-print-jacket'); await done();
     ok(`${width}px: fixed paper shows four turns and one suggestion; choosing it turns the sheet twice`);
 
+    // Choosing a curated paper for a piece begins from its suggestion; a link still opens as drawn.
+    await page.goto(`${base}/?design=jacket&step=99&view=display`); await settle();
+    const pick = async name => { await page.getByRole('radio', { name, exact: true }).click(); await settle(); };
+    await pick('Border print');
+    let b = await state(); assert.equal(b.turn, 2, 'Border print begins two turns round on the jacket'); assert.equal(b.x, 0);
+    // The start does not follow the paper to a piece that has none, and the dress keeps its hem.
+    await page.getByLabel('Garment design').selectOption('dress'); await settle();
+    assert.equal((await state()).turn, 0, 'the dress shows Border print as drawn');
+    await page.getByLabel('Garment design').selectOption('jacket'); await settle();
+    assert.equal((await state()).turn, 2);
+    // Another paper does not inherit the turn that only the suggestion made.
+    await pick('Oat linen'); assert.equal((await state()).turn, 0);
+    // A turn the person makes is theirs: it is kept across papers, as before.
+    await page.getByRole('button', { name: /^Turn paper/ }).click(); await settle(); assert.equal((await state()).turn, 1);
+    await pick('Slate grain'); assert.equal((await state()).turn, 1, 'a turn the person set is kept');
+    // An experimental paper is offered its suggestion but begins as drawn.
+    await page.goto(`${base}/?design=clutch&step=99&view=display`); await settle();
+    await pick('Corner bloom'); b = await state(); assert.equal(b.turn, 0); assert.equal(b.x, 0);
+    // A sliding curated paper begins at its suggested position.
+    await page.goto(`${base}/?design=kimono&step=99&view=display`); await settle();
+    await pick('Plum scatter'); b = await state(); assert.equal(b.x, -0.2265625); assert.equal(b.turn, 0);
+    ok(`${width}px: a curated paper begins from its suggestion when chosen, goes back to as drawn on a piece without one, and never overrides a turn the person made; an experimental paper begins as drawn`);
+
     // A sliding motif the kimono hides as drawn: a found placement, then the old nudges still work.
     await page.goto(`${base}/?design=kimono&paper=plum-scatter&step=99&view=display`); await settle();
     await open();

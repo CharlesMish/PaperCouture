@@ -1,12 +1,12 @@
 // Written findings for the placement review. Pictures are drawn live from the
 // same fold and paper code as the app; only the words here are hand-written.
-// Written 2026-11-21 against main b522124. Numbers come from this page's own
+// Written 2026-11-21 against main b522124; revised 2026-11-24 after Charlie's answers. Numbers come from this page's own
 // measurements (flat finished drawing, default shapes) unless a line says otherwise.
 export interface Shot { piece: string; paper: string; turns?: number; x?: number; y?: number; view?: 'front' | 'back'; label: string }
-export interface Finding { group: string; kind: 'done' | 'choice' | 'note'; title: string; body: string[]; shots?: Shot[] }
+export interface Finding { group: string; kind: 'done' | 'choice' | 'note'; title: string; body: string[]; shots?: Shot[]; image?: { file: string; alt: string } }
 export interface FoldNote { tier: 'Anchor' | 'Solid' | 'Look again'; note: string }
 
-const DONE = 'Changed on the branch', PAPERS = 'Papers and placement', FOLDS = 'Folds';
+const DONE = 'Changed on the branch', PAPERS = 'Papers and placement', FOLDS = 'Folds', DRESSING = 'Accessories and the pinboard';
 
 export const FINDINGS: Finding[] = [
   { group: DONE, kind: 'done', title: 'Position print now shows the finished piece',
@@ -21,8 +21,9 @@ export const FINDINGS: Finding[] = [
       '- The four turns, for every paper.',
       '- For a sparse print that slides: the position that keeps the most of it in view, and a centred one when that differs. These are measured on the spot for the piece and shape you have, so they also cover the silhouette choices.',
       '- Suggestions from this review, by name. There are 27, listed under By paper with a dark border.',
+      '- A curated paper now begins from its suggestion when you choose it for a piece that has one (Charlie, 24 November). That is Border print on 13 pieces and Plum scatter on 8. Experimental papers are offered theirs and begin as drawn. The start does not follow the paper to the next piece, and a turn you made yourself is kept.',
       '- Yours. Save as my start keeps the current turn and position for this paper on this piece. From then on, choosing that paper for that piece begins there. Each piece and colourway keeps its own, so one paper can sit differently on the kimono, the skirt and the tie.',
-      'Nothing else changes on its own. Papers still start as drawn, links that name a placement still win, and saved boards are untouched.',
+      'Links that name a placement still win, and saved boards are untouched.',
     ],
     shots: [
       { piece: 'kimono', paper: 'plum-scatter', label: 'As drawn' },
@@ -31,27 +32,41 @@ export const FINDINGS: Finding[] = [
       { piece: 'necktie', paper: 'plum-scatter', turns: 1, x: -0.07421875, y: -0.07421875, label: 'Blossom under the knot' },
     ] },
 
-  { group: PAPERS, kind: 'choice', title: 'Five motif papers start out of sight on a third of the wardrobe',
+  { group: DONE, kind: 'done', title: 'Accessory positions on nine more pieces',
     body: [
-      'Plum scatter, Corner bloom, Ginkgo pairs, Reed study and Reverse garden each have a small motif on a plain ground. On 33 paper-and-piece pairs the piece keeps under 12% of the motif as drawn, while another turn or position keeps more than 40%. Plum scatter, which is curated, is plain on the wrap skirt, lapel vest, cross-wrap top, kimono, capelet and swing coat.',
-      'The branch offers the better starts and leaves the beginning alone. Three ways to go from here:',
-      '- Keep it as it is: as drawn first, better starts one press away.',
-      '- Begin from the suggestion where this review has one. One line of code, and it changes what a fresh visitor sees for those pairs.',
-      '- Begin from the measured best everywhere. Least work for the player, but it takes away the small pleasure of finding the spot, and the measure prefers one-sided placements.',
-      'I would take the second, and only for curated papers.',
+      'The camp shirt, coat-dress, fit-and-flare, gown, swing coat, capelet, cross-wrap top, clutch and apron had nowhere to put an accessory. They now have 32 positions between them, placed by eye on each finished piece.',
+      '- Camp shirt: collar (a bow there is a bow tie), and a chest pocket either side.',
+      '- Coat-dress: the collar point, either collar, three along the waist for a sash, obi or tulip, and a pocket on each hip.',
+      '- Fit-and-flare: neckline, chest and waist. Gown: the shoulder where the sash begins, and the empire waist.',
+      '- Swing coat: the closure, either lapel, a pocket on each hip. Capelet: the clasp.',
+      '- Cross-wrap top: where the fronts cross, and the waist. Clutch: a pin at the point of the flap. Apron: bib, waist, a pocket on each side.',
+      'Every accessory allowed at a position lies wholly on paper; the repository’s own footprint audit checks all 594 placements. A collar, shoulder or clasp takes only the pin, and a hip takes the pin or the pocket, so the wide bow is not offered there. Accessories are folded a little smaller for the gown, fit-and-flare and capelet, and larger for the apron.',
+      'The picture shows a few of them in the app. They are first placements: where a pin sits is yours to judge, and each is one line in src/fold/garments.ts.',
+    ],
+    image: { file: 'accessories.jpg', alt: 'Accessories placed on the nine pieces, photographed in the app' } },
+  { group: DONE, kind: 'done', title: 'A finished piece with an accessory no longer says it was kept aside',
+    body: [
+      'On the newer designs the note under the toolbar ended with “accessory kept aside” whenever an accessory was attached, including on the kimono while its obi was showing. It now says so only when the piece has no place for that accessory.',
+    ] },
+
+  { group: PAPERS, kind: 'note', title: 'Five motif papers start out of sight on a third of the wardrobe',
+    body: [
+      'Plum scatter, Corner bloom, Ginkgo pairs, Reed study and Reverse garden each have a small motif on a plain ground. On 33 paper-and-piece pairs the piece keeps under 12% of the motif as drawn, while another turn or position keeps more than 40%.',
+      'Decided: curated papers begin from the suggestion. For Plum scatter that covers the kimono, wrap skirt, cross-wrap top, coat-dress, camp shirt, necktie, capelet and zori. It still starts plain on the lapel vest and swing coat, where I found no placement I would put my name to; the panel offers the measured ones.',
+      'The other four are experimental and begin as drawn, with better starts one press away.',
     ],
     shots: [
       { piece: 'skirt', paper: 'plum-scatter', label: 'Wrap skirt as drawn' },
-      { piece: 'skirt', paper: 'plum-scatter', turns: 2, x: 0.296875, y: 0.296875, label: 'Blossom on the wrap' },
+      { piece: 'skirt', paper: 'plum-scatter', turns: 2, x: 0.296875, y: 0.296875, label: 'Now begins here' },
       { piece: 'coat-dress', paper: 'plum-scatter', label: 'Coat-dress as drawn' },
-      { piece: 'coat-dress', paper: 'plum-scatter', x: -0.296875, y: 0.2265625, label: 'Blossom on the collar' },
+      { piece: 'coat-dress', paper: 'plum-scatter', x: -0.296875, y: 0.2265625, label: 'Now begins here' },
       { piece: 'clutch', paper: 'corner-bloom', label: 'Clutch as drawn' },
-      { piece: 'clutch', paper: 'corner-bloom', turns: 2, y: 0.07421875, label: 'Bloom on the flap' },
+      { piece: 'clutch', paper: 'corner-bloom', turns: 2, y: 0.07421875, label: 'Offered: Bloom on the flap' },
     ] },
-  { group: PAPERS, kind: 'choice', title: 'Border print wants half a turn on anything cut from the top of the square',
+  { group: PAPERS, kind: 'note', title: 'Border print wants half a turn on anything cut from the top of the square',
     body: [
       'The wave band sits at the foot of the sheet. That is right for the dress, gown, pleated skirt, fit-and-flare and camp shirt, where it becomes a hem. Tops, outerwear and small pieces are made from the upper part of the square and never see it.',
-      'Two turns bring the band to the yoke, collar, sleeve hems, hatband, boot cuffs and the rim of the fan. Thirteen of the 27 suggestions are this one move. It is the clearest case for a per-piece start, because the paper is fixed and curated and nothing else can rescue it.',
+      'Two turns bring the band to the yoke, collar, sleeve hems, hatband, boot cuffs and the rim of the fan. Thirteen of the 27 suggestions are this one move, and Border print now begins that way on those pieces.',
     ],
     shots: [
       { piece: 'jacket', paper: 'border-print', label: 'Box jacket as drawn' }, { piece: 'jacket', paper: 'border-print', turns: 2, label: 'Waves across the yoke' },
@@ -107,26 +122,19 @@ export const FINDINGS: Finding[] = [
       { piece: 'kimono', paper: 'sardine-run', label: 'Sardine run as drawn' }, { piece: 'kimono', paper: 'sardine-run', turns: 1, label: 'One turn' },
     ] },
 
-  { group: FOLDS, kind: 'choice', title: 'The best folds are dead ends for dressing up',
+  { group: FOLDS, kind: 'choice', title: 'Trousers, by not separating the legs',
     body: [
-      'Only six of the 27 designs take an accessory: the dress, box jacket, wrap skirt, lapel vest, pleated skirt and kimono. Only those, the colour-side pieces and the brooch offer a choice while folding. The coat-dress, gown, fit-and-flare, camp shirt, swing coat and capelet have no attachment positions and no options.',
-      'So the more convincing a piece looks, the less you can do with it afterwards. Nothing in the folds prevents this. Positions are a short list per design, and these would be natural:',
-      '- Camp shirt: a patch pocket on the chest, a pin at the collar.',
-      '- Coat-dress: a pin on the collar, a sash or obi at the waist.',
-      '- Fit-and-flare: a sash at the waist, a bow at the neckline.',
-      '- Gown: a pin at the shoulder, a sash under the bust.',
-      '- Swing coat and capelet: a pin or bow at the neck.',
-      'I have not added them, because where a pin sits is yours to judge. It is the change I would make first.',
+      'There are no trousers in the wardrobe. The Refolds tab has a sketch: two leg panels that meet under a waistband of the other colour and part toward the hem over the backing. Five simple folds. It is wide and flared, closest to hakama, which goes with the kimono, zori and fan you already have.',
+      'It is the one new piece I would add before anything else, and the one I would most like a second opinion on: the centre of the waistband is thick.',
     ] },
-  { group: FOLDS, kind: 'choice', title: 'Six early pieces read as shapes more than garments',
+  { group: FOLDS, kind: 'choice', title: 'Three refolds are sketched; two I would take',
     body: [
-      'Folded hat, Boat-neck top, Bib apron, One-shoulder tunic and both ankle boots have no part that says what they are once the paper is plain. The Folds tab shows each with a note. In short:',
-      '- Hat: a trapezoid that never shows the reverse. One more turn of the lower edge would give a band.',
-      '- Boots: no reverse and no cuff. Border print with two turns shows how well a band at the top of the shaft works; a turned cuff would do it with any paper.',
-      '- Boat-neck top: reads as a bucket. A small outward fold at each top corner, like the dress’s sleeve step, would give it shoulders.',
-      '- Bib apron: the bib is nearly as wide as the skirt, so it reads as a house. Steeper corner folds would give it a waist.',
-      '- Tunic: the gown does the same idea with a sash and length. Give the tunic the sash, or park it.',
-      'Each is a refold, and each could change what a paper shows. That is the kind of change this page is for: fold the candidate, open By piece, and compare all 40 papers before deciding.',
+      'Folded hat, Boat-neck top, Bib apron, One-shoulder tunic and both ankle boots have no part that says what they are once the paper is plain. The Refolds tab has a candidate for three of them, each beside the fold it would replace.',
+      '- Ankle boot with a cuff: one fold added at the start. A clear improvement to look at, and it removes a 0.3 mm sliver the current boot has. It is two layers thicker at one hinge than the simple folds are allowed to be, which someone should weigh.',
+      '- Boat-neck top with short sleeves: the side flaps folded back out from the shoulder, as the dress does. It reads as a top.',
+      '- Hat with a band: better than the trapezoid, and still the weakest.',
+      'They are sketches outside the app. Changing an existing fold would break every baseline that holds it exact, so the way in is a choice on the old design (Cuff: plain or turned down) with the old fold as the default until you flip it.',
+      'Apron: I tried waist ties and could not get a neat one from simple folds. Pockets and a waistband do more for it, so it has accessory positions instead. Tunic: the gown does the same idea better; I would park it.',
     ],
     shots: [
       { piece: 'hat', paper: 'slate-grain', label: 'Folded hat' }, { piece: 'boat-top', paper: 'slate-grain', label: 'Boat-neck top' },
@@ -146,6 +154,28 @@ export const FINDINGS: Finding[] = [
       '- Gown and fit-and-flare: a crease under 0.3 mm long. Ankle boots: a facet 0.3 mm wide.',
       'None of this shows on screen. For a first try in real paper, fold these from 15 cm or larger and treat the suggested sizes as board sizes only. The kimono, dress and coat-dress are still the three I would fold first.',
     ] },
+
+  { group: DRESSING, kind: 'choice', title: 'One accessory at a time is the limit that matters now',
+    body: [
+      'A piece can wear one accessory. With positions on the coat-dress and camp shirt, the first thing you want is two: a pin on the collar and an obi at the waist, or a pocket and a bow tie. Letting a piece keep one accessory per position would do more for dressing up than any new accessory.',
+      'Smaller things I noticed while placing them:',
+      '- The folded sash is small everywhere. At a waist it reads as a buckle. It wants to be a length that follows the garment’s width, or a second, longer sash.',
+      '- The obi is the best waist accessory on the gown, fit-and-flare and cross-wrap top, where it spans the piece. On the coat-dress and apron it covers half the waist.',
+      '- The patch pocket is tiny on the coats. A hip pocket could be half as large again.',
+      '- Obvious gaps: a belt with a buckle, a flower for a lapel, a hatband for the hat. I would add none of them before a piece can wear two.',
+    ] },
+  { group: DRESSING, kind: 'choice', title: 'The pinboard: what I would change first',
+    body: [
+      'You said the board is how you remember what you made. That is its real job, and it is not built for it yet. In the order I would do them:',
+      '- New pins land on top of the last one. Five pieces pinned are a pile showing two. A new pin should land in the nearest free space.',
+      '- A pinned piece does not show its recipe. Each already stores its design, paper, turn, print position, choices and square size. Show that as a caption when it is selected, and add “Open this piece again” so the workshop returns to exactly that state. This is the memory you were missing.',
+      '- A materials line under the photograph: “Kimono, 20 cm, Twice folded, two turns · Fan, 7.5 cm, same paper”. It turns a board into a folding plan, and it is the bridge to real paper.',
+      '- More than one board, each with a name. A board is a look; several are a lookbook. This is also where the briefs from the first review would be kept.',
+      '- Arranging is done with eight buttons. Dragging already works; a rotate handle on the selected piece and a Tidy button would replace most of the column.',
+      '- The shadow is as large as the piece and hides what is under it. Half the length and a softer edge would let overlaps read.',
+      '- Two papers are close to the board’s colours (see above). A board background that is not a paper colour would fix that for every future paper.',
+      'I changed none of this. The board has the most frozen checks in the repository, and I could not run them here.',
+    ] },
 ];
 
 export const FOLD_NOTES: Record<string, FoldNote> = {
@@ -154,22 +184,22 @@ export const FOLD_NOTES: Record<string, FoldNote> = {
   skirt: { tier: 'Solid', note: 'The wrap flap gives it away. Nearly half the front is reverse, so the reverse matters here.' },
   vest: { tier: 'Anchor', note: 'Lapels and placket read well. Most motif papers miss the narrow fronts as drawn.' },
   pleats: { tier: 'Solid', note: 'A clean skirt, but the pleats do not show at Classic depth. See Findings.' },
-  clutch: { tier: 'Anchor', note: 'An envelope is an envelope. Shown on the diagonal, so stripes always run corner to corner.' },
-  apron: { tier: 'Look again', note: 'The bib is almost as wide as the skirt, so it reads as a house. No choices, no accessories.' },
+  clutch: { tier: 'Anchor', note: 'An envelope is an envelope. Shown on the diagonal, so stripes always run corner to corner. A pin at the flap point is its clasp.' },
+  apron: { tier: 'Look again', note: 'The bib is almost as wide as the skirt, so it reads as a house. Pockets and a waistband help; it now takes both.' },
   tunic: { tier: 'Look again', note: 'A wedge with one cut corner. The gown does this better.' },
   tabard: { tier: 'Solid', note: 'A plain shield that shows a print whole. Useful as a canvas more than as a garment.' },
-  'boat-top': { tier: 'Look again', note: 'A band over a taper, with no shoulders. Reads as a bucket.' },
-  'wrap-top': { tier: 'Solid', note: 'The crossed fronts read well and turn stripes on the diagonal.' },
-  hat: { tier: 'Look again', note: 'A trapezoid with a line. Shows no reverse at all.' },
+  'boat-top': { tier: 'Look again', note: 'A band over a taper, with no shoulders. Reads as a bucket. See the sketch with short sleeves under Refolds.' },
+  'wrap-top': { tier: 'Solid', note: 'The crossed fronts read well and turn stripes on the diagonal. A pin where they cross, or an obi, suits it.' },
+  hat: { tier: 'Look again', note: 'A trapezoid with a line. Shows no reverse at all. See the banded sketch under Refolds.' },
   kimono: { tier: 'Anchor', note: 'The most recognisable piece. Keeps only two small parts of the printed face, so placement matters most here.' },
-  gown: { tier: 'Anchor', note: 'Elegant, and the sash is a good use of the reverse. A crease under 0.3 mm at 20 cm; no accessories.' },
-  'coat-dress': { tier: 'Anchor', note: 'The strongest silhouette in the set, and it shows both faces of the paper in either colourway. No accessories.' },
-  'swing-coat': { tier: 'Solid', note: 'Reads as a coat. Shows 39% print, the least of any garment, so it is a reverse-led piece.' },
-  'fit-flare': { tier: 'Anchor', note: 'The waist does a lot of work. A crease under 0.3 mm at 20 cm; no accessories.' },
-  'camp-shirt': { tier: 'Anchor', note: 'Collar, placket and cuffs all read. Fourteen steps, and nowhere to put a pocket.' },
+  gown: { tier: 'Anchor', note: 'Elegant, and the sash is a good use of the reverse. A crease under 0.3 mm at 20 cm. Now takes a pin at the shoulder and an obi or tulip at the waist.' },
+  'coat-dress': { tier: 'Anchor', note: 'The strongest silhouette in the set, and it shows both faces of the paper in either colourway. Now has eight accessory positions.' },
+  'swing-coat': { tier: 'Solid', note: 'Reads as a coat. Shows 39% print, the least of any garment, so it is a reverse-led piece. Now takes a clasp, lapel pins and hip pockets.' },
+  'fit-flare': { tier: 'Anchor', note: 'The waist does a lot of work. A crease under 0.3 mm at 20 cm. Now takes accessories at neckline, chest and waist.' },
+  'camp-shirt': { tier: 'Anchor', note: 'Collar, placket and cuffs all read. Fourteen steps. Now takes a chest pocket, and a bow at the collar is a bow tie.' },
   necktie: { tier: 'Anchor', note: 'Shown on the diagonal, so any stripe is a regimental stripe. 21 layers at 7 cm.' },
-  capelet: { tier: 'Solid', note: 'Reads once you know. The two fronts take a motif well.' },
-  'boot-left': { tier: 'Look again', note: 'An L with a slanted toe. No reverse, no cuff, no heel.' },
+  capelet: { tier: 'Solid', note: 'Reads once you know. The two fronts take a motif well, and a pin at the neck is its clasp.' },
+  'boot-left': { tier: 'Look again', note: 'An L with a slanted toe. No reverse, no cuff, no heel. See the cuffed sketch under Refolds.' },
   'boot-right': { tier: 'Look again', note: 'As the left boot.' },
   zori: { tier: 'Anchor', note: 'The thong in the other colour makes it. 16 layers at 8 cm.' },
   sensu: { tier: 'Anchor', note: 'Unmistakable, and hard on prints. See Findings.' },
