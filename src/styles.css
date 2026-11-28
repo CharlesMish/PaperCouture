@@ -247,7 +247,10 @@ button:focus-visible {
   transform: translateY(-1px) scale(1.06);
   box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ink), 0 6px 14px rgba(40, 32, 22, 0.2);
 }
-.swatch:hover:not([aria-checked='true']) { transform: translateY(-1px); }
+.swatch:hover:not([aria-checked='true']) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px var(--panel), 0 0 0 3px var(--rule);
+}
 
 .paper-name {
   margin: 2px 0 0;
