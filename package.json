@@ -41,6 +41,7 @@
     "check:zori-sensu": "node --import tsx scripts/check-zori-sensu.ts",
     "check:starting-points": "node --import tsx scripts/check-starting-points.ts",
     "build:placement": "tsc --noEmit -p experiments/placement && vite build --config vite.placement.config.ts",
+    "build:figure": "tsc --noEmit -p experiments/figure && vite build --config vite.figure.config.ts",
     "zori-sensu-pattern": "node --import tsx scripts/zori-sensu-pattern.ts"
   },
   "dependencies": {

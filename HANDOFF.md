@@ -1,3 +1,9 @@
+# Paper Couture — figure study (Claude, 2026-11-27)
+
+Branch `claude/figure-study`, stacked on PR #54. A sketch-lane page asking whether the
+wardrobe can dress a person: [docs/figure-study/NOTES.md](docs/figure-study/NOTES.md),
+and `docs/figure-study/study.html` opens by double-click. Nothing in the app changes.
+
 # Paper Couture — saved print placement and fold-choice follow-up
 
 The saved-start fix on PR #54 keeps a kimono’s saved print placement with that

@@ -1,0 +1,64 @@
+/* Layout idea: a study sheet. Each trial is a card with its question on the
+   left and the figures on a plain mounting board on the right, so the paper
+   is the only strong colour. Same tokens as the placement review. */
+:root {
+  --paper: #f2f3f1; --sheet: #fbfbfa; --ink: #1c2530; --ink-soft: #55606d; --rule: #d5d9d6;
+  --accent: #27467c; --accent-soft: #e1e8f3; --warn: #a2470f; --warn-soft: #f7e6d8; --board: #d9cdb8;
+  --display: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #14181d; --sheet: #1b2027; --ink: #e6e9ec; --ink-soft: #9aa5b1; --rule: #313943;
+    --accent: #8fb0ea; --accent-soft: #24324a; --warn: #f0a369; --warn-soft: #3d2a1c; --board: #cdbfa8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #14181d; --sheet: #1b2027; --ink: #e6e9ec; --ink-soft: #9aa5b1; --rule: #313943;
+  --accent: #8fb0ea; --accent-soft: #24324a; --warn: #f0a369; --warn-soft: #3d2a1c; --board: #cdbfa8;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 15px/1.5 var(--body); }
+button, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; margin: 0; letter-spacing: .01em; }
+h1 { font-size: 1.7rem; } h2 { font-size: 1.25rem; } h3 { font-size: 1.02rem; }
+p { margin: 0; max-width: 66ch; }
+ul { margin: 0; padding-left: 18px; max-width: 66ch; }
+.page { padding: 22px 20px 56px; display: flex; flex-direction: column; gap: 18px; max-width: 1240px; margin: 0 auto; }
+.trials { display: flex; flex-direction: column; gap: 18px; }
+.top { display: flex; flex-direction: column; gap: 8px; }
+.sources { font-size: .82rem; color: var(--ink-soft); }
+a { color: var(--accent); }
+.top p { color: var(--ink-soft); }
+.card { background: var(--sheet); border: 1px solid var(--rule); border-radius: 12px; padding: 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; }
+.words { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.kind { font: 500 .72rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); }
+.kind.warn { color: var(--warn); }
+.boardwrap { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+canvas.board { width: 100%; height: auto; display: block; background: var(--board); border-radius: 8px; }
+.captions { display: grid; gap: 8px; font-size: .84rem; color: var(--ink-soft); }
+.captions b { color: var(--ink); font-weight: 600; display: block; }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end; }
+.controls label, .controls .field { display: flex; flex-direction: column; gap: 3px; font-size: .78rem; color: var(--ink-soft); }
+.controls .seg, .controls select { font-size: .9rem; color: var(--ink); }
+select { background: var(--sheet); border: 1px solid var(--rule); border-radius: 8px; padding: 6px 10px; min-height: 36px; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: transparent; padding: 6px 12px; min-height: 36px; border-right: 1px solid var(--rule); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+table { border-collapse: collapse; font-size: .86rem; width: 100%; }
+th, td { text-align: left; padding: 5px 12px 5px 0; border-top: 1px solid var(--rule); vertical-align: top; }
+th { font-weight: 600; }
+.scroll { overflow-x: auto; }
+.three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.three > div { border: 1px solid var(--rule); border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
+.three .tag { font: 500 .72rem var(--mono); color: var(--ink-soft); }
+@media (min-width: 980px) { .card.split { grid-template-columns: minmax(0, 40ch) minmax(0, 1fr); column-gap: 26px; } }
+@media (max-width: 720px) { .three { grid-template-columns: 1fr; } }
