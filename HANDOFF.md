@@ -1,3 +1,13 @@
+# Paper Couture — saved print placement and fold-choice follow-up
+
+The saved-start fix on PR #54 keeps a kimono’s saved print placement with that
+colourway through a reload, a change of garment and a trip into the accessory
+editor. A copied link still carries its exact placement. Removing a saved start
+keeps the current view and allows the usual suggestion on the next swatch pick.
+`scripts/check-starting-points-browser.cjs` exercises these paths on the served
+production build. The [fold-choice and paper-doll handoff](docs/placement-review/ASTRA-FOLLOWUP.md)
+has three candidate decisions and a small pinboard study for independent review.
+
 # Paper Couture — accessories, beginnings and fold sketches (Claude, 2026-11-24)
 
 Second pass on `claude/starting-points`, after Charlie's answers. **Astra: start with
