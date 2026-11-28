@@ -41,5 +41,6 @@ export function findAccessory(id: AccessoryId) { return ACCESSORIES.find(a => a.
 /** The garment positions an accessory may use. Empty means it cannot be placed. */
 export function accessoryAnchors(id: AccessoryId, anchors: AttachmentAnchor[]): AttachmentAnchor[] {
   const allowed = findAccessory(id).positions;
-  return allowed ? anchors.filter(a => allowed.includes(a.id)) : anchors;
+  // A position that names its accessories decides for itself; otherwise the accessory's own list does.
+  return anchors.filter(a => a.only ? a.only.includes(id) : !allowed || allowed.includes(a.id));
 }

@@ -432,8 +432,25 @@ button:focus-visible {
 .editor-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .editor-actions [aria-pressed='true'] { background: #d7dbce; border-color: var(--ink); }
 .editor-dialog .editor-readout { font-size: .78rem; color: var(--ink-soft); }
-.print-dialog { width: 390px; }
-.print-preview { display: block; width: min(100%, 280px); height: auto; aspect-ratio: 1; margin: 12px auto; box-shadow: 0 2px 8px #302b2630; touch-action: none; }
+.print-dialog { width: 660px; }
+.print-views { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 12px 0; }
+.print-view { margin: 0; min-width: 0; }
+.print-view figcaption { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 10px; margin-top: 6px; font-size: .8rem; color: var(--ink-soft); }
+.print-preview, .print-finished { display: block; width: 100%; height: auto; aspect-ratio: 1; }
+.print-preview { box-shadow: 0 2px 8px #302b2630; touch-action: none; }
+.print-finished { background: #c9b99f; border-radius: 6px; }
+.print-veil { display: inline-flex; align-items: center; gap: 6px; }
+.editor-dialog .print-veil input { min-height: 0; width: 16px; height: 16px; accent-color: var(--accent); }
+.editor-dialog .print-flip { min-height: 32px; padding: 0 10px; border: 1px solid var(--rule); border-radius: 999px; background: transparent; font-size: .8rem; }
+.print-dialog h3 { margin: 4px 0 6px; font-size: .92rem; }
+.print-starts { display: flex; gap: 8px; overflow-x: auto; padding: 3px 3px 8px; margin: 0 -3px; scroll-snap-type: x proximity; }
+.editor-dialog .print-start { flex: 0 0 96px; display: flex; flex-direction: column; align-items: stretch; gap: 4px; padding: 4px 4px 6px; border: 1px solid var(--rule); border-radius: 10px; background: #fbf8f3; font-size: .74rem; line-height: 1.2; color: var(--ink); scroll-snap-align: start; }
+.print-start canvas { display: block; width: 100%; height: auto; aspect-ratio: 1; background: #c9b99f; border-radius: 6px; }
+.print-start[aria-pressed='true'] { border-color: var(--ink); box-shadow: inset 0 0 0 1px var(--ink); }
+.print-start[data-kind='saved'] span, .print-start[data-kind='suggested'] span { font-weight: 700; }
+.print-starts-busy { align-self: center; font-size: .78rem; color: var(--ink-soft); white-space: nowrap; }
+.print-foot { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.print-foot .btn-primary { margin-left: auto; }
 .print-preview.can-slide { cursor: grab; }
 .print-preview.can-slide:active { cursor: grabbing; }
 .pinboard-dialog { width: 1050px; }
@@ -457,11 +474,9 @@ button:focus-visible {
   .board-tools select { width: 100%; max-width: none; }
 }
 @media (max-height: 540px) and (min-width: 720px) {
-  .print-dialog { width: 680px; display: grid; grid-template-columns: 220px 1fr; gap: 8px 20px; align-items: center; }
-  .print-dialog:not([open]) { display: none; }
-  .print-dialog h2 { grid-column: 1 / -1; }
-  .print-preview { grid-column: 1; grid-row: 2 / 6; margin: 0; }
-  .print-dialog > :not(h2):not(canvas) { grid-column: 2; }
+  .print-dialog { width: 760px; }
+  .print-views { grid-template-columns: 170px 170px 1fr; }
+  .print-dialog p { margin: 4px 0 8px; }
   .board-tools .btn { font-size: .85rem; }
 }
 @media (max-height: 540px) and (min-width: 720px) {

@@ -1,6 +1,6 @@
 import './styles.css';
 import * as THREE from 'three';
-import { garmentDecisions, optionsFromParams, optionsToParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId } from './fold/garmentOptions';
+import { garmentDecisions, optionsFromParams, optionsToParams, decisionStep, selectOption, sharedFoldPrefix, DecisionId, DEFAULT_OPTIONS } from './fold/garmentOptions';
 import { buildBowCentre } from './fold/bowCentre';
 import { centroid } from './fold/geometry';
 import { FoldHandles, FoldTarget, dragVector } from './ui/foldHandles';
@@ -14,6 +14,7 @@ import { FoldController } from './app/controller';
 import { ViewSwitch } from './app/viewSwitch';
 import { DisplayCamera } from './app/displayCamera';
 import { PAPERS, findPaper } from './papers';
+import type { PaperDesign, PrintPosition } from './papers/types';
 import { rotationCheckPaper } from './papers/rotationCheck';
 import { makePaperTextures, PaperTextures } from './render/textures';
 import { SheetView } from './render/sheetView';
@@ -28,6 +29,7 @@ import { PrintPositionPanel } from './ui/printPositionPanel';
 import { BoardSource, Pinboard } from './ui/pinboard';
 import { recommendedSquareCm, REFERENCE_SQUARE_CM } from './fold/paperSize';
 import { normalizePosition, ORIGINAL, positionFromParams, positionToParams } from './papers/printPosition';
+import { StartingPoint, savedStart, suggestedStarts } from './papers/startingPoints';
 
 const params = new URLSearchParams(location.search);
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -44,7 +46,13 @@ function syncUrl() {
   positionToParams(garmentPosition, url.searchParams);
   url.searchParams.set('step', String(controller.step));
   url.searchParams.set('view', view.target === 1 ? 'display' : 'workshop');
-  if (url.href !== location.href) history.replaceState(history.state, '', url);
+  // The URL is shareable. Only this history entry remembers that the workshop
+  // supplied the placement, so reloading and opening a copied URL stay distinct.
+  const marker = pieceStart.garment ? placementSignature(garmentPaper, garmentTurns, garmentPosition) : undefined;
+  const state = history.state;
+  if (marker !== state?.paperCoutureStart) {
+    history.replaceState({ ...state, paperCoutureStart: marker }, '', url);
+  } else if (url.href !== location.href) history.replaceState(state, '', url);
 }
 
 // ---- folding data (pure, precomputed once)
@@ -185,6 +193,18 @@ let paper = resolvePaper(params.get('paper'));
 const requestedTurn = Number(params.get('turn'));
 let quarterTurns = Number.isFinite(requestedTurn) ? ((Math.trunc(requestedTurn) % 4) + 4) % 4 : 0;
 let printPosition = positionFromParams(paper, params);
+const pieceStart = { garment: false, accessory: false, centre: false };
+const activeSheet = () => accessoryMode ? (editingCentre ? 'centre' : 'accessory') : 'garment';
+function placementSignature(design: PaperDesign, turns: number, position: PrintPosition) {
+  return JSON.stringify([startKey(garmentId), design.id, turns, position.x, position.y]);
+}
+if (!params.has('turn') && !params.has('printX') && !params.has('printY')) {
+  // A link that names a placement wins; otherwise begin from the person's saved start.
+  const mine = savedStart(startKey(garmentId), paper.id);
+  if (mine) { applyStart(mine); pieceStart.garment = true; }
+} else {
+  pieceStart.garment = history.state?.paperCoutureStart === placementSignature(paper, quarterTurns, printPosition);
+}
 let textures: PaperTextures | null = null;
 let garmentPaper = paper;
 let garmentTurns = quarterTurns;
@@ -236,8 +256,42 @@ const view = new ViewSwitch(reducedMotion ? 0.6 : 1.1);
 const displayCam = new DisplayCamera(stage, canvas);
 
 // ---- interface
-const positionPanel = new PrintPositionPanel(app, p => {
-  printPosition = normalizePosition(paper, p); applyPaper();
+/** A design's other colourway shows a different face of the sheet, so it keeps its own starting points. */
+function colourway(id: GarmentId, options = garmentOptions) {
+  const side = garmentDecisions(id).find(d => d.id.endsWith('Side'));
+  return side && options[side.id] !== DEFAULT_OPTIONS[side.id] ? `:${options[side.id]}` : '';
+}
+function startKey(id: GarmentId) { return id + colourway(id); }
+/** The piece the paper is being placed on, for the placement panel and saved starting points. */
+const placementPiece = () => ({
+  key: accessoryMode ? `accessory:${editingCentre ? 'bow-centre' : accessoryId}` : startKey(garmentId),
+  // Suggestions were chosen on each design's default colourway and are offered only there.
+  designId: accessoryMode || colourway(garmentId) ? '' : garmentId, name: construction.name, construction,
+  angle: accessoryMode ? 0 : garmentDisplayAngle(garmentId),
+});
+function applyStart(s: StartingPoint) {
+  quarterTurns = ((Math.trunc(s.turns) % 4) + 4) % 4;
+  printPosition = normalizePosition(paper, s);
+}
+/**
+ * Where a paper begins on a piece: the person's saved start, or, for a curated
+ * paper, the first suggestion for that design on its default colourway. Other
+ * papers begin as drawn.
+ */
+function beginning(key: string, designId: string, design: PaperDesign): StartingPoint | undefined {
+  return savedStart(key, design.id) ?? (design.curation === 'curated' ? suggestedStarts(design.id, designId)[0] : undefined);
+}
+function begin(key: string, designId: string) {
+  const start = beginning(key, designId, paper), slot = activeSheet();
+  if (start) applyStart(start);
+  else if (pieceStart[slot]) applyStart({ turns: 0, ...ORIGINAL });
+  pieceStart[slot] = !!start;
+}
+const positionPanel = new PrintPositionPanel(app, {
+  change: p => { pieceStart[activeSheet()] = false; printPosition = normalizePosition(paper, p); applyPaper(); },
+  start: (s, saved) => { pieceStart[activeSheet()] = saved; applyStart(s); applyPaper(); },
+  saved: () => { pieceStart[activeSheet()] = true; syncUrl(); },
+  piece: placementPiece,
 });
 const pinboard = new Pinboard(app, {
   workshop: () => { if (!view.inWorkshop) leaveDisplay(); },
@@ -269,11 +323,16 @@ const square = Number(params.get('square'));
 if (square > 0) pinboard.rememberStartingSquare(`garment:${garmentId}`, square);
 const picker = new PaperPicker(app, PAPERS, {
   onSelect: (id) => {
-    if (id !== paper.id) printPosition = { ...ORIGINAL };
-    paper = findPaper(id);
+    if (id !== paper.id) {
+      printPosition = { ...ORIGINAL };
+      paper = findPaper(id);
+      const piece = placementPiece();
+      begin(piece.key, piece.designId);
+    }
     applyPaper();
   },
   onRotate: () => {
+    pieceStart[activeSheet()] = false;
     quarterTurns = (quarterTurns + 1) % 4;
     applyPaper();
   },
@@ -385,6 +444,8 @@ function changeGarment(id: GarmentId) {
   if (accessoryMode || id === garmentId) return;
   designProgress.set(garmentId, controller.step);
   garmentId = id;
+  // The same paper can begin differently on each piece: use the start saved for this one.
+  begin(startKey(id), colourway(id) ? '' : id);
   replaceConstruction(buildGarment(id, garmentOptions));
   controller.jumpTo(designProgress.get(id) ?? 0);
 }
@@ -396,7 +457,9 @@ function chooseFoldOption(id: DecisionId, value: string) {
   const next = buildGarment(garmentId, options);
   const retain = Math.min(controller.step, sharedFoldPrefix(construction, next));
   const refocus = shapeChoices.root.contains(document.activeElement);
+  const previousKey = startKey(garmentId);
   garmentOptions = options;
+  if (startKey(garmentId) !== previousKey) begin(startKey(garmentId), colourway(garmentId) ? '' : garmentId);
   replaceConstruction(next);
   controller.jumpTo(retain);
   if (refocus) shapeChoices.focusChoice(value);
@@ -414,9 +477,11 @@ function revisitFold(id: DecisionId) {
 function editPin(id: AccessoryId) {
   if (accessoryMode || !controller.finished || !accessoryAnchors(id, garmentAnchors()).length) return;
   savedGarment = { construction, timeline, controller };
-  if (id !== accessoryId) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); settlePosition(); }
+  const changed = id !== accessoryId;
+  if (changed) { accessoryId = id; savedPinStep = 0; bowWing = 0; attached = false; centreAttached = false; prepareAccessory(); settlePosition(); }
   studySeams.geometry = seamGeometry;
   accessoryMode = true; paper = pinPaper; quarterTurns = pinTurns; printPosition = { ...pinPrintPosition };
+  if (changed) begin(placementPiece().key, '');
   replaceConstruction(findAccessory(accessoryId).build(), pinTimeline);
   controller.jumpTo(savedPinStep);
 }
@@ -733,11 +798,12 @@ Object.assign(window, {
     enterDisplay,
     leaveDisplay,
     setPaper(id: string) {
-      if (id !== paper.id) printPosition = { ...ORIGINAL };
+      if (id !== paper.id) { pieceStart[activeSheet()] = false; printPosition = { ...ORIGINAL }; }
       paper = resolvePaper(id);
       applyPaper();
     },
     rotatePattern(q: number) {
+      pieceStart[activeSheet()] = false;
       quarterTurns = ((q % 4) + 4) % 4;
       applyPaper();
     },

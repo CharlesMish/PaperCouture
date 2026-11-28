@@ -50,7 +50,8 @@ assert.equal(DEFAULT_OPTIONS.gownSide, DEFAULT_GOWN.side);
 assert.deepEqual(buildGarment('gown'), buildGown());
 assert.deepEqual(buildGarment('gown', { ...DEFAULT_OPTIONS, gownSide: 'reverse' }), buildGown({ ...DEFAULT_GOWN, side: 'reverse' }));
 assert.equal(SQUARE_CM, 20);
-assert.deepEqual(attachmentAnchors('gown', 1, -1), [], 'Do not invent attachment anchors');
+// Positions were placed and reviewed on 2026-11-24 (docs/placement-review/REVIEW.md); footprints are audited by check-attachments.
+assert.deepEqual(attachmentAnchors('gown', 1, -1).map(a => a.id), ['shoulder', 'waist'], 'The gown keeps its reviewed attachment positions');
 assert(garmentExperiment('gown'), 'the gown is listed as an experiment');
 const [decision] = garmentDecisions('gown');
 assert.equal(decision.id, 'gownSide');

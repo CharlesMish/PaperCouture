@@ -217,3 +217,16 @@ dip of safflower red on the front, and the vat side of the same dye on the rever
 It was styled on the Kimono and the Folding fan. There are now 38 visible papers
 (17 curated, 21 Experimental). See [the paper, the board and how to recreate
 it](docs/twice-folded/NOTES.md).
+
+## Starting points and the placement review
+
+**Position print** shows the finished piece beside the flat sheet and dims the parts of
+the sheet the fold hides. Under them, **Starting points** offers the four turns, measured
+placements for sparse sliding prints, a few named suggestions, and one you save with
+**Save as my start**: from then on that paper begins there on that piece.
+A curated paper begins from its suggestion on a piece that has one.
+`docs/placement-review/review.html` opens by double-click and shows every paper on every
+piece at every turn, with findings and four fold sketches. See [the notes](docs/placement-review/NOTES.md).
+
+The camp shirt, coat-dress, fit-and-flare, gown, swing coat, capelet, cross-wrap top,
+clutch and apron now take accessories, at positions placed for each piece.

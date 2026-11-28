@@ -149,7 +149,8 @@ const fingerprint = (c: Construction) => createHash('sha256').update(JSON.string
   for (const g of GARMENTS) {
     const anchors = attachmentAnchors(g.id, 1, -1);
     assert(accessoryAnchors('kerchief', anchors).every(a => a.id === 'neckline'));
-    assert(accessoryAnchors('pocket', anchors).every(a => a.id === 'chest-left' || a.id === 'chest-right'));
+    assert(accessoryAnchors('pocket', anchors).every(a => ['chest-left', 'chest-right', 'hip-left', 'hip-right'].includes(a.id)), 'a patch pocket sits on the chest or, on a coat, at the hip');
+    assert(accessoryAnchors('bow', anchors).every(a => !['collar-left', 'collar-right', 'shoulder', 'hip-left', 'hip-right'].includes(a.id)), 'the bow keeps to the six original positions');
   }
   assert.equal(accessoryAnchors('kerchief', attachmentAnchors('skirt', 1, -1)).length, 0, 'skirts have no neckline');
   assert.equal(accessoryAnchors('pin', attachmentAnchors('dress', 1, -1)).length, 6, 'pin keeps every position');

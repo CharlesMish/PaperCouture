@@ -198,7 +198,9 @@ async function bundle(url) {
           matrices: [p.accessoryRoot.matrix.toArray(), ...p.accessoryRoot.children.map(c => c.matrix.toArray())] }));
       });
       const before = await signature(); assert(before.attached && before.visible);
-      await a.page.getByLabel('Garment design').selectOption(requiredIds[0]); await a.settle(); await a.finish(); await a.display();
+      // The capelet gained a clasp position on 2026-11-24, so the round trip uses a design that still has none.
+      const unsupported = requiredIds.find(id => id !== 'capelet') || 'boot-left';
+      await a.page.getByLabel('Garment design').selectOption(unsupported); await a.settle(); await a.finish(); await a.display();
       assert(await a.page.getByLabel('Accessory type').isHidden()); assert.match(await a.page.locator('.studio-note').innerText(), /kept aside/);
       assert.equal(await a.page.evaluate(() => paperCouture.accessoryRoot.visible), false);
       await a.page.getByLabel('Garment design').selectOption('jacket'); await a.settle(); await a.finish(); await a.display();

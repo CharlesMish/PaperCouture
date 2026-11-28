@@ -24,7 +24,8 @@ const visibleAt = (s: SheetState, x: number, y: number) => s.facets.filter(f => 
 assert.equal(garmentIdFrom('swing-coat'), 'swing-coat');
 assert.deepEqual(buildGarment('swing-coat'), c);
 assert.equal(recommendedSquareCm('swing-coat'), 20);
-assert.deepEqual(attachmentAnchors('swing-coat', 1, -.21), [], 'Do not invent attachment anchors');
+// Positions were placed and reviewed on 2026-11-24 (docs/placement-review/REVIEW.md); footprints are audited by check-attachments.
+assert.deepEqual(attachmentAnchors('swing-coat', 1, -.21).map(a => a.id), ['neckline', 'collar-left', 'collar-right', 'hip-left', 'hip-right'], 'The swing coat keeps its reviewed attachment positions');
 assert.equal(new Set(c.ops.map(op => op.id)).size, c.ops.length);
 assert(c.ops.every(op => op.kind === 'turn' || (op.kind === 'fold' && op.folds.every(f => f.sense === 'valley'))));
 for (const [i, s] of tl.states.entries()) assert.deepEqual(checkState(s, `coat:${i}`), []);

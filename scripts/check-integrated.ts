@@ -3,7 +3,10 @@ import { CANDIDATES as ORIGINAL } from '../experiments/fold-study/constructions'
 import { buildGarment, attachmentAnchors } from '../src/fold/garments';
 const CANDIDATES = {apron: () => buildGarment('apron'), clutch: () => buildGarment('clutch'), tunic: () => buildGarment('tunic')};
 for (const id of ['apron', 'clutch'] as const) assert.deepEqual(CANDIDATES[id](), ORIGINAL[id](), `${id} changed from the reviewed study`);
-for (const id of ['apron', 'clutch', 'tunic'] as const) assert.deepEqual(attachmentAnchors(id, 1, -1), []);
+assert.deepEqual(attachmentAnchors('tunic', 1, -1), []);
+// Reviewed positions added on 2026-11-24: a pin at the point of the clutch's flap; a bib, waist and two pockets on the apron.
+assert.deepEqual(attachmentAnchors('clutch', 1, -1).map(a => a.id), ['clasp']);
+assert.deepEqual(attachmentAnchors('apron', 1, -1).map(a => a.id), ['neckline', 'waist', 'hip-left', 'hip-right']);
 import { checkState, modelPoly, isFlipped } from '../src/fold/engine';
 import { centroid, signedArea, Vec2 } from '../src/fold/geometry';
 import { buildTimeline, evaluateFrame, posePoint, LAYER_GAP } from '../src/fold/timeline';
