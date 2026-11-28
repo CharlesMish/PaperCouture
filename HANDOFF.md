@@ -4,6 +4,11 @@ Branch `claude/figure-study`, stacked on PR #54. A sketch-lane page asking wheth
 wardrobe can dress a person: [docs/figure-study/NOTES.md](docs/figure-study/NOTES.md),
 and `docs/figure-study/study.html` opens by double-click. Nothing in the app changes.
 
+Second pass (2026-11-28), after Astra's reply: the sleeve root is tucked farther behind
+the body, a cut hand is optional, and the page has a cork board where two figures can be
+dressed, posed and moved. It opens on the plum kimono and *Fish Market Saturday* having
+just spotted each other. The notes say what moving this onto the app's pinboard would take.
+
 # Paper Couture — saved print placement and fold-choice follow-up
 
 The saved-start fix on PR #54 keeps a kimono’s saved print placement with that

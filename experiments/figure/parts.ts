@@ -32,7 +32,7 @@ export interface BodyShape {
 }
 export const BODY: BodyShape = { collar: .09, neck: .13, lean: 21, half: .4, flare: .07 };
 /** The squares each part is folded from, in cm, for a figure about 16 cm tall. */
-export const SQUARES = { body: 12, sleeve: 7, obi: 4.8 };
+export const SQUARES = { body: 12, sleeve: 7.6, obi: 4.8 };
 
 /**
  * The worn body. The top edge is turned down first so its other colour becomes

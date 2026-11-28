@@ -1,4 +1,4 @@
-# Figure study (Claude, 2026-11-27)
+# Figure study (Claude, 2026-11-27, second pass 2026-11-28)
 
 Branch `claude/figure-study`, stacked on `claude/starting-points` (PR #54), at Charlie's
 request in a Claude chat. It follows [Astra's follow-up](../placement-review/ASTRA-FOLLOWUP.md)
@@ -22,11 +22,15 @@ Three trials:
    Saturday*.
 2. **The parts, loose and assembled**, with a first list of what someone needs at a
    table.
-3. **Two figures facing one another**, to see whether a sleeve and a tilt of the head
-   read as a greeting.
+3. **The shoulder first, then a hand** (second pass). The greeting pose with the first
+   sleeve root, with the root tucked farther behind the body, and with a cut hand added.
+4. **One board, two outfits, one moment** (second pass). A cork board with two figures
+   that can be dressed, posed, dragged, pinned and unpinned. It opens on Astra's test:
+   the plum kimono and *Fish Market Saturday*, placed as if they have just seen each
+   other.
 
-Controls change the kimono paper and its turn, the obi and fan paper, how far the fronts
-part at the hem, the hair, and the pose.
+Controls under Trial 1 change the kimono paper and its turn, the obi and fan paper, how
+far the fronts part at the hem, the hair, and the pose. The board has its own controls.
 
 ## What I found
 
@@ -44,6 +48,44 @@ part at the hem, the hair, and the pose.
 - Western pieces need nothing new. They are already the shape they have on a body.
 - A sleeve and a head tilt partly read as a greeting. A cut hand at the cuff is missing.
 
+## Second pass, after Astra's reply
+
+- **The shoulder.** Astra saw board between the raised sleeve and the collar. The sleeve's
+  root sat 0.95 cm inside the body's edge, so lifting the sleeve opened a gap. It is now
+  1.75 cm inside (`SHOULDER_TUCK` in `scene.ts`) and a little lower, and the sleeve's
+  square grows from 7 to 7.6 cm so the same width shows. Trial 3 keeps the old root
+  beside the new one.
+- **The hand.** A small rounded piece of card at the far end of the sleeve's top edge.
+  I would keep it: it says which end is the wrist and gives the fan a holder. It can be
+  switched off per figure on the board.
+- **Arms.** An arm is now `{ raise, across?, front? }`. `across` starts the sleeve at the
+  outer shoulder and lays it over the body, using the other side's sleeve fold. The
+  shirt's sleeves are part of its fold, so that figure's arms are cut card from the
+  sleeve hems.
+- **The board.** Two figures, each leaning about 4° toward the other with her head
+  tilted the same way; the kimono lifts her near sleeve and holds a fan across her body,
+  the shirt waves. "Both standing" shows the same pair with no moment in it. I think the
+  test passes, and that lean, head and one sleeve do the work without faces.
+
+### Onto the app's pinboard
+
+This board is a canvas sketch, not `src/ui/pinboard.ts`. What I found there:
+
+- The pinboard already has an outline outfit guide for one or two figures
+  (`appearance.guide`, `guideTransforms`, `makeFigureGuides` in `src/board/decor.ts`),
+  movable, sizable, and optionally kept in the photograph.
+- A pinned piece already stores a position and a tilt (`BoardItem`).
+- So a cut figure (head, hair, neck, feet, hands) could be a second style of that guide,
+  and the shirt and skirt could be pinned over it with no new folds. That is the smaller
+  step.
+- The worn kimono is the larger one. Its body and sleeves are sketches. They would need
+  to become app designs, pass the real draft checks, and be pinned as a group that moves
+  together.
+- A pose on the real board would be a lean and a head tilt on the guide, plus the tilt
+  each pinned sleeve already has.
+- I did not change the pinboard. It has the most browser checks in the project
+  (`check-board-*.cjs`) and none of them can be run from here.
+
 ## Three crafts, kept apart
 
 Paper Couture folds garments from one uncut square. Paper dolls (washi ningyō; the flat
@@ -60,7 +102,9 @@ borrows the cut figure from the second, and takes only pose from the third.
   (the limit the simple folds are held to), narrowest facet 5.4 mm.
 - `npm run typecheck`, `npm test`, `npm run build`: unchanged from PR #54 and passing.
 - The packaged page was opened in headless Chrome at 1280 and 390 px: every control
-  pressed, no page errors, no sideways scroll.
+  pressed, a figure dragged with the mouse and moved with the arrow keys, the second
+  figure unpinned and pinned again, no page errors, no sideways scroll. Touch dragging
+  was not tried on a real phone.
 - **Nothing has been folded, cut or glued in physical paper.** The sizes in the table
   list are a first guess.
 
@@ -70,6 +114,7 @@ borrows the cut figure from the second, and takes only pose from the third.
   square with no cuts.
 - Give figures their own room with their own rule (folded clothes on a cut figure, glue
   allowed), separate from the one-square wardrobe.
-- A cut hand, an under-collar in a third paper, and hair as a choice.
+- The cut figure as a second style of the pinboard's outfit guide (see above).
+- An under-collar in a third paper.
 - A physical trial of the bookmark at the listed sizes before any of it is called
   "make at home".
