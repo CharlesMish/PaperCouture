@@ -10,7 +10,8 @@ import { FlatView, drawFinished, finishedState, paperFaces } from '../render/fla
 export interface PlacementPiece { key: string; designId: string; name: string; construction: Construction; angle: number }
 export interface PlacementHandlers {
   change(p: PrintPosition): void;
-  start(s: StartingPoint): void;
+  start(s: StartingPoint, saved: boolean): void;
+  saved(): void;
   piece(): PlacementPiece;
 }
 
@@ -166,7 +167,7 @@ export class PrintPositionPanel {
     drawFinished(c.getContext('2d')!, stateOf(piece.construction), paperFaces(this.paper!, start.turns, start, 192), start.turns, { angle: piece.angle });
     name.textContent = label;
     b.append(c, name);
-    b.addEventListener('click', () => this.h.start(start));
+    b.addEventListener('click', () => this.h.start(start, kind === 'saved'));
     return b;
   }
   private markStarts() {
@@ -202,14 +203,15 @@ export class PrintPositionPanel {
   private keep() {
     const piece = this.h.piece(), paper = this.paper!;
     const ok = saveStart(piece.key, paper.id, this.current());
+    if (ok) this.h.saved();
     this.renderStarts(true);
     this.saveNote.textContent = ok ? `Saved. ${paper.name} will start here whenever you choose it for the ${piece.name.toLowerCase()}.` : 'This browser would not keep a saved start.';
   }
   private drop() {
     const piece = this.h.piece();
-    forgetStart(piece.key, this.paper!.id);
+    const ok = forgetStart(piece.key, this.paper!.id);
     this.renderStarts(true);
-    this.saveNote.textContent = 'Forgotten. This paper starts as drawn again.';
+    this.saveNote.textContent = ok ? 'Saved start removed.' : 'This browser could not remove the saved start.';
   }
 
   render(paper: PaperDesign, turn: number, position: PrintPosition, front: HTMLCanvasElement): void {
